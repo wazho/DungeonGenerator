@@ -19,6 +19,10 @@ public class MissionAlphabetWindow : EditorWindow {
 	private EnumNodeTerminal _symbolTerminal = EnumNodeTerminal.Terminal;
 	private int _canvasWidth, _canvasHeight;
 	private Vector2 _canvasOffset;
+	// Temporary values or pointers.
+	private Vector2 mousePosition;
+	private GraphGrammarNode tempNode;
+	private GraphGrammarConnection tempConnection;
 
 	void Awake() {
 		this._symbolOrdering = 0;
@@ -28,8 +32,8 @@ public class MissionAlphabetWindow : EditorWindow {
 	}
 
 	void OnGUI() {
-		// Current mouse position.
-		Vector2 mousePosition = (Event.current.mousePosition - new Vector2(0, toolBoxHeight));
+		// Update current mouse position.
+		this.mousePosition = (Event.current.mousePosition - new Vector2(0, toolBoxHeight));
 
 		// Buttons - Add a new node.
 		EditorGUILayout.BeginHorizontal(EditorAdvance.PureTextureGUI(Color.red));
@@ -51,10 +55,10 @@ public class MissionAlphabetWindow : EditorWindow {
 		GUILayout.Label("Selected node", EditorStyles.boldLabel);
 
 		// IntSlider - Ordering for showing.
-		if (symbolSet.SelectedSymbol is GraphGrammarNode) {
+		if (this.symbolSet.SelectedSymbol is GraphGrammarNode) {
 			// Update the ordering value.
-			this._symbolOrdering = EditorGUILayout.IntSlider(new GUIContent("Ordering:"), ((GraphGrammarNode) symbolSet.SelectedSymbol).Ordering, 1, this.symbolSet.Nodes.Count);
-			((GraphGrammarNode) symbolSet.SelectedSymbol).Ordering = this._symbolOrdering;
+			this._symbolOrdering = EditorGUILayout.IntSlider(new GUIContent("Ordering:"), ((GraphGrammarNode) this.symbolSet.SelectedSymbol).Ordering, 1, this.symbolSet.Nodes.Count);
+			((GraphGrammarNode) this.symbolSet.SelectedSymbol).Ordering = this._symbolOrdering;
 			EditorAdvance.ProgressBar((float) this._symbolOrdering / this.symbolSet.Nodes.Count, "lower <--> upper");
 			// Sort via ordering.
 			this.symbolSet.Nodes = this.symbolSet.Nodes.OrderBy(symbol => symbol.Ordering).ToList();
@@ -66,9 +70,9 @@ public class MissionAlphabetWindow : EditorWindow {
 		}
 
 		// EnumPopup - Switch the node to terminal or non-terminal.
-		if (symbolSet.SelectedSymbol is GraphGrammarNode) {
-			this._symbolTerminal = (EnumNodeTerminal) EditorGUILayout.EnumPopup("Terminal:", ((GraphGrammarNode) symbolSet.SelectedSymbol).Terminal);
-			((GraphGrammarNode) symbolSet.SelectedSymbol).Terminal = this._symbolTerminal;
+		if (this.symbolSet.SelectedSymbol is GraphGrammarNode) {
+			this._symbolTerminal = (EnumNodeTerminal) EditorGUILayout.EnumPopup("Terminal:", ((GraphGrammarNode) this.symbolSet.SelectedSymbol).Terminal);
+			((GraphGrammarNode) this.symbolSet.SelectedSymbol).Terminal = this._symbolTerminal;
 		} else {
 			EditorGUI.BeginDisabledGroup(true);
 			EditorGUILayout.EnumPopup("Terminal:", EnumNodeTerminal.Terminal);
@@ -114,25 +118,33 @@ public class MissionAlphabetWindow : EditorWindow {
 		EditorGUI.DrawRect(this.canvas, Color.grey);
 
 		// Activate the symbol, make it could be selected.
-		if (Event.current.type == EventType.MouseDown && this.canvas.Contains(mousePosition)) {
-			symbolSet.TouchedSymbol(mousePosition);
+		if (Event.current.type == EventType.MouseDown && this.canvas.Contains(this.mousePosition)) {
+			this.symbolSet.TouchedSymbol(this.mousePosition);
 			// Refresh the layout.
 			this.Repaint();
 		}
 
-		// Revoke the activated symbol.
-		if (Event.current.type == EventType.MouseUp) {
-
-		}
-
 		// Drag and drop event, could move the symbols of canvas.
 		if (Event.current.type == EventType.MouseDrag) {
-			if (this.canvas.Contains(mousePosition)) {
-				foreach (GraphGrammarNode symbol in this.symbolSet.Nodes) {
-					if (symbol.Selected) { symbol.Position += Event.current.delta; }
+			if (this.canvas.Contains(this.mousePosition)) {
+				// Select node.
+				if (this.symbolSet.SelectedSymbol is GraphGrammarNode) {
+					this.tempNode = (GraphGrammarNode) this.symbolSet.SelectedSymbol;
+					this.tempNode.Position += Event.current.delta;
 				}
-				foreach (GraphGrammarConnection symbol in this.symbolSet.Connections) {
-					symbol.StartPosition += Event.current.delta;
+				// Select connection.
+				else if (this.symbolSet.SelectedSymbol is GraphGrammarConnection) {
+					this.tempConnection = (GraphGrammarConnection) this.symbolSet.SelectedSymbol;
+					// Start point.
+					if (this.tempConnection.StartSelected) {
+						this.tempConnection.StartPosition = this.mousePosition;
+						this.symbolSet.StickyNode(this.tempConnection, this.mousePosition, "start");
+					}
+					// End point.
+					else if (this.tempConnection.EndSelected) {
+						this.tempConnection.EndPosition = this.mousePosition;
+						this.symbolSet.StickyNode(this.tempConnection, this.mousePosition, "end");
+					}
 				}
 			} else {
 				// Revoke all 'selected' to false.
@@ -140,6 +152,9 @@ public class MissionAlphabetWindow : EditorWindow {
 			}
 			// Refresh the layout.
 			this.Repaint();
+			// Release.
+			this.tempNode = null;
+			this.tempConnection = null;
 		}
 
 		// Draw whole nodes on canvas.
@@ -149,8 +164,30 @@ public class MissionAlphabetWindow : EditorWindow {
 
 		// Draw whole connections on canvas.
 		foreach (GraphGrammarConnection connection in this.symbolSet.Connections) {
-			GraphGrammar.DrawConnection(connection.StartPosition, connection.EndPosition, false);
+			GraphGrammar.DrawConnection(connection);
 		}
+
+
+
+
+/*
+		Vector3[]   arrowHead = new Vector3[3];
+		arrowHead[0] = new Vector3(100, 100, 0);
+		arrowHead[1] = new Vector3(100, 200, 0);
+		arrowHead[2] = new Vector3(200, 150, 0);
+
+		Handles.DrawAAConvexPolygon( arrowHead );
+
+
+		Vector3[]   arrowHead2 = new Vector3[4];
+		arrowHead2[0] = new Vector3(300, 100, 0);
+		arrowHead2[1] = new Vector3(310,  90, 0);
+		arrowHead2[2] = new Vector3(410, 290, 0);
+		arrowHead2[3] = new Vector3(400, 300, 0);
+
+		Handles.DrawAAConvexPolygon( arrowHead2 );
+
+*/
 
 
 		int right = Screen.width - (int) this.canvas.xMax;

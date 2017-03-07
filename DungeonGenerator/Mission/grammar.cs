@@ -24,7 +24,6 @@ public class GraphGrammarSymbol {
 
 	public EnumSymbolType Type {
 		get { return this.type; }
-		set { ; }
 	}
 
 	public bool Selected {
@@ -34,7 +33,7 @@ public class GraphGrammarSymbol {
 
 	public int Ordering {
 		get { return this.ordering; }
-		set { Debug.Log(value); this.ordering = value; }
+		set { this.ordering = value; }
 	}
 }
 
@@ -45,29 +44,69 @@ public enum EnumNodeTerminal {
 }
 
 public class GraphGrammarNode : GraphGrammarSymbol {
-	protected EnumNodeTerminal terminal;
-	protected Rect             scope;
+	// Values of setting.
 
-	protected GraphGrammarNode() : base() {
-		this.type     = EnumSymbolType.Node;
-		this.terminal = EnumNodeTerminal.Terminal;
-		this.scope    = new Rect(100, 100, 50, 50);
+	// Sub-classes.
+	private class StickiedConnection {
+		public GraphGrammarConnection connection;
+		public string                 location;
+		// Construction.
+		public StickiedConnection(GraphGrammarConnection connection, string location) {
+			this.connection = connection;
+			this.location   = location;
+		}
 	}
-
+	// Members.
+	private EnumNodeTerminal         terminal;
+	private Rect                     scope;
+	private List<StickiedConnection> stickiedConnections;
+	// Construction (private).
+	private GraphGrammarNode() : base() {
+		this.type                = EnumSymbolType.Node;
+		this.terminal            = EnumNodeTerminal.Terminal;
+		this.scope               = new Rect(100, 100, 35, 35);
+		this.stickiedConnections = new List<StickiedConnection>();
+	}
+	// Construction.
 	public GraphGrammarNode(EnumNodeTerminal terminal) : this() {
 		this.terminal = terminal;
 	}
-
+	// Terminal, getter and setter.
 	public EnumNodeTerminal Terminal {
 		get { return this.terminal; }
 		set { this.terminal = value; }
 	}
-
+	// Position, getter and setter.
 	public Vector2 Position {
 		get { return this.scope.position; }
-		set { this.scope.position = value; }
+		set {
+			// Update position.
+			this.scope.position = value;
+			// Move the stickied connections together.
+			foreach (StickiedConnection stickied in this.stickiedConnections) {
+				switch (stickied.location) {
+				case "start":
+					stickied.connection.StartPosition = value;
+					break;
+				case "end":
+					stickied.connection.EndPosition = value;
+					break;
+				}
+			}
+		}
 	}
-
+	// Add a new pair for stickied connection.
+	public void AddStickiedConnection(GraphGrammarConnection connection, string location) {
+		// If connection is not store here, append this connection.
+		if (! this.stickiedConnections.Any(e => e.connection == connection)) {
+			this.stickiedConnections.Add(new StickiedConnection(connection, location));
+		}
+	}
+	// Remove the specific stickied connection.
+	public void RemoveStickiedConnection(GraphGrammarConnection connection, string location) {
+		// If connection is store here, remove this connection.
+		this.stickiedConnections.Remove(this.stickiedConnections.Find(e => e.connection == connection && e.location == location));
+	}
 	// Return the position is contained in this symbol or not.
 	public bool IsInScope(Vector2 pos) {
 		return this.scope.Contains(pos);
@@ -75,22 +114,74 @@ public class GraphGrammarNode : GraphGrammarSymbol {
 }
 
 public class GraphGrammarConnection : GraphGrammarSymbol {
-	protected Vector2 startPosition, endPosition;
+	// Values of setting.
+	private int pointScopeSize  = 11;
+	private float lineThickness = 5f;
+	// Members.
+	private bool startSelected, endSelected;
+	private Rect startpointScope, endpointScope;
+	private GraphGrammarNode startpointStickyOn, endpointStickyOn;
 
 	public GraphGrammarConnection() : base() {
-		this.type          = EnumSymbolType.Connection;
-		this.startPosition = new Vector2(10, 10);
-		this.endPosition   = new Vector2(100, 10);
+		this.type            = EnumSymbolType.Connection;
+		this.startpointScope = new Rect(10, 10, this.pointScopeSize, this.pointScopeSize);
+		this.endpointScope   = new Rect(100, 10, this.pointScopeSize, this.pointScopeSize);
 	}
 
+	// .
+	public int PointScopeSize {
+		get { return this.pointScopeSize; }
+	}
+
+	// .
+	public float LineThickness {
+		get { return this.lineThickness; }
+	}
+
+	// .
+	public bool StartSelected {
+		get { return this.startSelected; }
+		set { this.startSelected = value; }
+	}
+
+	// .
+	public bool EndSelected {
+		get { return this.endSelected; }
+		set { this.endSelected = value; }
+	}
+
+	// .
 	public Vector2 StartPosition {
-		get { return this.startPosition; }
-		set { this.startPosition = value; }
+		get { return this.startpointScope.position; }
+		set { this.startpointScope.position = value; }
 	}
 
+	// .
 	public Vector2 EndPosition {
-		get { return this.endPosition; }
-		set { this.endPosition = value; }
+		get { return this.endpointScope.position; }
+		set { this.endpointScope.position = value; }
+	}
+
+	// .
+	public GraphGrammarNode StartpointStickyOn {
+		get { return this.startpointStickyOn; }
+		set { this.startpointStickyOn = value; }
+	}
+
+	// .
+	public GraphGrammarNode EndpointStickyOn {
+		get { return this.endpointStickyOn; }
+		set { this.endpointStickyOn = value; }
+	}
+
+	// .
+	public bool IsInStartscope(Vector2 pos) {
+		return this.startpointScope.Contains(pos);
+	}
+
+	// .
+	public bool IsInEndscope(Vector2 pos) {
+		return this.endpointScope.Contains(pos);
 	}
 }
 
@@ -121,27 +212,75 @@ public class GraphGrammar {
 	}
 
 	// Pass the mouse position.
+	// Be careful for one thing. 'this.nodes' and 'this.connections' must pre-order by ordering.
 	public void TouchedSymbol(Vector2 pos) {
-		bool selected;
-		List<GraphGrammarSymbol> selectedSymbols = new List<GraphGrammarSymbol>();
-
-		// Initial all symbol first.
-		this.RevokeAllSelected();
-		// Find the 'selected nodes', then filtering the top one of them.
-		foreach (GraphGrammarNode symbol in this.nodes) {
-			selected = symbol.IsInScope(pos) ? true : false;
-			if (selected) { selectedSymbols.Add(symbol); }
+		// Find the 'points of selected connection'.
+		foreach (GraphGrammarConnection symbol in this.connections.AsEnumerable().Reverse()) {
+			// This connection is selected, check its endpoints are in scope or not.
+			if (symbol.Selected) {
+				// Initial all symbol first.
+				this.RevokeAllSelected();
+				// Update the symbol status. If out of selecting, disabled the connection.
+				if (symbol.IsInStartscope(pos)) {
+					symbol.Selected = true;
+					symbol.StartSelected = true;
+				} else if (symbol.IsInEndscope(pos)) {
+					symbol.Selected = true;
+					symbol.EndSelected = true;
+				} else {
+					break;
+				}
+				// Update selected symbol.
+				this.selectedSymbol = symbol;
+				return;
+			}
 		}
-		// Find the 'selected connections', then filtering the top one of them.
-		foreach (GraphGrammarConnection symbol in this.connections) {
-			// TODO.
+		// Find the 'selected nodes'.
+		foreach (GraphGrammarNode symbol in this.nodes.AsEnumerable().Reverse()) {
+			if (symbol.IsInScope(pos)) {
+				// Initial all symbol first.
+				this.RevokeAllSelected();
+				// Update the symbol status.
+				symbol.Selected = true;
+				// Update selected symbol.
+				this.selectedSymbol = symbol;
+				return;
+			}
+		}
+		// Find the 'selected connections'.
+		foreach (GraphGrammarConnection symbol in this.connections.AsEnumerable().Reverse()) {
+			float distance = HandleUtility.DistancePointLine((Vector3) pos, (Vector3) symbol.StartPosition, (Vector3) symbol.EndPosition);
+			if (distance < symbol.LineThickness) {
+				// Initial all symbol first.
+				this.RevokeAllSelected();
+				// Update the symbol status.
+				symbol.Selected = true;
+				// Update selected symbol.
+				this.selectedSymbol = symbol;
+				return;
+			}
 		}
 		// If anything has been found or not.
-		if (selectedSymbols.Count > 0) {
-			this.selectedSymbol = selectedSymbols.OrderByDescending(symbol => symbol.Ordering).First();
-			this.selectedSymbol.Selected = true;
-		} else {
-			this.selectedSymbol = null;
+		this.RevokeAllSelected();
+		this.selectedSymbol = null;
+	}
+
+	// Points of connection is sticky to the node.
+	public void StickyNode(GraphGrammarConnection connection, Vector2 pos, string location) {
+		foreach (GraphGrammarNode node in this.nodes.AsEnumerable().Reverse()) {
+			if (node.IsInScope(pos)) {
+				if (string.Equals(location, "start")) {
+					connection.StartpointStickyOn = node;
+					connection.StartPosition = node.Position;
+				} else {
+					connection.EndpointStickyOn = node;
+					connection.EndPosition = node.Position;
+				}
+				node.AddStickiedConnection(connection, location);
+				return;
+			} else {
+				node.RemoveStickiedConnection(connection, location);
+			}
 		}
 	}
 
@@ -171,16 +310,20 @@ public class GraphGrammar {
 
 	// Set all 'seleted' of symbols to false.
 	public void RevokeAllSelected() {
-		foreach (GraphGrammarSymbol symbol in this.nodes.Cast<GraphGrammarSymbol>().Concat(this.connections.Cast<GraphGrammarSymbol>())) {
+		foreach (GraphGrammarNode symbol in this.nodes) {
 			symbol.Selected = false;
+		}
+		foreach (GraphGrammarConnection symbol in this.connections) {
+			symbol.Selected = false;
+			symbol.StartSelected = symbol.EndSelected = false;
 		}
 		return;
 	}
 	
 	// [Draw on canvas] Draw the node on canvas.
 	public static void DrawNode(Vector2 pos, bool isTerminal, bool isSelected) {
-		const int thickness = 2;
-		const int size = 50;
+		int thickness = 2;
+		int size = 35;
 		// If this node is activated (selected), add the highlight boarder.
 		if (isSelected) {
 			EditorCanvas.DrawQuad((int) pos[0]-thickness, (int) pos[1]-thickness, size+thickness*4, size+thickness*4, Color.red);
@@ -190,18 +333,25 @@ public class GraphGrammar {
 		EditorCanvas.DrawQuad((int) pos[0]+thickness, (int) pos[1]+thickness, size, size, isTerminal ? Color.green : Color.yellow);
 	}
 	// [Draw on canvas] Draw the connection on canvas.
-	public static void DrawConnection(Vector2 posA, Vector2 posB, bool isSelected) {
-		const int thickness = 2;
-		const int size = 10;
+	public static void DrawConnection(GraphGrammarConnection connection) {
+		// Setting of endpoints and line.
+		int pBorder      = 2;
+		int pSize        = connection.PointScopeSize;
+		float lThickness = connection.LineThickness;
+		Vector2 posA     = connection.StartPosition;
+		Vector2 posB     = connection.EndPosition;
+		Vector2 offset   = new Vector2(pSize/2, pSize/2);
+
+		// Line between two points.
+		// EditorCanvas.DrawLine(posA + offset, posB + offset, Color.white);
+		EditorCanvas.DrawLine(posA, posB, Color.white, lThickness);
 
 		// Basic square and boarder.
-		EditorCanvas.DrawQuad((int) posA[0], (int) posA[1], size+thickness*2, size+thickness*2, Color.black);
-		EditorCanvas.DrawQuad((int) posA[0]+thickness, (int) posA[1]+thickness, size, size, Color.red);
-
-		EditorCanvas.DrawQuad((int) posB[0], (int) posB[1], size+thickness*2, size+thickness*2, Color.black);
-		EditorCanvas.DrawQuad((int) posB[0]+thickness, (int) posB[1]+thickness, size, size, Color.red);
-
-		EditorCanvas.DrawLine(posA, posB, Color.white);
-
+		if (connection.Selected) {
+			EditorCanvas.DrawQuad((int) posA[0], (int) posA[1], pSize+pBorder*2, pSize+pBorder*2, Color.black);
+			EditorCanvas.DrawQuad((int) posA[0]+pBorder, (int) posA[1]+pBorder, pSize, pSize, Color.red);
+			EditorCanvas.DrawQuad((int) posB[0], (int) posB[1], pSize+pBorder*2, pSize+pBorder*2, Color.black);
+			EditorCanvas.DrawQuad((int) posB[0]+pBorder, (int) posB[1]+pBorder, pSize, pSize, Color.blue);
+		}
 	}
 }

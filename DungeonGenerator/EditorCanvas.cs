@@ -3,9 +3,7 @@ using UnityEditor;
 using System.Collections;
 
 public class EditorCanvas {
-	// static Color defaultBlack = new Color(0, 0, 0, 1);
-	// static Color defaultWhite = new Color(255, 255, 255, 1);
-
+	// 
 	public static void DrawQuad(Rect rect, Color color) {
 		Texture2D texture = new Texture2D(1, 1);
 		texture.SetPixel(0, 0, color);
@@ -23,11 +21,11 @@ public class EditorCanvas {
 		GUI.Box(rect, GUIContent.none);
 	}
 
-	public static void DrawLine(Vector2 startPos, Vector2 endPos, Color color) {
+	public static void DrawLine(Vector2 startPos, Vector2 endPos, Color color, float thickness) {
 		Handles.BeginGUI();
 		Handles.color = color;
 		Vector3 [] lists = new Vector3[] { new Vector3(startPos[0], startPos[1], 0), new Vector3(endPos[0], endPos[1], 0) };
-		Handles.DrawAAPolyLine(5f, lists);
+		Handles.DrawAAPolyLine(thickness, lists);
 		Handles.EndGUI();
 	}
 
