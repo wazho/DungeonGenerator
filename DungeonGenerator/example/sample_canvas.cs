@@ -4,6 +4,8 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
+using EditorCanvas = EditorExtend.NodeCanvas;
+
 // Options of symbol type.
 public enum EnumSymbolType {
 	None       = 0,
@@ -340,7 +342,7 @@ public class GraphGrammar {
 		float lThickness = connection.LineThickness;
 		Vector2 posA     = connection.StartPosition;
 		Vector2 posB     = connection.EndPosition;
-		Vector2 offset   = new Vector2(pSize/2, pSize/2);
+		//Vector2 offset   = new Vector2(pSize/2, pSize/2);
 
 		// Line between two points.
 		// EditorCanvas.DrawLine(posA + offset, posB + offset, Color.white);

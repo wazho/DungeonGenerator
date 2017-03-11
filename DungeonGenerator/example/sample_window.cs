@@ -4,6 +4,8 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
+using EditorAdvance = EditorExtend.Advance;
+
 public class MissionAlphabetWindow : EditorWindow {
 	// Settings of window.
 	private const uint toolBoxHeight = 250;
@@ -166,29 +168,6 @@ public class MissionAlphabetWindow : EditorWindow {
 		foreach (GraphGrammarConnection connection in this.symbolSet.Connections) {
 			GraphGrammar.DrawConnection(connection);
 		}
-
-
-
-
-/*
-		Vector3[]   arrowHead = new Vector3[3];
-		arrowHead[0] = new Vector3(100, 100, 0);
-		arrowHead[1] = new Vector3(100, 200, 0);
-		arrowHead[2] = new Vector3(200, 150, 0);
-
-		Handles.DrawAAConvexPolygon( arrowHead );
-
-
-		Vector3[]   arrowHead2 = new Vector3[4];
-		arrowHead2[0] = new Vector3(300, 100, 0);
-		arrowHead2[1] = new Vector3(310,  90, 0);
-		arrowHead2[2] = new Vector3(410, 290, 0);
-		arrowHead2[3] = new Vector3(400, 300, 0);
-
-		Handles.DrawAAConvexPolygon( arrowHead2 );
-
-*/
-
 
 		int right = Screen.width - (int) this.canvas.xMax;
 
