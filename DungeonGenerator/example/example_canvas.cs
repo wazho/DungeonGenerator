@@ -1,3 +1,8 @@
+/*
+    This is example that is not follow the lateset style guide.
+    Just make a reference for you.
+*/
+
 using UnityEngine;
 using UnityEditor;
 using System.Linq;
