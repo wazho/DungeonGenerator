@@ -24,4 +24,6 @@ When you have prepared to program, please follow the [coding style](https://gith
 
 Keep the `master` branch is stable version. Any unstable work don't commit on `master`, checkout to another branch is better way. Merge it until your branch is finish without obvious bugs.
 
+About the name of branch, is based on your task number. Example: You had finish the part of task **C1-2-3**, and name the branch **C1_2_3**.
+
 We already set the [.gitignore](https://github.com/grass0916/DungeonGenerator/blob/master/.gitignore), you don't need remove the `*.meta` files each time.
