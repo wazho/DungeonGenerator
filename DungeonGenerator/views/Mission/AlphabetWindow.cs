@@ -4,24 +4,20 @@ using System.Collections;
 
 using EditorAdvance = EditorExtend.Advance;
 
-namespace MissionGrammar
-{
-    public enum EnumConnectionType
-    {
+namespace MissionGrammar {
+    public enum EnumConnectionType {
         _weak,
         _strong,
         _inhibition
     }
 
-    public enum EnumArrowType
-    {
+    public enum EnumArrowType {
         Type1,
         Type2,
         Type3
     }
 
-    public class AlphabetWindow : EditorWindow
-    {
+    public class AlphabetWindow : EditorWindow {
         // Set the original color of Property.
         private Color _outlineColor_Nodes;
         private Color _outlineColor_Connections;
@@ -49,8 +45,7 @@ namespace MissionGrammar
         // Content of scroll area. ( Test )
         private string testString;
 
-        void Awake()
-        {
+        void Awake() {
             _outlineColor_Nodes = Color.white;
             _outlineColor_Connections = Color.white;
             _fillColor = Color.white;
@@ -68,23 +63,20 @@ namespace MissionGrammar
             _canvas = new Rect(0, 0, Screen.width, Screen.height);
         }
 
-        void OnGUI()
-        {
+        void OnGUI() {
             #region Buttons
             // Buttons - Nodes or Connections.
             EditorGUILayout.BeginHorizontal();
             // <Left-hand container>
             EditorGUILayout.BeginVertical();
-            if (GUILayout.Button("Nodes", GUILayout.Height(25)))
-            {
+            if (GUILayout.Button("Nodes", GUILayout.Height(25))) {
                 _nodes = true;
                 _connections = false;
             }
             EditorGUILayout.EndVertical();
             // <Right-hand container>
             EditorGUILayout.BeginVertical();
-            if (GUILayout.Button("Connections", GUILayout.Height(25)))
-            {
+            if (GUILayout.Button("Connections", GUILayout.Height(25))) {
                 _nodes = false;
                 _connections = true;
             }
@@ -93,17 +85,14 @@ namespace MissionGrammar
             #endregion
             #region Label
             // Information of the selected button.
-            if (_nodes)
-            {
+            if (_nodes) {
                 GUI.skin.label.fontSize = 24;
                 GUI.skin.label.alignment = TextAnchor.MiddleCenter;
                 GUILayout.Label("List of Nodes");
                 GUI.skin.label.fontSize = 12;
                 GUI.skin.label.alignment = TextAnchor.UpperLeft;
                 ContentNodes();
-            }
-            else
-            {
+            } else {
                 GUI.skin.label.fontSize = 24;
                 GUI.skin.label.alignment = TextAnchor.MiddleCenter;
                 GUILayout.Label("List of Connections");
@@ -114,8 +103,7 @@ namespace MissionGrammar
             #endregion
         }
 
-        void ContentNodes()
-        {
+        void ContentNodes() {
             // Content of Nodes.
             // Set the ScrollPosition.
             _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, GUILayout.Height(100));
@@ -127,15 +115,13 @@ namespace MissionGrammar
             EditorGUILayout.BeginHorizontal();
             // <Left-hand container>
             EditorGUILayout.BeginVertical();
-            if (GUILayout.Button("Modify", GUILayout.Height(20)))
-            {
+            if (GUILayout.Button("Modify", GUILayout.Height(20))) {
                 testString += "\nHere is another line";
             }
             EditorGUILayout.EndVertical();
             // <Right-hand container>
             EditorGUILayout.BeginVertical();
-            if (GUILayout.Button("Delete", GUILayout.Height(20)))
-            {
+            if (GUILayout.Button("Delete", GUILayout.Height(20))) {
                 testString = "";
             }
             EditorGUILayout.EndVertical();
@@ -167,8 +153,7 @@ namespace MissionGrammar
             #endregion
         }
 
-        void ContentConnections()
-        {
+        void ContentConnections() {
             // Content of Connections.
             // Set the ScrollPosition.
             _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, GUILayout.Height(100));
@@ -180,15 +165,13 @@ namespace MissionGrammar
             EditorGUILayout.BeginHorizontal();
             // <Left-hand container>
             EditorGUILayout.BeginVertical();
-            if (GUILayout.Button("Modify", GUILayout.Height(20)))
-            {
+            if (GUILayout.Button("Modify", GUILayout.Height(20))) {
                 testString += "\nHere is another line";
             }
             EditorGUILayout.EndVertical();
             // <Right-hand container>
             EditorGUILayout.BeginVertical();
-            if (GUILayout.Button("Delete", GUILayout.Height(20)))
-            {
+            if (GUILayout.Button("Delete", GUILayout.Height(20))) {
                 testString = "";
             }
             EditorGUILayout.EndVertical();
