@@ -9,6 +9,7 @@ You can see some examples in the menu.
 > git clone https://github.com/grass0916/DungeonGenerator.git
 ```
 
+And check your task first from [Google sheet](https://docs.google.com/spreadsheets/d/1A1DMKRhcZCAshqFJlascTw-KpFhdhQTCEFTGTjbah5s/edit?usp=sharing).
 
 ---
 
@@ -58,3 +59,7 @@ We already set the [.gitignore](https://github.com/grass0916/DungeonGenerator/bl
 # Commit to GitHub after first time.
 > git push
 ```
+
+### How to merge the branch to master?
+
+NO. You don't need to do this. If you finish the task, please email to **Salmon** then he will confirm it. The link of the checklist [here](https://docs.google.com/spreadsheets/d/1A1DMKRhcZCAshqFJlascTw-KpFhdhQTCEFTGTjbah5s/edit?usp=sharing).
