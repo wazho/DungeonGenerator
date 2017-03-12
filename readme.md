@@ -1,4 +1,4 @@
-## Get starting
+## Getting Started
 
 Clone or download in your Unity project folder **Editor**. Then extension will appear on the top of menu, it's called **Dungeon**.
 
