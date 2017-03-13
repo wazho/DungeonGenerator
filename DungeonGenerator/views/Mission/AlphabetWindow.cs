@@ -91,7 +91,7 @@ namespace MissionGrammar {
                 GUI.skin.label.fontSize  = EditorStyle.ContentFontSize;
                 GUI.skin.label.alignment = TextAnchor.UpperLeft;
                 ShowConnectionsInterface();
-            }
+            }          
         }
 
         void ShowNodesInterface() {
@@ -129,6 +129,8 @@ namespace MissionGrammar {
             _symbolFilledColor  = EditorGUILayout.ColorField("Filled Color", _symbolFilledColor);
             _symbolTextColor    = EditorGUILayout.ColorField("Text Color", _symbolTextColor);
             EditorGUILayout.EndVertical();
+            // Show content of Submit.
+            ShowSubmitInterface();
             GUILayout.EndArea();
         }
 
@@ -167,7 +169,55 @@ namespace MissionGrammar {
             // Dropdown list of Arrow Type
             _ConnectionArrowType    = (ConnectionArrowType) EditorGUILayout.EnumPopup("Arrow Type", _ConnectionArrowType);
             EditorGUILayout.EndVertical();
+            // Show content of Submit.
+            ShowSubmitInterface();
             GUILayout.EndArea();
         }
+
+        void ShowSubmitInterface()
+        {
+            // Content of Submit.
+            // Buttons - Apply.
+            if (GUILayout.Button("Apply", EditorStyles.miniButton, EditorStyle.ButtonHeight))
+            {
+                // [Modify soon]
+                /*
+                    Need to create a pop up window. 
+                    To make sure the Information of content.
+                 */
+            }
+            // Remind user [need Modify]
+            if (_isInNodesInterface)
+            {
+                if (_nodeName == "")
+                {
+                    EditorGUILayout.HelpBox("Info \nThe Node's name is empty.", MessageType.Info);
+                }
+                if (_nodeAbbreviation == "")
+                {
+                    EditorGUILayout.HelpBox("Info \nThe Node's abbreviation is empty.", MessageType.Info);
+                }
+                if (_nodeDescription == "")
+                {
+                    EditorGUILayout.HelpBox("Info \nThe Node's description is empty.", MessageType.Info);
+                }
+            }
+            else
+            {
+                if (_connectionName == "")
+                {
+                    EditorGUILayout.HelpBox("Info \nThe Connection's name has been uesd.", MessageType.Info);
+                }
+                if (_connectionAbbreviation == "")
+                {
+                    EditorGUILayout.HelpBox("Info \nThe Connection's abbreviation has been uesd.", MessageType.Info);
+                }
+                if (_connectionDescription == "")
+                {
+                    EditorGUILayout.HelpBox("Info \nThe Connection's description has been uesd.", MessageType.Info);
+                }
+            }
+        }
+
     }
 }
