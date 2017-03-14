@@ -9,7 +9,6 @@ namespace MissionGrammar {
 	public static class Alphabet {
 		private static List<GraphGrammarNode>       _nodes       = new List<GraphGrammarNode>();
 		private static List<GraphGrammarConnection> _connections = new List<GraphGrammarConnection>();
-		private static Vector2 offset = new Vector2(2, 2);
 
 		// Node list in alphabet.
 		public static List<GraphGrammarNode> Nodes {
@@ -20,6 +19,25 @@ namespace MissionGrammar {
 		public static List<GraphGrammarConnection> Connections {
 			get { return _connections; }
 			set { _connections = value; }
+		}
+		// Add a new node.
+		public static void AddNode(GraphGrammarNode node) {
+			// Create a new node.
+			_nodes.Add(node);
+		}
+		// Remove all nodes.
+		public static void ClearAllNodes() {
+			// Create a new node.
+			_nodes.Clear();
+		}
+		// Set all 'seleted' of symbols to false.
+		public static void RevokeAllSelected() {
+			foreach (GraphGrammarNode node in _nodes) {
+				node.Selected = false;
+			}
+			foreach (GraphGrammarConnection connection in _connections) {
+				connection.Selected = false;
+			}
 		}
 		// Draw the node on canvas.
 		public static void DrawNode(GraphGrammarNode node) {

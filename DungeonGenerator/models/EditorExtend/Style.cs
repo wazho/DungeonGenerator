@@ -10,11 +10,15 @@ namespace EditorExtend {
         // Button.
         private const int _tabButtonHeight = 25;
         private const int _buttonHeight    = 20;
+        // Block.
+        private const int _paddingAfterBlock = 10;
         // Canvas.
-        private const int _paddingAfterCanvas = 10;
-        private static Rect _alphabetPreviewArea      = new Rect(0, 200, Screen.width, 150);
-        private static Rect _alphabetPreviewCanvas    = new Rect(0,   0, Screen.width, 150);
-        private static Rect _afterAlphabetPreviewArea = new Rect(0, 350, Screen.width, Screen.height);
+        private static Rect _alphabetSymbolListArea   = new Rect(0,   0, Screen.width, 1000);
+        private static Rect _alphabetSymbolListCanvas = new Rect(0,   0, Screen.width, 1000);
+        private static Rect _alphabetPreviewArea      = new Rect(0, 250, Screen.width,  150);
+        private static Rect _alphabetPreviewCanvas    = new Rect(0,   0, Screen.width,  150);
+        private static Rect _afterAlphabetPreviewArea = new Rect(0, 400, Screen.width, Screen.height);
+
 
         // Font size.
         public static int HeaderFontSize {
@@ -30,9 +34,22 @@ namespace EditorExtend {
         public static GUILayoutOption ButtonHeight {
             get { return GUILayout.Height(_buttonHeight); }
         }
+        // Block.
+        public static int PaddingAfterBlock {
+            get { return _paddingAfterBlock; }
+        }
         // Canvas.
-        public static int PaddingAfterCanvas {
-            get { return _paddingAfterCanvas; }
+        public static Rect AlphabetSymbolListArea {
+            get {
+                _alphabetSymbolListArea.width = Screen.width;
+                return _alphabetSymbolListArea;
+            }
+        }
+        public static Rect AlphabetSymbolListCanvas {
+            get {
+                _alphabetSymbolListCanvas.width = Screen.width;
+                return _alphabetSymbolListCanvas;
+            }
         }
         public static Rect AlphabetPreviewArea {
             get {
@@ -51,6 +68,26 @@ namespace EditorExtend {
                 _afterAlphabetPreviewArea.width  = Screen.width;
                 _afterAlphabetPreviewArea.height = Screen.height;
                 return _afterAlphabetPreviewArea;
+            }
+        }
+
+
+
+        private static GUIStyle _labelInNodeList       = new GUIStyle(GUI.skin.label);
+        private static Vector2  _labelInNodeListOffset = new Vector2(55, 0);
+
+        public static GUIStyle LabelInNodeList {
+            get {
+                if (_labelInNodeList.name != "LabelInNodeList") {
+                    _labelInNodeList.name           = "LabelInNodeList";
+                    _labelInNodeList.fontSize       = 12;
+                    _labelInNodeList.margin.top     = 0;
+                    _labelInNodeList.margin.bottom  = 0;
+                    _labelInNodeList.padding.top    = 17;
+                    _labelInNodeList.padding.bottom = 18;
+                    _labelInNodeList.contentOffset  = _labelInNodeListOffset;
+                }
+                return _labelInNodeList;
             }
         }
     }
