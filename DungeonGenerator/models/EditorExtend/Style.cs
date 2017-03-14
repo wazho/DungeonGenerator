@@ -14,6 +14,10 @@ namespace EditorExtend {
         private const int _paddingAfterCanvas = 10;
         private static Rect _alphabetPreviewArea      = new Rect(0, 200, Screen.width, 150);
         private static Rect _alphabetPreviewCanvas    = new Rect(0,   0, Screen.width, 150);
+
+		private static Rect _spaceRulePreviewArea = new Rect (0, 250, Screen.width, 150);
+		private static Rect _spaceRulePreviewCanvas = new Rect (0, 0, Screen.width, 150);
+
         private static Rect _afterAlphabetPreviewArea = new Rect(0, 350, Screen.width, Screen.height);
         private static Rect _rulePreviewArea = new Rect(0, 150, Screen.width, 300);
         private static Rect _ruleSourceCanvas = new Rect(0, 80, Screen.width / 2, 200);
@@ -90,5 +94,19 @@ namespace EditorExtend {
                 return _afterRulePreviewArea;
             }
         }
+
+		public static Rect SpaceRulePreviewArea {
+			get{ 
+				_spaceRulePreviewArea.width = Screen.width;
+				return _spaceRulePreviewArea;
+			}
+		}
+
+		public static Rect SpaceRulePreviewCanvas {
+			get{ 
+				_spaceRulePreviewCanvas.width = Screen.width;
+				return _spaceRulePreviewCanvas;
+			}
+		}
     }
 }
