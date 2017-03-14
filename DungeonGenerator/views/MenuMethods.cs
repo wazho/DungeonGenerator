@@ -66,10 +66,14 @@ public class DungeonWindow : EditorWindow {
         _window.position = _defaultSize;
     }
 
+    /*
+
     // Example.
     [MenuItem("Dungeon/Example canvas", false, 100)]
     public static void ExampleCanvasWindow() {
         _window = EditorWindow.GetWindow<MissionAlphabetWindow>("Canvas", true);
         _window.position = _defaultSize;
     }
+    
+    */
 }

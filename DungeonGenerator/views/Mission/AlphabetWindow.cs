@@ -6,21 +6,6 @@ using EditorAdvance = EditorExtend.Advance;
 using EditorStyle   = EditorExtend.Style;
 
 namespace MissionGrammar {
-    public enum NodeTerminalType {
-        NonTerminal,
-        Terminal
-    }
-    public enum ConnectionType {
-        WeakRequirement,
-        StrongRequirement,
-        Inhibition
-    }
-    public enum ConnectionArrowType {
-        Type1,
-        Type2,
-        Type3
-    }
-
     public class AlphabetWindow : EditorWindow {
         // Set the original color of Property.
         private Color _symbolOutlineColor;
@@ -31,6 +16,7 @@ namespace MissionGrammar {
         // The scroll bar of list.
         private Vector2 _scrollPosition;
         // The description of nodes or connections
+        private GraphGrammarNode _node = new GraphGrammarNode(NodeTerminalType.Terminal);
         private string _nodeName;
         private string _nodeAbbreviation;
         private string _nodeDescription;
@@ -38,7 +24,8 @@ namespace MissionGrammar {
         private string _connectionAbbreviation;
         private string _connectionDescription;
         // The drawing canvas.
-        private Rect _canvas;
+        private Rect    _canvas;
+        private Vector2 _centerPosition;
         // The type.
         private NodeTerminalType    _symbolTerminal;
         private ConnectionType      _connectionType;
@@ -52,6 +39,7 @@ namespace MissionGrammar {
             _symbolTextColor        = Color.black;
             _isInNodesInterface     = true;
             _scrollPosition         = Vector2.zero;
+            _node                   = new GraphGrammarNode(NodeTerminalType.Terminal);
             _nodeName               = "";
             _nodeAbbreviation       = "";
             _nodeDescription        = "";
@@ -59,9 +47,10 @@ namespace MissionGrammar {
             _connectionAbbreviation = "";
             _connectionDescription  = "";
             _canvas                 = new Rect(0, 0, Screen.width, Screen.height);
+            _centerPosition         = new Vector2(Screen.width / 2, 75);
             _symbolTerminal         = NodeTerminalType.Terminal;
             _connectionType         = ConnectionType.WeakRequirement;
-            _ConnectionArrowType    = ConnectionArrowType.Type1;
+            _ConnectionArrowType    = ConnectionArrowType.Normal;
             // [Remove soon]
             testString              = "1. Contents of List";
         }
@@ -113,7 +102,10 @@ namespace MissionGrammar {
             // Canvas.
             GUILayout.BeginArea(EditorStyle.AlphabetPreviewArea);
             _canvas = EditorStyle.AlphabetPreviewCanvas;
-            EditorGUI.DrawRect(_canvas, Color.black);
+            EditorGUI.DrawRect(_canvas, Color.gray);
+            _centerPosition.x = Screen.width / 2;
+            _node.Position    = _centerPosition;
+            Alphabet.DrawNode(_node);
             GUILayout.EndArea();
             //  Content of property.
             GUILayout.BeginArea(EditorStyle.AfterAlphabetPreviewArea);
@@ -123,11 +115,11 @@ namespace MissionGrammar {
             _symbolTerminal = (NodeTerminalType) EditorGUILayout.EnumPopup("Symbol Type", _symbolTerminal);
             // Information of Nodes
             _nodeName           = EditorGUILayout.TextField("Name", _nodeName);
-            _nodeAbbreviation   = EditorGUILayout.TextField("Abbreviation", _nodeAbbreviation);
+            _node.Abbreviation  = _nodeAbbreviation   = EditorGUILayout.TextField("Abbreviation", _nodeAbbreviation);
             _nodeDescription    = EditorGUILayout.TextField("Description", _nodeDescription);
-            _symbolOutlineColor = EditorGUILayout.ColorField("Outline Color", _symbolOutlineColor);
-            _symbolFilledColor  = EditorGUILayout.ColorField("Filled Color", _symbolFilledColor);
-            _symbolTextColor    = EditorGUILayout.ColorField("Text Color", _symbolTextColor);
+            _node.OutlineColor  = _symbolOutlineColor = EditorGUILayout.ColorField("Outline Color", _symbolOutlineColor);
+            _node.FilledColor   = _symbolFilledColor  = EditorGUILayout.ColorField("Filled Color", _symbolFilledColor);
+            _node.TextColor     = _symbolTextColor    = EditorGUILayout.ColorField("Text Color", _symbolTextColor);
             EditorGUILayout.EndVertical();
             GUILayout.EndArea();
         }

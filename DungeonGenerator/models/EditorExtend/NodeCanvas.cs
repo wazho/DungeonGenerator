@@ -12,6 +12,13 @@ namespace EditorExtend {
             GUI.skin.box.normal.background = texture;
             GUI.Box(rect, GUIContent.none);
         }
+        public static void DrawQuad(Rect rect, Color color, string content) {
+            Texture2D texture = new Texture2D(1, 1);
+            texture.SetPixel(0, 0, color);
+            texture.Apply();
+            GUI.skin.box.normal.background = texture;
+            GUI.Box(rect, content);
+        }
         // [TODO] Will remove.
         public static void DrawQuad(int x, int y, int width, int height, Color color) {
             Rect rect = new Rect(x, y, width, height);
