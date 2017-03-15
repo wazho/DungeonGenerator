@@ -12,11 +12,12 @@ namespace EditorExtend {
             GUI.skin.box.normal.background = texture;
             GUI.Box(rect, GUIContent.none);
         }
-        public static void DrawQuad(Rect rect, Color color, string content) {
+        public static void DrawQuad(Rect rect, Color color, string content, Color textColor) {
             Texture2D texture = new Texture2D(1, 1);
             texture.SetPixel(0, 0, color);
             texture.Apply();
             GUI.skin.box.normal.background = texture;
+            GUI.skin.box.normal.textColor  = textColor;
             GUI.Box(rect, content);
         }
         // [TODO] Will remove.

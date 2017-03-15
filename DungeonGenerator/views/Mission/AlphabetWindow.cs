@@ -55,15 +55,17 @@ namespace MissionGrammar {
             _symbolTerminal           = NodeTerminalType.Terminal;
             _connectionType           = ConnectionType.WeakRequirement;
             _ConnectionArrowType      = ConnectionArrowType.Normal;
+            // Revork all.
+            Alphabet.RevokeAllSelected();
         }
 
         void OnGUI() {
             // Buttons - Nodes or Connections.
-            EditorGUILayout.BeginHorizontal(GUILayout.Height(30));
-            if (GUILayout.Button("Nodes", EditorStyles.miniButtonLeft, GUILayout.Height(30))) {
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Nodes", EditorStyles.miniButtonLeft, EditorStyle.TabButtonHeight)) {
                 _isInNodesInterface = true;
             }
-            if (GUILayout.Button("Connections", EditorStyles.miniButtonRight, GUILayout.Height(30))) {
+            if (GUILayout.Button("Connections", EditorStyles.miniButtonRight, EditorStyle.TabButtonHeight)) {
                 _isInNodesInterface = false;
             }
             EditorGUILayout.EndHorizontal();
@@ -96,9 +98,13 @@ namespace MissionGrammar {
             if (GUILayout.Button("Modify", EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
                 Alphabet.AddNode(new GraphGrammarNode(_node));
                 _scrollPosition.y = Mathf.Infinity;
+                Alphabet.RevokeAllSelected();
+                Alphabet.Nodes.Last().Selected = true;
+                Repaint();
             }
             if (GUILayout.Button("Delete", EditorStyles.miniButtonRight, EditorStyle.ButtonHeight)) {
                 Alphabet.ClearAllNodes();
+                Repaint();
             }
             EditorGUILayout.EndHorizontal();
             // Canvas.
@@ -177,10 +183,7 @@ namespace MissionGrammar {
             GUILayout.EndArea();
 
             foreach (var node in Alphabet.Nodes) {
-                node.PositionX = 30;
-                node.PositionY = 25 + 50 * Alphabet.Nodes.FindIndex(n => n == node);
-                EditorExtend.NodeCanvas.DrawQuad(new Rect(5, node.PositionY - 23, Screen.width - 8, 46), node.Selected ? Color.red : Color.cyan);
-                Alphabet.DrawNode(node);
+                Alphabet.DrawNodeInList(node);
                 // Custom style to modify padding and margin for label.
                 GUILayout.Label(node.ExpressName, EditorStyle.LabelInNodeList);
             }
@@ -193,35 +196,55 @@ namespace MissionGrammar {
             }
         }
 
+        // Refresh the fields when select any symbol.
+        void RefreshNodeFields(GraphGrammarNode node) {
+            _symbolTerminal     = node.Terminal;
+            _nodeName           = node.Name;
+            _nodeAbbreviation   = node.Abbreviation;
+            _nodeDescription    = node.Description;
+            _symbolOutlineColor = node.OutlineColor;
+            _symbolFilledColor  = node.FilledColor;
+            _symbolTextColor    = node.TextColor;
+            // Repaint the window.
+            Repaint();
+        }
+        // Update the node information from the current field values.
+        void UpdateNode(GraphGrammarNode node) {
+            node.Terminal     = _symbolTerminal;
+            node.Name         = _nodeName;
+            node.Abbreviation = _nodeAbbreviation;
+            node.Description  = _nodeDescription;
+            node.OutlineColor = _symbolOutlineColor;
+            node.FilledColor  = _symbolFilledColor;
+            node.TextColor    = _symbolTextColor;
+            // Repaint the window.
+            Repaint();
+        }
         // Content of submition.
         void ShowSubmitionInterface() {
             // Remind user [need Modify]
             EditorGUILayout.HelpBox("Header\nContent of information.", MessageType.Info);
             // Buttons - Apply.
             if (GUILayout.Button("Apply", EditorStyles.miniButton, EditorStyle.ButtonHeight)) {
-                // [Modify soon]
-                /*
-                    Need to create a pop up window. 
-                    To make sure the Information of content.
-                 */
+                UpdateNode(Alphabet.SelectedNode);
+                GUI.FocusControl("FocusToNothing");
             }
         }
 
         // Control whole events.
         void EventController() {
             if (Event.current.type == EventType.MouseDown) {
-                OnClickedElementInList();
+                OnClickedElementInList(Event.current.mousePosition.y - _symbolListCanvasInWindow.y);
             }
         }
 
-        void OnClickedElementInList() {
-            float mm = Event.current.mousePosition.y - _symbolListCanvasInWindow.y;
-            if (mm > 0 && mm < 150) {
-                int index = (int) (mm + _scrollPosition.y) / 50;
+        void OnClickedElementInList(float y) {
+            if (y > 0 && y < 150) {
+                int index = (int) (y + _scrollPosition.y) / 50;
                 Alphabet.RevokeAllSelected();
                 if (index < Alphabet.Nodes.Count) {
                     Alphabet.Nodes[index].Selected = true;
-                    Repaint();
+                    RefreshNodeFields(Alphabet.Nodes[index]);
                 }
             }
         }
