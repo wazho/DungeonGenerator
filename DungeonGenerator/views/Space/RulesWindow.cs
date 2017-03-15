@@ -3,14 +3,14 @@ using UnityEditor;
 using System.Collections;
 
 namespace SpaceGrammar {
-    public class RulesWindow : EditorWindow {
-        void OnGUI() {
-            /*
+	public class RulesWindow : EditorWindow {
+		void OnGUI() {
+			/*
 
-               You need to write your code below here.
-               After you starting, you can delete the comment.
+			   You need to write your code below here.
+			   After you starting, you can delete the comment.
 
-            */
-        }
-    }
+			*/
+		}
+	}
 }

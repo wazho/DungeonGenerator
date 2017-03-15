@@ -10,7 +10,23 @@ namespace MissionGrammar {
 		NonTerminal = 0,
 		Terminal    = 1
 	}
+	/*
+		This structure is based on the GraphGrammarSymbol.
 
+		1. Basic information of symbol:
+		    _name, _abbreviation, _description
+
+		2. Exclusive information of node:
+		    _terminal
+		    _stickiedConnections (Store the stickied connections)
+
+		3. Shape to draw:
+		    _outlineScope, _filledScope, _textScope
+
+		4. Color to draw:
+		    _outlineColor, _filledColor, _textColor
+
+	 */
 	public class GraphGrammarNode : GraphGrammarSymbol {
 		// Members.
 		private string                   _name;
@@ -58,7 +74,7 @@ namespace MissionGrammar {
 			this._textColor           = node.TextColor;
 			this._stickiedConnections = new List<StickiedConnection>();
 		}
-		// ExpressName, getter and setter.
+		// ExpressName, getter.
 		public string ExpressName {
 			get { return _name + " (" + _abbreviation + ")"; }
 		}
@@ -120,15 +136,15 @@ namespace MissionGrammar {
 				_textScope.y    = _textScope.y    - _textScope.center.y    + value;
 			}
 		}
-		// Outline scope, getter and setter.
+		// Outline scope, getter.
 		public Rect OutlineScope {
 			get { return _outlineScope; }
 		}
-		// Filled scope, getter and setter.
+		// Filled scope, getter.
 		public Rect FilledScope {
 			get { return _filledScope; }
 		}
-		// Text scope, getter and setter.
+		// Text scope, getter.
 		public Rect TextScope {
 			get { return _textScope; }
 		}

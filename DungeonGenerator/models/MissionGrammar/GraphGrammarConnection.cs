@@ -20,63 +20,66 @@ namespace MissionGrammar {
 
 	public class GraphGrammarConnection : GraphGrammarSymbol {
 		// Values of setting.
-		private int pointScopeSize  = 11;
-		private float lineThickness = 5f;
+		private int   _pointScopeSize  = 11;
+		private float _lineThickness   = 5f;
 		// Members.
-		private bool startSelected, endSelected;
-		private Rect startpointScope, endpointScope;
-		private GraphGrammarNode startpointStickyOn, endpointStickyOn;
+		private bool _isStartSelected;
+		private bool _isEndSelected;
+		private Rect _startpointScope;
+		private Rect _endpointScope;
+		private GraphGrammarNode _startpointStickyOn;
+		private GraphGrammarNode _endpointStickyOn;
 
 		public GraphGrammarConnection() : base() {
 			this._type            = SymbolType.Connection;
-			this.startpointScope = new Rect(10, 10, this.pointScopeSize, this.pointScopeSize);
-			this.endpointScope   = new Rect(100, 10, this.pointScopeSize, this.pointScopeSize);
+			this._startpointScope = new Rect( 10, 10, this._pointScopeSize, this._pointScopeSize);
+			this._endpointScope   = new Rect(100, 10, this._pointScopeSize, this._pointScopeSize);
 		}
 		// .
 		public int PointScopeSize {
-			get { return this.pointScopeSize; }
+			get { return _pointScopeSize; }
 		}
 		// .
 		public float LineThickness {
-			get { return this.lineThickness; }
+			get { return _lineThickness; }
 		}
 		// .
 		public bool StartSelected {
-			get { return this.startSelected; }
-			set { this.startSelected = value; }
+			get { return _isStartSelected; }
+			set { _isStartSelected = value; }
 		}
 		// .
 		public bool EndSelected {
-			get { return this.endSelected; }
-			set { this.endSelected = value; }
+			get { return _isEndSelected; }
+			set { _isEndSelected = value; }
 		}
 		// .
 		public Vector2 StartPosition {
-			get { return this.startpointScope.position; }
-			set { this.startpointScope.position = value; }
+			get { return _startpointScope.position; }
+			set { _startpointScope.position = value; }
 		}
 		// .
 		public Vector2 EndPosition {
-			get { return this.endpointScope.position; }
-			set { this.endpointScope.position = value; }
+			get { return _endpointScope.position; }
+			set { _endpointScope.position = value; }
 		}
 		// .
 		public GraphGrammarNode StartpointStickyOn {
-			get { return this.startpointStickyOn; }
-			set { this.startpointStickyOn = value; }
+			get { return _startpointStickyOn; }
+			set { _startpointStickyOn = value; }
 		}
 		// .
 		public GraphGrammarNode EndpointStickyOn {
-			get { return this.endpointStickyOn; }
-			set { this.endpointStickyOn = value; }
+			get { return _endpointStickyOn; }
+			set { _endpointStickyOn = value; }
 		}
 		// .
 		public bool IsInStartscope(Vector2 pos) {
-			return this.startpointScope.Contains(pos);
+			return _startpointScope.Contains(pos);
 		}
 		// .
 		public bool IsInEndscope(Vector2 pos) {
-			return this.endpointScope.Contains(pos);
+			return _endpointScope.Contains(pos);
 		}
 	}
 }
