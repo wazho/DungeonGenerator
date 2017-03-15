@@ -13,7 +13,7 @@ namespace SpaceGrammar {
 	}
 
 	public class AlphabetWindow : EditorWindow {
-        //Color properties
+		//Color properties
 		private Color _symbolOutlineColor;
 		private Color _symbolFilledColor;
 		private Color _symbolTextColor;
@@ -74,7 +74,7 @@ namespace SpaceGrammar {
 		}
 
 		void OnGUI() {
-            //Interface buttons
+			//Interface buttons
 			EditorGUILayout.BeginHorizontal();
 			if (GUILayout.Button ("Points", EditorStyles.miniButtonLeft, EditorStyle.TabButtonHeight)) {
 				_isInPointsInterface = true;
@@ -118,7 +118,7 @@ namespace SpaceGrammar {
 
 				ShowAreasInterface (); 
 			}
-        }
+		}
 
 		void ShowPointsInterface(){
 			//Showing content of points interface	
@@ -274,8 +274,8 @@ namespace SpaceGrammar {
 			EditorGUILayout.HelpBox(_messageInfo, MessageType.Info);
 			if (GUILayout.Button("Apply", EditorStyles.miniButton, EditorStyle.ButtonHeight)) { //, GUILayout.Width(50))) {
 				if (EditorUtility.DisplayDialog ("Apply on the element", 
-					    "Are you sure want to apply the operation?", 
-					    "Yes", "No")) {
+						"Are you sure want to apply the operation?", 
+						"Yes", "No")) {
 					_messageInfo = "Info\nNew area has been added";
 				} else {
 					_messageInfo = "Info\nNew area cancelled";
@@ -284,5 +284,5 @@ namespace SpaceGrammar {
 			EditorGUILayout.EndVertical ();
 			GUILayout.EndArea ();
 		}
-    }
+	}
 }
