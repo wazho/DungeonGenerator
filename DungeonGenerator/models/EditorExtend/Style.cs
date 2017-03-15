@@ -19,6 +19,15 @@ namespace EditorExtend {
 		private static Rect _alphabetPreviewCanvas    = new Rect(0,   0, Screen.width,  150);
 		private static Rect _afterAlphabetPreviewArea = new Rect(0, 400, Screen.width, Screen.height);
 
+		private static Rect _spaceRulePreviewArea     = new Rect (0, 250, Screen.width, 150);
+		private static Rect _spaceRulePreviewCanvas   = new Rect (0, 0, Screen.width, 150);
+
+        private static Rect _rulePreviewArea          = new Rect(0, 150, Screen.width, 300);
+        private static Rect _ruleSourceCanvas         = new Rect(0,  80, Screen.width / 2, 200);
+        private static Rect _ruleReplacementCanvas    = new Rect(Screen.width / 2, 80, Screen.width / 2, 200);
+        private static Rect _ruleCanvasSlider         = new Rect(0, 280, Screen.width, 10);
+        private static Rect _afterRulePreviewArea     = new Rect(0, 450, Screen.width, Screen.height);
+
 		// Font size.
 		public static int HeaderFontSize {
 			get { return _headerFontSize; }
@@ -67,6 +76,50 @@ namespace EditorExtend {
 				_afterAlphabetPreviewArea.width  = Screen.width;
 				_afterAlphabetPreviewArea.height = Screen.height;
 				return _afterAlphabetPreviewArea;
+			}
+		}
+        public static Rect RulePreviewArea {
+            get {
+                _rulePreviewArea.width = Screen.width;
+                return _rulePreviewArea;
+            }
+        }
+        public static Rect RuleSourceCanvas {
+            get {
+                _ruleSourceCanvas.width = Screen.width/2;
+                return _ruleSourceCanvas;
+            }
+        }
+        public static Rect RuleReplacementCanvas {
+            get {
+                _ruleReplacementCanvas.x = Screen.width / 2;
+                _ruleReplacementCanvas.width = Screen.width/2;
+                return _ruleReplacementCanvas;
+            }
+        }
+        public static Rect RuleCanvasSlider {
+            get {
+                _ruleCanvasSlider.width = Screen.width;
+                return _ruleCanvasSlider;
+            }
+        }       
+        public static Rect AfterRulePreviewArea {
+            get {
+                _afterRulePreviewArea.width = Screen.width;
+                _afterRulePreviewArea.height = Screen.height;
+                return _afterRulePreviewArea;
+            }
+        }
+		public static Rect SpaceRulePreviewArea {
+			get{ 
+				_spaceRulePreviewArea.width = Screen.width;
+				return _spaceRulePreviewArea;
+			}
+		}
+		public static Rect SpaceRulePreviewCanvas {
+			get{ 
+				_spaceRulePreviewCanvas.width = Screen.width;
+				return _spaceRulePreviewCanvas;
 			}
 		}
 
