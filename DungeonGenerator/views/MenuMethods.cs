@@ -42,7 +42,7 @@ public class DungeonWindow : EditorWindow {
 	// Add the 'Space > Grammar settings' in 'Dungeon' menu.
 	[MenuItem("Dungeon/Space/Grammar settings %#&sa", false, 21)]
 	public static void ShowSpaceSettingWindow() {
-		_window = EditorWindow.GetWindow<Space.AlphabetWindow>("Space settings", true);
+		_window = EditorWindow.GetWindow<Space.SettingsWindow>("Space settings", true);
 		_window.position = _defaultSize;
 	}
 
