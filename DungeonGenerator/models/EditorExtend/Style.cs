@@ -13,6 +13,7 @@ namespace EditorExtend {
 		// Block.
 		private const int _paddingAfterBlock = 10;
 		// Canvas.
+		private const int _alphabetSymbolListHeight = 150;
 		private static Rect _alphabetSymbolListArea   = new Rect(0,   0, Screen.width, 1000);
 		private static Rect _alphabetSymbolListCanvas = new Rect(0,   0, Screen.width, 1000);
 		private static Rect _alphabetPreviewArea      = new Rect(0, 250, Screen.width,  150);
@@ -20,7 +21,7 @@ namespace EditorExtend {
 		private static Rect _afterAlphabetPreviewArea = new Rect(0, 400, Screen.width, Screen.height);
 
 		private static Rect _spaceRulePreviewArea     = new Rect (0, 250, Screen.width, 150);
-		private static Rect _spaceRulePreviewCanvas   = new Rect (0, 0, Screen.width, 150);
+		private static Rect _spaceRulePreviewCanvas   = new Rect (0,   0, Screen.width, 150);
 
         private static Rect _rulePreviewArea          = new Rect(0, 150, Screen.width, 300);
         private static Rect _ruleSourceCanvas         = new Rect(0,  80, Screen.width / 2, 200);
@@ -47,6 +48,12 @@ namespace EditorExtend {
 			get { return _paddingAfterBlock; }
 		}
 		// Canvas.
+		public static GUILayoutOption AlphabetSymbolListHeight {
+			get { return GUILayout.Height(_alphabetSymbolListHeight); }
+		}
+		public static int AlphabetSymbolListHeightValue {
+			get { return _alphabetSymbolListHeight; }
+		}
 		public static Rect AlphabetSymbolListArea {
 			get {
 				_alphabetSymbolListArea.width = Screen.width;
@@ -136,6 +143,24 @@ namespace EditorExtend {
 					_labelInNodeList.padding.top    = 17;
 					_labelInNodeList.padding.bottom = 18;
 					_labelInNodeList.contentOffset  = _labelInNodeListOffset;
+				}
+				return _labelInNodeList;
+			}
+		}
+
+		private static GUIStyle _labelInConnectionList       = new GUIStyle(GUI.skin.label);
+		private static Vector2  _labelInConnectionListOffset = new Vector2(75, 0);
+
+		public static GUIStyle LabelInConnectionList {
+			get {
+				if (_labelInNodeList.name != "LabelInConnectionList") {
+					_labelInNodeList.name           = "LabelInConnectionList";
+					_labelInNodeList.fontSize       = 12;
+					_labelInNodeList.margin.top     = 0;
+					_labelInNodeList.margin.bottom  = 0;
+					_labelInNodeList.padding.top    = 17;
+					_labelInNodeList.padding.bottom = 18;
+					_labelInNodeList.contentOffset  = _labelInConnectionListOffset;
 				}
 				return _labelInNodeList;
 			}

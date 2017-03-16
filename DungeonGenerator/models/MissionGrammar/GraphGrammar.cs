@@ -45,10 +45,10 @@ namespace MissionGrammar {
 					// Update the symbol status. If out of selecting, disabled the connection.
 					if (symbol.IsInStartscope(pos)) {
 						symbol.Selected = true;
-						symbol.StartSelected = true;
+						// symbol.StartSelected = true;
 					} else if (symbol.IsInEndscope(pos)) {
 						symbol.Selected = true;
-						symbol.EndSelected = true;
+						// symbol.EndSelected = true;
 					} else {
 						break;
 					}
@@ -137,7 +137,7 @@ namespace MissionGrammar {
 			}
 			foreach (GraphGrammarConnection symbol in this.connections) {
 				symbol.Selected = false;
-				symbol.StartSelected = symbol.EndSelected = false;
+				// symbol.StartSelected = symbol.EndSelected = false;
 			}
 			return;
 		}
