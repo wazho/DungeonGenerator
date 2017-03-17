@@ -111,8 +111,8 @@ namespace MissionGrammar {
 		void ShowNodesInterface() {
 			// Show the canvas, that is the list of nodes.
 			LayoutNodeList();
-			// Buttons - Modify or Delete.
-			EditorGUILayout.BeginHorizontal();
+            // Buttons - Add New or Modify or Delete.
+            EditorGUILayout.BeginHorizontal();
 			if (GUILayout.Button("Add New", EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
 				// Switch the mode.
 				_editingMode = EditingMode.Create;
@@ -174,13 +174,18 @@ namespace MissionGrammar {
 			_scrollPosition = GUILayout.BeginScrollView(_scrollPosition, GUILayout.Height(100));
 			// Content of scroll area.
 			GUILayout.EndScrollView();
-			// Buttons - Modify or Delete.
-			EditorGUILayout.BeginHorizontal();
-			if (GUILayout.Button("Modify", EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
-			}
-			if (GUILayout.Button("Delete", EditorStyles.miniButtonRight, EditorStyle.ButtonHeight)) {
-			}
-			EditorGUILayout.EndHorizontal();
+            // Buttons - Add New or Modify or Delete.
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Add New", EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
+               
+            }
+            if (GUILayout.Button("Modify", EditorStyles.miniButtonMid, EditorStyle.ButtonHeight)) {
+               
+            }
+            if (GUILayout.Button("Delete", EditorStyles.miniButtonRight, EditorStyle.ButtonHeight)) {
+                
+            }
+            EditorGUILayout.EndHorizontal();
 			// Canvas.
 			GUILayout.BeginArea(EditorStyle.AlphabetPreviewArea);
 			_canvas = EditorStyle.AlphabetPreviewCanvas;
@@ -197,8 +202,8 @@ namespace MissionGrammar {
 			_connectionAbbreviation = EditorGUILayout.TextField("Abbreviation", _connectionAbbreviation);
 			_connectionDescription  = EditorGUILayout.TextField("Description", _connectionDescription);
 			_symbolOutlineColor     = EditorGUILayout.ColorField("Outline Color", _symbolOutlineColor);
-			// Dropdown list of Arrow Type
-			_ConnectionArrowType    = (ConnectionArrowType) EditorGUILayout.EnumPopup("Arrow Type", _ConnectionArrowType);
+            _symbolFilledColor = EditorGUILayout.ColorField("Filled Color", _symbolFilledColor);
+            _symbolTextColor = EditorGUILayout.ColorField("Text Color", _symbolTextColor);
 			EditorGUILayout.EndVertical();
 			GUILayout.Space(EditorStyle.PaddingAfterBlock);
 			// Show content of Submit.
