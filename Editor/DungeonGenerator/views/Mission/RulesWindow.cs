@@ -14,11 +14,11 @@ namespace MissionGrammar {
 			RuleEdit,
 			SetDelete,
 			RuleDelete,
-			SetNew,
-			RuleNew,
+			SetCreate,
+			RuleCreate,
 		}
 		// Types of the tabs.(After Rule Preview Area)
-		public enum AfterRulePreviewTab {
+		public enum SymbolEditingMode {
 			None,
 			AddNode,
 			AddConnection,
@@ -38,28 +38,27 @@ namespace MissionGrammar {
 		private Texture2D _edit;
 		private Texture2D _delete;
 		// The mode of buttons.
-		private EditingMode _editingMode;
-		private AfterRulePreviewTab _currentTab;
+		private EditingMode       _editingMode;
+		private SymbolEditingMode _currentTab;
 		// The scroll bar of list.
 		private Vector2 _scrollPosition;
 		// [Remove soon] Content of scroll area.
 		private string testString;
 
 		void Awake() {
-			_currentSet			= new string[] { "Set1", "Set2"};
-			_currentRule		= new string[] { "Rule1", "Rule2" };
-			_currentSetIndex	= 0;
-			_currentRuleIndex	= 0;
-			_name				= "";
-			_description		= "";
-			_edit				= Resources.Load<Texture2D>("Icons/edit");
-			_delete				= Resources.Load<Texture2D>("Icons/delete");
-			_editingMode		= EditingMode.None;
-			_currentTab			= AfterRulePreviewTab.None;
-			_scrollPosition		= Vector2.zero;
+			_currentSet        = new string[] { "Set1", "Set2"};
+			_currentRule       = new string[] { "Rule1", "Rule2" };
+			_currentSetIndex   = 0;
+			_currentRuleIndex  = 0;
+			_name              = string.Empty;
+			_description       = string.Empty;
+			_edit              = Resources.Load<Texture2D>("Icons/edit");
+			_delete            = Resources.Load<Texture2D>("Icons/delete");
+			_editingMode       = EditingMode.None;
+			_currentTab        = SymbolEditingMode.None;
+			_scrollPosition    = Vector2.zero;
 			// [Remove soon]
-			testString			= "1. Contents of List \n2. Contents of List \n3. Contents of List \n4. Contents of List \n5. Contents of List" +
-									"\n6. Contents of List \n7. Contents of List \n8. Contents of List \n9. Contents of List \n10. Contents of List";
+			testString = "*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n";
 		}
 
 		void OnGUI() {
@@ -75,7 +74,7 @@ namespace MissionGrammar {
 				_editingMode = EditingMode.SetDelete;
 			}
 			if (GUILayout.Button("Add New", EditorStyles.miniButtonRight, EditorStyle.ButtonHeight)) {
-				_editingMode = EditingMode.SetNew;
+				_editingMode = EditingMode.SetCreate;
 			}
 			EditorGUILayout.EndHorizontal();
 
@@ -91,22 +90,16 @@ namespace MissionGrammar {
 				_editingMode = EditingMode.RuleDelete;
 			}
 			if (GUILayout.Button("Add New", EditorStyles.miniButtonRight, EditorStyle.ButtonHeight)) {
-				_editingMode = EditingMode.RuleNew;
+				_editingMode = EditingMode.RuleCreate;
 			}
 			EditorGUILayout.EndHorizontal();
 
 			// Show the Editor of Set or Rule.
 			switch (_editingMode) {
 				case EditingMode.SetEdit:
-					ShowEditSetRule();
-					break;
-				case EditingMode.SetNew:
-					ShowEditSetRule();
-					break;
+				case EditingMode.SetCreate:
 				case EditingMode.RuleEdit:
-					ShowEditSetRule();
-					break;
-				case EditingMode.RuleNew:
+				case EditingMode.RuleCreate:
 					ShowEditSetRule();
 					break;
 			}
@@ -125,10 +118,8 @@ namespace MissionGrammar {
 		void ShowRulePreviewArea() {
 			// Information of Source and Replacement.
 			EditorGUILayout.BeginHorizontal();
-			GUI.skin.label.fontSize = EditorStyle.ContentFontSize;
-			GUI.skin.label.alignment = TextAnchor.UpperLeft;
-			GUILayout.Label("Source", GUILayout.Width(Screen.width / 2));
-			GUILayout.Label("Replacement");
+			GUILayout.Label("Source", EditorStyle.Header2, GUILayout.Width(Screen.width / 2));
+			GUILayout.Label("Replacement", EditorStyle.Header2, GUILayout.Width(Screen.width / 2));
 			EditorGUILayout.EndHorizontal();
 			// Canvas.
 			EditorGUI.DrawRect(EditorStyle.RuleSourceCanvas, Color.black);
@@ -139,25 +130,25 @@ namespace MissionGrammar {
 			// Buttons - Add Node & Add Connection & Copy & Delete.
 			EditorGUILayout.BeginHorizontal();
 			if (GUILayout.Button("Add Node", EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
-				_currentTab = AfterRulePreviewTab.AddNode;
+				_currentTab = SymbolEditingMode.AddNode;
 			}
 			if (GUILayout.Button("Add Connection", EditorStyles.miniButtonMid, EditorStyle.ButtonHeight)) {
-				_currentTab = AfterRulePreviewTab.AddConnection;
+				_currentTab = SymbolEditingMode.AddConnection;
 			}
 			if (GUILayout.Button("Copy", EditorStyles.miniButtonMid, EditorStyle.ButtonHeight)) {
-				_currentTab = AfterRulePreviewTab.Copy;
+				_currentTab = SymbolEditingMode.Copy;
 			}
 			if (GUILayout.Button("Delete", EditorStyles.miniButtonRight, EditorStyle.ButtonHeight)) {
-				_currentTab = AfterRulePreviewTab.Delete;
+				_currentTab = SymbolEditingMode.Delete;
 			}
 			EditorGUILayout.EndHorizontal();
 			// Show the list.
 			switch (_currentTab) {
-				case AfterRulePreviewTab.AddNode:
-					ShowAddNodeList();
+				case SymbolEditingMode.AddNode:
+					LayoutNodeList();
 					break;
-				case AfterRulePreviewTab.AddConnection:
-					ShowAddConnectionList();
+				case SymbolEditingMode.AddConnection:
+					LayoutConnectionList();
 					break;
 			}
 			
@@ -201,19 +192,19 @@ namespace MissionGrammar {
 			}
 		}
 
-		void ShowAddNodeList() {
+		void LayoutNodeList() {
 			// Content of Node-List.
 			// Set the ScrollPosition.
-			_scrollPosition = GUILayout.BeginScrollView(_scrollPosition, GUILayout.Height(100));
+			_scrollPosition = GUILayout.BeginScrollView(_scrollPosition, EditorStyle.AlphabetSymbolListHeight);
 			// Content of scroll area.
 			GUILayout.Label(testString, EditorStyles.label);
 			GUILayout.EndScrollView();
 		}
 
-		void ShowAddConnectionList() {
+		void LayoutConnectionList() {
 			// Content of Connection-List.
 			// Set the ScrollPosition.
-			_scrollPosition = GUILayout.BeginScrollView(_scrollPosition, GUILayout.Height(100));
+			_scrollPosition = GUILayout.BeginScrollView(_scrollPosition, EditorStyle.AlphabetSymbolListHeight);
 			// Content of scroll area.
 			GUILayout.Label(testString, EditorStyles.label);
 			GUILayout.EndScrollView();
