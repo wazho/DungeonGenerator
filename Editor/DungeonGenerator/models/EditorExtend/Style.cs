@@ -28,10 +28,10 @@ namespace EditorExtend {
 		private static Rect _spaceRulePreviewCanvas   = new Rect (0,   0, Screen.width, 150);
 
         private static Rect _rulePreviewArea          = new Rect(0, 150, Screen.width, 300);
-        private static Rect _ruleSourceCanvas         = new Rect(0,  80, Screen.width / 2, 200);
-        private static Rect _ruleReplacementCanvas    = new Rect(Screen.width / 2, 80, Screen.width / 2, 200);
-        private static Rect _ruleCanvasSlider         = new Rect(0, 280, Screen.width, 10);
-        private static Rect _afterRulePreviewArea     = new Rect(0, 450, Screen.width, Screen.height);
+        private static Rect _ruleSourceCanvas         = new Rect(0,  25, Screen.width / 2, 200);
+        private static Rect _ruleReplacementCanvas    = new Rect(Screen.width / 2, 25, Screen.width / 2, 200);
+        private static Rect _ruleCanvasSlider         = new Rect(0, 225, Screen.width, 10);
+        private static Rect _afterRulePreviewArea     = new Rect(0, 400, Screen.width, Screen.height);
 
 		// Font size.
 		public static int HeaderFontSize {

@@ -7,20 +7,20 @@ using EditorAdvance = EditorExtend.Advance;
 using EditorStyle   = EditorExtend.Style;
 
 namespace MissionGrammar {
-	// Tabs of this window.
-	public enum AlphabetWindowTab {
-		Nodes       = 0,
-		Connections = 1,
-	}
-	// Types of the symbol.
-	public enum EditingMode {
-		None   = 0,
-		Create = 1,
-		Modify = 2,
-		Delete = 3,
-	}
 	// The mission alphabet window.
 	public class AlphabetWindow : EditorWindow {
+		// Tabs of this window.
+		public enum AlphabetWindowTab {
+			Nodes,
+			Connections,
+		}
+		// Types of the symbol.
+		public enum EditingMode {
+			None,
+			Create,
+			Modify,
+			Delete,
+		}
 		// The mode of buttons.
 		private AlphabetWindowTab _currentTab;
 		private EditingMode       _editingMode;
@@ -73,13 +73,13 @@ namespace MissionGrammar {
 		}
 		// Initial whole fields in window.
 		void InitFields() {
-			_symbolName             = string.Empty;
-			_symbolAbbreviation     = string.Empty;
-			_symbolDescription      = string.Empty;
-			_symbolOutlineColor     = Color.black;
-			_symbolFilledColor      = Color.white;
-			_symbolTextColor        = Color.black;
-			_symbolTerminal         = NodeTerminalType.Terminal;
+			_symbolName         = string.Empty;
+			_symbolAbbreviation = string.Empty;
+			_symbolDescription  = string.Empty;
+			_symbolOutlineColor = Color.black;
+			_symbolFilledColor  = Color.white;
+			_symbolTextColor    = Color.black;
+			_symbolTerminal     = NodeTerminalType.Terminal;
 			// Unfocus from the field.
 			GUI.FocusControl("FocusToNothing");
 		}
@@ -184,12 +184,11 @@ namespace MissionGrammar {
 				EditorGUILayout.BeginVertical();
 				GUILayout.Space(EditorStyle.PaddingAfterBlock);
 				// Information of connection.
-				_connection.Requirement  = _connectionType     = (ConnectionType) EditorGUILayout.EnumPopup("Connection Type", _connectionType);
-				_connection.Name         = _symbolName         = EditorGUILayout.TextField("Name", _symbolName);
-				_connection.Description  = _symbolDescription  = EditorGUILayout.TextField("Description", _symbolDescription);
-				_connection.OutlineColor = _symbolOutlineColor = EditorGUILayout.ColorField("Outline Color", _symbolOutlineColor);
-				// Dropdown list of Arrow Type
-				_connectionArrowType = (ConnectionArrowType) EditorGUILayout.EnumPopup("Arrow Type", _connectionArrowType);
+				_connection.Name         = _symbolName          = EditorGUILayout.TextField("Name", _symbolName);
+				_connection.Description  = _symbolDescription   = EditorGUILayout.TextField("Description", _symbolDescription);
+				_connection.OutlineColor = _symbolOutlineColor  = EditorGUILayout.ColorField("Outline Color", _symbolOutlineColor);
+				_connection.Requirement  = _connectionType      = (ConnectionType) EditorGUILayout.EnumPopup("Connection Type", _connectionType);
+				_connection.Arrow        = _connectionArrowType = (ConnectionArrowType) EditorGUILayout.EnumPopup("Arrow Type", _connectionArrowType);
 				EditorGUILayout.EndVertical();
 				GUILayout.Space(EditorStyle.PaddingAfterBlock);
 				// Show content of submition.
