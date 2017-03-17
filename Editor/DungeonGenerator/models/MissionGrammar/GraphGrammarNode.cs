@@ -43,9 +43,9 @@ namespace MissionGrammar {
 		// Construction (private).
 		private GraphGrammarNode() : base() {
 			this._type                = SymbolType.Node;
-			this._name                = "";
-			this._abbreviation        = "";
-			this._description         = "";
+			this._name                = string.Empty;
+			this._abbreviation        = string.Empty;
+			this._description         = string.Empty;
 			this._terminal            = NodeTerminalType.Terminal;
 			this._outlineScope        = new Rect(0, 0, 39, 39);
 			this._filledScope         = new Rect(2, 2, 35, 35);
@@ -88,6 +88,7 @@ namespace MissionGrammar {
 			get { return _abbreviation; }
 			set { _abbreviation = value; }
 		}
+		// Description, getter and setter.
 		public string Description {
 			get { return _description; }
 			set { _description = value; }
@@ -105,17 +106,17 @@ namespace MissionGrammar {
 				_outlineScope.center = value;
 				_filledScope.center  = value;
 				_textScope.center    = value;
-				// // Move the stickied connections together.
-				// foreach (StickiedConnection stickied in _stickiedConnections) {
-				// 	switch (stickied.location) {
-				// 	case "start":
-				// 		stickied.connection.StartPosition = value;
-				// 		break;
-				// 	case "end":
-				// 		stickied.connection.EndPosition = value;
-				// 		break;
-				// 	}
-				// }
+				// Move the stickied connections together.
+				foreach (StickiedConnection stickied in _stickiedConnections) {
+					switch (stickied.location) {
+					case "start":
+						stickied.connection.StartPosition = value;
+						break;
+					case "end":
+						stickied.connection.EndPosition = value;
+						break;
+					}
+				}
 			}
 		}
 		public float PositionX {

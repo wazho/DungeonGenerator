@@ -4,7 +4,7 @@ using System.Collections;
 
 namespace EditorExtend {
 	public class NodeCanvas {
-		// Draw a quad with a Rect.
+		// Draw a quad.
 		public static void DrawQuad(Rect rect, Color color) {
 			Texture2D texture = new Texture2D(1, 1);
 			texture.SetPixel(0, 0, color);
@@ -12,6 +12,7 @@ namespace EditorExtend {
 			GUI.skin.box.normal.background = texture;
 			GUI.Box(rect, GUIContent.none);
 		}
+		// Draw a quad with the text.
 		public static void DrawQuad(Rect rect, Color color, string content, Color textColor) {
 			Texture2D texture = new Texture2D(1, 1);
 			texture.SetPixel(0, 0, color);
@@ -19,6 +20,13 @@ namespace EditorExtend {
 			GUI.skin.box.normal.background = texture;
 			GUI.skin.box.normal.textColor  = textColor;
 			GUI.Box(rect, content);
+		}
+		// Draw a dics.
+		public static void DrawDics(Vector3 position, float radius, Color color) {
+			Handles.BeginGUI();
+			Handles.color = color;
+			Handles.DrawSolidDisc(position, Vector3.forward, radius);
+			Handles.EndGUI();
 		}
 		// [TODO] Will remove.
 		public static void DrawQuad(int x, int y, int width, int height, Color color) {
