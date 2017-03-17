@@ -7,9 +7,13 @@ namespace EditorExtend {
 		// Font size.
 		private const int _headerFontSize  = 24;
 		private const int _contentFontSize = 12;
+		// Text field.
+		private const int _textFieldHeight = 15;
+		private const int _textAreaHeight  = 60;
 		// Button.
-		private const int _tabButtonHeight = 25;
-		private const int _buttonHeight    = 20;
+		private const int _buttonHeight       = 20;
+		private const int _tabButtonHeight    = 25;
+		private const int _submitButtonHeight = 30;
 		// Block.
 		private const int _paddingAfterBlock = 10;
 		// Canvas.
@@ -35,12 +39,22 @@ namespace EditorExtend {
 		public static int ContentFontSize {
 			get { return _contentFontSize; }
 		}
+		// Text field.
+		public static GUILayoutOption TextFieldHeight {
+			get { return GUILayout.Height(_textFieldHeight); }
+		}
+		public static GUILayoutOption TextAreaHeight {
+			get { return GUILayout.Height(_textAreaHeight); }
+		}
 		// Button.
+		public static GUILayoutOption ButtonHeight {
+			get { return GUILayout.Height(_buttonHeight); }
+		}
 		public static GUILayoutOption TabButtonHeight {
 			get { return GUILayout.Height(_tabButtonHeight); }
 		}
-		public static GUILayoutOption ButtonHeight {
-			get { return GUILayout.Height(_buttonHeight); }
+		public static GUILayoutOption SubmitButtonHeight {
+			get { return GUILayout.Height(_submitButtonHeight); }
 		}
 		// Block.
 		public static int PaddingAfterBlock {
