@@ -34,6 +34,9 @@ namespace MissionGrammar {
 		// The description of set or rule.
 		private string _name;
 		private string _description;
+		// Enabled Button-Apply
+		private bool _applyEditingButtonEnabled;
+		private bool _applySymbolEditingButtonEnabled;
 		// The texture of icons.
 		private Texture2D _edit;
 		private Texture2D _delete;
@@ -52,6 +55,8 @@ namespace MissionGrammar {
 			_currentRuleIndex  = 0;
 			_name              = string.Empty;
 			_description       = string.Empty;
+			_applyEditingButtonEnabled = false;
+			_applySymbolEditingButtonEnabled = false;
 			_edit              = Resources.Load<Texture2D>("Icons/edit");
 			_delete            = Resources.Load<Texture2D>("Icons/delete");
 			_editingMode       = EditingMode.None;
@@ -111,7 +116,7 @@ namespace MissionGrammar {
 
 			// Show the area of after-rule-preview.
 			GUILayout.BeginArea(EditorStyle.AfterRulePreviewArea);
-			ShowAfterRulePreviewArea();		   
+			ShowAfterRulePreviewArea();
 			GUILayout.EndArea();
 		}
 
@@ -130,15 +135,19 @@ namespace MissionGrammar {
 			// Buttons - Add Node & Add Connection & Copy & Delete.
 			EditorGUILayout.BeginHorizontal();
 			if (GUILayout.Button("Add Node", EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
+				_applySymbolEditingButtonEnabled = true;
 				_currentTab = SymbolEditingMode.AddNode;
 			}
 			if (GUILayout.Button("Add Connection", EditorStyles.miniButtonMid, EditorStyle.ButtonHeight)) {
+				_applySymbolEditingButtonEnabled = true;
 				_currentTab = SymbolEditingMode.AddConnection;
 			}
 			if (GUILayout.Button("Copy", EditorStyles.miniButtonMid, EditorStyle.ButtonHeight)) {
+				_applySymbolEditingButtonEnabled = true;
 				_currentTab = SymbolEditingMode.Copy;
 			}
 			if (GUILayout.Button("Delete", EditorStyles.miniButtonRight, EditorStyle.ButtonHeight)) {
+				_applySymbolEditingButtonEnabled = true;
 				_currentTab = SymbolEditingMode.Delete;
 			}
 			EditorGUILayout.EndHorizontal();
@@ -155,13 +164,16 @@ namespace MissionGrammar {
 			// Remind user [need Modify]
 			EditorGUILayout.HelpBox("Info \nThe Node's name has been used.", MessageType.Info);
 			// Buttons - Apply.
+			GUI.enabled = _applySymbolEditingButtonEnabled;
 			if (GUILayout.Button("Apply", EditorStyles.miniButton, EditorStyle.ButtonHeight)) {
-				// [Modify soon]
-				/*
-					Need to create a pop up window. 
-					To make sure the Information of content.
-				 */
+				if (EditorUtility.DisplayDialog("Saving", 
+					"Are you sure to save?",
+						"Yes", "No")) {
+				} else {
+
+				}
 			}
+			GUI.enabled = true;
 		}
 
 		void ShowEditSetRule() {
@@ -169,27 +181,31 @@ namespace MissionGrammar {
 			_name = EditorGUILayout.TextField("Name", _name);
 			_description = EditorGUILayout.TextField("Description", _description);
 			// Remind user [need Modify]
-			if (_name == "" && _description == "") {
+			if (_name == string.Empty && _description == string.Empty) {
 				EditorGUILayout.HelpBox("Info \nThe name is empty. \nThe description is empty.", MessageType.Info);
 			}
-			if (_name == "" && _description != "") {
+			if (_name == string.Empty && _description != string.Empty) {
 				EditorGUILayout.HelpBox("Info \nThe name is empty.", MessageType.Info);
 			}
-			if (_name != "" && _description == "") {
+			if (_name != string.Empty && _description == string.Empty) {
 				EditorGUILayout.HelpBox("Info \nThe description is empty.", MessageType.Info);
 			}
-			if (_name != "" && _description != "") {
+			if (_name != string.Empty && _description != string.Empty) {
+				_applyEditingButtonEnabled = true;
 				EditorGUILayout.HelpBox("Info \nNothing.", MessageType.Info);
 			}
 
 			// Buttons - Apply.
+			GUI.enabled = _applyEditingButtonEnabled;
 			if (GUILayout.Button("Apply", EditorStyles.miniButton, EditorStyle.ButtonHeight)) {
-				// [Modify soon]
-				/*
-				Need to create a pop up window. 
-				To make sure the Information of content.
-				*/
+				if (EditorUtility.DisplayDialog("Saving", 
+				"Are you sure to save?",
+				"Yes", "No")) {
+				} else {
+
+				}
 			}
+			GUI.enabled = true;
 		}
 
 		void LayoutNodeList() {
