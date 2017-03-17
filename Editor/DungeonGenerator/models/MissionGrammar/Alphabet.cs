@@ -76,20 +76,18 @@ namespace MissionGrammar {
 			DrawNode(node);
 		}
 		// Draw the connection on canvas.
+		// [TODO] Task C2-2-2. (you can remove these lines)
+		// This part need to fix. The arrow is static not dynamic with rotate.
 		public static void DrawConnection(GraphGrammarConnection connection) {
 			EditorCanvas.DrawLine(connection.StartPosition, connection.EndPosition, connection.OutlineColor, 5f);
-
-
-
+			/*
 			Vector3[] arrowHead = new Vector3[3];
-			arrowHead[0] = new Vector3(connection.EndPositionX +  0, connection.EndPositionY +  0 -10, 0);
-			arrowHead[1] = new Vector3(connection.EndPositionX +  0, connection.EndPositionY + 20 -10, 0);
-			arrowHead[2] = new Vector3(connection.EndPositionX + 15, connection.EndPositionY + 10 -10, 0);
+			arrowHead[0] = new Vector3(connection.EndPositionX +  0, connection.EndPositionY - 10, 0);
+			arrowHead[1] = new Vector3(connection.EndPositionX +  0, connection.EndPositionY + 10, 0);
+			arrowHead[2] = new Vector3(connection.EndPositionX + 15, connection.EndPositionY +  0, 0);
 			Handles.color = connection.OutlineColor;
-			Handles.DrawAAConvexPolygon( arrowHead );
-
-
-
+			Handles.DrawAAConvexPolygon(arrowHead);
+			*/
 		}
 		// Draw the connection in the connection list.
 		public static void DrawConnectionInList(GraphGrammarConnection connection) {

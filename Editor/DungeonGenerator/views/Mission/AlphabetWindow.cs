@@ -21,30 +21,34 @@ namespace MissionGrammar {
 	}
 	// The mission alphabet window.
 	public class AlphabetWindow : EditorWindow {
-		// Set the original color of Property.
-		private Color _symbolOutlineColor;
-		private Color _symbolFilledColor;
-		private Color _symbolTextColor;
 		// The mode of buttons.
 		private AlphabetWindowTab _currentTab;
 		private EditingMode       _editingMode;
 		// The scroll bar of list.
 		private Vector2 _scrollPosition;
-		// The description of nodes or connections
+		// Message of helpbox of submition.
+		private string      _messageHint;
+		private MessageType _messageType;
+		// Node or connection in prview canvas.
 		private GraphGrammarNode       _node       = new GraphGrammarNode(NodeTerminalType.Terminal);
 		private GraphGrammarConnection _connection = new GraphGrammarConnection();
+		// The description of nodes and connections.
 		private string _symbolName;
 		private string _symbolAbbreviation;
 		private string _symbolDescription;
+		// Symbol colors.
+		private Color _symbolOutlineColor;
+		private Color _symbolFilledColor;
+		private Color _symbolTextColor;
+		// The exclusive types.
+		private NodeTerminalType    _symbolTerminal;
+		private ConnectionType      _connectionType;
+		private ConnectionArrowType _connectionArrowType;
 		// The drawing canvas.
 		private Rect    _symbolListCanvas;
 		private Rect    _symbolListCanvasInWindow;
 		private Rect    _canvas;
 		private Vector2 _centerPosition;
-		// The type.
-		private NodeTerminalType    _symbolTerminal;
-		private ConnectionType      _connectionType;
-		private ConnectionArrowType _connectionArrowType;
 
 		// Native function for Editor Window. Trigger via opening the window.
 		void Awake() {
@@ -54,6 +58,8 @@ namespace MissionGrammar {
 			_currentTab               = AlphabetWindowTab.Nodes;
 			_editingMode              = EditingMode.None;
 			_scrollPosition           = Vector2.zero;
+			_messageHint              = string.Empty;
+			_messageType              = MessageType.Info;
 			_node                     = new GraphGrammarNode(NodeTerminalType.Terminal);
 			_connection               = new GraphGrammarConnection();
 			_symbolListCanvas         = new Rect(0, 0, Screen.width, Screen.height);
@@ -67,9 +73,9 @@ namespace MissionGrammar {
 		}
 		// Initial whole fields in window.
 		void InitFields() {
-			_symbolName             = "";
-			_symbolAbbreviation     = "";
-			_symbolDescription      = "";
+			_symbolName             = string.Empty;
+			_symbolAbbreviation     = string.Empty;
+			_symbolDescription      = string.Empty;
 			_symbolOutlineColor     = Color.black;
 			_symbolFilledColor      = Color.white;
 			_symbolTextColor        = Color.black;
@@ -93,6 +99,7 @@ namespace MissionGrammar {
 			// Toggle for nodes interface and connection interface.
 			switch (_currentTab) {
 			case AlphabetWindowTab.Nodes:
+				// [TODO] This style value is wrong format, must modify soon.
 				GUI.skin.label.fontSize  = EditorStyle.HeaderFontSize;
 				GUI.skin.label.alignment = TextAnchor.MiddleCenter;
 				GUILayout.Label("List of Nodes", GUILayout.Height(30));
@@ -101,6 +108,7 @@ namespace MissionGrammar {
 				ShowNodesInterface();
 				break;
 			case AlphabetWindowTab.Connections:
+				// [TODO] This style value is wrong format, must modify soon.
 				GUI.skin.label.fontSize  = EditorStyle.HeaderFontSize;
 				GUI.skin.label.alignment = TextAnchor.MiddleCenter;
 				GUILayout.Label("List of Connections", GUILayout.Height(30));
@@ -112,14 +120,12 @@ namespace MissionGrammar {
 			// Event controller.
 			EventController();
 		}
-
 		// Content of nodes.
 		void ShowNodesInterface() {
 			// Show the canvas, that is the list of nodes.
-			LayoutNodeList();
+			LayoutSymbolList();
 			// Buttons for switching editing mode.
 			LayoutEditingModeButtonGroup();
-
 			// Canvas for preview symbol.
 			GUILayout.BeginArea(EditorStyle.AlphabetPreviewArea);
 			_canvas = EditorStyle.AlphabetPreviewCanvas;
@@ -147,24 +153,27 @@ namespace MissionGrammar {
 				EditorGUILayout.EndVertical();
 				GUILayout.Space(EditorStyle.PaddingAfterBlock);
 				// Show content of submition.
-				ShowSubmitionInterface();
+				LayoutSubmitionHint();
+				LayoutSubmitionButton();
 				GUILayout.EndArea();
 				break;
 			}
 		}
-
 		// Content of connections.
 		void ShowConnectionsInterface() {
 			// Show the canvas, that is the list of nodes.
-			LayoutNodeList();
+			LayoutSymbolList();
 			// Buttons for switching editing mode./*
 			LayoutEditingModeButtonGroup();
 			// Canvas.
 			GUILayout.BeginArea(EditorStyle.AlphabetPreviewArea);
 			_canvas = EditorStyle.AlphabetPreviewCanvas;
 			EditorGUI.DrawRect(_canvas, Color.gray);
-			_centerPosition.x    = Screen.width / 2;
+			// [TODO] This part (value assign) is temporary.
+			_centerPosition.x         = Screen.width / 2 - 25;
 			_connection.StartPosition = _centerPosition;
+			_centerPosition.x         = Screen.width / 2 + 25;
+			_connection.EndPosition   = _centerPosition;
 			Alphabet.DrawConnection(_connection);
 			GUILayout.EndArea();
 			switch (_editingMode) {
@@ -183,14 +192,15 @@ namespace MissionGrammar {
 				_connectionArrowType = (ConnectionArrowType) EditorGUILayout.EnumPopup("Arrow Type", _connectionArrowType);
 				EditorGUILayout.EndVertical();
 				GUILayout.Space(EditorStyle.PaddingAfterBlock);
-				// Show content of Submit.
-				ShowSubmitionInterface();
+				// Show content of submition.
+				LayoutSubmitionHint();
+				LayoutSubmitionButton();
 				GUILayout.EndArea();
 				break;
 			}
 		}
-		// .
-		void LayoutNodeList() {
+		// Symbol list in node tab and connection tab.
+		void LayoutSymbolList() {
 			// Set the scroll position.
 			_scrollPosition = GUILayout.BeginScrollView(_scrollPosition, EditorStyle.AlphabetSymbolListHeight);
 			// Content of scroll area.
@@ -221,7 +231,7 @@ namespace MissionGrammar {
 				_symbolListCanvasInWindow = GUILayoutUtility.GetLastRect();
 			}
 		}
-		// .
+		// Buttons about adding new symbol, modifying and deleting.
 		void LayoutEditingModeButtonGroup() {
 			EditorGUILayout.BeginHorizontal();
 			if (GUILayout.Button("Add New", EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
@@ -306,11 +316,38 @@ namespace MissionGrammar {
 			// Repaint the window.
 			Repaint();
 		}
+		// Hint message about the form fields.
+		// [TODO] Task C2-2-4-C. (you can remove these lines)
+		// If you toggle the apply button, you can disable and enable it on 'LayoutSubmitionButton' function.
+		void LayoutSubmitionHint() {
+			switch (_currentTab) {
+			case AlphabetWindowTab.Nodes:
+				switch (_editingMode) {
+				case EditingMode.Create:
+					if (_symbolName         == string.Empty ||
+						_symbolAbbreviation == string.Empty ||
+						_symbolDescription  == string.Empty) {
+						_messageHint = "Please fill every column.";
+						_messageType = MessageType.Info;
+					} else {
+						_messageHint = "The data has changed, but still not save it.";
+						_messageType = MessageType.Info;
+					}
+					break;
+				case EditingMode.Modify:
+					_messageHint = "The data is up to date.";
+					_messageType = MessageType.Info;
+					break;
+				}
+				break;
+			case AlphabetWindowTab.Connections:
+				break;
+			}
+			EditorGUILayout.HelpBox(_messageHint, _messageType);
+		}
 		// Content of submition.
-		void ShowSubmitionInterface() {
-			// Remind user [need Modify]
-			EditorGUILayout.HelpBox("Header\nContent of information.", MessageType.Info);
-			// Buttons - Apply.
+		void LayoutSubmitionButton() {
+			// When click apply button.
 			switch (_editingMode) {
 			case EditingMode.Create:
 				if (! GUILayout.Button("Add this symbol into alphabet", EditorStyles.miniButton, EditorStyle.ButtonHeight)) { break; }
@@ -355,9 +392,10 @@ namespace MissionGrammar {
 				OnClickedElementInList(Event.current.mousePosition.y - _symbolListCanvasInWindow.y);
 			}
 		}
-		// Temporary. The click event listener for list canvas.
+		// [TODO] Temporary. The click event listener for list canvas.
 		void OnClickedElementInList(float y) {
 			if (y > 0 && y < EditorStyle.AlphabetSymbolListHeightValue) {
+				// [TODO] This is temporary to assign value, will promote it soon.
 				int index = (int) (y + _scrollPosition.y) / 50;
 				Alphabet.RevokeAllSelected();
 				switch (_currentTab) {

@@ -131,6 +131,7 @@ namespace EditorExtend {
 		}
 
 		private static GUIStyle _labelInNodeList       = new GUIStyle(GUI.skin.label);
+		private static Font     _labelInNodeListFont   = Resources.Load("Fonts/texgyrecursor") as Font;
 		private static Vector2  _labelInNodeListOffset = new Vector2(55, 0);
 
 		public static GUIStyle LabelInNodeList {

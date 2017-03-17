@@ -105,8 +105,6 @@ namespace MissionGrammar {
 			get { return _endpointScope.center; }
 			set { _endpointScope.center = value; }
 		}
-
-
 		public float StartPositionX {
 			get { return _startpointScope.center.x; }
 			set { _startpointScope.x = _startpointScope.x - _startpointScope.center.x + value; }
@@ -123,8 +121,6 @@ namespace MissionGrammar {
 			get { return _endpointScope.center.y; }
 			set { _endpointScope.y = _endpointScope.y - _endpointScope.center.y + value; }
 		}
-
-
 		// Startpoint scope, getter.
 		public Rect StartpointScope {
 			get { return _startpointScope; }
