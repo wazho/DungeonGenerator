@@ -23,6 +23,22 @@ namespace SpaceGrammar {
 		private bool _isInEdgesInterface;
 		private bool _isInAreasInterface;
 
+		//[remove soon]
+		//Textures of interface buttons
+		private Texture2D _pointsButtonNormalTexture;
+		private Texture2D _edgesButtonNormalTexture;
+		private Texture2D _areasButtonNormalTexture;
+		private Texture2D _pointsButtonActiveTexture;
+		private Texture2D _edgesButtonActiveTexture;
+		private Texture2D _areasButtonActiveTexture;
+
+		//Styles for the interface buttons
+		private GUIStyle _pointsInterfaceStyle;
+		private GUIStyle _edgesInterfaceStyle;
+		private GUIStyle _areasInterfaceStyle;
+
+		private bool _isFirstTime;
+
 		//Scrollbar of list
 		private Vector2 _scrollPosition;
 
@@ -71,24 +87,44 @@ namespace SpaceGrammar {
 			_messageInfo = "Info\nStill Empty!";
 			//[Remove soon]
 			testString = "1. Element of List";
+			_isFirstTime = true;
 		}
 
 		void OnGUI() {
-			//Interface buttons
+			if (_isFirstTime) {
+				//points
+				_pointsInterfaceStyle = new GUIStyle(EditorStyles.miniButtonLeft);
+				_pointsButtonNormalTexture = _pointsInterfaceStyle.normal.background;
+				_pointsButtonActiveTexture = _pointsInterfaceStyle.active.background;
+				//edges
+				_edgesInterfaceStyle = new GUIStyle(EditorStyles.miniButtonMid);
+				_edgesButtonNormalTexture = _edgesInterfaceStyle.normal.background;
+				_edgesButtonActiveTexture = _edgesInterfaceStyle.active.background;
+				//areas
+				_areasInterfaceStyle = new GUIStyle(EditorStyles.miniButtonRight);
+				_areasButtonNormalTexture = _areasInterfaceStyle.normal.background;
+				_areasButtonActiveTexture = _areasInterfaceStyle.active.background;
+				_isFirstTime = false;
+			}
+
+			//Interface buttons 
 			EditorGUILayout.BeginHorizontal();
-			if (GUILayout.Button ("Points", EditorStyles.miniButtonLeft, EditorStyle.TabButtonHeight)) {
+			if (GUILayout.Button ("Points", _pointsInterfaceStyle, EditorStyle.TabButtonHeight)) {
 				_isInPointsInterface = true;
 				_isInEdgesInterface = _isInAreasInterface = false;
-			} else if (GUILayout.Button ("Edges", EditorStyles.miniButtonMid, EditorStyle.TabButtonHeight)) {
+			} else if (GUILayout.Button ("Edges", _edgesInterfaceStyle, EditorStyle.TabButtonHeight)) {
 				_isInEdgesInterface = true;
 				_isInPointsInterface = _isInAreasInterface = false;
-			} else if (GUILayout.Button ("Areas", EditorStyles.miniButtonRight, EditorStyle.TabButtonHeight)) {
+			} else if (GUILayout.Button ("Areas", _areasInterfaceStyle, EditorStyle.TabButtonHeight)) {
 				_isInAreasInterface = true;
 				_isInPointsInterface = _isInEdgesInterface = false;
-			} 
+			}
 			EditorGUILayout.EndHorizontal();
 
-			if (_isInPointsInterface) { 
+			if (_isInPointsInterface) {
+				_pointsInterfaceStyle.normal.background = _pointsButtonActiveTexture;
+				_edgesInterfaceStyle.normal.background = _edgesButtonNormalTexture;
+				_areasInterfaceStyle.normal.background = _areasButtonNormalTexture;
 				//Drawing the interface's contents
 				GUI.skin.label.fontSize = EditorStyle.HeaderFontSize;
 				GUI.skin.label.alignment = TextAnchor.MiddleCenter;
@@ -99,6 +135,9 @@ namespace SpaceGrammar {
 				ShowPointsInterface ();	
 			}
 			else if (_isInEdgesInterface) { 
+				_pointsInterfaceStyle.normal.background = _pointsButtonNormalTexture;
+				_edgesInterfaceStyle.normal.background = _edgesButtonActiveTexture;
+				_areasInterfaceStyle.normal.background = _areasButtonNormalTexture;
 				//Drawing the interface's contents
 				GUI.skin.label.fontSize = EditorStyle.HeaderFontSize;
 				GUI.skin.label.alignment = TextAnchor.MiddleCenter;
@@ -108,7 +147,10 @@ namespace SpaceGrammar {
 
 				ShowEdgesInterface (); 
 			}
-			else if (_isInAreasInterface){ 
+			else if (_isInAreasInterface){
+				_pointsInterfaceStyle.normal.background = _pointsButtonNormalTexture;
+				_edgesInterfaceStyle.normal.background = _edgesButtonNormalTexture;
+				_areasInterfaceStyle.normal.background = _areasButtonActiveTexture;
 				//Drawing the interface's contents
 				GUI.skin.label.fontSize = EditorStyle.HeaderFontSize;
 				GUI.skin.label.alignment = TextAnchor.MiddleCenter;

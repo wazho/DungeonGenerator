@@ -37,8 +37,7 @@ namespace SpaceGrammar {
 		//Info
 		private string _messageInfo;
 
-		//[Remove soon]
-		//asdasda
+		//[Remove soon] 
 
 		void Awake(){
 			_startingSymboltype = StartingSymbolType.Symbol1;
