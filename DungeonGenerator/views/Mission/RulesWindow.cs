@@ -17,6 +17,14 @@ namespace MissionGrammar {
 		// The description of set or rule
 		private string _name;
 		private string _description;
+		// The texture of icons.
+		private Texture2D _edit;
+		private Texture2D _delete;
+		// The mode of editor.
+		private bool _isInSetEdit;
+		private bool _isInRuleEdit;
+		private bool _isInSetNew;
+		private bool _isInRuleNew;
 		// The value of slider.
 		private float _hSliderValue;
 		// The mode of list.
@@ -33,6 +41,12 @@ namespace MissionGrammar {
 		void Awake() {
 			_name = "";
 			_description = "";
+			_edit = Resources.Load<Texture2D>("edit");
+			_delete = Resources.Load<Texture2D>("delete");
+			_isInSetEdit = false;
+			_isInSetNew = false;
+			_isInRuleEdit = false;
+			_isInRuleNew = false;
 			_hSliderValue = 0.0f;
 			_isInNodeList = false;
 			_isInConnectionList = false;
@@ -45,41 +59,53 @@ namespace MissionGrammar {
 		}
 
 		void OnGUI() {
-			// Buttons - Nodes or Connections.
+			// Current Set.
 			EditorGUILayout.BeginHorizontal();
-			if (GUILayout.Button("Create Set", EditorStyles.miniButtonLeft, EditorStyle.TabButtonHeight)) {
-
+			// Dropdown list of Current Set Type.
+			_currentSetType = (CurrentSetType)EditorGUILayout.EnumPopup("Current Set", _currentSetType);
+			// Buttons - Editor, Delete and Add new.
+			if (GUILayout.Button(_edit, EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
+				_isInSetEdit = true;
+				_isInSetNew = false;
 			}
-			if (GUILayout.Button("Create Rule", EditorStyles.miniButtonRight, EditorStyle.TabButtonHeight)) {
-		
+			if (GUILayout.Button(_delete, EditorStyles.miniButtonMid, EditorStyle.ButtonHeight)) {
+				_isInSetEdit = false;
+				_isInSetNew = false;
+				_isInRuleEdit = false;
+				_isInRuleNew = false;
+			}
+			if (GUILayout.Button("Add New", EditorStyles.miniButtonRight, EditorStyle.ButtonHeight)) {
+				_isInSetEdit = false;
+				_isInSetNew = true;
 			}
 			EditorGUILayout.EndHorizontal();
 
-			// Information of Rule,
-			_name = EditorGUILayout.TextField("Name", _name);
-			_description = EditorGUILayout.TextField("Description", _description);
-			// Remind user [need Modify]
-			if (_name == "" && _description == "") {
-				EditorGUILayout.HelpBox("Info \nThe name is empty. \nThe description is empty.", MessageType.Info);
+			// Current Rule.
+			EditorGUILayout.BeginHorizontal();
+			// Dropdown list of Currect Rule Type.
+			_currectRuleType = (CurrectRuleType)EditorGUILayout.EnumPopup("Currect Rule", _currectRuleType);
+			// Buttons - Editor, Delete and Add new.
+			if (GUILayout.Button(_edit, EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
+				_isInRuleEdit = true;
+				_isInRuleNew = false;
 			}
-			if (_name == "" && _description != "") {
-				EditorGUILayout.HelpBox("Info \nThe name is empty.", MessageType.Info);
+			if (GUILayout.Button(_delete, EditorStyles.miniButtonMid, EditorStyle.ButtonHeight)) {
+				_isInSetEdit = false;
+				_isInSetNew = false;
+				_isInRuleEdit = false;
+				_isInRuleNew = false;
 			}
-			if (_name != "" && _description == "") {
-				EditorGUILayout.HelpBox("Info \nThe description is empty.", MessageType.Info);
+			if (GUILayout.Button("Add New", EditorStyles.miniButtonRight, EditorStyle.ButtonHeight)) {
+				_isInRuleEdit = false;
+				_isInRuleNew = true;
 			}
-			if (_name != "" && _description != "") {
-				EditorGUILayout.HelpBox("Info \nNothing.", MessageType.Info);
+			EditorGUILayout.EndHorizontal();
+
+			// Show the Editor of Set or Rule.
+			if(_isInSetEdit == true || _isInSetNew == true || _isInRuleEdit == true || _isInRuleNew == true) {
+				ShowEditSetRule();
 			}
 
-			// Buttons - Apply.
-			if (GUILayout.Button("Apply", EditorStyles.miniButton, EditorStyle.ButtonHeight)) {
-				// [Modify soon]
-				/*
-					Need to create a pop up window. 
-					To make sure the Information of content.
-				 */
-			}
 			// Show the area of rule-preview.
 			GUILayout.BeginArea(EditorStyle.RulePreviewArea);
 			ShowRulePreviewArea();
@@ -92,21 +118,6 @@ namespace MissionGrammar {
 		}
 
 		void ShowRulePreviewArea() {
-			// Dropdown list of Current Set Type.
-			_currentSetType = (CurrentSetType)EditorGUILayout.EnumPopup("Current Set", _currentSetType);
-			// Dropdown list of Currect Rule Type.
-			_currectRuleType = (CurrectRuleType)EditorGUILayout.EnumPopup("Currect Rule", _currectRuleType);
-
-			// Buttons - Modify or Delete.
-			EditorGUILayout.BeginHorizontal();
-			if (GUILayout.Button("Modify", EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
-
-			}
-			if (GUILayout.Button("Delete", EditorStyles.miniButtonRight, EditorStyle.ButtonHeight)) {
-
-			}
-			EditorGUILayout.EndHorizontal();
-			
 			// Information of Source and Replacement.
 			EditorGUILayout.BeginHorizontal();
 			GUI.skin.label.fontSize = EditorStyle.ContentFontSize;
@@ -118,12 +129,8 @@ namespace MissionGrammar {
 			EditorGUI.DrawRect(EditorStyle.RuleSourceCanvas, Color.black);
 			EditorGUI.DrawRect(EditorStyle.RuleReplacementCanvas, Color.white);
 			// Slider. To implement which canvas.
-			if(_hSliderValue <= 0.5f) {
-				_hSliderValue = 0.0f;
-			} else {
-				_hSliderValue = 1.0f;
-			}
-			_hSliderValue = GUI.HorizontalSlider(EditorStyle.RuleCanvasSlider, _hSliderValue, 0.0f, 1.0f);
+
+			_hSliderValue = GUI.HorizontalSlider(EditorStyle.RuleCanvasSlider, _hSliderValue, 0.0f, 99.0f);
 		}
 
 		void ShowAfterRulePreviewArea() {
@@ -153,6 +160,9 @@ namespace MissionGrammar {
 			if(_isInConnectionList == true) {
 				ShowAddConnectionList();
 			}
+
+			// Remind user [need Modify]
+			EditorGUILayout.HelpBox("Info \nThe Node's name has been used.", MessageType.Info);
 			// Buttons - Apply.
 			if (GUILayout.Button("Apply", EditorStyles.miniButton, EditorStyle.ButtonHeight)) {
 				// [Modify soon]
@@ -160,6 +170,34 @@ namespace MissionGrammar {
 					Need to create a pop up window. 
 					To make sure the Information of content.
 				 */
+			}
+		}
+
+		void ShowEditSetRule() {
+			// Information.
+			_name = EditorGUILayout.TextField("Name", _name);
+			_description = EditorGUILayout.TextField("Description", _description);
+			// Remind user [need Modify]
+			if (_name == "" && _description == "") {
+				EditorGUILayout.HelpBox("Info \nThe name is empty. \nThe description is empty.", MessageType.Info);
+			}
+			if (_name == "" && _description != "") {
+				EditorGUILayout.HelpBox("Info \nThe name is empty.", MessageType.Info);
+			}
+			if (_name != "" && _description == "") {
+				EditorGUILayout.HelpBox("Info \nThe description is empty.", MessageType.Info);
+			}
+			if (_name != "" && _description != "") {
+				EditorGUILayout.HelpBox("Info \nNothing.", MessageType.Info);
+			}
+
+			// Buttons - Apply.
+			if (GUILayout.Button("Apply", EditorStyles.miniButton, EditorStyle.ButtonHeight)) {
+				// [Modify soon]
+				/*
+				Need to create a pop up window. 
+				To make sure the Information of content.
+				*/
 			}
 		}
 
