@@ -180,5 +180,20 @@ namespace EditorExtend {
 				return _labelInNodeList;
 			}
 		}
+
+
+		private const int _header2FontSize = 18;
+		private static GUIStyle _header2 = new GUIStyle(GUI.skin.label);
+
+		public static GUIStyle Header2 {
+			get {
+				if (_header2.name != "Header2") {
+					_header2.fontSize  = _header2FontSize;
+					_header2.alignment = TextAnchor.UpperLeft;
+				}
+				return _header2;
+			}
+		}
+
 	}
 }
