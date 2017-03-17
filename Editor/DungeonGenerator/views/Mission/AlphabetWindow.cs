@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Linq;
 using System.Collections;
+using System.Text.RegularExpressions;
 
 using EditorAdvance = EditorExtend.Advance;
 using EditorStyle   = EditorExtend.Style;
@@ -315,28 +316,62 @@ namespace MissionGrammar {
 			// Repaint the window.
 			Repaint();
 		}
-		// Hint message about the form fields.
-		// [TODO] Task C2-2-4-C. (you can remove these lines)
-		// If you toggle the apply button, you can disable and enable it on 'LayoutSubmitionButton' function.
-		void LayoutSubmitionHint() {
+
+        //Validate that the field data is legal.
+        //call by 'LayoutSubmitionButton' function.
+        private static Regex _ruleOfTerminalSymbolName = new Regex(@"^[a-z]{1}[a-zA-Z]*$");
+        private static Regex _ruleOfTerminalSymbolAbbreviation = new Regex(@"^[a-z]*$");
+        private static Regex _ruleOfNonTerminalSymbolName = new Regex(@"^[A-Z]{1}[a-zA-Z]*$");
+        private static Regex _ruleOfNonTerminalSymbolAbbreviation = new Regex(@"^[A-Z]*$");
+        void NodeFieldValidation() {
+            if (_symbolName == string.Empty ||
+                        _symbolAbbreviation == string.Empty ||
+                        _symbolDescription == string.Empty) {
+                _messageHint = "Please fill every column.";
+                _messageType = MessageType.Error;
+            } else if (_symbolTerminal == NodeTerminalType.Terminal &&
+                ! _ruleOfTerminalSymbolName.IsMatch(_symbolName)) {
+                _messageHint = "Name field Error! \nPlease use only letters (a-z,A-Z) and the first letter is lowercase.";
+                _messageType = MessageType.Error;
+            } else if (_symbolTerminal == NodeTerminalType.Terminal &&
+                ( _symbolAbbreviation.Length > 4 ||
+                ! _ruleOfTerminalSymbolAbbreviation.IsMatch(_symbolAbbreviation) )) {
+                _messageHint = "Abbreviation field error! \nPlease use only lowercase letters (a-z) and 4 characters or less.";
+                _messageType = MessageType.Error;
+            } else if (_symbolTerminal == NodeTerminalType.NonTerminal &&
+                ! _ruleOfNonTerminalSymbolName.IsMatch(_symbolName)) {
+                _messageHint = "Name field Error! \nPlease use only letters (a-z,A-Z) and the first letter is lowercase.";
+                _messageType = MessageType.Error;
+            } else if (_symbolTerminal == NodeTerminalType.NonTerminal &&
+                ( _symbolAbbreviation.Length > 4 ||
+                ! _ruleOfNonTerminalSymbolAbbreviation.IsMatch(_symbolAbbreviation) )) {
+                _messageHint = "Abbreviation field error! \nPlease use only uppercase letters (A-Z) and 4 characters or less.";
+                _messageType = MessageType.Error;
+            } else {
+                _messageHint = "The data has changed, but still not save it.";
+                _messageType = MessageType.Info;
+            }
+        }
+        // Hint message about the form fields.
+        // If you toggle the apply button, you can disable and enable it on 'LayoutSubmitionButton' function.
+        void LayoutSubmitionHint() {
 			switch (_currentTab) {
 			case AlphabetWindowTab.Nodes:
 				switch (_editingMode) {
 				case EditingMode.Create:
-					if (_symbolName         == string.Empty ||
-						_symbolAbbreviation == string.Empty ||
-						_symbolDescription  == string.Empty) {
-						_messageHint = "Please fill every column.";
-						_messageType = MessageType.Info;
-					} else {
-						_messageHint = "The data has changed, but still not save it.";
-						_messageType = MessageType.Info;
-					}
-					break;
+                    NodeFieldValidation();
+                    break;
 				case EditingMode.Modify:
-					_messageHint = "The data is up to date.";
-					_messageType = MessageType.Info;
-					break;
+                    if (Alphabet.SelectedNode.Terminal == _node.Terminal &&
+                        Alphabet.SelectedNode.Name == _node.Name &&
+                        Alphabet.SelectedNode.Abbreviation == _node.Abbreviation &&
+                        Alphabet.SelectedNode.Description == _node.Description) {
+					    _messageHint = "The data is up to date.";
+					    _messageType = MessageType.Info;
+                    } else {
+                        NodeFieldValidation();
+                    }
+                    break;
 				}
 				break;
 			case AlphabetWindowTab.Connections:
