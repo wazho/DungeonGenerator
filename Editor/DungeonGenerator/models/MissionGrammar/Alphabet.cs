@@ -62,9 +62,18 @@ namespace MissionGrammar {
 		}
 		// Draw the node on canvas.
 		public static void DrawNode(GraphGrammarNode node) {
-			EditorCanvas.DrawQuad(node.OutlineScope, node.OutlineColor);
-			EditorCanvas.DrawQuad(node.FilledScope, node.FilledColor);
-			EditorCanvas.DrawQuad(node.TextScope, Color.clear, node.Abbreviation, node.TextColor);
+			switch (node.Terminal) {
+			case NodeTerminalType.NonTerminal:
+				EditorCanvas.DrawQuad(node.OutlineScope, node.OutlineColor);
+				EditorCanvas.DrawQuad(node.FilledScope, node.FilledColor);
+				EditorCanvas.DrawQuad(node.TextScope, Color.clear, node.Abbreviation, node.TextColor);
+				break;
+			case NodeTerminalType.Terminal:
+				EditorCanvas.DrawDics(node.Position, 20, node.OutlineColor);
+				EditorCanvas.DrawDics(node.Position, 18, node.FilledColor);
+				EditorCanvas.DrawQuad(node.TextScope, Color.clear, node.Abbreviation, node.TextColor);
+				break;
+			}
 		}
 		// Draw the node in the node list.
 		public static void DrawNodeInList(GraphGrammarNode node) {
