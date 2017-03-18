@@ -27,11 +27,8 @@ namespace EditorExtend {
 		private static Rect _spaceRulePreviewArea     = new Rect (0, 250, Screen.width, 150);
 		private static Rect _spaceRulePreviewCanvas   = new Rect (0,   0, Screen.width, 150);
 
-        private static Rect _rulePreviewArea          = new Rect(0, 150, Screen.width, 300);
-        private static Rect _ruleSourceCanvas         = new Rect(0,  25, Screen.width / 2, 200);
-        private static Rect _ruleReplacementCanvas    = new Rect(Screen.width / 2, 25, Screen.width / 2, 200);
-        private static Rect _ruleCanvasSlider         = new Rect(0, 225, Screen.width, 10);
-        private static Rect _afterRulePreviewArea     = new Rect(0, 400, Screen.width, Screen.height);
+		private static Rect _rulePreviewArea          = new Rect(0, 150, Screen.width, 300);
+		private static Rect _afterRulePreviewArea     = new Rect(0, 400, Screen.width, Screen.height);
 
 		// Font size.
 		public static int HeaderFontSize {
@@ -99,46 +96,86 @@ namespace EditorExtend {
 				return _afterAlphabetPreviewArea;
 			}
 		}
-        public static Rect RulePreviewArea {
-            get {
-                _rulePreviewArea.width = Screen.width;
-                return _rulePreviewArea;
-            }
-        }
-        public static Rect RuleSourceCanvas {
-            get {
-                _ruleSourceCanvas.width = Screen.width/2;
-                return _ruleSourceCanvas;
-            }
-        }
-        public static Rect RuleReplacementCanvas {
-            get {
-                _ruleReplacementCanvas.x = Screen.width / 2;
-                _ruleReplacementCanvas.width = Screen.width/2;
-                return _ruleReplacementCanvas;
-            }
-        }
-        public static Rect RuleCanvasSlider {
-            get {
-                _ruleCanvasSlider.width = Screen.width;
-                return _ruleCanvasSlider;
-            }
-        }       
-        public static Rect AfterRulePreviewArea {
-            get {
-                _afterRulePreviewArea.width = Screen.width;
-                _afterRulePreviewArea.height = Screen.height;
-                return _afterRulePreviewArea;
-            }
-        }
+		public static Rect RulePreviewArea {
+			get {
+				_rulePreviewArea.width = Screen.width;
+				return _rulePreviewArea;
+			}
+		}
+		private const int _ruleScrollViewHeight = 200;
+		public static GUILayoutOption RuleScrollViewHeight {
+			get { return GUILayout.Height(_ruleScrollViewHeight); }
+		}
+		// RuleSourceCanvas
+		private static int _ruleSourceCanvasWidth = 10;
+		private static int _ruleSourceCanvasHeight = 10;
+		private static int _ruleSourceCanvasRightBorder = (int)(_ruleSourceCanvasWidth * 0.9);
+		private static int _ruleSourceCanvasBottomBorder = (int)(_ruleSourceCanvasHeight * 0.9);    
+		public static void ResizeRuleSourceCanvas(int width, int height) {
+			_ruleSourceCanvasWidth = width;
+			_ruleSourceCanvasHeight = height;
+			_ruleSourceCanvasRightBorder = (int)(width * 0.9);
+			_ruleSourceCanvasBottomBorder = (int)(height * 0.9);
+		}
+		private static Rect _ruleSourceCanvas = new Rect(0, 0, _ruleSourceCanvasWidth, _ruleSourceCanvasHeight);
+		public static Rect RuleSourceCanvas {
+			get {
+				_ruleSourceCanvas.width = _ruleSourceCanvasWidth;
+				_ruleSourceCanvas.height = _ruleSourceCanvasHeight;
+				return _ruleSourceCanvas;
+			}
+		}
+		private static GUIStyle _ruleSourceCanvasContent = new GUIStyle(GUI.skin.label);
+		public static GUIStyle RuleSourceCanvasContent {
+			get {
+				_ruleSourceCanvasContent.padding.right = _ruleSourceCanvasRightBorder;
+				_ruleSourceCanvasContent.padding.bottom = _ruleSourceCanvasBottomBorder;
+				return _ruleSourceCanvasContent;
+			}
+		}
+		// RuleReplacementCanvas
+		private static int _ruleReplacementCanvasWidth = 10;
+		private static int _ruleReplacementCanvasHeight = 10;
+		private static int _ruleReplacementCanvasRightBorder = (int)(_ruleReplacementCanvasWidth * 0.9);
+		private static int _ruleReplacementCanvasBottomBorder = (int)(_ruleReplacementCanvasHeight * 0.9);
+		public static void ResizeRuleReplacementCanvas(int width, int height) {
+			_ruleReplacementCanvasWidth = width;
+			_ruleReplacementCanvasHeight = height;
+			_ruleReplacementCanvasRightBorder = (int)(width * 0.9);
+			_ruleReplacementCanvasBottomBorder = (int)(height * 0.9);
+		}
+		private static Rect _ruleReplacementCanvas = new Rect(0, 0, _ruleReplacementCanvasWidth, _ruleReplacementCanvasHeight);
+		public static Rect RuleReplacementCanvas {
+			get {
+				_ruleReplacementCanvas.width = _ruleReplacementCanvasWidth;
+				_ruleReplacementCanvas.height = _ruleReplacementCanvasHeight;
+				return _ruleReplacementCanvas;
+			}
+		}
+		private static GUIStyle _ruleReplacementCanvasContent = new GUIStyle(GUI.skin.label);
+		public static GUIStyle RuleReplacementCanvasContent {
+			get {
+				_ruleReplacementCanvasContent.padding.right = _ruleReplacementCanvasRightBorder;
+				_ruleReplacementCanvasContent.padding.bottom = _ruleReplacementCanvasBottomBorder;
+				return _ruleReplacementCanvasContent;
+			}
+		}
+
+		public static Rect AfterRulePreviewArea {
+			get {
+				_afterRulePreviewArea.width = Screen.width;
+				_afterRulePreviewArea.height = Screen.height;
+				return _afterRulePreviewArea;
+			}
+		}
 		public static Rect SpaceRulePreviewArea {
-			get{ 
+			get{
 				_spaceRulePreviewArea.width = Screen.width;
 				return _spaceRulePreviewArea;
 			}
 		}
 		public static Rect SpaceRulePreviewCanvas {
-			get{ 
+			get{
 				_spaceRulePreviewCanvas.width = Screen.width;
 				return _spaceRulePreviewCanvas;
 			}
