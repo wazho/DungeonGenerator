@@ -109,13 +109,13 @@ namespace EditorExtend {
 		// RuleSourceCanvas
 		private static int _ruleSourceCanvasWidth = 10;
 		private static int _ruleSourceCanvasHeight = 10;
-		private static int _ruleSourceCanvasRightBorder = (int)(_ruleSourceCanvasWidth * 0.9);
-		private static int _ruleSourceCanvasBottomBorder = (int)(_ruleSourceCanvasHeight * 0.9);    
+		private static int _ruleSourceCanvasRightBorder = (int) (_ruleSourceCanvasWidth * 0.9);
+		private static int _ruleSourceCanvasBottomBorder = (int) (_ruleSourceCanvasHeight * 0.9);    
 		public static void ResizeRuleSourceCanvas(int width, int height) {
-			_ruleSourceCanvasWidth = width;
+			_ruleSourceCanvasWidth  = width;
 			_ruleSourceCanvasHeight = height;
-			_ruleSourceCanvasRightBorder = (int)(width * 0.9);
-			_ruleSourceCanvasBottomBorder = (int)(height * 0.9);
+			_ruleSourceCanvasRightBorder  = (int) (width * 0.9);
+			_ruleSourceCanvasBottomBorder = (int) (height * 0.9);
 		}
 		private static Rect _ruleSourceCanvas = new Rect(0, 0, _ruleSourceCanvasWidth, _ruleSourceCanvasHeight);
 		public static Rect RuleSourceCanvas {
@@ -128,7 +128,7 @@ namespace EditorExtend {
 		private static GUIStyle _ruleSourceCanvasContent = new GUIStyle(GUI.skin.label);
 		public static GUIStyle RuleSourceCanvasContent {
 			get {
-				_ruleSourceCanvasContent.padding.right = _ruleSourceCanvasRightBorder;
+				_ruleSourceCanvasContent.padding.right  = _ruleSourceCanvasRightBorder;
 				_ruleSourceCanvasContent.padding.bottom = _ruleSourceCanvasBottomBorder;
 				return _ruleSourceCanvasContent;
 			}
@@ -139,15 +139,15 @@ namespace EditorExtend {
 		private static int _ruleReplacementCanvasRightBorder = (int)(_ruleReplacementCanvasWidth * 0.9);
 		private static int _ruleReplacementCanvasBottomBorder = (int)(_ruleReplacementCanvasHeight * 0.9);
 		public static void ResizeRuleReplacementCanvas(int width, int height) {
-			_ruleReplacementCanvasWidth = width;
+			_ruleReplacementCanvasWidth  = width;
 			_ruleReplacementCanvasHeight = height;
-			_ruleReplacementCanvasRightBorder = (int)(width * 0.9);
+			_ruleReplacementCanvasRightBorder  = (int)(width * 0.9);
 			_ruleReplacementCanvasBottomBorder = (int)(height * 0.9);
 		}
 		private static Rect _ruleReplacementCanvas = new Rect(0, 0, _ruleReplacementCanvasWidth, _ruleReplacementCanvasHeight);
 		public static Rect RuleReplacementCanvas {
 			get {
-				_ruleReplacementCanvas.width = _ruleReplacementCanvasWidth;
+				_ruleReplacementCanvas.width  = _ruleReplacementCanvasWidth;
 				_ruleReplacementCanvas.height = _ruleReplacementCanvasHeight;
 				return _ruleReplacementCanvas;
 			}
@@ -155,7 +155,7 @@ namespace EditorExtend {
 		private static GUIStyle _ruleReplacementCanvasContent = new GUIStyle(GUI.skin.label);
 		public static GUIStyle RuleReplacementCanvasContent {
 			get {
-				_ruleReplacementCanvasContent.padding.right = _ruleReplacementCanvasRightBorder;
+				_ruleReplacementCanvasContent.padding.right  = _ruleReplacementCanvasRightBorder;
 				_ruleReplacementCanvasContent.padding.bottom = _ruleReplacementCanvasBottomBorder;
 				return _ruleReplacementCanvasContent;
 			}
@@ -163,7 +163,7 @@ namespace EditorExtend {
 
 		public static Rect AfterRulePreviewArea {
 			get {
-				_afterRulePreviewArea.width = Screen.width;
+				_afterRulePreviewArea.width  = Screen.width;
 				_afterRulePreviewArea.height = Screen.height;
 				return _afterRulePreviewArea;
 			}

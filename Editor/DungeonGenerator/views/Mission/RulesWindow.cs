@@ -3,8 +3,8 @@ using UnityEditor;
 using System.Collections;
 
 using EditorAdvance = EditorExtend.Advance;
-using EditorCanvas = EditorExtend.NodeCanvas;
-using EditorStyle = EditorExtend.Style;
+using EditorCanvas  = EditorExtend.NodeCanvas;
+using EditorStyle   = EditorExtend.Style;
 
 namespace MissionGrammar {	
 	public class RulesWindow : EditorWindow {
@@ -55,10 +55,10 @@ namespace MissionGrammar {
 		// The scroll bar of list.
 		private Vector2 _scrollPosition;
 		// [Remove soon] Content of scroll area.
-		private string testString;       
+		private string testString;  
 
 		void Awake() {
-			_currentSet        = new string[] { "Set1", "Set2"};
+			_currentSet        = new string[] { "Set1", "Set2" };
 			_currentRule       = new string[] { "Rule1", "Rule2" };
 			_currentSetIndex   = 0;
 			_currentRuleIndex  = 0;
