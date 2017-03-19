@@ -47,8 +47,14 @@ namespace MissionGrammar {
 		private Vector2 _scrollPosition;
 		// [Remove soon] Content of scroll area.
 		private string testString;
+        // RuleSymbolSet
+        private GraphGrammar _sourceSymbolSet      = new GraphGrammar();
+        private GraphGrammar _replacementSymbolSet = new GraphGrammar();
+        // The drawing canvas.
+        private Rect _ruleSourceCanvasInWindow;
+        private Rect _ruleReplacementCanvasInWindow;
 
-		void Awake() {
+        void Awake() {
 			_currentSet        = new string[] { "Set1", "Set2"};
 			_currentRule       = new string[] { "Rule1", "Rule2" };
 			_currentSetIndex   = 0;
@@ -67,8 +73,8 @@ namespace MissionGrammar {
 		}
 
 		void OnGUI() {
-			// Current Set.
-			EditorGUILayout.BeginHorizontal();
+            // Current Set.
+            EditorGUILayout.BeginHorizontal();
 			// Dropdown list of Current Set Type.
 			_currentSetIndex = EditorGUILayout.Popup("Current Set", _currentSetIndex, _currentSet);
 			// Buttons - Editor, Delete and Add new.
@@ -118,28 +124,145 @@ namespace MissionGrammar {
 			GUILayout.BeginArea(EditorStyle.AfterRulePreviewArea);
 			ShowAfterRulePreviewArea();
 			GUILayout.EndArea();
-		}
 
-		void ShowRulePreviewArea() {
+            EventController();
+        }
+        // Control whole events.
+        void EventController() {
+            if (Event.current.type == EventType.MouseDown) {
+                OnClickedSymbolInPreviewCanvas();
+            } else if (Event.current.type == EventType.MouseDrag) {// Drag and drop event, could move the symbols of canvas.
+                OnDraggedAndDroppedInPreviewCanvas();
+            }
+        }
+        //Click Event (Just copy-paste from example_window.cs)
+        void OnClickedSymbolInPreviewCanvas() {
+            if (_ruleSourceCanvasInWindow.Contains(Event.current.mousePosition)) {
+                _replacementSymbolSet.RevokeAllSelected();
+                _sourceSymbolSet.TouchedSymbol(new Vector2(Event.current.mousePosition.x - _ruleSourceCanvasInWindow.x, Event.current.mousePosition.y - _ruleSourceCanvasInWindow.y)/*new Vector2(x, y)*/);
+                this.Repaint();
+            } else if (_ruleReplacementCanvasInWindow.Contains(Event.current.mousePosition)) {
+                _sourceSymbolSet.RevokeAllSelected();
+                _replacementSymbolSet.TouchedSymbol(new Vector2(Event.current.mousePosition.x - _ruleReplacementCanvasInWindow.x, Event.current.mousePosition.y - _ruleReplacementCanvasInWindow.y)/*new Vector2(x, y)*/);
+                this.Repaint();
+            } else {
+                Debug.Log(Event.current.mousePosition);
+                Debug.Log(_ruleSourceCanvasInWindow);
+                Debug.Log(_ruleReplacementCanvasInWindow);
+            }
+        }
+        //Drag and drop event (Just copy-paste from example_window.cs)
+        private static GraphGrammarNode tempNode;
+        private static GraphGrammarConnection tempConnection;
+        void OnDraggedAndDroppedInPreviewCanvas() {
+            if (_ruleSourceCanvasInWindow.Contains(Event.current.mousePosition)) {
+                _replacementSymbolSet.RevokeAllSelected();
+                Vector2 positionInCanvas = new Vector2(Event.current.mousePosition.x - _ruleSourceCanvasInWindow.x, Event.current.mousePosition.y - _ruleSourceCanvasInWindow.y);
+                // Select node.
+                if (_sourceSymbolSet.SelectedSymbol is GraphGrammarNode) {
+                    tempNode = (GraphGrammarNode) _sourceSymbolSet.SelectedSymbol;
+                    tempNode.Position += Event.current.delta;
+                }
+                // Select connection.
+                else if (_sourceSymbolSet.SelectedSymbol is GraphGrammarConnection) {
+                    tempConnection = (GraphGrammarConnection) _sourceSymbolSet.SelectedSymbol;
+                    // Start point.
+                    if (tempConnection.StartSelected) {
+                        tempConnection.StartPosition = positionInCanvas;
+                        _sourceSymbolSet.StickyNode(tempConnection, positionInCanvas, "start");
+                    }
+                    // End point.
+                    else if (tempConnection.EndSelected) {
+                        tempConnection.EndPosition = positionInCanvas;
+                        _sourceSymbolSet.StickyNode(tempConnection, positionInCanvas, "end");
+                    }
+                }
+            } else if (_ruleReplacementCanvasInWindow.Contains(Event.current.mousePosition)) {
+                _sourceSymbolSet.RevokeAllSelected();
+                Vector2 positionInCanvas = new Vector2(Event.current.mousePosition.x - _ruleReplacementCanvasInWindow.x, Event.current.mousePosition.y - _ruleReplacementCanvasInWindow.y);
+                // Select node.
+                if (_replacementSymbolSet.SelectedSymbol is GraphGrammarNode) {
+                    tempNode = (GraphGrammarNode) _replacementSymbolSet.SelectedSymbol;
+                    tempNode.Position += Event.current.delta;
+                }
+                // Select connection.
+                else if (_replacementSymbolSet.SelectedSymbol is GraphGrammarConnection) {
+                    tempConnection = (GraphGrammarConnection) _replacementSymbolSet.SelectedSymbol;
+                    // Start point.
+                    if (tempConnection.StartSelected) {
+                        tempConnection.StartPosition = positionInCanvas;
+                        _replacementSymbolSet.StickyNode(tempConnection, positionInCanvas, "start");
+                    }
+                    // End point.
+                    else if (tempConnection.EndSelected) {
+                        tempConnection.EndPosition = positionInCanvas;
+                        _replacementSymbolSet.StickyNode(tempConnection, positionInCanvas, "end");
+                    }
+                }
+            } else {
+                // Revoke all 'selected' to false.
+                _sourceSymbolSet.RevokeAllSelected();
+                _replacementSymbolSet.RevokeAllSelected();
+            }
+            // Refresh the layout.
+            this.Repaint();
+            // Release.
+            tempNode = null;
+            tempConnection = null;
+        }
+        void ShowRulePreviewArea() {
 			// Information of Source and Replacement.
 			EditorGUILayout.BeginHorizontal();
 			GUILayout.Label("Source", EditorStyle.Header2, GUILayout.Width(Screen.width / 2));
 			GUILayout.Label("Replacement", EditorStyle.Header2, GUILayout.Width(Screen.width / 2));
 			EditorGUILayout.EndHorizontal();
-			// Canvas.
-			EditorGUI.DrawRect(EditorStyle.RuleSourceCanvas, Color.black);
-			EditorGUI.DrawRect(EditorStyle.RuleReplacementCanvas, Color.white);
-		}
+
+            // Canvas
+            // SourceCanvas
+            GUILayout.BeginArea(EditorStyle.RuleSourceCanvasArea);
+            // Get the Rect in EditWindow from the GUI rect. (Position = Real screen position - this EditWindow position)
+            _ruleSourceCanvasInWindow.position = GUIUtility.GUIToScreenPoint(EditorStyle.RuleGraphGrammarCanvas.position) - this.position.position;
+            _ruleSourceCanvasInWindow.size = EditorStyle.RuleGraphGrammarCanvas.size;
+            EditorGUI.DrawRect(EditorStyle.RuleGraphGrammarCanvas, Color.gray);
+            //Draw Nodes and Connections.
+            foreach (GraphGrammarNode node in _sourceSymbolSet.Nodes) {
+                GraphGrammar.DrawNode(node);
+            }
+            foreach (GraphGrammarConnection connection in _sourceSymbolSet.Connections) {
+                GraphGrammar.DrawConnection(connection);
+            }
+            GUILayout.EndArea();
+
+            // ReplacementCanvas
+            GUILayout.BeginArea(EditorStyle.RuleReplacementCanvasArea);
+            _ruleReplacementCanvasInWindow.position = GUIUtility.GUIToScreenPoint(EditorStyle.RuleGraphGrammarCanvas.position) - this.position.position;
+            _ruleReplacementCanvasInWindow.size = EditorStyle.RuleGraphGrammarCanvas.size;
+            EditorGUI.DrawRect(EditorStyle.RuleGraphGrammarCanvas, Color.white);
+            foreach (GraphGrammarNode node in _replacementSymbolSet.Nodes) {
+                GraphGrammar.DrawNode(node);
+            }
+            foreach (GraphGrammarConnection connection in _replacementSymbolSet.Connections) {
+                GraphGrammar.DrawConnection(connection);
+            }
+            GUILayout.EndArea();
+        }
 
 		void ShowAfterRulePreviewArea() {
 			// Buttons - Add Node & Add Connection & Copy & Delete.
 			EditorGUILayout.BeginHorizontal();
 			if (GUILayout.Button("Add Node", EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
-				_applySymbolEditingButtonEnabled = true;
+                // [Will remove] Just test canvas.
+                // Add Alphabet's Node 
+                _sourceSymbolSet.AddNode(Alphabet.Nodes[0]);
+                //_sourceSymbolSet.RevokeAllSelected();
+                _replacementSymbolSet.AddNode(Alphabet.Nodes[1]);
+                _replacementSymbolSet.RevokeAllSelected();
+
+                _applySymbolEditingButtonEnabled = true;
 				_currentTab = SymbolEditingMode.AddNode;
 			}
 			if (GUILayout.Button("Add Connection", EditorStyles.miniButtonMid, EditorStyle.ButtonHeight)) {
-				_applySymbolEditingButtonEnabled = true;
+                _applySymbolEditingButtonEnabled = true;
 				_currentTab = SymbolEditingMode.AddConnection;
 			}
 			if (GUILayout.Button("Copy", EditorStyles.miniButtonMid, EditorStyle.ButtonHeight)) {
