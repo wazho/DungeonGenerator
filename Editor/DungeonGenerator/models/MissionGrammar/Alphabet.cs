@@ -9,7 +9,12 @@ using EditorStyle  = EditorExtend.Style;
 
 namespace MissionGrammar {
 	public static class Alphabet {
-		private static List<GraphGrammarNode>       _nodes       = new List<GraphGrammarNode>();
+		// Default nodes in alphabet.
+		private static List<GraphGrammarNode> _nodes = new List<GraphGrammarNode>() {
+				new GraphGrammarNode(NodeTerminalType.Terminal, "none",     "none", "System protected."),
+				new GraphGrammarNode(NodeTerminalType.Terminal, "entrance", "en",   "System protected."),
+				new GraphGrammarNode(NodeTerminalType.Terminal, "goal",     "go",   "System protected."),
+			};
 		private static List<GraphGrammarConnection> _connections = new List<GraphGrammarConnection>();
 
 		// Node list in alphabet.

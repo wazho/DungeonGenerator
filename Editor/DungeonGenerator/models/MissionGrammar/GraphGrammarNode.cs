@@ -59,6 +59,13 @@ namespace MissionGrammar {
 		public GraphGrammarNode(NodeTerminalType terminal) : this() {
 			this._terminal = terminal;
 		}
+		// Basic construction.
+		public GraphGrammarNode(string name, string abbreviation, string description, NodeTerminalType terminal) : this() {
+			this._name         = name;
+			this._abbreviation = abbreviation;
+			this._description  = description;
+			this._terminal     = terminal;
+		}
 		// Clone construction for basic informations.
 		public GraphGrammarNode(GraphGrammarNode node) {
 			this._type                = SymbolType.Node;
