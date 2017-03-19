@@ -3,7 +3,8 @@ using UnityEditor;
 using System.Collections;
 
 using EditorAdvance = EditorExtend.Advance;
-using EditorStyle = EditorExtend.Style;
+using EditorCanvas  = EditorExtend.NodeCanvas;
+using EditorStyle   = EditorExtend.Style;
 
 namespace MissionGrammar {	
 	public class RulesWindow : EditorWindow {
@@ -43,13 +44,21 @@ namespace MissionGrammar {
 		// The mode of buttons.
 		private EditingMode       _editingMode;
 		private SymbolEditingMode _currentTab;
+		// The scroll bar of canvas.
+		private Vector2 _sourceCanvasScrollPosition;
+		private Vector2 _replacementCanvasScrollPosition;
+		// Size of source canvas & replacement canvas.
+		private int _sourceCanvasSizeWidth;
+		private int _sourceCanvasSizeHeight;
+		private int _replacementCanvasSizeWidth;
+		private int _replacementCanvasSizeHeight;
 		// The scroll bar of list.
 		private Vector2 _scrollPosition;
 		// [Remove soon] Content of scroll area.
-		private string testString;
+		private string testString;  
 
 		void Awake() {
-			_currentSet        = new string[] { "Set1", "Set2"};
+			_currentSet        = new string[] { "Set1", "Set2" };
 			_currentRule       = new string[] { "Rule1", "Rule2" };
 			_currentSetIndex   = 0;
 			_currentRuleIndex  = 0;
@@ -61,9 +70,16 @@ namespace MissionGrammar {
 			_delete            = Resources.Load<Texture2D>("Icons/delete");
 			_editingMode       = EditingMode.None;
 			_currentTab        = SymbolEditingMode.None;
+			_sourceCanvasScrollPosition = Vector2.zero;
+			_replacementCanvasScrollPosition = Vector2.zero;
 			_scrollPosition    = Vector2.zero;
 			// [Remove soon]
 			testString = "*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n";
+			// [Modify soon]
+			_sourceCanvasSizeWidth = 8000;
+			_sourceCanvasSizeHeight = 1000;
+			_replacementCanvasSizeWidth = 1000;
+			_replacementCanvasSizeHeight = 300;
 		}
 
 		void OnGUI() {
@@ -117,6 +133,17 @@ namespace MissionGrammar {
 			// Show the area of after-rule-preview.
 			GUILayout.BeginArea(EditorStyle.AfterRulePreviewArea);
 			ShowAfterRulePreviewArea();
+			// [Remove soon] Just Testing
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.BeginVertical();
+			_sourceCanvasSizeWidth = EditorAdvance.LimitedIntField("SourceCanvasSizeWidth:", _sourceCanvasSizeWidth, 100, 5000);
+			_sourceCanvasSizeHeight = EditorAdvance.LimitedIntField("SourceCanvasSizeHeight:", _sourceCanvasSizeHeight, 100, 2000);
+			EditorGUILayout.EndVertical();
+			EditorGUILayout.BeginVertical();
+			_replacementCanvasSizeWidth = EditorAdvance.LimitedIntField("ReplacementCanvasSizeWidth:", _replacementCanvasSizeWidth, 100, 5000);
+			_replacementCanvasSizeHeight = EditorAdvance.LimitedIntField("ReplacementCanvasSizeHeight:", _replacementCanvasSizeHeight, 100, 5000);
+			EditorGUILayout.EndVertical();
+			EditorGUILayout.EndHorizontal();
 			GUILayout.EndArea();
 		}
 
@@ -127,8 +154,11 @@ namespace MissionGrammar {
 			GUILayout.Label("Replacement", EditorStyle.Header2, GUILayout.Width(Screen.width / 2));
 			EditorGUILayout.EndHorizontal();
 			// Canvas.
-			EditorGUI.DrawRect(EditorStyle.RuleSourceCanvas, Color.black);
-			EditorGUI.DrawRect(EditorStyle.RuleReplacementCanvas, Color.white);
+			EditorGUILayout.BeginHorizontal();
+			ShowSourceCanvas();
+			ShowReplacementCanvas();
+			EditorGUILayout.EndHorizontal();
+
 		}
 
 		void ShowAfterRulePreviewArea() {
@@ -223,6 +253,26 @@ namespace MissionGrammar {
 			_scrollPosition = GUILayout.BeginScrollView(_scrollPosition, EditorStyle.AlphabetSymbolListHeight);
 			// Content of scroll area.
 			GUILayout.Label(testString, EditorStyles.label);
+			GUILayout.EndScrollView();
+		}
+
+		void ShowSourceCanvas() {
+			// Set the scroll position.
+			_sourceCanvasScrollPosition = GUILayout.BeginScrollView(_sourceCanvasScrollPosition, GUILayout.Width(Screen.width / 2), EditorStyle.RuleScrollViewHeight);
+			// Content of canvas area.
+			EditorStyle.ResizeRuleSourceCanvas(_sourceCanvasSizeWidth, _sourceCanvasSizeHeight);
+			EditorGUI.DrawRect(EditorStyle.RuleSourceCanvas, Color.yellow);
+			GUILayout.Label(string.Empty, EditorStyle.RuleSourceCanvasContent);
+			GUILayout.EndScrollView();
+		}
+
+		void ShowReplacementCanvas() {
+			// Set the scroll position.
+			_replacementCanvasScrollPosition = GUILayout.BeginScrollView(_replacementCanvasScrollPosition, GUILayout.Width(Screen.width / 2), EditorStyle.RuleScrollViewHeight);
+			// Content of canvas area.
+			EditorStyle.ResizeRuleReplacementCanvas(_replacementCanvasSizeWidth, _replacementCanvasSizeHeight);
+			EditorGUI.DrawRect(EditorStyle.RuleReplacementCanvas, Color.white);
+			GUILayout.Label(string.Empty, EditorStyle.RuleReplacementCanvasContent);
 			GUILayout.EndScrollView();
 		}
 	}
