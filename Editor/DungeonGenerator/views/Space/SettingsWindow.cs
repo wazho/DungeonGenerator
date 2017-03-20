@@ -7,7 +7,7 @@ using EditorStyle = EditorExtend.Style;
 
 namespace SpaceGrammar {
 	public class SettingsWindow : EditorWindow {
-		//[Edit later] change the string type with SpaceGrammar...
+		// [Edit later] change the string type with SpaceGrammar...
 		// Types - Symbol & Connection
 		private int _startingSymbolIndex;
 		private int _defaultSymbolIndex;
@@ -23,8 +23,6 @@ namespace SpaceGrammar {
 
 		// Info
 		private string _messageInfo;
-
-		// Apply Button Enabled
 
 		void Awake(){
 			_startingSymbolIndex = 0;
@@ -45,19 +43,19 @@ namespace SpaceGrammar {
 		}
 
 		void OnGUI() {
-			//Symbol Block
+			// Symbol Block
 			GUILayout.Space(EditorStyle.PaddingAfterBlock);
 			GUILayout.Label("Symbol");
 			_startingSymbolIndex = EditorGUILayout.Popup("Starting Symbol", _startingSymbolIndex, _symbolTypes);
 			_defaultSymbolIndex = EditorGUILayout.Popup("Default Symbol", _defaultSymbolIndex, _symbolTypes);
 
-			//Connection Block
+			// Connection Block
 			GUILayout.Space (EditorStyle.PaddingAfterBlock);
 			GUILayout.Label ("Connection");
 			_connectingFloorIndex = EditorGUILayout.Popup("Connecting Floor", _connectingFloorIndex, _connectingFloorTypes);
 			_connectingWallIndex = EditorGUILayout.Popup("Connecting Wall", _connectingWallIndex, _connectingWallTypes);
 
-			//Info Block
+			// Info Block
 			GUILayout.Space (EditorStyle.PaddingAfterBlock);
 			EditorGUILayout.HelpBox(_messageInfo,MessageType.Info);
 			if (GUILayout.Button("Apply", EditorStyles.miniButtonMid, EditorStyle.ButtonHeight)) {
