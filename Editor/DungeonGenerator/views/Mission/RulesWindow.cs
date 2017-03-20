@@ -1,24 +1,25 @@
 using UnityEngine;
 using UnityEditor;
+using System.Linq;
 using System.Collections;
+using System.Text.RegularExpressions;
 
 using EditorAdvance = EditorExtend.Advance;
-using EditorCanvas  = EditorExtend.NodeCanvas;
 using EditorStyle   = EditorExtend.Style;
 
-namespace MissionGrammar {	
+namespace MissionGrammarSystem {	
 	public class RulesWindow : EditorWindow {
 		// Types of the editor.
 		public enum EditingMode {
 			None,
-			SetEdit,
-			RuleEdit,
-			SetDelete,
-			RuleDelete,
-			SetCreate,
-			RuleCreate,
+			EditGroup,
+			EditRule,
+			DeleteGroup,
+			DeleteRule,
+			CreateGroup,
+			CreateRule,
 		}
-		// Types of the tabs.(After Rule Preview Area)
+		// Types of the tabs. (After Rule Preview Area)
 		public enum SymbolEditingMode {
 			None,
 			AddNode,
@@ -26,13 +27,18 @@ namespace MissionGrammar {
 			Copy,
 			Delete,
 		}
-		// The array of set & rule.
-		private string[] _currentSet;
-		private string[] _currentRule;
-		// The index of set & rule.
-		private int _currentSetIndex;
-		private int _currentRuleIndex;
-		// The description of set or rule.
+		// The mode of buttons.
+		private EditingMode       _editingMode;
+		private SymbolEditingMode _currentTab;
+		// Mission rule of current editing.
+		private MissionRule _missionRule = new MissionRule();
+		// The array of group & rule.
+		private string[] _groupsOptions;
+		private string[] _rulesOptions;
+		// The index of group & rule.
+		private int _indexOfGroupsOptions;
+		private int _indexOfRulesOptions;
+		// The description of group or rule.
 		private string _name;
 		private string _description;
 		// Enabled Button-Apply
@@ -41,9 +47,9 @@ namespace MissionGrammar {
 		// The texture of icons.
 		private Texture2D _edit;
 		private Texture2D _delete;
-		// The mode of buttons.
-		private EditingMode       _editingMode;
-		private SymbolEditingMode _currentTab;
+		// The drawing canvas.
+		private Rect _ruleSourceCanvasInWindow;
+		private Rect _ruleReplacementCanvasInWindow;
 		// The scroll bar of canvas.
 		private Vector2 _sourceCanvasScrollPosition;
 		private Vector2 _replacementCanvasScrollPosition;
@@ -55,116 +61,187 @@ namespace MissionGrammar {
 		// The scroll bar of list.
 		private Vector2 _scrollPosition;
 		// [Remove soon] Content of scroll area.
-		private string testString;  
+		private string testString;
 
 		void Awake() {
-			_currentSet        = new string[] { "Set1", "Set2" };
-			_currentRule       = new string[] { "Rule1", "Rule2" };
-			_currentSetIndex   = 0;
-			_currentRuleIndex  = 0;
-			_name              = string.Empty;
-			_description       = string.Empty;
+			_editingMode          = EditingMode.None;
+			_currentTab           = SymbolEditingMode.None;
+			_missionRule          = MissionGrammar.Groups[0].Rules[0];
+			_groupsOptions        = MissionGrammar.Groups.Select(s => s.Name).ToArray();
+			_rulesOptions         = MissionGrammar.Groups[0].Rules.Select(r => r.Name).ToArray();
+			_indexOfGroupsOptions = 0;
+			_indexOfRulesOptions  = 0;
+			_name                 = string.Empty;
+			_description          = string.Empty;
 			_applyEditingButtonEnabled = false;
 			_applySymbolEditingButtonEnabled = false;
-			_edit              = Resources.Load<Texture2D>("Icons/edit");
-			_delete            = Resources.Load<Texture2D>("Icons/delete");
-			_editingMode       = EditingMode.None;
-			_currentTab        = SymbolEditingMode.None;
-			_sourceCanvasScrollPosition = Vector2.zero;
+			_edit                 = Resources.Load<Texture2D>("Icons/edit");
+			_delete               = Resources.Load<Texture2D>("Icons/delete");
+			_sourceCanvasScrollPosition      = Vector2.zero;
 			_replacementCanvasScrollPosition = Vector2.zero;
-			_scrollPosition    = Vector2.zero;
+			_scrollPosition       = Vector2.zero;
+			_sourceCanvasSizeWidth       = 8000;
+			_sourceCanvasSizeHeight      = 1000;
+			_replacementCanvasSizeWidth  = 1000;
+			_replacementCanvasSizeHeight = 300;
 			// [Remove soon]
 			testString = "*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n";
-			// [Modify soon]
-			_sourceCanvasSizeWidth = 8000;
-			_sourceCanvasSizeHeight = 1000;
-			_replacementCanvasSizeWidth = 1000;
-			_replacementCanvasSizeHeight = 300;
 		}
 
 		void OnGUI() {
-			// Current Set.
-			EditorGUILayout.BeginHorizontal();
-			// Dropdown list of Current Set Type.
-			_currentSetIndex = EditorGUILayout.Popup("Current Set", _currentSetIndex, _currentSet);
-			// Buttons - Editor, Delete and Add new.
-			if (GUILayout.Button(_edit, EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
-				_editingMode = EditingMode.SetEdit;
-			}
-			if (GUILayout.Button(_delete, EditorStyles.miniButtonMid, EditorStyle.ButtonHeight)) {
-				_editingMode = EditingMode.SetDelete;
-			}
-			if (GUILayout.Button("Add New", EditorStyles.miniButtonRight, EditorStyle.ButtonHeight)) {
-				_editingMode = EditingMode.SetCreate;
-			}
-			EditorGUILayout.EndHorizontal();
-
-			// Current Rule.
-			EditorGUILayout.BeginHorizontal();
-			// Dropdown list of Currect Rule Type.
-			_currentRuleIndex = EditorGUILayout.Popup("Current Rule", _currentRuleIndex, _currentRule);
-			// Buttons - Editor, Delete and Add new.
-			if (GUILayout.Button(_edit, EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
-				_editingMode = EditingMode.RuleEdit;
-			}
-			if (GUILayout.Button(_delete, EditorStyles.miniButtonMid, EditorStyle.ButtonHeight)) {
-				_editingMode = EditingMode.RuleDelete;
-			}
-			if (GUILayout.Button("Add New", EditorStyles.miniButtonRight, EditorStyle.ButtonHeight)) {
-				_editingMode = EditingMode.RuleCreate;
-			}
-			EditorGUILayout.EndHorizontal();
-
-			// Show the Editor of Set or Rule.
+			// Layout the combobox and editor of mission group.
+			LayoutMissionGroupOptions();
+			// Layout the combobox and editor of mission rule.
+			LayoutMissionRuleOptions();
+			// Layout the editor of mission group or mission rule.
 			switch (_editingMode) {
-				case EditingMode.SetEdit:
-				case EditingMode.SetCreate:
-				case EditingMode.RuleEdit:
-				case EditingMode.RuleCreate:
-					ShowEditSetRule();
-					break;
+			case EditingMode.EditGroup:
+			case EditingMode.CreateGroup:
+			case EditingMode.EditRule:
+			case EditingMode.CreateRule:
+				LayoutBasicInfoEditor();
+				break;
 			}
-
-			// Show the area of rule-preview.
-			GUILayout.BeginArea(EditorStyle.RulePreviewArea);
-			ShowRulePreviewArea();
-			GUILayout.EndArea();
-
+			// Layout the canvas areas of two graph grammars.
+			LayoutRulesCanvasArea();
 			// Show the area of after-rule-preview.
-			GUILayout.BeginArea(EditorStyle.AfterRulePreviewArea);
-			ShowAfterRulePreviewArea();
+			LayoutRuleCanvasEditor();
+			// Control whole events.
+			EventController();
+
 			// [Remove soon] Just Testing
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.BeginVertical();
-			_sourceCanvasSizeWidth = EditorAdvance.LimitedIntField("SourceCanvasSizeWidth:", _sourceCanvasSizeWidth, 100, 5000);
+			_sourceCanvasSizeWidth  = EditorAdvance.LimitedIntField("SourceCanvasSizeWidth:", _sourceCanvasSizeWidth, 100, 5000);
 			_sourceCanvasSizeHeight = EditorAdvance.LimitedIntField("SourceCanvasSizeHeight:", _sourceCanvasSizeHeight, 100, 2000);
 			EditorGUILayout.EndVertical();
 			EditorGUILayout.BeginVertical();
-			_replacementCanvasSizeWidth = EditorAdvance.LimitedIntField("ReplacementCanvasSizeWidth:", _replacementCanvasSizeWidth, 100, 5000);
+			_replacementCanvasSizeWidth  = EditorAdvance.LimitedIntField("ReplacementCanvasSizeWidth:", _replacementCanvasSizeWidth, 100, 5000);
 			_replacementCanvasSizeHeight = EditorAdvance.LimitedIntField("ReplacementCanvasSizeHeight:", _replacementCanvasSizeHeight, 100, 5000);
 			EditorGUILayout.EndVertical();
 			EditorGUILayout.EndHorizontal();
-			GUILayout.EndArea();
 		}
+		// Layout the combobox and editor of mission group.
+		void LayoutMissionGroupOptions() {
+			// Current group.
+			EditorGUILayout.BeginHorizontal();
+			// Dropdown list of current group type.
+			_indexOfGroupsOptions = EditorGUILayout.Popup("Current Group", _indexOfGroupsOptions, _groupsOptions);
+			// Editor buttons, edit, delete and create.
+			if (GUILayout.Button(_edit, EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
+				_editingMode = EditingMode.EditGroup;
+			}
+			if (GUILayout.Button(_delete, EditorStyles.miniButtonMid, EditorStyle.ButtonHeight)) {
+				_editingMode = EditingMode.DeleteGroup;
+			}
+			if (GUILayout.Button("Add New", EditorStyles.miniButtonRight, EditorStyle.ButtonHeight)) {
+				_editingMode = EditingMode.CreateGroup;
+			}
+			EditorGUILayout.EndHorizontal();
+		}
+		// Layout the combobox and editor of mission rule, mission rule is sub-member in current mission group.
+		void LayoutMissionRuleOptions() {
+			// Current rule.
+			EditorGUILayout.BeginHorizontal();
+			// Dropdown list of Currect Rule Type.
+			_indexOfRulesOptions = EditorGUILayout.Popup("Current Rule", _indexOfRulesOptions, _rulesOptions);
+			// Buttons - Editor, Delete and Add new.
+			if (GUILayout.Button(_edit, EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
+				_editingMode = EditingMode.EditRule;
+			}
+			if (GUILayout.Button(_delete, EditorStyles.miniButtonMid, EditorStyle.ButtonHeight)) {
+				_editingMode = EditingMode.DeleteRule;
+			}
+			if (GUILayout.Button("Add New", EditorStyles.miniButtonRight, EditorStyle.ButtonHeight)) {
+				_editingMode = EditingMode.CreateRule;
+			}
+			EditorGUILayout.EndHorizontal();
+		}
+		// Layout the editor of mission group or mission rule.
+		void LayoutBasicInfoEditor() {
+			// Information.
+			_name = EditorGUILayout.TextField("Name", _name);
+			_description = EditorGUILayout.TextField("Description", _description);
+			// Remind user [need Modify]
+			if (_name == string.Empty && _description == string.Empty) {
+				EditorGUILayout.HelpBox("Info \nThe name is empty. \nThe description is empty.", MessageType.Info);
+			}
+			if (_name == string.Empty && _description != string.Empty) {
+				EditorGUILayout.HelpBox("Info \nThe name is empty.", MessageType.Info);
+			}
+			if (_name != string.Empty && _description == string.Empty) {
+				EditorGUILayout.HelpBox("Info \nThe description is empty.", MessageType.Info);
+			}
+			if (_name != string.Empty && _description != string.Empty) {
+				_applyEditingButtonEnabled = true;
+				EditorGUILayout.HelpBox("Info \nNothing.", MessageType.Info);
+			}
+			// Buttons - Apply.
+			GUI.enabled = _applyEditingButtonEnabled;
+			if (GUILayout.Button("Apply", EditorStyles.miniButton, EditorStyle.ButtonHeight)) {
+				if (EditorUtility.DisplayDialog("Saving", 
+				"Are you sure to save?",
+				"Yes", "No")) {
+				} else {
 
-		void ShowRulePreviewArea() {
+				}
+			}
+			GUI.enabled = true;
+		}
+		// Layout the canvas areas of two graph grammars.
+		void LayoutRulesCanvasArea() {
+			GUILayout.BeginArea(EditorStyle.RulePreviewArea);
 			// Information of Source and Replacement.
 			EditorGUILayout.BeginHorizontal();
 			GUILayout.Label("Source", EditorStyle.Header2, GUILayout.Width(Screen.width / 2));
 			GUILayout.Label("Replacement", EditorStyle.Header2, GUILayout.Width(Screen.width / 2));
 			EditorGUILayout.EndHorizontal();
-			// Canvas.
-			EditorGUILayout.BeginHorizontal();
+
+			// Canvas
+			// SourceCanvas
+			GUILayout.BeginArea(EditorStyle.RuleSourceCanvasArea);
+			// Get the Rect in EditWindow from the GUI rect. (Position = Real screen position - this EditWindow position)
+			_ruleSourceCanvasInWindow.position = GUIUtility.GUIToScreenPoint(EditorStyle.RuleGraphGrammarCanvas.position) - this.position.position;
+			_ruleSourceCanvasInWindow.size     = EditorStyle.RuleGraphGrammarCanvas.size;
+			// Show the source canvas.
 			ShowSourceCanvas();
+			// Draw Nodes and Connections.
+			foreach (GraphGrammarNode node in _missionRule.SourceRule.Nodes) {
+				GraphGrammar.DrawNode(node);
+			}
+			foreach (GraphGrammarConnection connection in _missionRule.SourceRule.Connections) {
+				GraphGrammar.DrawConnection(connection);
+			}
+			GUILayout.EndArea();
+
+			// ReplacementCanvas
+			GUILayout.BeginArea(EditorStyle.RuleReplacementCanvasArea);
+			_ruleReplacementCanvasInWindow.position = GUIUtility.GUIToScreenPoint(EditorStyle.RuleGraphGrammarCanvas.position) - this.position.position;
+			_ruleReplacementCanvasInWindow.size = EditorStyle.RuleGraphGrammarCanvas.size;
+			// Show the replacement canvas.
 			ShowReplacementCanvas();
-			EditorGUILayout.EndHorizontal();
-
+			foreach (GraphGrammarNode node in _missionRule.ReplacementRule.Nodes) {
+				GraphGrammar.DrawNode(node);
+			}
+			foreach (GraphGrammarConnection connection in _missionRule.ReplacementRule.Connections) {
+				GraphGrammar.DrawConnection(connection);
+			}
+			GUILayout.EndArea();
+			GUILayout.EndArea();
 		}
-
-		void ShowAfterRulePreviewArea() {
+		// Layout the canvas editor of current selected rules.
+		void LayoutRuleCanvasEditor() {
+			GUILayout.BeginArea(EditorStyle.AfterRulePreviewArea);
 			// Buttons - Add Node & Add Connection & Copy & Delete.
 			EditorGUILayout.BeginHorizontal();
 			if (GUILayout.Button("Add Node", EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
+				// [Will remove] Just test canvas.
+				// Add Alphabet's Node 
+				_missionRule.SourceRule.AddNode(Alphabet.Nodes[0]);
+				//_missionRule.SourceRule.RevokeAllSelected();
+				_missionRule.ReplacementRule.AddNode(Alphabet.Nodes[1]);
+				_missionRule.ReplacementRule.RevokeAllSelected();
+
 				_applySymbolEditingButtonEnabled = true;
 				_currentTab = SymbolEditingMode.AddNode;
 			}
@@ -183,14 +260,14 @@ namespace MissionGrammar {
 			EditorGUILayout.EndHorizontal();
 			// Show the list.
 			switch (_currentTab) {
-				case SymbolEditingMode.AddNode:
-					LayoutNodeList();
-					break;
-				case SymbolEditingMode.AddConnection:
-					LayoutConnectionList();
-					break;
+			case SymbolEditingMode.AddNode:
+				LayoutNodeList();
+				break;
+			case SymbolEditingMode.AddConnection:
+				LayoutConnectionList();
+				break;
 			}
-			
+
 			// Remind user [need Modify]
 			EditorGUILayout.HelpBox("Info \nThe Node's name has been used.", MessageType.Info);
 			// Buttons - Apply.
@@ -204,38 +281,95 @@ namespace MissionGrammar {
 				}
 			}
 			GUI.enabled = true;
+			GUILayout.EndArea();
+		}
+		// Control whole events.
+		void EventController() {
+			if (Event.current.type == EventType.MouseDown) {
+				OnClickedSymbolInCanvas();
+			} else if (Event.current.type == EventType.MouseDrag) {
+				// Drag and drop event, could move the symbols of canvas.
+				OnDraggedAndDroppedInCanvas();
+			}
 		}
 
-		void ShowEditSetRule() {
-			// Information.
-			_name = EditorGUILayout.TextField("Name", _name);
-			_description = EditorGUILayout.TextField("Description", _description);
-			// Remind user [need Modify]
-			if (_name == string.Empty && _description == string.Empty) {
-				EditorGUILayout.HelpBox("Info \nThe name is empty. \nThe description is empty.", MessageType.Info);
+		// Click Event (Just copy-paste from example_window.cs)
+		void OnClickedSymbolInCanvas() {
+			if (_ruleSourceCanvasInWindow.Contains(Event.current.mousePosition)) {
+				_missionRule.ReplacementRule.RevokeAllSelected();
+				_missionRule.SourceRule.TouchedSymbol(Event.current.mousePosition - _ruleSourceCanvasInWindow.position);
+				Repaint();
+			} else if (_ruleReplacementCanvasInWindow.Contains(Event.current.mousePosition)) {
+				_missionRule.SourceRule.RevokeAllSelected();
+				_missionRule.ReplacementRule.TouchedSymbol(Event.current.mousePosition - _ruleReplacementCanvasInWindow.position);
+				Repaint();
+			} else {
+				Debug.Log(Event.current.mousePosition);
+				Debug.Log(_ruleSourceCanvasInWindow);
+				Debug.Log(_ruleReplacementCanvasInWindow);
 			}
-			if (_name == string.Empty && _description != string.Empty) {
-				EditorGUILayout.HelpBox("Info \nThe name is empty.", MessageType.Info);
-			}
-			if (_name != string.Empty && _description == string.Empty) {
-				EditorGUILayout.HelpBox("Info \nThe description is empty.", MessageType.Info);
-			}
-			if (_name != string.Empty && _description != string.Empty) {
-				_applyEditingButtonEnabled = true;
-				EditorGUILayout.HelpBox("Info \nNothing.", MessageType.Info);
-			}
-
-			// Buttons - Apply.
-			GUI.enabled = _applyEditingButtonEnabled;
-			if (GUILayout.Button("Apply", EditorStyles.miniButton, EditorStyle.ButtonHeight)) {
-				if (EditorUtility.DisplayDialog("Saving", 
-				"Are you sure to save?",
-				"Yes", "No")) {
-				} else {
-
+		}
+		// Drag and drop event (Just copy-paste from example_window.cs)
+		private static GraphGrammarNode tempNode;
+		private static GraphGrammarConnection tempConnection;
+		void OnDraggedAndDroppedInCanvas() {
+			// If mouse position is in the canvas of source rule. 
+			if (_ruleSourceCanvasInWindow.Contains(Event.current.mousePosition)) {
+				_missionRule.ReplacementRule.RevokeAllSelected();
+				Vector2 positionInCanvas = Event.current.mousePosition - _ruleSourceCanvasInWindow.position;
+				// Select node.
+				if (_missionRule.SourceRule.SelectedSymbol is GraphGrammarNode) {
+					tempNode = (GraphGrammarNode) _missionRule.SourceRule.SelectedSymbol;
+					tempNode.Position += Event.current.delta;
+				}
+				// Select connection.
+				else if (_missionRule.SourceRule.SelectedSymbol is GraphGrammarConnection) {
+					tempConnection = (GraphGrammarConnection) _missionRule.SourceRule.SelectedSymbol;
+					// Start point.
+					if (tempConnection.StartSelected) {
+						tempConnection.StartPosition = positionInCanvas;
+						_missionRule.SourceRule.StickyNode(tempConnection, positionInCanvas, "start");
+					}
+					// End point.
+					else if (tempConnection.EndSelected) {
+						tempConnection.EndPosition = positionInCanvas;
+						_missionRule.SourceRule.StickyNode(tempConnection, positionInCanvas, "end");
+					}
 				}
 			}
-			GUI.enabled = true;
+			// If mouse position is in the canvas of replacement rule. 
+			else if (_ruleReplacementCanvasInWindow.Contains(Event.current.mousePosition)) {
+				_missionRule.SourceRule.RevokeAllSelected();
+				Vector2 positionInCanvas = Event.current.mousePosition - _ruleReplacementCanvasInWindow.position;
+				// Select node.
+				if (_missionRule.ReplacementRule.SelectedSymbol is GraphGrammarNode) {
+					tempNode = (GraphGrammarNode) _missionRule.ReplacementRule.SelectedSymbol;
+					tempNode.Position += Event.current.delta;
+				}
+					// Select connection.
+				else if (_missionRule.ReplacementRule.SelectedSymbol is GraphGrammarConnection) {
+						tempConnection = (GraphGrammarConnection) _missionRule.ReplacementRule.SelectedSymbol;
+					// Start point.
+					if (tempConnection.StartSelected) {
+						tempConnection.StartPosition = positionInCanvas;
+						_missionRule.ReplacementRule.StickyNode(tempConnection, positionInCanvas, "start");
+					}
+					// End point.
+					else if (tempConnection.EndSelected) {
+						tempConnection.EndPosition = positionInCanvas;
+						_missionRule.ReplacementRule.StickyNode(tempConnection, positionInCanvas, "end");
+					}
+				}
+			} else {
+				// Revoke all 'selected' to false.
+				_missionRule.SourceRule.RevokeAllSelected();
+				_missionRule.ReplacementRule.RevokeAllSelected();
+			}
+			// Refresh the layout.
+			Repaint();
+			// Release.
+			tempNode = null;
+			tempConnection = null;
 		}
 
 		void LayoutNodeList() {
@@ -255,7 +389,6 @@ namespace MissionGrammar {
 			GUILayout.Label(testString, EditorStyles.label);
 			GUILayout.EndScrollView();
 		}
-
 		void ShowSourceCanvas() {
 			// Set the scroll position.
 			_sourceCanvasScrollPosition = GUILayout.BeginScrollView(_sourceCanvasScrollPosition, GUILayout.Width(Screen.width / 2), EditorStyle.RuleScrollViewHeight);

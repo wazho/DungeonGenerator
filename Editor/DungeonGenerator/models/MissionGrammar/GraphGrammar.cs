@@ -6,42 +6,44 @@ using System.Collections.Generic;
 
 using EditorCanvas = EditorExtend.NodeCanvas;
 
-namespace MissionGrammar {
+namespace MissionGrammarSystem {
 	public class GraphGrammar {
-		private List<GraphGrammarNode>       nodes;
-		private List<GraphGrammarConnection> connections;
-		private GraphGrammarSymbol           selectedSymbol;
+		private List<GraphGrammarNode>       _nodes;
+		private List<GraphGrammarConnection> _connections;
+		private GraphGrammarSymbol           _selectedSymbol;
 
 		public GraphGrammar() {
-			this.nodes          = new List<GraphGrammarNode>();
-			this.connections    = new List<GraphGrammarConnection>();
-			this.selectedSymbol = null;
+			this._nodes          = new List<GraphGrammarNode>();
+			this._connections    = new List<GraphGrammarConnection>();
+			this._selectedSymbol = null;
 		}
 
+		// Nodes, getter and setter.
 		public List<GraphGrammarNode> Nodes {
-			get { return this.nodes; }
-			set { this.nodes = value; }
+			get { return _nodes; }
+			set { _nodes = value; }
 		}
-
+		// Connections, getter and setter.
 		public List<GraphGrammarConnection> Connections {
-			get { return this.connections; }
-			set { this.connections = value; }
+			get { return _connections; }
+			set { _connections = value; }
 		}
-
+		// SelectedSymbol, getter and setter.
+		// This is the parent class, it can be assigned by GraphGrammarNode of GraphGrammarConnection.
 		public GraphGrammarSymbol SelectedSymbol {
-			get { return this.selectedSymbol; }
-			set { this.selectedSymbol = value; }
+			get { return _selectedSymbol; }
+			set { _selectedSymbol = value; }
 		}
 
 		// Pass the mouse position.
-		// Be careful for one thing. 'this.nodes' and 'this.connections' must pre-order by ordering.
+		// Be careful for one thing. '_nodes' and '_connections' must pre-order by ordering.
 		public void TouchedSymbol(Vector2 pos) {
 			// Find the 'points of selected connection'.
-			foreach (GraphGrammarConnection symbol in this.connections.AsEnumerable().Reverse()) {
+			foreach (GraphGrammarConnection symbol in _connections.AsEnumerable().Reverse()) {
 				// This connection is selected, check its endpoints are in scope or not.
 				if (symbol.Selected) {
 					// Initial all symbol first.
-					this.RevokeAllSelected();
+					RevokeAllSelected();
 					// Update the symbol status. If out of selecting, disabled the connection.
 					if (symbol.IsInStartscope(pos)) {
 						symbol.Selected = true;
@@ -53,43 +55,43 @@ namespace MissionGrammar {
 						break;
 					}
 					// Update selected symbol.
-					this.selectedSymbol = symbol;
+					_selectedSymbol = symbol;
 					return;
 				}
 			}
 			// Find the 'selected nodes'.
-			foreach (GraphGrammarNode symbol in this.nodes.AsEnumerable().Reverse()) {
+			foreach (GraphGrammarNode symbol in _nodes.AsEnumerable().Reverse()) {
 				if (symbol.IsInScope(pos)) {
 					// Initial all symbol first.
-					this.RevokeAllSelected();
+					RevokeAllSelected();
 					// Update the symbol status.
 					symbol.Selected = true;
 					// Update selected symbol.
-					this.selectedSymbol = symbol;
+					_selectedSymbol = symbol;
 					return;
 				}
 			}
 			// Find the 'selected connections'.
-			foreach (GraphGrammarConnection symbol in this.connections.AsEnumerable().Reverse()) {
+			foreach (GraphGrammarConnection symbol in _connections.AsEnumerable().Reverse()) {
 				float distance = HandleUtility.DistancePointLine((Vector3) pos, (Vector3) symbol.StartPosition, (Vector3) symbol.EndPosition);
 				if (distance < symbol.LineThickness) {
 					// Initial all symbol first.
-					this.RevokeAllSelected();
+					RevokeAllSelected();
 					// Update the symbol status.
 					symbol.Selected = true;
 					// Update selected symbol.
-					this.selectedSymbol = symbol;
+					_selectedSymbol = symbol;
 					return;
 				}
 			}
 			// If anything has been found or not.
-			this.RevokeAllSelected();
-			this.selectedSymbol = null;
+			RevokeAllSelected();
+			_selectedSymbol = null;
 		}
 
 		// Points of connection is sticky to the node.
 		public void StickyNode(GraphGrammarConnection connection, Vector2 pos, string location) {
-			foreach (GraphGrammarNode node in this.nodes.AsEnumerable().Reverse()) {
+			foreach (GraphGrammarNode node in _nodes.AsEnumerable().Reverse()) {
 				if (node.IsInScope(pos)) {
 					if (string.Equals(location, "start")) {
 						connection.StartpointStickyOn = node;
@@ -109,36 +111,53 @@ namespace MissionGrammar {
 		// Add a new node.
 		public void AddNode() {
 			// Revoke all symbols first.
-			this.RevokeAllSelected();
+			RevokeAllSelected();
 			// Create a new node and update its ordering and selected status.
 			GraphGrammarNode node = new GraphGrammarNode(NodeTerminalType.NonTerminal);
-			node.Ordering = this.nodes.Count + 1;
+			node.Ordering = _nodes.Count + 1;
 			node.Selected = true;
-			this.nodes.Add(node);
+			_nodes.Add(node);
 			// Update the current node.
-			this.selectedSymbol = node;
+			_selectedSymbol = node;
+		}
+		public void AddNode(GraphGrammarNode nodeClone) {
+			RevokeAllSelected();
+			// Deep copy.
+			GraphGrammarNode node = new GraphGrammarNode(nodeClone);
+			node.Ordering = _nodes.Count + 1;
+			node.Selected = true;
+			_nodes.Add(node);
+			_selectedSymbol = node;
 		}
 		// Add a new connection.
 		public void AddConnection() {
 			// Revoke all symbols first.
-			this.RevokeAllSelected();
+			RevokeAllSelected();
 			// Create a new connection.
 			GraphGrammarConnection connection = new GraphGrammarConnection();
 			connection.Selected = true;
-			this.connections.Add(connection);
+			_connections.Add(connection);
 			// Update the current connection.
-			this.selectedSymbol = connection;
+			_selectedSymbol = connection;
 		}
-
+		public void AddConnection(GraphGrammarConnection connectionClone) {
+			RevokeAllSelected();
+			// Deep copy.
+			GraphGrammarConnection connection = new GraphGrammarConnection(connectionClone);
+			connection.Selected = true;
+			_connections.Add(connection);
+			_selectedSymbol = connection;
+		}
 		// Set all 'seleted' of symbols to false.
 		public void RevokeAllSelected() {
-			foreach (GraphGrammarNode symbol in this.nodes) {
+			foreach (GraphGrammarNode symbol in _nodes) {
 				symbol.Selected = false;
 			}
-			foreach (GraphGrammarConnection symbol in this.connections) {
+			foreach (GraphGrammarConnection symbol in _connections) {
 				symbol.Selected = false;
 				// symbol.StartSelected = symbol.EndSelected = false;
 			}
+			_selectedSymbol = null;
 			return;
 		}
 		
@@ -154,6 +173,29 @@ namespace MissionGrammar {
 			EditorCanvas.DrawQuad((int) pos[0], (int) pos[1], size+thickness*2, size+thickness*2, Color.black);
 			EditorCanvas.DrawQuad((int) pos[0]+thickness, (int) pos[1]+thickness, size, size, isTerminal ? Color.green : Color.yellow);
 		}
+		public static void DrawNode(GraphGrammarNode node) {
+			int thickness   = 2;
+
+			switch (node.Terminal) {
+			case NodeTerminalType.NonTerminal:
+				if (node.Selected) {
+					EditorCanvas.DrawQuad(new Rect(node.OutlineScope.x - thickness, (int) node.OutlineScope.y - thickness, node.OutlineScope.width + thickness * 2, node.OutlineScope.height + thickness * 2), Color.red);
+				}
+				EditorCanvas.DrawQuad(node.OutlineScope, node.OutlineColor);
+				EditorCanvas.DrawQuad(node.FilledScope, node.FilledColor);
+				EditorCanvas.DrawQuad(node.TextScope, Color.clear, node.Abbreviation, node.TextColor);
+				break;
+			case NodeTerminalType.Terminal:
+				if (node.Selected) {
+					EditorCanvas.DrawDics(node.Position, 20 + thickness, Color.red);
+				}
+				EditorCanvas.DrawDics(node.Position, 20, node.OutlineColor);
+				EditorCanvas.DrawDics(node.Position, 18, node.FilledColor);
+				EditorCanvas.DrawQuad(node.TextScope, Color.clear, node.Abbreviation, node.TextColor);
+				break;
+			}
+		}
+
 		// [Draw on canvas] Draw the connection on canvas.
 		public static void DrawConnection(GraphGrammarConnection connection) {
 			// Setting of endpoints and line.

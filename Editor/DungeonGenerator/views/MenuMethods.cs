@@ -2,14 +2,14 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections;
 
-using Mission    = MissionGrammar;
+using Mission    = MissionGrammarSystem;
 using Space      = SpaceGrammar;
 using Generation = GraphGeneration;
 using Dungeon    = DungeonLevel;
 
 public class DungeonWindow : EditorWindow {
 	private static EditorWindow _window;
-	private static Rect _defaultSize = new Rect(35, 35, 500, 500);
+	private static Rect _defaultSize = new Rect(35, 35, 500, 650);
 
 	// Add the 'Level settings' in 'Dungeon' menu.
 	[MenuItem("Dungeon/Level settings %#&i", false, 1)]

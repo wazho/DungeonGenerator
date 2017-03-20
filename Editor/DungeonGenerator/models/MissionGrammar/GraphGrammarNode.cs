@@ -4,7 +4,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace MissionGrammar {
+namespace MissionGrammarSystem {
 	// Terminal types of node.
 	public enum NodeTerminalType {
 		NonTerminal = 0,
@@ -58,6 +58,13 @@ namespace MissionGrammar {
 		// Basic construction.
 		public GraphGrammarNode(NodeTerminalType terminal) : this() {
 			this._terminal = terminal;
+		}
+		// Basic construction.
+		public GraphGrammarNode(string name, string abbreviation, string description, NodeTerminalType terminal) : this() {
+			this._name         = name;
+			this._abbreviation = abbreviation;
+			this._description  = description;
+			this._terminal     = terminal;
 		}
 		// Clone construction for basic informations.
 		public GraphGrammarNode(GraphGrammarNode node) {

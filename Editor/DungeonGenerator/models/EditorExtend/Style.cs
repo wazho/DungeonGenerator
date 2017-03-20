@@ -28,6 +28,9 @@ namespace EditorExtend {
 		private static Rect _spaceRulePreviewCanvas   = new Rect (0,   0, Screen.width, 150);
 
 		private static Rect _rulePreviewArea          = new Rect(0, 150, Screen.width, 300);
+		private static Rect _ruleSourceCanvasArea     = new Rect(0,  25, Screen.width / 2, 200);
+		private static Rect _ruleReplacementCanvasArea= new Rect(Screen.width / 2, 25, Screen.width / 2, 200);
+		private static Rect _ruleGraphGrammarCanvas   = new Rect(0, 0, Screen.width, 200);
 		private static Rect _afterRulePreviewArea     = new Rect(0, 400, Screen.width, Screen.height);
 
 		// Font size.
@@ -102,6 +105,8 @@ namespace EditorExtend {
 				return _rulePreviewArea;
 			}
 		}
+
+
 		private const int _ruleScrollViewHeight = 200;
 		public static GUILayoutOption RuleScrollViewHeight {
 			get { return GUILayout.Height(_ruleScrollViewHeight); }
@@ -180,6 +185,30 @@ namespace EditorExtend {
 				return _spaceRulePreviewCanvas;
 			}
 		}
+
+
+		public static Rect RuleSourceCanvasArea {
+			get {
+				_ruleSourceCanvasArea.width = Screen.width/2;
+				return _ruleSourceCanvasArea;
+			}
+		}
+		public static Rect RuleReplacementCanvasArea {
+			get {
+				_ruleReplacementCanvasArea.x = Screen.width / 2;
+				_ruleReplacementCanvasArea.width = Screen.width/2;
+				return _ruleReplacementCanvasArea;
+			}
+		}
+		public static Rect RuleGraphGrammarCanvas {
+			get {
+				_ruleGraphGrammarCanvas.width = Screen.width / 2;
+				return _ruleGraphGrammarCanvas;
+			}
+		}
+
+
+
 
 		private static GUIStyle _labelInNodeList       = new GUIStyle(GUI.skin.label);
 		private static Font     _labelInNodeListFont   = Resources.Load("Fonts/texgyrecursor") as Font;

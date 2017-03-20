@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 using EditorAdvance = EditorExtend.Advance;
 using EditorStyle   = EditorExtend.Style;
 
-namespace MissionGrammar {
+namespace MissionGrammarSystem {
 	// The mission alphabet window.
 	public class AlphabetWindow : EditorWindow {
 		// Tabs of this window.
@@ -358,7 +358,7 @@ namespace MissionGrammar {
                     NodeFieldValidation();
                     break;
 				case EditingMode.Modify:
-					if (Alphabet.SelectedNode.Terminal == _node.Terminal &&
+					if (Alphabet.SelectedNode != null && Alphabet.SelectedNode.Terminal == _node.Terminal &&
 						Alphabet.SelectedNode.Name == _node.Name &&
 						Alphabet.SelectedNode.Abbreviation == _node.Abbreviation &&
 						Alphabet.SelectedNode.Description == _node.Description) {
