@@ -50,9 +50,6 @@ namespace MissionGrammarSystem {
 		private Rect    _symbolListCanvasInWindow;
 		private Rect    _canvas;
 		private Vector2 _centerPosition;
-        	//If nodes info or connection info are repeated.
-        	private bool _isRepeated;
-        	private System.Collections.Generic.IEnumerable<GraphGrammarNode> _repeatedNodes;
 
 		// Native function for Editor Window. Trigger via opening the window.
 		void Awake() {
@@ -320,20 +317,13 @@ namespace MissionGrammarSystem {
 			Repaint();
 		}
 
-        	// Validate that the field data is legal.
-        	private static Regex _ruleOfTerminalSymbolName            = new Regex(@"^[a-z]{1}[a-zA-Z]{,19}$");
-        	private static Regex _ruleOfTerminalSymbolAbbreviation    = new Regex(@"^[a-z]{1,4}$");
-        	private static Regex _ruleOfNonTerminalSymbolName         = new Regex(@"^[A-Z]{1}[a-zA-Z]{,19}$");
-        	private static Regex _ruleOfNonTerminalSymbolAbbreviation = new Regex(@"^[A-Z]{1,4}$");
+		// Validate that the field data is legal.
+		private static Regex _ruleOfTerminalSymbolName            = new Regex(@"^[a-z]{1}[a-zA-Z]{,19}$");
+		private static Regex _ruleOfTerminalSymbolAbbreviation    = new Regex(@"^[a-z]{1,4}$");
+		private static Regex _ruleOfNonTerminalSymbolName         = new Regex(@"^[A-Z]{1}[a-zA-Z]{,19}$");
+		private static Regex _ruleOfNonTerminalSymbolAbbreviation = new Regex(@"^[A-Z]{1,4}$");
 		void NodeFieldValidation() {
-            		//if repeat.
-            		_repeatedNodes = from node in Alphabet.Nodes
-					where (node.Name == _node.Name || node.Abbreviation == _node.Abbreviation)&& 
-					node != Alphabet.SelectedNode
-                             		select node;
-            		_isRepeated = (_repeatedNodes).Any();
-
-            		if (_symbolName == string.Empty ||
+			if (_symbolName == string.Empty ||
 				_symbolAbbreviation == string.Empty ||
 				_symbolDescription == string.Empty) {
 				_messageHint = "Please fill every column.";
@@ -354,26 +344,25 @@ namespace MissionGrammarSystem {
 				! _ruleOfNonTerminalSymbolAbbreviation.IsMatch(_symbolAbbreviation)) {
 				_messageHint = "Abbreviation field error! \nPlease use only uppercase letters (A-Z) and 4 characters or less.";
 				_messageType = MessageType.Error;
-			} else if (_isRepeated) {
-                		if (_repeatedNodes.First().Name == _node.Name) {
-                    			_messageHint = "Node name has been used!\nPlease try another one.";
-                		} else {
-                    			_messageHint = "Node abbreviation has been used!\nPlease try another one.";
-                		}
-                		_messageType = MessageType.Error;
-            		} else {
-                		_messageHint = "The data has changed, but still not save it.";
-                		_messageType = MessageType.Info;
-            		}  
+			} else if (Alphabet.IsNodeNameUsed(_node)) {
+				_messageHint = "Node name has been used!\nPlease try another one.";
+				_messageType = MessageType.Error;
+			} else if (Alphabet.IsNodeAbbreviationUsed(_node)) {
+				_messageHint = "Node abbreviation has been used!\nPlease try another one.";
+				_messageType = MessageType.Error;
+			} else {
+				_messageHint = "The data has changed, but still not save it.";
+				_messageType = MessageType.Info;
+			}
 		}
-        	// Hint message about the form fields.
-        	void LayoutSubmitionHint() {
+		// Hint message about the form fields.
+		void LayoutSubmitionHint() {
 			switch (_currentTab) {
 			case AlphabetWindowTab.Nodes:
 				switch (_editingMode) {
 				case EditingMode.Create:
-                    NodeFieldValidation();
-                    break;
+					NodeFieldValidation();
+					break;
 				case EditingMode.Modify:
 					if (Alphabet.SelectedNode != null && Alphabet.SelectedNode.Terminal == _node.Terminal &&
 						Alphabet.SelectedNode.Name == _node.Name &&
@@ -397,6 +386,7 @@ namespace MissionGrammarSystem {
 			// When click apply button.
 			switch (_editingMode) {
 			case EditingMode.Create:
+				GUI.enabled = (_messageType != MessageType.Error && _messageType != MessageType.Warning);
 				if (! GUILayout.Button("Add this symbol into alphabet", EditorStyles.miniButton, EditorStyle.ButtonHeight)) { break; }
 				// When click the button, revoke all selected symbols and add the symbon in list.
 				switch (_currentTab) {
@@ -416,8 +406,10 @@ namespace MissionGrammarSystem {
 				_editingMode      = EditingMode.Modify;
 				// Unfocus from the field.
 				GUI.FocusControl("FocusToNothing");
+				GUI.enabled = true;
 				break;
 			case EditingMode.Modify:
+				GUI.enabled = (_messageType != MessageType.Error && _messageType != MessageType.Warning);
 				if (! GUILayout.Button("Update the changed", EditorStyles.miniButton, EditorStyle.ButtonHeight)) { break; }
 				// When click the button, update the symbol informations.
 				switch (_currentTab) {
@@ -430,6 +422,7 @@ namespace MissionGrammarSystem {
 				}
 				// Unfocus from the field.
 				GUI.FocusControl("FocusToNothing");
+				GUI.enabled = true;
 				break;
 			}
 		}

@@ -51,6 +51,20 @@ namespace MissionGrammarSystem {
 		public static void RemoveConnection(GraphGrammarConnection connection) {
 			_connections.Remove(connection);
 		}
+		// Return a boolean when it's name never be used in alphabet.
+		public static bool IsNodeNameUsed(GraphGrammarNode currentNode) {
+			return (from node in Alphabet.Nodes
+				where node.Name == currentNode.Name && node != currentNode
+				select node)
+				.Any();
+		}
+		// Return a boolean about it's abbreviation never be used in alphabet.
+		public static bool IsNodeAbbreviationUsed(GraphGrammarNode currentNode) {
+			return (from node in Alphabet.Nodes
+				where node.Abbreviation == currentNode.Abbreviation && node != currentNode
+				select node)
+				.Any();
+		}
 		// Remove all nodes.
 		public static void ClearAllNodes() {
 			// Create a new node.
