@@ -118,15 +118,15 @@ namespace MissionGrammar {
 			// Update the current node.
 			this.selectedSymbol = node;
 		}
-        public void AddNode(GraphGrammarNode nodeClone) {
-            this.RevokeAllSelected();
-            // Deep copy.
-            GraphGrammarNode node = new GraphGrammarNode(nodeClone);
-            node.Ordering = this.nodes.Count + 1;
-            node.Selected = true;
-            this.nodes.Add(node);
-            this.selectedSymbol = node;
-        }
+		public void AddNode(GraphGrammarNode nodeClone) {
+			this.RevokeAllSelected();
+			// Deep copy.
+			GraphGrammarNode node = new GraphGrammarNode(nodeClone);
+			node.Ordering = this.nodes.Count + 1;
+			node.Selected = true;
+			this.nodes.Add(node);
+			this.selectedSymbol = node;
+		}
 		// Add a new connection.
 		public void AddConnection() {
 			// Revoke all symbols first.
@@ -138,16 +138,16 @@ namespace MissionGrammar {
 			// Update the current connection.
 			this.selectedSymbol = connection;
 		}
-        public void AddConnection(GraphGrammarConnection connectionClone) {
-            this.RevokeAllSelected();
-            // Deep copy.
-            GraphGrammarConnection connection = new GraphGrammarConnection(connectionClone);
-            connection.Selected = true;
-            this.connections.Add(connection);
-            this.selectedSymbol = connection;
-        }
-        // Set all 'seleted' of symbols to false.
-        public void RevokeAllSelected() {
+		public void AddConnection(GraphGrammarConnection connectionClone) {
+			this.RevokeAllSelected();
+			// Deep copy.
+			GraphGrammarConnection connection = new GraphGrammarConnection(connectionClone);
+			connection.Selected = true;
+			this.connections.Add(connection);
+			this.selectedSymbol = connection;
+		}
+		// Set all 'seleted' of symbols to false.
+		public void RevokeAllSelected() {
 			foreach (GraphGrammarNode symbol in this.nodes) {
 				symbol.Selected = false;
 			}
@@ -155,7 +155,7 @@ namespace MissionGrammar {
 				symbol.Selected = false;
 				// symbol.StartSelected = symbol.EndSelected = false;
 			}
-            this.SelectedSymbol = null;
+			this.SelectedSymbol = null;
 			return;
 		}
 		
@@ -171,28 +171,28 @@ namespace MissionGrammar {
 			EditorCanvas.DrawQuad((int) pos[0], (int) pos[1], size+thickness*2, size+thickness*2, Color.black);
 			EditorCanvas.DrawQuad((int) pos[0]+thickness, (int) pos[1]+thickness, size, size, isTerminal ? Color.green : Color.yellow);
 		}
-        public static void DrawNode(GraphGrammarNode node) {
-            int thickness   = 2;
+		public static void DrawNode(GraphGrammarNode node) {
+			int thickness   = 2;
 
-            switch (node.Terminal) {
-            case NodeTerminalType.NonTerminal:
-                if (node.Selected) {
-                    EditorCanvas.DrawQuad(new Rect(node.OutlineScope.x - thickness, (int) node.OutlineScope.y - thickness, node.OutlineScope.width + thickness * 2, node.OutlineScope.height + thickness * 2), Color.red);
-                }
-                EditorCanvas.DrawQuad(node.OutlineScope, node.OutlineColor);
-                EditorCanvas.DrawQuad(node.FilledScope, node.FilledColor);
-                EditorCanvas.DrawQuad(node.TextScope, Color.clear, node.Abbreviation, node.TextColor);
-                break;
-            case NodeTerminalType.Terminal:
-                if (node.Selected) {
-                    EditorCanvas.DrawDics(node.Position, 20 + thickness, Color.red);
-                }
-                EditorCanvas.DrawDics(node.Position, 20, node.OutlineColor);
-                EditorCanvas.DrawDics(node.Position, 18, node.FilledColor);
-                EditorCanvas.DrawQuad(node.TextScope, Color.clear, node.Abbreviation, node.TextColor);
-                break;
-            }
-        }
+			switch (node.Terminal) {
+			case NodeTerminalType.NonTerminal:
+				if (node.Selected) {
+					EditorCanvas.DrawQuad(new Rect(node.OutlineScope.x - thickness, (int) node.OutlineScope.y - thickness, node.OutlineScope.width + thickness * 2, node.OutlineScope.height + thickness * 2), Color.red);
+				}
+				EditorCanvas.DrawQuad(node.OutlineScope, node.OutlineColor);
+				EditorCanvas.DrawQuad(node.FilledScope, node.FilledColor);
+				EditorCanvas.DrawQuad(node.TextScope, Color.clear, node.Abbreviation, node.TextColor);
+				break;
+			case NodeTerminalType.Terminal:
+				if (node.Selected) {
+					EditorCanvas.DrawDics(node.Position, 20 + thickness, Color.red);
+				}
+				EditorCanvas.DrawDics(node.Position, 20, node.OutlineColor);
+				EditorCanvas.DrawDics(node.Position, 18, node.FilledColor);
+				EditorCanvas.DrawQuad(node.TextScope, Color.clear, node.Abbreviation, node.TextColor);
+				break;
+			}
+		}
 
 		// [Draw on canvas] Draw the connection on canvas.
 		public static void DrawConnection(GraphGrammarConnection connection) {
