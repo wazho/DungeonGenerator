@@ -31,7 +31,6 @@ namespace EditorExtend {
 		private static Rect _ruleSourceCanvasArea     = new Rect(0,  25, Screen.width / 2, 200);
 		private static Rect _ruleReplacementCanvasArea= new Rect(Screen.width / 2, 25, Screen.width / 2, 200);
 		private static Rect _ruleGraphGrammarCanvas   = new Rect(0, 0, Screen.width, 200);
-		private static Rect _ruleCanvasSlider         = new Rect(0, 225, Screen.width, 10);
 		private static Rect _afterRulePreviewArea     = new Rect(0, 400, Screen.width, Screen.height);
 
 		// Font size.
@@ -106,6 +105,88 @@ namespace EditorExtend {
 				return _rulePreviewArea;
 			}
 		}
+
+
+		private const int _ruleScrollViewHeight = 200;
+		public static GUILayoutOption RuleScrollViewHeight {
+			get { return GUILayout.Height(_ruleScrollViewHeight); }
+		}
+		// RuleSourceCanvas
+		private static int _ruleSourceCanvasWidth = 10;
+		private static int _ruleSourceCanvasHeight = 10;
+		private static int _ruleSourceCanvasRightBorder = (int) (_ruleSourceCanvasWidth * 0.9);
+		private static int _ruleSourceCanvasBottomBorder = (int) (_ruleSourceCanvasHeight * 0.9);    
+		public static void ResizeRuleSourceCanvas(int width, int height) {
+			_ruleSourceCanvasWidth  = width;
+			_ruleSourceCanvasHeight = height;
+			_ruleSourceCanvasRightBorder  = (int) (width * 0.9);
+			_ruleSourceCanvasBottomBorder = (int) (height * 0.9);
+		}
+		private static Rect _ruleSourceCanvas = new Rect(0, 0, _ruleSourceCanvasWidth, _ruleSourceCanvasHeight);
+		public static Rect RuleSourceCanvas {
+			get {
+				_ruleSourceCanvas.width = _ruleSourceCanvasWidth;
+				_ruleSourceCanvas.height = _ruleSourceCanvasHeight;
+				return _ruleSourceCanvas;
+			}
+		}
+		private static GUIStyle _ruleSourceCanvasContent = new GUIStyle(GUI.skin.label);
+		public static GUIStyle RuleSourceCanvasContent {
+			get {
+				_ruleSourceCanvasContent.padding.right  = _ruleSourceCanvasRightBorder;
+				_ruleSourceCanvasContent.padding.bottom = _ruleSourceCanvasBottomBorder;
+				return _ruleSourceCanvasContent;
+			}
+		}
+		// RuleReplacementCanvas
+		private static int _ruleReplacementCanvasWidth = 10;
+		private static int _ruleReplacementCanvasHeight = 10;
+		private static int _ruleReplacementCanvasRightBorder = (int)(_ruleReplacementCanvasWidth * 0.9);
+		private static int _ruleReplacementCanvasBottomBorder = (int)(_ruleReplacementCanvasHeight * 0.9);
+		public static void ResizeRuleReplacementCanvas(int width, int height) {
+			_ruleReplacementCanvasWidth  = width;
+			_ruleReplacementCanvasHeight = height;
+			_ruleReplacementCanvasRightBorder  = (int)(width * 0.9);
+			_ruleReplacementCanvasBottomBorder = (int)(height * 0.9);
+		}
+		private static Rect _ruleReplacementCanvas = new Rect(0, 0, _ruleReplacementCanvasWidth, _ruleReplacementCanvasHeight);
+		public static Rect RuleReplacementCanvas {
+			get {
+				_ruleReplacementCanvas.width  = _ruleReplacementCanvasWidth;
+				_ruleReplacementCanvas.height = _ruleReplacementCanvasHeight;
+				return _ruleReplacementCanvas;
+			}
+		}
+		private static GUIStyle _ruleReplacementCanvasContent = new GUIStyle(GUI.skin.label);
+		public static GUIStyle RuleReplacementCanvasContent {
+			get {
+				_ruleReplacementCanvasContent.padding.right  = _ruleReplacementCanvasRightBorder;
+				_ruleReplacementCanvasContent.padding.bottom = _ruleReplacementCanvasBottomBorder;
+				return _ruleReplacementCanvasContent;
+			}
+		}
+
+		public static Rect AfterRulePreviewArea {
+			get {
+				_afterRulePreviewArea.width  = Screen.width;
+				_afterRulePreviewArea.height = Screen.height;
+				return _afterRulePreviewArea;
+			}
+		}
+		public static Rect SpaceRulePreviewArea {
+			get{
+				_spaceRulePreviewArea.width = Screen.width;
+				return _spaceRulePreviewArea;
+			}
+		}
+		public static Rect SpaceRulePreviewCanvas {
+			get{
+				_spaceRulePreviewCanvas.width = Screen.width;
+				return _spaceRulePreviewCanvas;
+			}
+		}
+
+
 		public static Rect RuleSourceCanvasArea {
 			get {
 				_ruleSourceCanvasArea.width = Screen.width/2;
@@ -125,31 +206,9 @@ namespace EditorExtend {
 				return _ruleGraphGrammarCanvas;
 			}
 		}
-		public static Rect RuleCanvasSlider {
-			get {
-				_ruleCanvasSlider.width = Screen.width;
-				return _ruleCanvasSlider;
-			}
-		}
-		public static Rect AfterRulePreviewArea {
-			get {
-				_afterRulePreviewArea.width = Screen.width;
-				_afterRulePreviewArea.height = Screen.height;
-				return _afterRulePreviewArea;
-			}
-		}
-		public static Rect SpaceRulePreviewArea {
-			get { 
-				_spaceRulePreviewArea.width = Screen.width;
-				return _spaceRulePreviewArea;
-			}
-		}
-		public static Rect SpaceRulePreviewCanvas {
-			get { 
-				_spaceRulePreviewCanvas.width = Screen.width;
-				return _spaceRulePreviewCanvas;
-			}
-		}
+
+
+
 
 		private static GUIStyle _labelInNodeList       = new GUIStyle(GUI.skin.label);
 		private static Font     _labelInNodeListFont   = Resources.Load("Fonts/texgyrecursor") as Font;

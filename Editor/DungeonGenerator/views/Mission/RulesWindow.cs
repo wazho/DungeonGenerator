@@ -27,6 +27,9 @@ namespace MissionGrammarSystem {
 			Copy,
 			Delete,
 		}
+		// The mode of buttons.
+		private EditingMode       _editingMode;
+		private SymbolEditingMode _currentTab;
 		// Mission rule of current editing.
 		private MissionRule _missionRule = new MissionRule();
 		// The array of group & rule.
@@ -44,18 +47,25 @@ namespace MissionGrammarSystem {
 		// The texture of icons.
 		private Texture2D _edit;
 		private Texture2D _delete;
-		// The mode of buttons.
-		private EditingMode       _editingMode;
-		private SymbolEditingMode _currentTab;
+		// The drawing canvas.
+		private Rect _ruleSourceCanvasInWindow;
+		private Rect _ruleReplacementCanvasInWindow;
+		// The scroll bar of canvas.
+		private Vector2 _sourceCanvasScrollPosition;
+		private Vector2 _replacementCanvasScrollPosition;
+		// Size of source canvas & replacement canvas.
+		private int _sourceCanvasSizeWidth;
+		private int _sourceCanvasSizeHeight;
+		private int _replacementCanvasSizeWidth;
+		private int _replacementCanvasSizeHeight;
 		// The scroll bar of list.
 		private Vector2 _scrollPosition;
 		// [Remove soon] Content of scroll area.
 		private string testString;
-		// The drawing canvas.
-		private Rect _ruleSourceCanvasInWindow;
-		private Rect _ruleReplacementCanvasInWindow;
 
 		void Awake() {
+			_editingMode          = EditingMode.None;
+			_currentTab           = SymbolEditingMode.None;
 			_missionRule          = MissionGrammar.Groups[0].Rules[0];
 			_groupsOptions        = MissionGrammar.Groups.Select(s => s.Name).ToArray();
 			_rulesOptions         = MissionGrammar.Groups[0].Rules.Select(r => r.Name).ToArray();
@@ -67,9 +77,13 @@ namespace MissionGrammarSystem {
 			_applySymbolEditingButtonEnabled = false;
 			_edit                 = Resources.Load<Texture2D>("Icons/edit");
 			_delete               = Resources.Load<Texture2D>("Icons/delete");
-			_editingMode          = EditingMode.None;
-			_currentTab           = SymbolEditingMode.None;
+			_sourceCanvasScrollPosition      = Vector2.zero;
+			_replacementCanvasScrollPosition = Vector2.zero;
 			_scrollPosition       = Vector2.zero;
+			_sourceCanvasSizeWidth       = 8000;
+			_sourceCanvasSizeHeight      = 1000;
+			_replacementCanvasSizeWidth  = 1000;
+			_replacementCanvasSizeHeight = 300;
 			// [Remove soon]
 			testString = "*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n";
 		}
@@ -94,6 +108,18 @@ namespace MissionGrammarSystem {
 			LayoutRuleCanvasEditor();
 			// Control whole events.
 			EventController();
+
+			// [Remove soon] Just Testing
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.BeginVertical();
+			_sourceCanvasSizeWidth  = EditorAdvance.LimitedIntField("SourceCanvasSizeWidth:", _sourceCanvasSizeWidth, 100, 5000);
+			_sourceCanvasSizeHeight = EditorAdvance.LimitedIntField("SourceCanvasSizeHeight:", _sourceCanvasSizeHeight, 100, 2000);
+			EditorGUILayout.EndVertical();
+			EditorGUILayout.BeginVertical();
+			_replacementCanvasSizeWidth  = EditorAdvance.LimitedIntField("ReplacementCanvasSizeWidth:", _replacementCanvasSizeWidth, 100, 5000);
+			_replacementCanvasSizeHeight = EditorAdvance.LimitedIntField("ReplacementCanvasSizeHeight:", _replacementCanvasSizeHeight, 100, 5000);
+			EditorGUILayout.EndVertical();
+			EditorGUILayout.EndHorizontal();
 		}
 		// Layout the combobox and editor of mission group.
 		void LayoutMissionGroupOptions() {
@@ -177,7 +203,8 @@ namespace MissionGrammarSystem {
 			// Get the Rect in EditWindow from the GUI rect. (Position = Real screen position - this EditWindow position)
 			_ruleSourceCanvasInWindow.position = GUIUtility.GUIToScreenPoint(EditorStyle.RuleGraphGrammarCanvas.position) - this.position.position;
 			_ruleSourceCanvasInWindow.size     = EditorStyle.RuleGraphGrammarCanvas.size;
-			EditorGUI.DrawRect(EditorStyle.RuleGraphGrammarCanvas, Color.gray);
+			// Show the source canvas.
+			ShowSourceCanvas();
 			// Draw Nodes and Connections.
 			foreach (GraphGrammarNode node in _missionRule.SourceRule.Nodes) {
 				GraphGrammar.DrawNode(node);
@@ -191,7 +218,8 @@ namespace MissionGrammarSystem {
 			GUILayout.BeginArea(EditorStyle.RuleReplacementCanvasArea);
 			_ruleReplacementCanvasInWindow.position = GUIUtility.GUIToScreenPoint(EditorStyle.RuleGraphGrammarCanvas.position) - this.position.position;
 			_ruleReplacementCanvasInWindow.size = EditorStyle.RuleGraphGrammarCanvas.size;
-			EditorGUI.DrawRect(EditorStyle.RuleGraphGrammarCanvas, Color.white);
+			// Show the replacement canvas.
+			ShowReplacementCanvas();
 			foreach (GraphGrammarNode node in _missionRule.ReplacementRule.Nodes) {
 				GraphGrammar.DrawNode(node);
 			}
@@ -359,6 +387,25 @@ namespace MissionGrammarSystem {
 			_scrollPosition = GUILayout.BeginScrollView(_scrollPosition, EditorStyle.AlphabetSymbolListHeight);
 			// Content of scroll area.
 			GUILayout.Label(testString, EditorStyles.label);
+			GUILayout.EndScrollView();
+		}
+		void ShowSourceCanvas() {
+			// Set the scroll position.
+			_sourceCanvasScrollPosition = GUILayout.BeginScrollView(_sourceCanvasScrollPosition, GUILayout.Width(Screen.width / 2), EditorStyle.RuleScrollViewHeight);
+			// Content of canvas area.
+			EditorStyle.ResizeRuleSourceCanvas(_sourceCanvasSizeWidth, _sourceCanvasSizeHeight);
+			EditorGUI.DrawRect(EditorStyle.RuleSourceCanvas, Color.yellow);
+			GUILayout.Label(string.Empty, EditorStyle.RuleSourceCanvasContent);
+			GUILayout.EndScrollView();
+		}
+
+		void ShowReplacementCanvas() {
+			// Set the scroll position.
+			_replacementCanvasScrollPosition = GUILayout.BeginScrollView(_replacementCanvasScrollPosition, GUILayout.Width(Screen.width / 2), EditorStyle.RuleScrollViewHeight);
+			// Content of canvas area.
+			EditorStyle.ResizeRuleReplacementCanvas(_replacementCanvasSizeWidth, _replacementCanvasSizeHeight);
+			EditorGUI.DrawRect(EditorStyle.RuleReplacementCanvas, Color.white);
+			GUILayout.Label(string.Empty, EditorStyle.RuleReplacementCanvasContent);
 			GUILayout.EndScrollView();
 		}
 	}
