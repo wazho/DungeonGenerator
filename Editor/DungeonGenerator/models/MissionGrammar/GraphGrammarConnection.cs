@@ -4,7 +4,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace MissionGrammar {
+namespace MissionGrammarSystem {
 	// Types of connection.
 	public enum ConnectionType {
 		WeakRequirement   = 0,

@@ -5,7 +5,7 @@ using System.Collections;
 
 using EditorStyle = EditorExtend.Style;
 
-namespace MissionGrammar {
+namespace MissionGrammarSystem {
 	public class SettingsWindow : EditorWindow {
 		// Node's name.
 		private string[] _nodeNames;

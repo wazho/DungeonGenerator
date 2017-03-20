@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using EditorCanvas = EditorExtend.NodeCanvas;
 using EditorStyle  = EditorExtend.Style;
 
-namespace MissionGrammar {
+namespace MissionGrammarSystem {
 	public static class Alphabet {
 		private static List<GraphGrammarNode>       _nodes       = new List<GraphGrammarNode>();
 		private static List<GraphGrammarConnection> _connections = new List<GraphGrammarConnection>();

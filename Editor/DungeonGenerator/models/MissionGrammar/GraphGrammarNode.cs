@@ -4,7 +4,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace MissionGrammar {
+namespace MissionGrammarSystem {
 	// Terminal types of node.
 	public enum NodeTerminalType {
 		NonTerminal = 0,
