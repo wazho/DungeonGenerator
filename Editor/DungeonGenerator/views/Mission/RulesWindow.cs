@@ -62,6 +62,11 @@ namespace MissionGrammarSystem {
 		private Vector2 _scrollPosition;
 		// [Remove soon] Content of scroll area.
 		private string testString;
+		private enum SelectedCanvas {
+			SourceCanvas,
+			ReplacementCanvas
+		};
+		private SelectedCanvas _currentSelectedCanvas;
 
 		void Awake() {
 			_editingMode          = EditingMode.None;
@@ -84,6 +89,7 @@ namespace MissionGrammarSystem {
 			_sourceCanvasSizeHeight      = 1000;
 			_replacementCanvasSizeWidth  = 1000;
 			_replacementCanvasSizeHeight = 300;
+			_currentSelectedCanvas = SelectedCanvas.SourceCanvas;
 			// [Remove soon]
 			testString = "*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n";
 		}
@@ -296,17 +302,15 @@ namespace MissionGrammarSystem {
 		// Click Event (Just copy-paste from example_window.cs)
 		void OnClickedSymbolInCanvas() {
 			if (_ruleSourceCanvasInWindow.Contains(Event.current.mousePosition)) {
+				_currentSelectedCanvas = SelectedCanvas.SourceCanvas;
 				_missionRule.ReplacementRule.RevokeAllSelected();
 				_missionRule.SourceRule.TouchedSymbol(Event.current.mousePosition - _ruleSourceCanvasInWindow.position);
 				Repaint();
 			} else if (_ruleReplacementCanvasInWindow.Contains(Event.current.mousePosition)) {
+				_currentSelectedCanvas = SelectedCanvas.ReplacementCanvas;
 				_missionRule.SourceRule.RevokeAllSelected();
 				_missionRule.ReplacementRule.TouchedSymbol(Event.current.mousePosition - _ruleReplacementCanvasInWindow.position);
 				Repaint();
-			} else {
-				Debug.Log(Event.current.mousePosition);
-				Debug.Log(_ruleSourceCanvasInWindow);
-				Debug.Log(_ruleReplacementCanvasInWindow);
 			}
 		}
 		// Drag and drop event (Just copy-paste from example_window.cs)
@@ -394,7 +398,8 @@ namespace MissionGrammarSystem {
 			_sourceCanvasScrollPosition = GUILayout.BeginScrollView(_sourceCanvasScrollPosition, GUILayout.Width(Screen.width / 2), EditorStyle.RuleScrollViewHeight);
 			// Content of canvas area.
 			EditorStyle.ResizeRuleSourceCanvas(_sourceCanvasSizeWidth, _sourceCanvasSizeHeight);
-			EditorGUI.DrawRect(EditorStyle.RuleSourceCanvas, Color.yellow);
+			// If  this is current selected canvas, backgound will be white. Else gray.
+			EditorGUI.DrawRect(EditorStyle.RuleSourceCanvas, _currentSelectedCanvas==SelectedCanvas.SourceCanvas ? Color.white : Color.gray);
 			GUILayout.Label(string.Empty, EditorStyle.RuleSourceCanvasContent);
 			GUILayout.EndScrollView();
 		}
@@ -404,7 +409,7 @@ namespace MissionGrammarSystem {
 			_replacementCanvasScrollPosition = GUILayout.BeginScrollView(_replacementCanvasScrollPosition, GUILayout.Width(Screen.width / 2), EditorStyle.RuleScrollViewHeight);
 			// Content of canvas area.
 			EditorStyle.ResizeRuleReplacementCanvas(_replacementCanvasSizeWidth, _replacementCanvasSizeHeight);
-			EditorGUI.DrawRect(EditorStyle.RuleReplacementCanvas, Color.white);
+			EditorGUI.DrawRect(EditorStyle.RuleReplacementCanvas, _currentSelectedCanvas == SelectedCanvas.ReplacementCanvas ? Color.white : Color.gray);
 			GUILayout.Label(string.Empty, EditorStyle.RuleReplacementCanvasContent);
 			GUILayout.EndScrollView();
 		}

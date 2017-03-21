@@ -54,6 +54,7 @@ namespace MissionGrammarSystem {
 			this._filledColor         = Color.white;
 			this._textColor           = Color.black;
 			this._stickiedConnections = new List<StickiedConnection>();
+			this.Position = this.Position;//Fix to align center
 		}
 		// Basic construction.
 		public GraphGrammarNode(NodeTerminalType terminal) : this() {
