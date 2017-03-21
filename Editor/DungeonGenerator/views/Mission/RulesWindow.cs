@@ -211,13 +211,6 @@ namespace MissionGrammarSystem {
 			_ruleSourceCanvasInWindow.size     = EditorStyle.RuleGraphGrammarCanvas.size;
 			// Show the source canvas.
 			ShowSourceCanvas();
-			// Draw Nodes and Connections.
-			foreach (GraphGrammarNode node in _missionRule.SourceRule.Nodes) {
-				GraphGrammar.DrawNode(node);
-			}
-			foreach (GraphGrammarConnection connection in _missionRule.SourceRule.Connections) {
-				GraphGrammar.DrawConnection(connection);
-			}
 			GUILayout.EndArea();
 
 			// ReplacementCanvas
@@ -226,12 +219,6 @@ namespace MissionGrammarSystem {
 			_ruleReplacementCanvasInWindow.size = EditorStyle.RuleGraphGrammarCanvas.size;
 			// Show the replacement canvas.
 			ShowReplacementCanvas();
-			foreach (GraphGrammarNode node in _missionRule.ReplacementRule.Nodes) {
-				GraphGrammar.DrawNode(node);
-			}
-			foreach (GraphGrammarConnection connection in _missionRule.ReplacementRule.Connections) {
-				GraphGrammar.DrawConnection(connection);
-			}
 			GUILayout.EndArea();
 			GUILayout.EndArea();
 		}
@@ -304,12 +291,12 @@ namespace MissionGrammarSystem {
 			if (_ruleSourceCanvasInWindow.Contains(Event.current.mousePosition)) {
 				_currentSelectedCanvas = SelectedCanvas.SourceCanvas;
 				_missionRule.ReplacementRule.RevokeAllSelected();
-				_missionRule.SourceRule.TouchedSymbol(Event.current.mousePosition - _ruleSourceCanvasInWindow.position);
+				_missionRule.SourceRule.TouchedSymbol(Event.current.mousePosition - _ruleSourceCanvasInWindow.position + _sourceCanvasScrollPosition);
 				Repaint();
 			} else if (_ruleReplacementCanvasInWindow.Contains(Event.current.mousePosition)) {
 				_currentSelectedCanvas = SelectedCanvas.ReplacementCanvas;
 				_missionRule.SourceRule.RevokeAllSelected();
-				_missionRule.ReplacementRule.TouchedSymbol(Event.current.mousePosition - _ruleReplacementCanvasInWindow.position);
+				_missionRule.ReplacementRule.TouchedSymbol(Event.current.mousePosition - _ruleReplacementCanvasInWindow.position + _replacementCanvasScrollPosition);
 				Repaint();
 			}
 		}
@@ -396,11 +383,19 @@ namespace MissionGrammarSystem {
 		void ShowSourceCanvas() {
 			// Set the scroll position.
 			_sourceCanvasScrollPosition = GUILayout.BeginScrollView(_sourceCanvasScrollPosition, GUILayout.Width(Screen.width / 2), EditorStyle.RuleScrollViewHeight);
+			Debug.Log(_sourceCanvasScrollPosition);
 			// Content of canvas area.
 			EditorStyle.ResizeRuleSourceCanvas(_sourceCanvasSizeWidth, _sourceCanvasSizeHeight);
 			// If  this is current selected canvas, backgound will be white. Else gray.
 			EditorGUI.DrawRect(EditorStyle.RuleSourceCanvas, _currentSelectedCanvas==SelectedCanvas.SourceCanvas ? Color.white : Color.gray);
 			GUILayout.Label(string.Empty, EditorStyle.RuleSourceCanvasContent);
+			// Draw Nodes and Connections.
+			foreach (GraphGrammarNode node in _missionRule.SourceRule.Nodes) {
+				GraphGrammar.DrawNode(node);
+			}
+			foreach (GraphGrammarConnection connection in _missionRule.SourceRule.Connections) {
+				GraphGrammar.DrawConnection(connection);
+			}
 			GUILayout.EndScrollView();
 		}
 
@@ -411,6 +406,12 @@ namespace MissionGrammarSystem {
 			EditorStyle.ResizeRuleReplacementCanvas(_replacementCanvasSizeWidth, _replacementCanvasSizeHeight);
 			EditorGUI.DrawRect(EditorStyle.RuleReplacementCanvas, _currentSelectedCanvas == SelectedCanvas.ReplacementCanvas ? Color.white : Color.gray);
 			GUILayout.Label(string.Empty, EditorStyle.RuleReplacementCanvasContent);
+			foreach (GraphGrammarNode node in _missionRule.ReplacementRule.Nodes) {
+				GraphGrammar.DrawNode(node);
+			}
+			foreach (GraphGrammarConnection connection in _missionRule.ReplacementRule.Connections) {
+				GraphGrammar.DrawConnection(connection);
+			}
 			GUILayout.EndScrollView();
 		}
 	}
