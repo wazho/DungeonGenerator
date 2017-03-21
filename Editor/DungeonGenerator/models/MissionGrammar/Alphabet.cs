@@ -54,14 +54,14 @@ namespace MissionGrammarSystem {
 		// Return a boolean when it's name never be used in alphabet.
 		public static bool IsNodeNameUsed(GraphGrammarNode currentNode) {
 			return (from node in Alphabet.Nodes
-				where node.Name == currentNode.Name && node != currentNode
+				where node.Name == currentNode.Name && node != Alphabet.SelectedNode
 				select node)
 				.Any();
 		}
 		// Return a boolean about it's abbreviation never be used in alphabet.
 		public static bool IsNodeAbbreviationUsed(GraphGrammarNode currentNode) {
 			return (from node in Alphabet.Nodes
-				where node.Abbreviation == currentNode.Abbreviation && node != currentNode
+				where node.Abbreviation == currentNode.Abbreviation && node != Alphabet.SelectedNode
 				select node)
 				.Any();
 		}
