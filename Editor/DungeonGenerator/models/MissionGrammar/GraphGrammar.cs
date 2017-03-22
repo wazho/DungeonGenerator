@@ -129,7 +129,7 @@ namespace MissionGrammarSystem {
 			_nodes.Add(node);
 			_selectedSymbol = node;
 		}
-		// Update symbol apperance.
+		// Update symbol appearance.
 		public void UpdateSymbol(GraphGrammarSymbol before, GraphGrammarSymbol after) {
 			if (before is GraphGrammarNode) {
 				GraphGrammarNode node = (GraphGrammarNode) after;
