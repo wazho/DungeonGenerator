@@ -298,7 +298,7 @@ namespace MissionGrammarSystem {
 				Repaint();
 			} else if(_symbolListCanvasInWindow .Contains(Event.current.mousePosition)) {
 				_positionInCanvas = Event.current.mousePosition - _symbolListCanvasInWindow.position;
-				int index = (int) ( _positionInCanvas.y + _listScrollPosition.y ) / 50;
+				int index = (int) ( _positionInCanvas.y ) / 50;
 				Alphabet.RevokeAllSelected();
 				switch (_currentTab) {
 				case SymbolEditingMode.AddNode:
@@ -380,17 +380,15 @@ namespace MissionGrammarSystem {
 
 		void LayoutNodeList() {
 			// Content of Node-List.
-			// Set the scroll position.
 			_listScrollPosition = GUILayout.BeginScrollView(_listScrollPosition, EditorStyle.AlphabetSymbolListHeight);
-			_symbolListCanvasInWindow.position = GUIUtility.GUIToScreenPoint(EditorStyle.AlphabetSymbolListArea.position) - this.position.position;
-			_symbolListCanvasInWindow.size = EditorStyle.AlphabetSymbolListArea.size;
 			// Content of scroll area.
 			GUILayout.BeginArea(EditorStyle.AlphabetSymbolListArea);
+			// Set the scroll position.
 			_symbolListCanvasInWindow.position = GUIUtility.GUIToScreenPoint(EditorStyle.AlphabetSymbolListCanvas.position) - this.position.position;
-			_symbolListCanvasInWindow.size = EditorStyle.AlphabetSymbolListCanvas.size;
+			_symbolListCanvasInWindow.size     = _symbolListCanvasInWindow.size = EditorStyle.AlphabetSymbolListCanvas.size;
 			EditorGUI.DrawRect(EditorStyle.AlphabetSymbolListCanvas, Color.gray);
 			GUILayout.EndArea();
-			// Layout each symbols in list.:
+			// Layout each symbols in list.
 			foreach (var node in Alphabet.Nodes) {
 				Alphabet.DrawNodeInList(node);
 				// Custom style to modify padding and margin for label.
