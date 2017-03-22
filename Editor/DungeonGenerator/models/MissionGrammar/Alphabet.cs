@@ -93,15 +93,50 @@ namespace MissionGrammarSystem {
 		// [TODO] Task C2-2-2. (you can remove these lines)
 		// This part need to fix. The arrow is static not dynamic with rotate.
 		public static void DrawConnection(GraphGrammarConnection connection) {
+			// [Remove soon] Just to test --> connection.EndPosition += new Vector2(100,50);
 			EditorCanvas.DrawLine(connection.StartPosition, connection.EndPosition, connection.OutlineColor, 5f);
-			/*
+			Vector2 dir = (connection.EndPosition - connection.StartPosition).normalized * 5f; // Head size
+			Vector2 orth = new Vector2(-dir.y, dir.x);
+			// Arrow cap's points
 			Vector3[] arrowHead = new Vector3[3];
-			arrowHead[0] = new Vector3(connection.EndPositionX +  0, connection.EndPositionY - 10, 0);
-			arrowHead[1] = new Vector3(connection.EndPositionX +  0, connection.EndPositionY + 10, 0);
-			arrowHead[2] = new Vector3(connection.EndPositionX + 15, connection.EndPositionY +  0, 0);
-			Handles.color = connection.OutlineColor;
-			Handles.DrawAAConvexPolygon(arrowHead);
-			*/
+			arrowHead [0] = connection.EndPosition - dir * 2 + orth; 
+			arrowHead [1] = connection.EndPosition - dir * 2 - orth; 
+			arrowHead [2] = connection.EndPosition; 
+			Vector3[] arrowHeadSec = new Vector3[3];
+			Vector2 dir2 = dir = dir + dir * 1f;
+			arrowHeadSec [0] = connection.EndPosition - dir2 * 2 + orth;
+			arrowHeadSec [1] = connection.EndPosition - dir2 * 2 - orth;
+			arrowHeadSec [2] = connection.EndPosition - dir2;
+
+			switch (connection.Arrow) {
+			case ConnectionArrowType.Normal:
+				Handles.color = connection.OutlineColor;
+				Handles.DrawAAConvexPolygon (arrowHead);	
+				break;
+			case ConnectionArrowType.Double:
+				Handles.color = connection.OutlineColor;
+				Handles.DrawAAConvexPolygon (arrowHead);
+				Handles.DrawAAConvexPolygon (arrowHeadSec);
+				break;
+			case ConnectionArrowType.WithCircle:
+				Handles.DrawAAConvexPolygon (arrowHeadSec);
+				EditorCanvas.DrawDics (connection.EndPosition - dir2 / 2f, 5f, connection.OutlineColor);
+				EditorCanvas.DrawDics (connection.EndPosition - dir2 / 2f, 4f, Color.white);
+				break;
+			}
+			// [Remove soon] Seems like switch is better
+			/*if (connection.Arrow == ConnectionArrowType.Normal || connection.Arrow == ConnectionArrowType.Double) {
+				Handles.color = connection.OutlineColor;
+				Handles.DrawAAConvexPolygon (arrowHead);
+			}
+			if (connection.Arrow == ConnectionArrowType.Double || connection.Arrow == ConnectionArrowType.WithCircle) {
+				Handles.color = connection.OutlineColor;
+				Handles.DrawAAConvexPolygon (arrowHeadSec);
+			}
+			if (connection.Arrow == ConnectionArrowType.WithCircle || connection.Arrow == ConnectionArrowType.WithCircle) {
+				EditorCanvas.DrawDics (connection.EndPosition - dir2 / 2f, 5f, connection.OutlineColor);
+				EditorCanvas.DrawDics (connection.EndPosition - dir2 / 2f, 4f, Color.white);
+			}*/
 		}
 		// Draw the connection in the connection list.
 		public static void DrawConnectionInList(GraphGrammarConnection connection) {
