@@ -55,7 +55,7 @@ namespace MissionGrammarSystem {
 		public static bool IsNodeNameUsed(GraphGrammarNode currentNode) {
 			if (currentNode == null) { return false; }
 			return (from node in Alphabet.Nodes
-				where node.Name == currentNode.Name && node != currentNode
+				where node.Name == currentNode.Name && node != Alphabet.SelectedNode
 				select node)
 				.Any();
 		}
@@ -63,8 +63,15 @@ namespace MissionGrammarSystem {
 		public static bool IsNodeAbbreviationUsed(GraphGrammarNode currentNode) {
 			if (currentNode == null) { return false; }
 			return (from node in Alphabet.Nodes
-				where node.Abbreviation == currentNode.Abbreviation && node != currentNode
+				where node.Abbreviation == currentNode.Abbreviation && node != Alphabet.SelectedNode
 				select node)
+				.Any();
+		}
+		// Return a boolean when it's name never be used in alphabet.
+		public static bool IsConnectionNameUsed(GraphGrammarConnection currentConnection) {
+			return (from connection in Alphabet.Connections
+				where connection.Name == currentConnection.Name && connection != Alphabet.SelectedConnection
+				select connection)
 				.Any();
 		}
 		// Remove all nodes.
