@@ -298,7 +298,9 @@ namespace MissionGrammarSystem {
 				Repaint();
 			} else if(_symbolListCanvasInWindow .Contains(Event.current.mousePosition)) {
 				_positionInCanvas = Event.current.mousePosition - _symbolListCanvasInWindow.position;
-				int index = (int) ( _positionInCanvas.y + _listScrollPosition.y ) / 50;
+				Debug.Log("pos:" + _positionInCanvas);
+				Debug.Log("scroll:" + _listScrollPosition);
+				int index = (int) ( _positionInCanvas.y ) / 50;
 				Alphabet.RevokeAllSelected();
 				switch (_currentTab) {
 				case SymbolEditingMode.AddNode:
@@ -380,12 +382,12 @@ namespace MissionGrammarSystem {
 
 		void LayoutNodeList() {
 			// Content of Node-List.
-			// Set the scroll position.
-			_symbolListCanvasInWindow.position = GUIUtility.GUIToScreenPoint(EditorStyle.AlphabetSymbolListArea.position) - this.position.position;
-			_symbolListCanvasInWindow.size = EditorStyle.AlphabetSymbolListArea.size;
 			_listScrollPosition = GUILayout.BeginScrollView(_listScrollPosition, EditorStyle.AlphabetSymbolListHeight);
 			// Content of scroll area.
 			GUILayout.BeginArea(EditorStyle.AlphabetSymbolListArea);
+			// Set the scroll position.
+			_symbolListCanvasInWindow.position = GUIUtility.GUIToScreenPoint(EditorStyle.AlphabetSymbolListCanvas.position) - this.position.position;
+			_symbolListCanvasInWindow.size = EditorStyle.AlphabetSymbolListCanvas.size;
 			EditorGUI.DrawRect(EditorStyle.AlphabetSymbolListCanvas, Color.gray);
 			GUILayout.EndArea();
 			// Layout each symbols in list.:
