@@ -355,6 +355,25 @@ namespace MissionGrammarSystem {
 				_messageType = MessageType.Info;
 			}
 		}
+		// Validate that the field data is legal.
+		private static Regex _ruleOfConnectionName			= new Regex(@"^[a-z]{1}[a-zA-Z]{,19}$");
+		private static Regex _ruleOfConnectionAbbreviation	= new Regex(@"^[a-z]{1,4}$");
+		void ConnectionFieldValidation() {
+			if (_symbolName == string.Empty ||
+				_symbolDescription == string.Empty) {
+				_messageHint = "Please fill every column.";
+				_messageType = MessageType.Warning;
+			} else if (! _ruleOfConnectionName.IsMatch(_symbolName)) {
+				_messageHint = "Name field Error! \nPlease use only letters (a-z,A-Z) under 20 characters and the first letter is lowercase.";
+				_messageType = MessageType.Error;
+			} else if (Alphabet.IsConnectionNameUsed(_connection)) {
+				_messageHint = "Node name has been used!\nPlease try another one.";
+				_messageType = MessageType.Error;
+			} else {
+				_messageHint = "The data has changed, but still not save it.";
+				_messageType = MessageType.Info;
+			}
+		}
 		// Hint message about the form fields.
 		void LayoutSubmitionHint() {
 			switch (_currentTab) {
@@ -377,6 +396,22 @@ namespace MissionGrammarSystem {
 				}
 				break;
 			case AlphabetWindowTab.Connections:
+					switch (_editingMode) {
+				case EditingMode.Create:
+						ConnectionFieldValidation();
+					break;
+				case EditingMode.Modify:
+					if (Alphabet.SelectedConnection != null && Alphabet.SelectedConnection.Arrow == _connection.Arrow &&
+						Alphabet.SelectedConnection.Requirement == _connection.Requirement &&
+						Alphabet.SelectedConnection.Name == _connection.Name &&
+						Alphabet.SelectedConnection.Description == _connection.Description) {
+						_messageHint = "The data is up to date.";
+						_messageType = MessageType.Info;
+					} else {
+						ConnectionFieldValidation();
+					}
+					break;
+				}
 				break;
 			}
 			EditorGUILayout.HelpBox(_messageHint, _messageType);

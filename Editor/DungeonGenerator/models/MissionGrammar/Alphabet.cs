@@ -65,6 +65,13 @@ namespace MissionGrammarSystem {
 				select node)
 				.Any();
 		}
+		// Return a boolean when it's name never be used in alphabet.
+		public static bool IsConnectionNameUsed(GraphGrammarConnection currentConnection) {
+			return (from connection in Alphabet.Connections
+				where connection.Name == currentConnection.Name && connection != Alphabet.SelectedConnection
+				select connection)
+				.Any();
+		}
 		// Remove all nodes.
 		public static void ClearAllNodes() {
 			// Create a new node.
