@@ -89,6 +89,7 @@ namespace MissionGrammarSystem {
 			_replacementCanvasSizeWidth  = 1000;
 			_replacementCanvasSizeHeight = 300;
 			_currentSelectedGraphGrammar = _missionRule.SourceRule;
+			Alphabet.RevokeAllSelected();
 		}
 
 		void OnGUI() {
@@ -380,11 +381,11 @@ namespace MissionGrammarSystem {
 		void LayoutNodeList() {
 			// Content of Node-List.
 			// Set the scroll position.
+			_symbolListCanvasInWindow.position = GUIUtility.GUIToScreenPoint(EditorStyle.AlphabetSymbolListArea.position) - this.position.position;
+			_symbolListCanvasInWindow.size = EditorStyle.AlphabetSymbolListArea.size;
 			_listScrollPosition = GUILayout.BeginScrollView(_listScrollPosition, EditorStyle.AlphabetSymbolListHeight);
 			// Content of scroll area.
 			GUILayout.BeginArea(EditorStyle.AlphabetSymbolListArea);
-			_symbolListCanvasInWindow.position = GUIUtility.GUIToScreenPoint(EditorStyle.AlphabetSymbolListCanvas.position) - this.position.position;
-			_symbolListCanvasInWindow.size = EditorStyle.AlphabetSymbolListCanvas.size;
 			EditorGUI.DrawRect(EditorStyle.AlphabetSymbolListCanvas, Color.gray);
 			GUILayout.EndArea();
 			// Layout each symbols in list.:
