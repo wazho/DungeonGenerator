@@ -50,6 +50,7 @@ namespace MissionGrammarSystem {
 		// The drawing canvas.
 		private Rect _ruleSourceCanvasInWindow;
 		private Rect _ruleReplacementCanvasInWindow;
+		private Rect _symbolListCanvasInWindow;
 		// The scroll bar of canvas.
 		private Vector2 _sourceCanvasScrollPosition;
 		private Vector2 _replacementCanvasScrollPosition;
@@ -59,14 +60,13 @@ namespace MissionGrammarSystem {
 		private int _replacementCanvasSizeWidth;
 		private int _replacementCanvasSizeHeight;
 		// The scroll bar of list.
-		private Vector2 _scrollPosition;
+		private Vector2 _listScrollPosition;
 		// [Remove soon] Content of scroll area.
 		private string testString;
-		private enum SelectedCanvas {
-			SourceCanvas,
-			ReplacementCanvas
-		};
-		private SelectedCanvas _currentSelectedCanvas;
+		private GraphGrammar _currentSelectedGraphGrammar;
+
+		private static Vector2 _positionInCanvas;
+
 
 		void Awake() {
 			_editingMode          = EditingMode.None;
@@ -84,12 +84,12 @@ namespace MissionGrammarSystem {
 			_delete               = Resources.Load<Texture2D>("Icons/delete");
 			_sourceCanvasScrollPosition      = Vector2.zero;
 			_replacementCanvasScrollPosition = Vector2.zero;
-			_scrollPosition       = Vector2.zero;
+			_listScrollPosition       = Vector2.zero;
 			_sourceCanvasSizeWidth       = 8000;
 			_sourceCanvasSizeHeight      = 1000;
 			_replacementCanvasSizeWidth  = 1000;
 			_replacementCanvasSizeHeight = 300;
-			_currentSelectedCanvas = SelectedCanvas.SourceCanvas;
+			_currentSelectedGraphGrammar = _missionRule.SourceRule;
 			// [Remove soon]
 			testString = "*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n";
 		}
@@ -230,9 +230,8 @@ namespace MissionGrammarSystem {
 			if (GUILayout.Button("Add Node", EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
 				// [Will remove] Just test canvas.
 				// Add Alphabet's Node 
-				_missionRule.SourceRule.AddNode(Alphabet.Nodes[0]);
-				//_missionRule.SourceRule.RevokeAllSelected();
-				_missionRule.ReplacementRule.AddNode(Alphabet.Nodes[1]);
+				
+				_missionRule.SourceRule.RevokeAllSelected();
 				_missionRule.ReplacementRule.RevokeAllSelected();
 
 				_applySymbolEditingButtonEnabled = true;
@@ -255,12 +254,13 @@ namespace MissionGrammarSystem {
 			switch (_currentTab) {
 			case SymbolEditingMode.AddNode:
 				LayoutNodeList();
+				LayoutEditingButtonGroup();
 				break;
 			case SymbolEditingMode.AddConnection:
 				LayoutConnectionList();
+				LayoutEditingButtonGroup();
 				break;
 			}
-
 			// Remind user [need Modify]
 			EditorGUILayout.HelpBox("Info \nThe Node's name has been used.", MessageType.Info);
 			// Buttons - Apply.
@@ -289,14 +289,31 @@ namespace MissionGrammarSystem {
 		// Click Event (Just copy-paste from example_window.cs)
 		void OnClickedSymbolInCanvas() {
 			if (_ruleSourceCanvasInWindow.Contains(Event.current.mousePosition)) {
-				_currentSelectedCanvas = SelectedCanvas.SourceCanvas;
+				_currentSelectedGraphGrammar = _missionRule.SourceRule;
 				_missionRule.ReplacementRule.RevokeAllSelected();
 				_missionRule.SourceRule.TouchedSymbol(Event.current.mousePosition - _ruleSourceCanvasInWindow.position + _sourceCanvasScrollPosition);
 				Repaint();
 			} else if (_ruleReplacementCanvasInWindow.Contains(Event.current.mousePosition)) {
-				_currentSelectedCanvas = SelectedCanvas.ReplacementCanvas;
+				_currentSelectedGraphGrammar = _missionRule.ReplacementRule;
 				_missionRule.SourceRule.RevokeAllSelected();
 				_missionRule.ReplacementRule.TouchedSymbol(Event.current.mousePosition - _ruleReplacementCanvasInWindow.position + _replacementCanvasScrollPosition);
+				Repaint();
+			} else if(_symbolListCanvasInWindow .Contains(Event.current.mousePosition)) {
+				_positionInCanvas = Event.current.mousePosition - _symbolListCanvasInWindow.position;
+				int index = (int) ( _positionInCanvas.y + _listScrollPosition.y ) / 50;
+				Alphabet.RevokeAllSelected();
+				switch (_currentTab) {
+				case SymbolEditingMode.AddNode:
+					if (index < Alphabet.Nodes.Count) {
+						Alphabet.Nodes[index].Selected = true;
+					}
+					break;
+				case SymbolEditingMode.AddConnection:
+					if (index < Alphabet.Connections.Count) {
+						Alphabet.Connections[index].Selected = true;
+					}
+					break;
+				}
 				Repaint();
 			}
 		}
@@ -307,7 +324,7 @@ namespace MissionGrammarSystem {
 			// If mouse position is in the canvas of source rule. 
 			if (_ruleSourceCanvasInWindow.Contains(Event.current.mousePosition)) {
 				_missionRule.ReplacementRule.RevokeAllSelected();
-				Vector2 positionInCanvas = Event.current.mousePosition - _ruleSourceCanvasInWindow.position;
+				_positionInCanvas = Event.current.mousePosition - _ruleSourceCanvasInWindow.position;
 				// Select node.
 				if (_missionRule.SourceRule.SelectedSymbol is GraphGrammarNode) {
 					tempNode = (GraphGrammarNode) _missionRule.SourceRule.SelectedSymbol;
@@ -318,13 +335,13 @@ namespace MissionGrammarSystem {
 					tempConnection = (GraphGrammarConnection) _missionRule.SourceRule.SelectedSymbol;
 					// Start point.
 					if (tempConnection.StartSelected) {
-						tempConnection.StartPosition = positionInCanvas;
-						_missionRule.SourceRule.StickyNode(tempConnection, positionInCanvas, "start");
+						tempConnection.StartPosition = _positionInCanvas;
+						_missionRule.SourceRule.StickyNode(tempConnection, _positionInCanvas, "start");
 					}
 					// End point.
 					else if (tempConnection.EndSelected) {
-						tempConnection.EndPosition = positionInCanvas;
-						_missionRule.SourceRule.StickyNode(tempConnection, positionInCanvas, "end");
+						tempConnection.EndPosition = _positionInCanvas;
+						_missionRule.SourceRule.StickyNode(tempConnection, _positionInCanvas, "end");
 					}
 				}
 			}
@@ -365,29 +382,98 @@ namespace MissionGrammarSystem {
 
 		void LayoutNodeList() {
 			// Content of Node-List.
-			// Set the ScrollPosition.
-			_scrollPosition = GUILayout.BeginScrollView(_scrollPosition, EditorStyle.AlphabetSymbolListHeight);
+			// Set the scroll position.
+			_listScrollPosition = GUILayout.BeginScrollView(_listScrollPosition, EditorStyle.AlphabetSymbolListHeight);
 			// Content of scroll area.
-			GUILayout.Label(testString, EditorStyles.label);
+			GUILayout.BeginArea(EditorStyle.AlphabetSymbolListArea);
+			_symbolListCanvasInWindow.position = GUIUtility.GUIToScreenPoint(EditorStyle.AlphabetSymbolListCanvas.position) - this.position.position;
+			_symbolListCanvasInWindow.size = EditorStyle.AlphabetSymbolListCanvas.size;
+			EditorGUI.DrawRect(EditorStyle.AlphabetSymbolListCanvas, Color.gray);
+			GUILayout.EndArea();
+			// Layout each symbols in list.:
+			foreach (var node in Alphabet.Nodes) {
+				Alphabet.DrawNodeInList(node);
+				// Custom style to modify padding and margin for label.
+				GUILayout.Label(node.ExpressName, EditorStyle.LabelInNodeList);
+			}
 			GUILayout.EndScrollView();
+
 		}
 
 		void LayoutConnectionList() {
 			// Content of Connection-List.
 			// Set the ScrollPosition.
-			_scrollPosition = GUILayout.BeginScrollView(_scrollPosition, EditorStyle.AlphabetSymbolListHeight);
+			_listScrollPosition = GUILayout.BeginScrollView(_listScrollPosition, EditorStyle.AlphabetSymbolListHeight);
 			// Content of scroll area.
-			GUILayout.Label(testString, EditorStyles.label);
+			GUILayout.BeginArea(EditorStyle.AlphabetSymbolListArea);
+			_symbolListCanvasInWindow.position = GUIUtility.GUIToScreenPoint(EditorStyle.AlphabetSymbolListCanvas.position) - this.position.position;
+			_symbolListCanvasInWindow.size = EditorStyle.AlphabetSymbolListCanvas.size;
+			EditorGUI.DrawRect(EditorStyle.AlphabetSymbolListCanvas, Color.gray);
+			GUILayout.EndArea();
+			// Layout each symbols in list.:
+			foreach (var connection in Alphabet.Connections) {
+				Alphabet.DrawConnectionInList(connection);
+				// Custom style to modify padding and margin for label.
+				GUILayout.Label(connection.Name, EditorStyle.LabelInConnectionList);
+			}
 			GUILayout.EndScrollView();
+		}
+		// Buttons about adding new symbol, modifying and deleting.
+		void LayoutEditingButtonGroup() {
+			EditorGUILayout.BeginHorizontal();
+			switch (_currentTab) {
+			case SymbolEditingMode.AddNode:
+				EditorGUI.BeginDisabledGroup(Alphabet.SelectedNode == null);
+				break;
+			case SymbolEditingMode.AddConnection:
+				EditorGUI.BeginDisabledGroup(Alphabet.SelectedConnection == null);
+				break;
+			}
+			if (GUILayout.Button("Add New", EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
+				// Add symbol.
+				switch (_currentTab) {
+				case SymbolEditingMode.AddNode:
+					_currentSelectedGraphGrammar.AddNode(Alphabet.SelectedNode);
+					break;
+				case SymbolEditingMode.AddConnection:
+					_currentSelectedGraphGrammar.AddConnection(Alphabet.SelectedConnection);
+					break;
+				}
+				Repaint();
+			}
+			EditorGUI.EndDisabledGroup();
+
+			switch (_currentTab) {
+			case SymbolEditingMode.AddNode:
+				EditorGUI.BeginDisabledGroup(Alphabet.SelectedNode == null ||
+											_currentSelectedGraphGrammar.SelectedSymbol == null);
+				break;
+			case SymbolEditingMode.AddConnection:
+				EditorGUI.BeginDisabledGroup(Alphabet.SelectedConnection == null ||
+											_currentSelectedGraphGrammar.SelectedSymbol == null);
+				break;
+			}
+			if (GUILayout.Button("Modify", EditorStyles.miniButtonMid, EditorStyle.ButtonHeight)) {
+				switch (_currentTab) {
+				case SymbolEditingMode.AddNode:
+					_currentSelectedGraphGrammar.UpdateSymbol(_currentSelectedGraphGrammar.SelectedSymbol, Alphabet.SelectedNode);
+					break;
+				case SymbolEditingMode.AddConnection:
+					_currentSelectedGraphGrammar.UpdateSymbol(_currentSelectedGraphGrammar.SelectedSymbol, Alphabet.SelectedConnection);
+					break;
+				}
+				Repaint();
+			}
+			EditorGUI.EndDisabledGroup();
+			EditorGUILayout.EndHorizontal();
 		}
 		void ShowSourceCanvas() {
 			// Set the scroll position.
 			_sourceCanvasScrollPosition = GUILayout.BeginScrollView(_sourceCanvasScrollPosition, GUILayout.Width(Screen.width / 2), EditorStyle.RuleScrollViewHeight);
-			Debug.Log(_sourceCanvasScrollPosition);
 			// Content of canvas area.
 			EditorStyle.ResizeRuleSourceCanvas(_sourceCanvasSizeWidth, _sourceCanvasSizeHeight);
 			// If  this is current selected canvas, backgound will be white. Else gray.
-			EditorGUI.DrawRect(EditorStyle.RuleSourceCanvas, _currentSelectedCanvas==SelectedCanvas.SourceCanvas ? Color.white : Color.gray);
+			EditorGUI.DrawRect(EditorStyle.RuleSourceCanvas, _missionRule.SourceRule.Equals(_currentSelectedGraphGrammar) ? Color.white : Color.gray);
 			GUILayout.Label(string.Empty, EditorStyle.RuleSourceCanvasContent);
 			// Draw Nodes and Connections.
 			foreach (GraphGrammarNode node in _missionRule.SourceRule.Nodes) {
@@ -404,7 +490,7 @@ namespace MissionGrammarSystem {
 			_replacementCanvasScrollPosition = GUILayout.BeginScrollView(_replacementCanvasScrollPosition, GUILayout.Width(Screen.width / 2), EditorStyle.RuleScrollViewHeight);
 			// Content of canvas area.
 			EditorStyle.ResizeRuleReplacementCanvas(_replacementCanvasSizeWidth, _replacementCanvasSizeHeight);
-			EditorGUI.DrawRect(EditorStyle.RuleReplacementCanvas, _currentSelectedCanvas == SelectedCanvas.ReplacementCanvas ? Color.white : Color.gray);
+			EditorGUI.DrawRect(EditorStyle.RuleReplacementCanvas, _missionRule.ReplacementRule.Equals(_currentSelectedGraphGrammar) ? Color.white : Color.gray);
 			GUILayout.Label(string.Empty, EditorStyle.RuleReplacementCanvasContent);
 			foreach (GraphGrammarNode node in _missionRule.ReplacementRule.Nodes) {
 				GraphGrammar.DrawNode(node);
