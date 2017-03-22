@@ -356,8 +356,8 @@ namespace MissionGrammarSystem {
 			}
 		}
 		// Validate that the field data is legal.
-		private static Regex _ruleOfConnectionName			= new Regex(@"^[a-z]{1}[a-zA-Z]{,19}$");
-		private static Regex _ruleOfConnectionAbbreviation	= new Regex(@"^[a-z]{1,4}$");
+		private static Regex _ruleOfConnectionName         = new Regex(@"^[a-z]{1}[a-zA-Z]{,19}$");
+		private static Regex _ruleOfConnectionAbbreviation = new Regex(@"^[a-z]{1,4}$");
 		void ConnectionFieldValidation() {
 			if (_symbolName == string.Empty ||
 				_symbolDescription == string.Empty) {
