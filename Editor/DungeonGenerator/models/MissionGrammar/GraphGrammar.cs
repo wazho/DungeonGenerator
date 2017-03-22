@@ -129,25 +129,25 @@ namespace MissionGrammarSystem {
 			_nodes.Add(node);
 			_selectedSymbol = node;
 		}
-		//Update symbol performance.
+		// Update symbol performance.
 		public void UpdateSymbol(GraphGrammarSymbol before, GraphGrammarSymbol after) {
-			if(before is GraphGrammarNode) {
-				GraphGrammarNode node =  (GraphGrammarNode) after;
+			if (before is GraphGrammarNode) {
+				GraphGrammarNode node = (GraphGrammarNode) after;
 				int symbolIndex = _nodes.FindIndex(x => x.Equals(before));
-				_nodes[symbolIndex].Terminal = node.Terminal;
-				_nodes[symbolIndex].Name = node.Name;
+				_nodes[symbolIndex].Terminal     = node.Terminal;
+				_nodes[symbolIndex].Name         = node.Name;
 				_nodes[symbolIndex].Abbreviation = node.Abbreviation;
-				_nodes[symbolIndex].Description = node.Description;
+				_nodes[symbolIndex].Description  = node.Description;
 				_nodes[symbolIndex].OutlineColor = node.OutlineColor;
-				_nodes[symbolIndex].FilledColor = node.FilledColor;
-				_nodes[symbolIndex].TextColor = node.TextColor;
-			}else if(before is GraphGrammarConnection) {
+				_nodes[symbolIndex].FilledColor  = node.FilledColor;
+				_nodes[symbolIndex].TextColor    = node.TextColor;
+			} else if (before is GraphGrammarConnection) {
 				GraphGrammarConnection connection = (GraphGrammarConnection) after;
 				int symbolIndex = _connections.FindIndex(x => x.Equals(before));
-				// [Will modify]
-				_connections[symbolIndex].Requirement = connection.Requirement;
-				_connections[symbolIndex].Name = connection.Name;
-				_connections[symbolIndex].Description = connection.Description;
+				// [TODO] Will modify
+				_connections[symbolIndex].Requirement  = connection.Requirement;
+				_connections[symbolIndex].Name         = connection.Name;
+				_connections[symbolIndex].Description  = connection.Description;
 				_connections[symbolIndex].OutlineColor = connection.OutlineColor;
 			}
 		}

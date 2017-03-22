@@ -61,16 +61,15 @@ namespace MissionGrammarSystem {
 		private int _replacementCanvasSizeHeight;
 		// The scroll bar of list.
 		private Vector2 _listScrollPosition;
-		// [Remove soon] Content of scroll area.
-		private string testString;
-		private GraphGrammar _currentSelectedGraphGrammar;
-
 		private static Vector2 _positionInCanvas;
+		private GraphGrammar _currentSelectedGraphGrammar;
 
 
 		void Awake() {
 			_editingMode          = EditingMode.None;
 			_currentTab           = SymbolEditingMode.None;
+			// [TODO] Here doesn't avoid the out of index, 
+			//        if doesn't exist any member need initial in future.
 			_missionRule          = MissionGrammar.Groups[0].Rules[0];
 			_groupsOptions        = MissionGrammar.Groups.Select(s => s.Name).ToArray();
 			_rulesOptions         = MissionGrammar.Groups[0].Rules.Select(r => r.Name).ToArray();
@@ -90,8 +89,6 @@ namespace MissionGrammarSystem {
 			_replacementCanvasSizeWidth  = 1000;
 			_replacementCanvasSizeHeight = 300;
 			_currentSelectedGraphGrammar = _missionRule.SourceRule;
-			// [Remove soon]
-			testString = "*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n*\n";
 		}
 
 		void OnGUI() {
