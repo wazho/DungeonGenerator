@@ -89,6 +89,7 @@ namespace MissionGrammarSystem {
 			_replacementCanvasSizeWidth  = 1000;
 			_replacementCanvasSizeHeight = 300;
 			_currentSelectedGraphGrammar = _missionRule.SourceRule;
+			Alphabet.RevokeAllSelected();
 		}
 
 		void OnGUI() {
@@ -381,6 +382,8 @@ namespace MissionGrammarSystem {
 			// Content of Node-List.
 			// Set the scroll position.
 			_listScrollPosition = GUILayout.BeginScrollView(_listScrollPosition, EditorStyle.AlphabetSymbolListHeight);
+			_symbolListCanvasInWindow.position = GUIUtility.GUIToScreenPoint(EditorStyle.AlphabetSymbolListArea.position) - this.position.position;
+			_symbolListCanvasInWindow.size = EditorStyle.AlphabetSymbolListArea.size;
 			// Content of scroll area.
 			GUILayout.BeginArea(EditorStyle.AlphabetSymbolListArea);
 			_symbolListCanvasInWindow.position = GUIUtility.GUIToScreenPoint(EditorStyle.AlphabetSymbolListCanvas.position) - this.position.position;
@@ -403,8 +406,6 @@ namespace MissionGrammarSystem {
 			_listScrollPosition = GUILayout.BeginScrollView(_listScrollPosition, EditorStyle.AlphabetSymbolListHeight);
 			// Content of scroll area.
 			GUILayout.BeginArea(EditorStyle.AlphabetSymbolListArea);
-			_symbolListCanvasInWindow.position = GUIUtility.GUIToScreenPoint(EditorStyle.AlphabetSymbolListCanvas.position) - this.position.position;
-			_symbolListCanvasInWindow.size = EditorStyle.AlphabetSymbolListCanvas.size;
 			EditorGUI.DrawRect(EditorStyle.AlphabetSymbolListCanvas, Color.gray);
 			GUILayout.EndArea();
 			// Layout each symbols in list.:
@@ -418,14 +419,8 @@ namespace MissionGrammarSystem {
 		// Buttons about adding new symbol, modifying and deleting.
 		void LayoutEditingButtonGroup() {
 			EditorGUILayout.BeginHorizontal();
-			switch (_currentTab) {
-			case SymbolEditingMode.AddNode:
-				EditorGUI.BeginDisabledGroup(Alphabet.SelectedNode == null);
-				break;
-			case SymbolEditingMode.AddConnection:
-				EditorGUI.BeginDisabledGroup(Alphabet.SelectedConnection == null);
-				break;
-			}
+			// Button of adding new symbol.
+			GUI.enabled = (_currentSelectedGraphGrammar != null);
 			if (GUILayout.Button("Add New", EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
 				// Add symbol.
 				switch (_currentTab) {
@@ -438,18 +433,8 @@ namespace MissionGrammarSystem {
 				}
 				Repaint();
 			}
-			EditorGUI.EndDisabledGroup();
-
-			switch (_currentTab) {
-			case SymbolEditingMode.AddNode:
-				EditorGUI.BeginDisabledGroup(Alphabet.SelectedNode == null ||
-											_currentSelectedGraphGrammar.SelectedSymbol == null);
-				break;
-			case SymbolEditingMode.AddConnection:
-				EditorGUI.BeginDisabledGroup(Alphabet.SelectedConnection == null ||
-											_currentSelectedGraphGrammar.SelectedSymbol == null);
-				break;
-			}
+			// Button of modifying new symbol.
+			GUI.enabled = (_currentSelectedGraphGrammar != null && _currentSelectedGraphGrammar.SelectedSymbol != null);
 			if (GUILayout.Button("Modify", EditorStyles.miniButtonMid, EditorStyle.ButtonHeight)) {
 				switch (_currentTab) {
 				case SymbolEditingMode.AddNode:
@@ -461,7 +446,7 @@ namespace MissionGrammarSystem {
 				}
 				Repaint();
 			}
-			EditorGUI.EndDisabledGroup();
+			GUI.enabled = true;
 			EditorGUILayout.EndHorizontal();
 		}
 		void ShowSourceCanvas() {

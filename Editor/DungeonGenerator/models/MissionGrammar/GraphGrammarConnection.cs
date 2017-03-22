@@ -3,25 +3,28 @@ using UnityEditor;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using Guid = System.Guid;
 
 namespace MissionGrammarSystem {
 	// Types of connection.
 	public enum ConnectionType {
-		WeakRequirement   = 0,
-		StrongRequirement = 1,
-		Inhibition        = 2
+		WeakRequirement,
+		StrongRequirement,
+		Inhibition,
 	}
 	// Types of connection arrow.
 	public enum ConnectionArrowType {
-		Normal     = 0,
-		Double     = 1,
-		WithCircle = 2
+		Normal,
+		Double,
+		WithCircle,
 	}
 
 	public class GraphGrammarConnection : GraphGrammarSymbol {
 		// Values of setting.
 		private int   _pointScopeSize  = 11;
 		private float _lineThickness   = 5f;
+		// GUID for this symbol in alphabet.
+		private Guid                _alphabetID;
 		// Members.
 		private string              _name;
 		private string              _description;
@@ -58,6 +61,11 @@ namespace MissionGrammarSystem {
 			this._startpointStickyOn = null;
 			this._endpointStickyOn   = null;
 
+		}
+		// Return the ID.
+		public Guid AlphabetID {
+			get { return _alphabetID; }
+			set { _alphabetID = value; }
 		}
 		// Name, getter and setter.
 		public string Name {

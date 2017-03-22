@@ -3,24 +3,33 @@ using UnityEditor;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using Guid = System.Guid;
 
 namespace MissionGrammarSystem {
 	// Types of the symbol.
 	public enum SymbolType {
-		None       = 0,
-		Node       = 1,
-		Connection = 2,
+		None,
+		Node,
+		Connection,
 	}
 	// This is the base structure of GraphGrammarNode and GraphGrammarConnection.
 	public class GraphGrammarSymbol {
+		// GUID for symbol.
+		protected Guid       _symbolID;
+		// Members.
 		protected SymbolType _type;
 		protected bool       _isSelect;
 		protected int        _ordering;
 		// Basic construction.
 		protected GraphGrammarSymbol() {
+			this._symbolID = Guid.NewGuid();
 			this._type     = SymbolType.None;
 			this._isSelect = false;
 			this._ordering = 0;
+		}
+		// Return the ID.
+		public Guid ID {
+			get { return _symbolID; }
 		}
 		// Return the symbol type.
 		public SymbolType Type {

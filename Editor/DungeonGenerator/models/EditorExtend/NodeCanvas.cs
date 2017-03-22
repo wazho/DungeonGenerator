@@ -22,7 +22,7 @@ namespace EditorExtend {
 			GUI.Box(rect, content);
 		}
 		// Draw a dics.
-		public static void DrawDics(Vector3 position, float radius, Color color) {
+		public static void DrawDisc(Vector3 position, float radius, Color color) {
 			Handles.BeginGUI();
 			Handles.color = color;
 			Handles.DrawSolidDisc(position, Vector3.forward, radius);

@@ -120,6 +120,7 @@ namespace MissionGrammarSystem {
 			// Update the current node.
 			_selectedSymbol = node;
 		}
+		// Add a new node from another exist node.
 		public void AddNode(GraphGrammarNode nodeClone) {
 			RevokeAllSelected();
 			// Deep copy.
@@ -129,11 +130,12 @@ namespace MissionGrammarSystem {
 			_nodes.Add(node);
 			_selectedSymbol = node;
 		}
-		// Update symbol performance.
+		// Update symbol appearance.
 		public void UpdateSymbol(GraphGrammarSymbol before, GraphGrammarSymbol after) {
 			if (before is GraphGrammarNode) {
 				GraphGrammarNode node = (GraphGrammarNode) after;
 				int symbolIndex = _nodes.FindIndex(x => x.Equals(before));
+				Debug.Log(symbolIndex + "/" + _nodes.Count);
 				_nodes[symbolIndex].Terminal     = node.Terminal;
 				_nodes[symbolIndex].Name         = node.Name;
 				_nodes[symbolIndex].Abbreviation = node.Abbreviation;
@@ -196,7 +198,7 @@ namespace MissionGrammarSystem {
 			EditorCanvas.DrawQuad((int) pos[0]+thickness, (int) pos[1]+thickness, size, size, isTerminal ? Color.green : Color.yellow);
 		}
 		public static void DrawNode(GraphGrammarNode node) {
-			int thickness   = 2;
+			int thickness = 2;
 
 			switch (node.Terminal) {
 			case NodeTerminalType.NonTerminal:
@@ -209,10 +211,10 @@ namespace MissionGrammarSystem {
 				break;
 			case NodeTerminalType.Terminal:
 				if (node.Selected) {
-					EditorCanvas.DrawDics(node.Position, 20 + thickness, Color.red);
+					EditorCanvas.DrawDisc(node.Position, 20 + thickness, Color.red);
 				}
-				EditorCanvas.DrawDics(node.Position, 20, node.OutlineColor);
-				EditorCanvas.DrawDics(node.Position, 18, node.FilledColor);
+				EditorCanvas.DrawDisc(node.Position, 20, node.OutlineColor);
+				EditorCanvas.DrawDisc(node.Position, 18, node.FilledColor);
 				EditorCanvas.DrawQuad(node.TextScope, Color.clear, node.Abbreviation, node.TextColor);
 				break;
 			}

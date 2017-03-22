@@ -35,5 +35,29 @@ namespace MissionGrammarSystem {
 			_groups.Remove(_groups.Where(s => s.Name == name).FirstOrDefault());
 			return;
 		}
+		// Same symbols in mission grammar will be updated in the same time when the alphabet updated.
+		public static void OnAlphabetUpdated(GraphGrammarSymbol symbol) {
+			GraphGrammarNode       referenceNode       = null;
+			GraphGrammarConnection referenceConnection = null;
+			if (symbol is GraphGrammarNode) {
+				referenceNode = (GraphGrammarNode) symbol;
+				foreach (var group in _groups) {
+					foreach (var rule in group.Rules) {
+						foreach (var node in rule.SourceRule.Nodes) {
+							if (node.AlphabetID == referenceNode.AlphabetID) {
+								node.UpdateSymbolInfo(referenceNode);
+							}
+						}
+						foreach (var node in rule.ReplacementRule.Nodes) {
+							if (node.AlphabetID == referenceNode.AlphabetID) {
+								node.UpdateSymbolInfo(referenceNode);
+							}
+						}
+					}
+				}
+			} else if (symbol is GraphGrammarConnection) {
+				referenceConnection = (GraphGrammarConnection) symbol;
+			}
+		}
 	}
 }

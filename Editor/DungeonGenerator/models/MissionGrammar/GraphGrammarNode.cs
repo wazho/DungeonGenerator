@@ -3,12 +3,13 @@ using UnityEditor;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using Guid = System.Guid;
 
 namespace MissionGrammarSystem {
 	// Terminal types of node.
 	public enum NodeTerminalType {
-		NonTerminal = 0,
-		Terminal    = 1
+		NonTerminal,
+		Terminal,
 	}
 	/*
 		This structure is based on the GraphGrammarSymbol.
@@ -28,6 +29,8 @@ namespace MissionGrammarSystem {
 
 	 */
 	public class GraphGrammarNode : GraphGrammarSymbol {
+		// GUID for this symbol in alphabet.
+		private Guid                     _alphabetID;
 		// Members.
 		private string                   _name;
 		private string                   _abbreviation;
@@ -42,6 +45,7 @@ namespace MissionGrammarSystem {
 		private List<StickiedConnection> _stickiedConnections;
 		// Construction (private).
 		private GraphGrammarNode() : base() {
+			this._alphabetID          = Guid.NewGuid();
 			this._type                = SymbolType.Node;
 			this._name                = string.Empty;
 			this._abbreviation        = string.Empty;
@@ -69,6 +73,10 @@ namespace MissionGrammarSystem {
 		}
 		// Clone construction for basic informations.
 		public GraphGrammarNode(GraphGrammarNode node) {
+			// Generate new symbol ID, but use same alphabet ID.
+			this._symbolID            = Guid.NewGuid();
+			this._alphabetID          = node.AlphabetID;
+			// Basic information to copy.
 			this._type                = SymbolType.Node;
 			this._name                = node.Name;
 			this._abbreviation        = node.Abbreviation;
@@ -81,6 +89,11 @@ namespace MissionGrammarSystem {
 			this._filledColor         = node.FilledColor;
 			this._textColor           = node.TextColor;
 			this._stickiedConnections = new List<StickiedConnection>();
+		}
+		// Return the ID.
+		public Guid AlphabetID {
+			get { return _alphabetID; }
+			set { _alphabetID = value; }
 		}
 		// ExpressName, getter.
 		public string ExpressName {
@@ -171,6 +184,16 @@ namespace MissionGrammarSystem {
 		public Color TextColor {
 			get { return _textColor; }
 			set { _textColor = value; }
+		}
+		// Update the information form another node, mostly reference is in Alphabet.
+		public void UpdateSymbolInfo(GraphGrammarNode referenceNode) {
+			_terminal     = referenceNode.Terminal;
+			_name         = referenceNode.Name;
+			_abbreviation = referenceNode.Abbreviation;
+			_description  = referenceNode.Description;
+			_outlineColor = referenceNode.OutlineColor;
+			_filledColor  = referenceNode.FilledColor;
+			_textColor    = referenceNode.TextColor;
 		}
 		// Add a new pair for stickied connection.
 		public void AddStickiedConnection(GraphGrammarConnection connection, string location) {

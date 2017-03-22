@@ -53,6 +53,7 @@ namespace MissionGrammarSystem {
 		}
 		// Return a boolean when it's name never be used in alphabet.
 		public static bool IsNodeNameUsed(GraphGrammarNode currentNode) {
+			if (currentNode == null) { return false; }
 			return (from node in Alphabet.Nodes
 				where node.Name == currentNode.Name && node != currentNode
 				select node)
@@ -60,6 +61,7 @@ namespace MissionGrammarSystem {
 		}
 		// Return a boolean about it's abbreviation never be used in alphabet.
 		public static bool IsNodeAbbreviationUsed(GraphGrammarNode currentNode) {
+			if (currentNode == null) { return false; }
 			return (from node in Alphabet.Nodes
 				where node.Abbreviation == currentNode.Abbreviation && node != currentNode
 				select node)
@@ -88,8 +90,8 @@ namespace MissionGrammarSystem {
 				EditorCanvas.DrawQuad(node.TextScope, Color.clear, node.Abbreviation, node.TextColor);
 				break;
 			case NodeTerminalType.Terminal:
-				EditorCanvas.DrawDics(node.Position, 20, node.OutlineColor);
-				EditorCanvas.DrawDics(node.Position, 18, node.FilledColor);
+				EditorCanvas.DrawDisc(node.Position, 20, node.OutlineColor);
+				EditorCanvas.DrawDisc(node.Position, 18, node.FilledColor);
 				EditorCanvas.DrawQuad(node.TextScope, Color.clear, node.Abbreviation, node.TextColor);
 				break;
 			}

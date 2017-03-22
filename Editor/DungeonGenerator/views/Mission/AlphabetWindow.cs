@@ -144,13 +144,15 @@ namespace MissionGrammarSystem {
 				EditorGUILayout.BeginVertical();
 				GUILayout.Space(EditorStyle.PaddingAfterBlock);
 				// Information of node.
-				_node.Terminal     = _symbolTerminal     = (NodeTerminalType) EditorGUILayout.EnumPopup("Symbol Type", _symbolTerminal);
-				_node.Name         = _symbolName         = EditorGUILayout.TextField("Name", _symbolName);
-				_node.Abbreviation = _symbolAbbreviation = EditorGUILayout.TextField("Abbreviation", _symbolAbbreviation);
-				_node.Description  = _symbolDescription  = EditorGUILayout.TextField("Description", _symbolDescription);
-				_node.OutlineColor = _symbolOutlineColor = EditorGUILayout.ColorField("Outline Color", _symbolOutlineColor);
-				_node.FilledColor  = _symbolFilledColor  = EditorGUILayout.ColorField("Filled Color", _symbolFilledColor);
-				_node.TextColor    = _symbolTextColor    = EditorGUILayout.ColorField("Text Color", _symbolTextColor);
+				_symbolTerminal     = (NodeTerminalType) EditorGUILayout.EnumPopup("Symbol Type", _symbolTerminal);
+				_symbolName         = EditorGUILayout.TextField("Name", _symbolName);
+				_symbolAbbreviation = EditorGUILayout.TextField("Abbreviation", _symbolAbbreviation);
+				_symbolDescription  = EditorGUILayout.TextField("Description", _symbolDescription);
+				_symbolOutlineColor = EditorGUILayout.ColorField("Outline Color", _symbolOutlineColor);
+				_symbolFilledColor  = EditorGUILayout.ColorField("Filled Color", _symbolFilledColor);
+				_symbolTextColor    = EditorGUILayout.ColorField("Text Color", _symbolTextColor);
+				// Update the node.
+				UpdateNode(_node);
 				EditorGUILayout.EndVertical();
 				GUILayout.Space(EditorStyle.PaddingAfterBlock);
 				// Show content of submition.
@@ -185,11 +187,13 @@ namespace MissionGrammarSystem {
 				EditorGUILayout.BeginVertical();
 				GUILayout.Space(EditorStyle.PaddingAfterBlock);
 				// Information of connection.
-				_connection.Name         = _symbolName          = EditorGUILayout.TextField("Name", _symbolName);
-				_connection.Description  = _symbolDescription   = EditorGUILayout.TextField("Description", _symbolDescription);
-				_connection.OutlineColor = _symbolOutlineColor  = EditorGUILayout.ColorField("Outline Color", _symbolOutlineColor);
-				_connection.Requirement  = _connectionType      = (ConnectionType) EditorGUILayout.EnumPopup("Connection Type", _connectionType);
-				_connection.Arrow        = _connectionArrowType = (ConnectionArrowType) EditorGUILayout.EnumPopup("Arrow Type", _connectionArrowType);
+				_symbolName          = EditorGUILayout.TextField("Name", _symbolName);
+				_symbolDescription   = EditorGUILayout.TextField("Description", _symbolDescription);
+				_symbolOutlineColor  = EditorGUILayout.ColorField("Outline Color", _symbolOutlineColor);
+				_connectionType      = (ConnectionType) EditorGUILayout.EnumPopup("Connection Type", _connectionType);
+				_connectionArrowType = (ConnectionArrowType) EditorGUILayout.EnumPopup("Arrow Type", _connectionArrowType);
+				// Update the conntection.
+				UpdateConnection(_connection);
 				EditorGUILayout.EndVertical();
 				GUILayout.Space(EditorStyle.PaddingAfterBlock);
 				// Show content of submition.
@@ -316,7 +320,6 @@ namespace MissionGrammarSystem {
 			// Repaint the window.
 			Repaint();
 		}
-
 		// Validate that the field data is legal.
 		private static Regex _ruleOfTerminalSymbolName            = new Regex(@"^[a-z]{1}[a-zA-Z]{,19}$");
 		private static Regex _ruleOfTerminalSymbolAbbreviation    = new Regex(@"^[a-z]{1,4}$");
@@ -344,10 +347,10 @@ namespace MissionGrammarSystem {
 				! _ruleOfNonTerminalSymbolAbbreviation.IsMatch(_symbolAbbreviation)) {
 				_messageHint = "Abbreviation field error! \nPlease use only uppercase letters (A-Z) and 4 characters or less.";
 				_messageType = MessageType.Error;
-			} else if (Alphabet.IsNodeNameUsed(_node)) {
+			} else if (Alphabet.IsNodeNameUsed(Alphabet.SelectedNode)) {
 				_messageHint = "Node name has been used!\nPlease try another one.";
 				_messageType = MessageType.Error;
-			} else if (Alphabet.IsNodeAbbreviationUsed(_node)) {
+			} else if (Alphabet.IsNodeAbbreviationUsed(Alphabet.SelectedNode)) {
 				_messageHint = "Node abbreviation has been used!\nPlease try another one.";
 				_messageType = MessageType.Error;
 			} else {
@@ -414,10 +417,14 @@ namespace MissionGrammarSystem {
 				// When click the button, update the symbol informations.
 				switch (_currentTab) {
 				case AlphabetWindowTab.Nodes:
+					// Update in alphabet and mission grammar.
 					UpdateNode(Alphabet.SelectedNode);
+					MissionGrammar.OnAlphabetUpdated(Alphabet.SelectedNode);
 					break;
 				case AlphabetWindowTab.Connections:
+					// Update in alphabet and mission grammar.
 					UpdateConnection(Alphabet.SelectedConnection);
+					MissionGrammar.OnAlphabetUpdated(Alphabet.SelectedConnection);
 					break;
 				}
 				// Unfocus from the field.
