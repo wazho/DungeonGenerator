@@ -183,8 +183,8 @@ namespace MissionGrammarSystem {
 			Vector2 orthoptics = new Vector2(-dir.y, dir.x);
 			// Arrow cap's points
 			Vector3[] arrowHead = new Vector3[3];
-			arrowHead[0] = EndPosition - dir * 2 + orthoptics; 
-			arrowHead[1] = EndPosition - dir * 2 - orthoptics; 
+			arrowHead[0] = EndPosition - dir * 2 + orthoptics;
+			arrowHead[1] = EndPosition - dir * 2 - orthoptics;
 			arrowHead[2] = EndPosition; 
 			Vector3[] arrowHeadSec = new Vector3[3];
 			Vector2 dir2 = dir = dir + dir * 1f;

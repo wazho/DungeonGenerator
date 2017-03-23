@@ -12,31 +12,38 @@ public class DungeonWindow : EditorWindow {
 	private static Rect _defaultSize = new Rect(35, 35, 500, 650);
 
 	// Add the 'Level settings' in 'Dungeon' menu.
-	[MenuItem("Dungeon/Level settings %#&i", false, 1)]
+	[MenuItem("Dungeon/Index", false, 1)]
+	public static void ShowIndexWindow() {
+		_window = EditorWindow.GetWindow<Dungeon.IndexWindow>("Index", true);
+		_window.position = new Rect(35, 35, 500, 400);
+	}
+
+	// Add the 'Level settings' in 'Dungeon' menu.
+	[MenuItem("Dungeon/Level settings", false, 1)]
 	public static void ShowLevelSettingWindow() {
 		_window = EditorWindow.GetWindow<Dungeon.LevelSettingsWindow>("Level settings", true);
-		_window.position = _defaultSize;
+		_window.position = new Rect(35, 60, 500, 195);
 	}
 
 	// Add the 'Mission > Grammar settings' in 'Dungeon' menu.
 	[MenuItem("Dungeon/Mission/Grammar settings %#&ms", false, 11)]
 	public static void ShowMissionSettingWindow() {
 		_window = EditorWindow.GetWindow<Mission.SettingsWindow>("Mission settings", true);
-		_window.position = _defaultSize;
+		_window.position = new Rect(35, 60, 500, 165);
 	}
 
 	// Add the 'Mission > Alphabet' in 'Dungeon' menu.
 	[MenuItem("Dungeon/Mission/Alphabet %#&ma", false, 12)]
 	public static void ShowMissionAlphabetWindow() {
 		_window = EditorWindow.GetWindow<Mission.AlphabetWindow>("Mission alphabet", true);
-		_window.position = _defaultSize;
+		_window.position = new Rect(35, 60, 500, 615);
 	}
 
 	// Add the 'Mission > Rules' in 'Dungeon' menu.
 	[MenuItem("Dungeon/Mission/Rules %#&mr", false, 13)]
 	public static void ShowMissionRulesWindow() {
 		_window = EditorWindow.GetWindow<Mission.RulesWindow>("Mission rules", true);
-		_window.position = _defaultSize;
+		_window.position = new Rect(35, 60, 750, 495);
 	}
 
 	// Add the 'Space > Grammar settings' in 'Dungeon' menu.
@@ -50,7 +57,7 @@ public class DungeonWindow : EditorWindow {
 	[MenuItem("Dungeon/Space/Alphabet %#&sa", false, 22)]
 	public static void ShowSpaceAlphabetWindow() {
 		_window = EditorWindow.GetWindow<Space.AlphabetWindow>("Space alphabet", true);
-		_window.position = _defaultSize;
+		_window.position = new Rect(35, 60, 500, 615);
 	}
 	
 	// Add the 'Space > Rules' in 'Dungeon' menu.
