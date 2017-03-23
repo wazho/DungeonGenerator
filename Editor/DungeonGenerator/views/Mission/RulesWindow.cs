@@ -456,12 +456,20 @@ namespace MissionGrammarSystem {
 			EditorGUI.DrawRect(EditorStyle.RuleSourceCanvas, _missionRule.SourceRule.Equals(_currentSelectedGraphGrammar) ? Color.white : Color.gray);
 			GUILayout.Label(string.Empty, EditorStyle.RuleSourceCanvasContent);
 			// Draw Nodes and Connections.
+			GraphGrammarConnection _currentSelectedConnection = null;
+			foreach (GraphGrammarConnection connection in _missionRule.SourceRule.Connections) {
+				if (connection.Selected) {
+					_currentSelectedConnection = connection;
+				} else {
+					GraphGrammar.DrawConnection(connection);
+				}
+			}
 			foreach (GraphGrammarNode node in _missionRule.SourceRule.Nodes) {
 				GraphGrammar.DrawNode(node);
 			}
-			foreach (GraphGrammarConnection connection in _missionRule.SourceRule.Connections) {
-				GraphGrammar.DrawConnection(connection);
-			}
+			// Only selected connection need to place at the top.
+			if(_currentSelectedConnection != null)
+				GraphGrammar.DrawConnection(_currentSelectedConnection);
 			GUILayout.EndScrollView();
 		}
 
