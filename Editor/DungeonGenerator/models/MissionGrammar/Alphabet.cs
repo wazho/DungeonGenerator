@@ -11,12 +11,14 @@ namespace MissionGrammarSystem {
 	public static class Alphabet {
 		// Default nodes in alphabet.
 		private static List<GraphGrammarNode> _nodes = new List<GraphGrammarNode>() {
-				new GraphGrammarNode("none",     "none", "System protected.", NodeTerminalType.Terminal),
-				new GraphGrammarNode("entrance", "en",   "System protected.", NodeTerminalType.Terminal),
-				new GraphGrammarNode("goal",     "go",   "System protected.", NodeTerminalType.Terminal),
+				new GraphGrammarNode("none",     "none", "System default.", NodeTerminalType.Terminal),
+				new GraphGrammarNode("entrance", "en",   "System default.", NodeTerminalType.Terminal),
+				new GraphGrammarNode("goal",     "go",   "System default.", NodeTerminalType.Terminal),
 			};
 		private static List<GraphGrammarConnection> _connections = new List<GraphGrammarConnection>() {
-				new GraphGrammarConnection()
+				new GraphGrammarConnection("Weak requirement",   "System default.", ConnectionType.WeakRequirement,   ConnectionArrowType.Normal),
+				new GraphGrammarConnection("Strong requirement", "System default.", ConnectionType.StrongRequirement, ConnectionArrowType.Double),
+				new GraphGrammarConnection("Inhibition",         "System default.", ConnectionType.Inhibition,        ConnectionArrowType.WithCircle),
 			};
 
 		// Node list in alphabet.

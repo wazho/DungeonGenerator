@@ -53,6 +53,13 @@ namespace MissionGrammarSystem {
 			this._startpointStickyOn = null;
 			this._endpointStickyOn   = null;
 		}
+		// Basic construction.
+		public GraphGrammarConnection(string name, string description, ConnectionType requirement, ConnectionArrowType arrowType) : this() {
+			this._name        = name;
+			this._description = description;
+			this._requirement = requirement;
+			this._arrow       = arrowType;
+		}
 		// Clone construction for basic informations.
 		public GraphGrammarConnection(GraphGrammarConnection connection) {
 			// Generate new symbol ID, but use same alphabet ID.
