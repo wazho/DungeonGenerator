@@ -33,6 +33,10 @@ namespace EditorExtend {
 		private static Rect _ruleGraphGrammarCanvas   = new Rect(0, 0, Screen.width, 200);
 		private static Rect _afterRulePreviewArea     = new Rect(0, 400, Screen.width, Screen.height);
 
+		private static Rect _indexWindowCanvasArea = new Rect(0, 0, Screen.width, 250);
+		private static Rect _indexWindowCanvas = new Rect(0, 0, Screen.width, 250);
+		private static Rect _afterIndexWindowCanvasArea = new Rect(0, 250, Screen.width, Screen.height);
+
 		// Font size.
 		public static int HeaderFontSize {
 			get { return _headerFontSize; }
@@ -105,7 +109,24 @@ namespace EditorExtend {
 				return _rulePreviewArea;
 			}
 		}
-
+		public static Rect IndexWindowCanvas {
+			get {
+				_indexWindowCanvas.width = Screen.width;
+				return _indexWindowCanvas;
+			}
+		}
+		public static Rect IndexWindowCanvasArea {
+			get {
+				_indexWindowCanvasArea.width = Screen.width;
+				return _indexWindowCanvasArea;
+			}
+		}
+		public static Rect AfterIndexWindowCanvasArea {
+			get {
+				_afterIndexWindowCanvasArea.width = Screen.width;
+				return _afterIndexWindowCanvasArea;
+			}
+		}
 
 		private const int _ruleScrollViewHeight = 200;
 		public static GUILayoutOption RuleScrollViewHeight {
