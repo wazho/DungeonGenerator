@@ -15,7 +15,9 @@ namespace MissionGrammarSystem {
 				new GraphGrammarNode("entrance", "en",   "System protected.", NodeTerminalType.Terminal),
 				new GraphGrammarNode("goal",     "go",   "System protected.", NodeTerminalType.Terminal),
 			};
-		private static List<GraphGrammarConnection> _connections = new List<GraphGrammarConnection>();
+		private static List<GraphGrammarConnection> _connections = new List<GraphGrammarConnection>() {
+				new GraphGrammarConnection()
+			};
 
 		// Node list in alphabet.
 		public static List<GraphGrammarNode> Nodes {
