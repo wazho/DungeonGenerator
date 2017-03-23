@@ -258,6 +258,14 @@ namespace MissionGrammarSystem {
 				LayoutConnectionList();
 				LayoutEditingButtonGroup();
 				break;
+			case SymbolEditingMode.Copy:
+				_currentTab = SymbolEditingMode.AddNode;
+				CopySelectedCanvas();
+				break;
+			case SymbolEditingMode.Delete:
+				_currentTab = SymbolEditingMode.AddNode;
+				DeleteSelectedNode();
+				break;
 			}
 			// Remind user [need Modify]
 			EditorGUILayout.HelpBox("Info \nThe Node's name has been used.", MessageType.Info);
@@ -479,6 +487,47 @@ namespace MissionGrammarSystem {
 				GraphGrammar.DrawConnection(connection);
 			}
 			GUILayout.EndScrollView();
+		}
+		//Delete selected symbol.
+		void DeleteSelectedNode() {
+			//return while not selected symbol.
+			if (_currentSelectedGraphGrammar.SelectedSymbol == null) { return; }
+			if (_currentSelectedGraphGrammar.SelectedSymbol is GraphGrammarNode) {
+				//Is node.
+				_currentSelectedGraphGrammar.Nodes.Remove((GraphGrammarNode)_currentSelectedGraphGrammar.SelectedSymbol);
+			}else if(_currentSelectedGraphGrammar.SelectedSymbol is GraphGrammarConnection) {
+				//Is connection.
+				_currentSelectedGraphGrammar.Connections.Remove((GraphGrammarConnection)_currentSelectedGraphGrammar.SelectedSymbol);
+			}
+			
+		}
+		//Copy selected canvas to another one.
+		void CopySelectedCanvas() {
+			if(_currentSelectedGraphGrammar != null && _currentSelectedGraphGrammar == _missionRule.SourceRule) {
+				//Copy nodes.
+				_missionRule.ReplacementRule.Nodes.Clear();
+				foreach (GraphGrammarNode node in _missionRule.SourceRule.Nodes) {
+					_missionRule.ReplacementRule.AddNode(node);
+				}
+				//Copy Connections.
+				_missionRule.ReplacementRule.Connections.Clear();
+				foreach (GraphGrammarConnection connection in _missionRule.SourceRule.Connections) {
+					_missionRule.ReplacementRule.AddConnection(connection);
+				}
+				_missionRule.ReplacementRule.RevokeAllSelected();
+			} else if(_currentSelectedGraphGrammar != null && _currentSelectedGraphGrammar == _missionRule.ReplacementRule) {
+				//Copy nodes.
+				_missionRule.SourceRule.Nodes.Clear();
+				foreach (GraphGrammarNode node in _missionRule.ReplacementRule.Nodes) {
+					_missionRule.SourceRule.AddNode(node);
+				}
+				//Copy connections.
+				_missionRule.SourceRule.Connections.Clear();
+				foreach (GraphGrammarConnection connection in _missionRule.ReplacementRule.Connections) {
+					_missionRule.SourceRule.AddConnection(connection);
+				}
+				_missionRule.SourceRule.RevokeAllSelected();
+			}
 		}
 	}
 }
