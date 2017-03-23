@@ -15,12 +15,18 @@ namespace MissionGrammarSystem {
 		private string            _name;
 		private string            _description;
 		private List<MissionRule> _rules;
-
+		// Constructor - Default.
 		public MissionGroup() {
-			this._name         = "New group";
-			this._description  = "Description here.";
+			this._name        = "New group";
+			this._description = "Description here.";
 			// Default mission rule.
-			this._rules        = new List<MissionRule>() { new MissionRule() };
+			this._rules       = new List<MissionRule>() { new MissionRule() };
+		}
+		// Constructor - Pass name and description.
+		// Constructor - Pass name and description.
+		public MissionGroup(string name, string description) : this() {
+			this._name        = name;
+			this._description = description;
 		}
 		// Name, getter and setter.
 		public string Name {
@@ -40,7 +46,17 @@ namespace MissionGrammarSystem {
 		public MissionRule Rule(string name) {
 			return _rules.Where(r => r.Name == name).FirstOrDefault();
 		}
-		// Add a mission rule.
+		// Add a mission rule by default.
+		public void AddRule() {
+			_rules.Add(new MissionRule());
+			return;
+		}
+		// Add a mission rule from basic info.
+		public void AddRule(string name, string description) {
+			_rules.Add(new MissionRule(name, description));
+			return;
+		}
+		// Add a mission rule from another rule.
 		public void AddRule(MissionRule rule) {
 			_rules.Add(rule);
 			return;

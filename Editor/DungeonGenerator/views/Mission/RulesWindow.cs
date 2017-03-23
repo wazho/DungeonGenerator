@@ -38,9 +38,12 @@ namespace MissionGrammarSystem {
 		// The index of group & rule.
 		private int _indexOfGroupsOptions;
 		private int _indexOfRulesOptions;
+		private int _tempIndexOfGroupsOptions;
+		private int _tempIndexOfRulesOptions;
 		// The description of group or rule.
 		private string _name;
 		private string _description;
+		private bool _nameCanBeUsed;
 		// Enabled Button-Apply
 		private bool _applyEditingButtonEnabled;
 		private bool _applySymbolEditingButtonEnabled;
@@ -75,8 +78,11 @@ namespace MissionGrammarSystem {
 			_rulesOptions         = MissionGrammar.Groups[0].Rules.Select(r => r.Name).ToArray();
 			_indexOfGroupsOptions = 0;
 			_indexOfRulesOptions  = 0;
+			_tempIndexOfGroupsOptions = 0;
+			_tempIndexOfRulesOptions = 0;
 			_name                 = string.Empty;
 			_description          = string.Empty;
+			_nameCanBeUsed = false;
 			_applyEditingButtonEnabled = false;
 			_applySymbolEditingButtonEnabled = false;
 			_edit                 = Resources.Load<Texture2D>("Icons/edit");
@@ -131,16 +137,43 @@ namespace MissionGrammarSystem {
 			EditorGUILayout.BeginHorizontal();
 			// Dropdown list of current group type.
 			_indexOfGroupsOptions = EditorGUILayout.Popup("Current Group", _indexOfGroupsOptions, _groupsOptions);
-			// Editor buttons, edit, delete and create.
+			if (_tempIndexOfGroupsOptions != _indexOfGroupsOptions) {
+				// Switch mode.
+				_editingMode = EditingMode.None;
+				_tempIndexOfGroupsOptions = _indexOfGroupsOptions;
+				_indexOfRulesOptions = 0;
+				// Update the rules of selected group.
+				_rulesOptions = MissionGrammar.Groups[_indexOfGroupsOptions].Rules.Select(r => r.Name).ToArray();
+			}
+			// Sub-button of editor, edit the group.
 			if (GUILayout.Button(_edit, EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
+				// Switch mode.
 				_editingMode = EditingMode.EditGroup;
+				// Update info.
+				_name        = MissionGrammar.Groups[_indexOfGroupsOptions].Name;
+				_description = MissionGrammar.Groups[_indexOfGroupsOptions].Description;
 			}
+			// Sub-button of editor, delete the group.
 			if (GUILayout.Button(_delete, EditorStyles.miniButtonMid, EditorStyle.ButtonHeight)) {
+				// Switch mode.
 				_editingMode = EditingMode.DeleteGroup;
+				MissionGrammar.RemoveGroup(MissionGrammar.Groups[_indexOfGroupsOptions]);
+				// If deleted the least one, add the new one.
+				if (_groupsOptions.Length <= 1) { MissionGrammar.AddGroup(); }
+				// Reset the index and mode.
+				_indexOfGroupsOptions = 0;
+				_editingMode = EditingMode.None;
 			}
+			// Sub-button of editor, create new group.
 			if (GUILayout.Button("Add New", EditorStyles.miniButtonRight, EditorStyle.ButtonHeight)) {
+				// Switch mode.
 				_editingMode = EditingMode.CreateGroup;
+				// Update info.
+				_name        = string.Empty;
+				_description = string.Empty;
 			}
+			// Update the content of dropdown.
+			_groupsOptions = MissionGrammar.Groups.Select(s => s.Name).ToArray();
 			EditorGUILayout.EndHorizontal();
 		}
 		// Layout the combobox and editor of mission rule, mission rule is sub-member in current mission group.
@@ -149,43 +182,130 @@ namespace MissionGrammarSystem {
 			EditorGUILayout.BeginHorizontal();
 			// Dropdown list of Currect Rule Type.
 			_indexOfRulesOptions = EditorGUILayout.Popup("Current Rule", _indexOfRulesOptions, _rulesOptions);
-			// Buttons - Editor, Delete and Add new.
+			if (_tempIndexOfRulesOptions != _indexOfRulesOptions) {
+				// Switch mode.
+				_editingMode             = EditingMode.None;
+				_tempIndexOfRulesOptions = _indexOfRulesOptions;
+			}
+			// Sub-button of editor, edit the rule.
 			if (GUILayout.Button(_edit, EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
+				// Switch mode.
 				_editingMode = EditingMode.EditRule;
+				// Update info.
+				_name        = MissionGrammar.Groups[_indexOfGroupsOptions].Rules[_indexOfRulesOptions].Name;
+				_description = MissionGrammar.Groups[_indexOfGroupsOptions].Rules[_indexOfRulesOptions].Description;
 			}
+			// Sub-button of editor, delete the rule.
 			if (GUILayout.Button(_delete, EditorStyles.miniButtonMid, EditorStyle.ButtonHeight)) {
+				// Switch mode.
 				_editingMode = EditingMode.DeleteRule;
+				// Remove the rule from current group.
+				MissionGrammar.Groups[_indexOfGroupsOptions].RemoveRule(MissionGrammar.Groups[_indexOfGroupsOptions].Rules[_indexOfRulesOptions]);
+				// If deleted the least one, add the new one.
+				if (_rulesOptions.Length <= 1) { MissionGrammar.Groups[_indexOfGroupsOptions].AddRule(); }
+				// Reset the index and mode.
+				_indexOfRulesOptions = 0;
+				_editingMode = EditingMode.None;
 			}
+			// Sub-button of editor, create new rule.
 			if (GUILayout.Button("Add New", EditorStyles.miniButtonRight, EditorStyle.ButtonHeight)) {
+				// Switch mode.
 				_editingMode = EditingMode.CreateRule;
+				// Update info.
+				_name        = string.Empty;
+				_description = string.Empty;
 			}
+			// Update the content of dropdown.
+			_rulesOptions = MissionGrammar.Groups[_indexOfGroupsOptions].Rules.Select(r => r.Name).ToArray();
 			EditorGUILayout.EndHorizontal();
 		}
 		// Layout the editor of mission group or mission rule.
 		void LayoutBasicInfoEditor() {
-			// Information.
-			_name = EditorGUILayout.TextField("Name", _name);
-			_description = EditorGUILayout.TextField("Description", _description);
+			// Information of mission group or mission rule.
+			switch (_editingMode) {
+			case EditingMode.EditGroup:
+				// Text fields.
+				_name        = EditorGUILayout.TextField("Group Name", _name);
+				_description = EditorGUILayout.TextField("Group Description", _description);
+				// Check the name has never used before.
+				_nameCanBeUsed = ! MissionGrammar.IsGroupNameUsed(_name);
+				break;
+			case EditingMode.CreateGroup:
+				// Text fields.
+				_name        = EditorGUILayout.TextField("New Group Name", _name);
+				_description = EditorGUILayout.TextField("Group Description", _description);
+				// Check the name has never used before.
+				_nameCanBeUsed = ! MissionGrammar.IsGroupNameUsed(_name);
+				break;
+			case EditingMode.EditRule:
+				// Text fields.
+				_name        = EditorGUILayout.TextField("Rule Name", _name);
+				_description = EditorGUILayout.TextField("Rule Description", _description);
+				// Check the name has never used before.
+				_nameCanBeUsed = ! MissionGrammar.IsRuleNameUsed(_name, _indexOfGroupsOptions);
+				break;
+			case EditingMode.CreateRule:
+				// Text fields.
+				_name        = EditorGUILayout.TextField("New Rule Name", _name);
+				_description = EditorGUILayout.TextField("Rule Description", _description);
+				// Check the name has never used before.
+				_nameCanBeUsed = ! MissionGrammar.IsRuleNameUsed(_name, _indexOfGroupsOptions);
+				break;
+			}
+			// [TODO] Data validation. Move this part.
 			// Remind user [need Modify]
 			if (_name == string.Empty && _description == string.Empty) {
 				EditorGUILayout.HelpBox("Info \nThe name is empty. \nThe description is empty.", MessageType.Info);
+				_applyEditingButtonEnabled = false;
 			}
 			if (_name == string.Empty && _description != string.Empty) {
+				_applyEditingButtonEnabled = false;
 				EditorGUILayout.HelpBox("Info \nThe name is empty.", MessageType.Info);
 			}
-			if (_name != string.Empty && _description == string.Empty) {
+			if (_name != string.Empty && _description == string.Empty && _nameCanBeUsed == false) {
+				_applyEditingButtonEnabled = false;
+				EditorGUILayout.HelpBox("Info  \nThe name has been used before. \nThe description is empty.", MessageType.Info);
+			}
+			if (_name != string.Empty && _description == string.Empty && _nameCanBeUsed == true) {
+				_applyEditingButtonEnabled = false;
 				EditorGUILayout.HelpBox("Info \nThe description is empty.", MessageType.Info);
 			}
-			if (_name != string.Empty && _description != string.Empty) {
+			if (_name != string.Empty && _description != string.Empty && _nameCanBeUsed == false) {
+				_applyEditingButtonEnabled = false;
+				EditorGUILayout.HelpBox("Info \nThe name has been used before.", MessageType.Info);
+			}
+			if (_name != string.Empty && _description != string.Empty && _nameCanBeUsed == true) {
 				_applyEditingButtonEnabled = true;
 				EditorGUILayout.HelpBox("Info \nNothing.", MessageType.Info);
 			}
-			// Buttons - Apply.
+			// Submit button.
 			GUI.enabled = _applyEditingButtonEnabled;
 			if (GUILayout.Button("Apply", EditorStyles.miniButton, EditorStyle.ButtonHeight)) {
 				if (EditorUtility.DisplayDialog("Saving", 
-				"Are you sure to save?",
-				"Yes", "No")) {
+					"Are you sure to save?",
+					"Yes", "No")) {
+					switch (_editingMode) {
+					case EditingMode.EditGroup:
+						MissionGrammar.Groups[_indexOfGroupsOptions].Name        = _name;
+						MissionGrammar.Groups[_indexOfGroupsOptions].Description = _description;
+						break;
+					case EditingMode.CreateGroup:
+						MissionGrammar.AddGroup(_name, _description);
+						_indexOfGroupsOptions = _groupsOptions.Length;
+						break;
+					case EditingMode.EditRule:
+						MissionGrammar.Groups[_indexOfGroupsOptions].Rules[_indexOfRulesOptions].Name        = _name;
+						MissionGrammar.Groups[_indexOfGroupsOptions].Rules[_indexOfRulesOptions].Description = _description;
+						break;
+					case EditingMode.CreateRule:
+						MissionGrammar.Groups[_indexOfGroupsOptions].AddRule(_name, _description);
+						_indexOfRulesOptions = _rulesOptions.Length;
+						break;
+					}
+					// Reset the mode.
+					_editingMode = EditingMode.None;
+					// Unfocus from the field.
+					GUI.FocusControl("FocusToNothing");
 				} else {
 
 				}
@@ -496,7 +616,7 @@ namespace MissionGrammarSystem {
 			}
 			GUILayout.EndScrollView();
 		}
-		//Delete selected symbol.
+		// Delete selected symbol.
 		void DeleteSelectedNode() {
 			//return while not selected symbol.
 			if (_currentSelectedGraphGrammar.SelectedSymbol == null) { return; }
@@ -509,7 +629,7 @@ namespace MissionGrammarSystem {
 			}
 			
 		}
-		//Copy selected canvas to another one.
+		// Copy selected canvas to another one.
 		void CopySelectedCanvas() {
 			if(_currentSelectedGraphGrammar != null && _currentSelectedGraphGrammar == _missionRule.SourceRule) {
 				//Copy nodes.

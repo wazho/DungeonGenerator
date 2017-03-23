@@ -16,14 +16,18 @@ namespace MissionGrammarSystem {
 		private string       _description;
 		private GraphGrammar _sourceRule;
 		private GraphGrammar _replacementRule;
-
+		// Constructor - Default.
 		public MissionRule() {
 			this._name            = "New rule";
 			this._description     = "Description here.";
 			this._sourceRule      = new GraphGrammar();
 			this._replacementRule = new GraphGrammar();
 		}
-
+		// Constructor - Pass name and description.
+		public MissionRule(string name, string description) : this() {
+			this._name        = name;
+			this._description = description;
+		}
 		// Name, getter and setter.
 		public string Name {
 			get { return _name; }
