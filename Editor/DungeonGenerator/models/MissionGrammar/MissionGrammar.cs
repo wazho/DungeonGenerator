@@ -57,6 +57,20 @@ namespace MissionGrammarSystem {
 				}
 			} else if (symbol is GraphGrammarConnection) {
 				referenceConnection = (GraphGrammarConnection) symbol;
+				foreach (var group in _groups) {
+					foreach (var rule in group.Rules) {
+						foreach (var connection in rule.SourceRule.Connections) {
+							if (connection.AlphabetID == referenceConnection.AlphabetID) {
+								connection.UpdateSymbolInfo(referenceConnection);
+							}
+						}
+						foreach (var connection in rule.ReplacementRule.Connections) {
+							if (connection.AlphabetID == referenceConnection.AlphabetID) {
+								connection.UpdateSymbolInfo(referenceConnection);
+							}
+						}
+					}
+				}
 			}
 		}
 	}

@@ -5,6 +5,8 @@ using System.Collections;
 using System.Collections.Generic;
 using Guid = System.Guid;
 
+using EditorCanvas = EditorExtend.NodeCanvas;
+
 namespace MissionGrammarSystem {
 	// Terminal types of node.
 	public enum NodeTerminalType {
@@ -29,6 +31,8 @@ namespace MissionGrammarSystem {
 
 	 */
 	public class GraphGrammarNode : GraphGrammarSymbol {
+		// Values of setting.
+		private const int _thickness = 2;
 		// GUID for this symbol in alphabet.
 		private Guid                     _alphabetID;
 		// Members.
@@ -58,7 +62,6 @@ namespace MissionGrammarSystem {
 			this._filledColor         = Color.white;
 			this._textColor           = Color.black;
 			this._stickiedConnections = new List<StickiedConnection>();
-			this.Position = this.Position;//Fix to align center
 		}
 		// Basic construction.
 		public GraphGrammarNode(NodeTerminalType terminal) : this() {
@@ -210,6 +213,31 @@ namespace MissionGrammarSystem {
 		// Return the position is contained in this symbol or not.
 		public bool IsInScope(Vector2 pos) {
 			return _filledScope.Contains(pos);
+		}
+		// Draw the node on canvas.
+		public void Draw() {
+			switch (Terminal) {
+			case NodeTerminalType.NonTerminal:
+				// Highlighting.
+				if (Selected) {
+					EditorCanvas.DrawQuad(new Rect(OutlineScope.x - _thickness, (int) OutlineScope.y - _thickness, OutlineScope.width + _thickness * 2, OutlineScope.height + _thickness * 2), Color.red);
+				}
+				// Main part of node.
+				EditorCanvas.DrawQuad(OutlineScope, OutlineColor);
+				EditorCanvas.DrawQuad(FilledScope, FilledColor);
+				EditorCanvas.DrawQuad(TextScope, Color.clear, Abbreviation, TextColor);
+				break;
+			case NodeTerminalType.Terminal:
+				// Highlighting.
+				if (Selected) {
+					EditorCanvas.DrawDisc(Position, OutlineScope.width / 2 + _thickness, Color.red);
+				}
+				// Main part of node.
+				EditorCanvas.DrawDisc(Position, OutlineScope.width / 2, OutlineColor);
+				EditorCanvas.DrawDisc(Position, OutlineScope.width / 2 - _thickness, FilledColor);
+				EditorCanvas.DrawQuad(TextScope, Color.clear, Abbreviation, TextColor);
+				break;
+			}
 		}
 		// Sub-classes.
 		private class StickiedConnection {

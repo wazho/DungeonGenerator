@@ -403,7 +403,6 @@ namespace MissionGrammarSystem {
 				GUILayout.Label(node.ExpressName, EditorStyle.LabelInNodeList);
 			}
 			GUILayout.EndScrollView();
-
 		}
 
 		void LayoutConnectionList() {
@@ -469,15 +468,16 @@ namespace MissionGrammarSystem {
 				if (connection.Selected) {
 					_currentSelectedConnection = connection;
 				} else {
-					GraphGrammar.DrawConnection(connection);
+					connection.Draw();
 				}
 			}
 			foreach (GraphGrammarNode node in _missionRule.SourceRule.Nodes) {
-				GraphGrammar.DrawNode(node);
+				node.Draw();
 			}
 			// Only selected connection need to place at the top.
-			if(_currentSelectedConnection != null)
-				GraphGrammar.DrawConnection(_currentSelectedConnection);
+			if (_currentSelectedConnection != null) {
+				_currentSelectedConnection.Draw();
+			}
 			GUILayout.EndScrollView();
 		}
 
@@ -489,10 +489,10 @@ namespace MissionGrammarSystem {
 			EditorGUI.DrawRect(EditorStyle.RuleReplacementCanvas, _missionRule.ReplacementRule.Equals(_currentSelectedGraphGrammar) ? Color.white : Color.gray);
 			GUILayout.Label(string.Empty, EditorStyle.RuleReplacementCanvasContent);
 			foreach (GraphGrammarNode node in _missionRule.ReplacementRule.Nodes) {
-				GraphGrammar.DrawNode(node);
+				node.Draw();
 			}
 			foreach (GraphGrammarConnection connection in _missionRule.ReplacementRule.Connections) {
-				GraphGrammar.DrawConnection(connection);
+				connection.Draw();
 			}
 			GUILayout.EndScrollView();
 		}

@@ -174,87 +174,14 @@ namespace MissionGrammarSystem {
 		}
 		// Set all 'seleted' of symbols to false.
 		public void RevokeAllSelected() {
-			foreach (GraphGrammarNode symbol in _nodes) {
+			foreach (var symbol in _nodes) {
 				symbol.Selected = false;
 			}
-			foreach (GraphGrammarConnection symbol in _connections) {
+			foreach (var symbol in _connections) {
 				symbol.Selected = symbol.StartSelected = symbol.EndSelected = false;
 			}
 			_selectedSymbol = null;
 			return;
-		}
-		
-		// [Draw on canvas] Draw the node on canvas.
-		public static void DrawNode(GraphGrammarNode node) {
-			int thickness = 2;
-
-			switch (node.Terminal) {
-			case NodeTerminalType.NonTerminal:
-				if (node.Selected) {
-					EditorCanvas.DrawQuad(new Rect(node.OutlineScope.x - thickness, (int) node.OutlineScope.y - thickness, node.OutlineScope.width + thickness * 2, node.OutlineScope.height + thickness * 2), Color.red);
-				}
-				EditorCanvas.DrawQuad(node.OutlineScope, node.OutlineColor);
-				EditorCanvas.DrawQuad(node.FilledScope, node.FilledColor);
-				EditorCanvas.DrawQuad(node.TextScope, Color.clear, node.Abbreviation, node.TextColor);
-				break;
-			case NodeTerminalType.Terminal:
-				if (node.Selected) {
-					EditorCanvas.DrawDisc(node.Position, 20 + thickness, Color.red);
-				}
-				EditorCanvas.DrawDisc(node.Position, 20, node.OutlineColor);
-				EditorCanvas.DrawDisc(node.Position, 18, node.FilledColor);
-				EditorCanvas.DrawQuad(node.TextScope, Color.clear, node.Abbreviation, node.TextColor);
-				break;
-			}
-		}
-
-		// [Draw on canvas] Draw the connection on canvas.
-		public static void DrawConnection(GraphGrammarConnection connection) {
-			// Setting of endpoints and line.
-			int pBorder      = 2;
-			float lThickness = connection.LineThickness;
-
-			// Line between two points.
-			EditorCanvas.DrawLine(connection.StartPosition, connection.EndPosition, connection.OutlineColor, lThickness);
-
-			// Head size
-			Vector2 dir = (connection.EndPosition - connection.StartPosition).normalized * 5f;
-			Vector2 orth = new Vector2(-dir.y, dir.x);
-			// Arrow cap's points
-			Vector3[] arrowHead = new Vector3[3];
-			arrowHead [0] = connection.EndPosition - dir * 2 + orth; 
-			arrowHead [1] = connection.EndPosition - dir * 2 - orth; 
-			arrowHead [2] = connection.EndPosition; 
-			Vector3[] arrowHeadSec = new Vector3[3];
-			Vector2 dir2 = dir = dir + dir * 1f;
-			arrowHeadSec [0] = connection.EndPosition - dir2 * 2 + orth;
-			arrowHeadSec [1] = connection.EndPosition - dir2 * 2 - orth;
-			arrowHeadSec [2] = connection.EndPosition - dir2;
-			
-			switch (connection.Arrow) {
-			case ConnectionArrowType.Normal:
-				Handles.color = connection.OutlineColor;
-				Handles.DrawAAConvexPolygon (arrowHead);	
-				break;
-			case ConnectionArrowType.Double:
-				Handles.color = connection.OutlineColor;
-				Handles.DrawAAConvexPolygon (arrowHead);
-				Handles.DrawAAConvexPolygon (arrowHeadSec);
-				break;
-			case ConnectionArrowType.WithCircle:
-				Handles.DrawAAConvexPolygon (arrowHeadSec);
-				EditorCanvas.DrawDisc(connection.EndPosition - dir2 / 2f, 5f, connection.OutlineColor);
-				EditorCanvas.DrawDisc(connection.EndPosition - dir2 / 2f, 4f, Color.white);
-				break;
-			}
-
-			// Basic square and boarder.
-			if (connection.Selected) {
-				EditorCanvas.DrawQuad((int) connection.StartpointScope.x - pBorder, (int) connection.StartpointScope.y - pBorder, (int) connection.StartpointScope.width + pBorder*2, (int) connection.StartpointScope.height + pBorder*2, Color.black);
-				EditorCanvas.DrawQuad((int) connection.StartpointScope.x, (int) connection.StartpointScope.y, (int) connection.StartpointScope.width, (int) connection.StartpointScope.height, Color.red);
-				EditorCanvas.DrawQuad((int) connection.EndpointScope.x - pBorder, (int) connection.EndpointScope.y - pBorder, (int) connection.EndpointScope.width + pBorder * 2, (int) connection.EndpointScope.height + pBorder * 2, Color.black);
-				EditorCanvas.DrawQuad((int) connection.EndpointScope.x, (int) connection.EndpointScope.y, (int) connection.EndpointScope.width, (int) connection.EndpointScope.height, Color.blue);
-			}
 		}
 	}
 }

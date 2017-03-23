@@ -133,7 +133,7 @@ namespace MissionGrammarSystem {
 			EditorGUI.DrawRect(_canvas, Color.gray);
 			_centerPosition.x = Screen.width / 2;
 			_node.Position    = _centerPosition;
-			Alphabet.DrawNode(_node);
+			_node.Draw();
 			GUILayout.EndArea();
 			// Area for input fields.
 			switch (_editingMode) {
@@ -177,7 +177,8 @@ namespace MissionGrammarSystem {
 			_connection.StartPosition = _centerPosition;
 			_centerPosition.x         = Screen.width / 2 + 25;
 			_connection.EndPosition   = _centerPosition;
-			Alphabet.DrawConnection(_connection);
+			// Draw this connection.
+			_connection.Draw();
 			GUILayout.EndArea();
 			switch (_editingMode) {
 			case EditingMode.Create:

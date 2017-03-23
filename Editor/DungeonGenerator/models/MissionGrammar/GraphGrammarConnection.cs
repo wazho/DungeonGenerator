@@ -5,6 +5,8 @@ using System.Collections;
 using System.Collections.Generic;
 using Guid = System.Guid;
 
+using EditorCanvas = EditorExtend.NodeCanvas;
+
 namespace MissionGrammarSystem {
 	// Types of connection.
 	public enum ConnectionType {
@@ -40,8 +42,8 @@ namespace MissionGrammarSystem {
 		// Basic construction.
 		public GraphGrammarConnection() : base() {
 			this._type               = SymbolType.Connection;
-			this._name               = "";
-			this._description        = "";
+			this._name               = string.Empty;
+			this._description        = string.Empty;
 			this._requirement        = ConnectionType.WeakRequirement;
 			this._arrow              = ConnectionArrowType.Normal;
 			this._startpointScope    = new Rect(  0,   0, this._pointScopeSize, this._pointScopeSize);
@@ -163,6 +165,52 @@ namespace MissionGrammarSystem {
 		// .
 		public bool IsInEndscope(Vector2 pos) {
 			return _endpointScope.Contains(pos);
+		}
+		// Update the information form another connection, mostly reference is in Alphabet.
+		public void UpdateSymbolInfo(GraphGrammarConnection referenceConnection) {
+			_name         = referenceConnection.Name;
+			_description  = referenceConnection.Description;
+			_outlineColor = referenceConnection.OutlineColor;
+			_requirement  = referenceConnection.Requirement;
+			_arrow        = referenceConnection.Arrow;
+		}
+		// Draw the connection on canvas.
+		public void Draw() {
+			// Draw the main line about connection.
+			EditorCanvas.DrawLine(StartPosition, EndPosition, OutlineColor, LineThickness);
+			// Head size
+			Vector2 dir = (EndPosition - StartPosition).normalized * LineThickness;
+			Vector2 orthoptics = new Vector2(-dir.y, dir.x);
+			// Arrow cap's points
+			Vector3[] arrowHead = new Vector3[3];
+			arrowHead[0] = EndPosition - dir * 2 + orthoptics; 
+			arrowHead[1] = EndPosition - dir * 2 - orthoptics; 
+			arrowHead[2] = EndPosition; 
+			Vector3[] arrowHeadSec = new Vector3[3];
+			Vector2 dir2 = dir = dir + dir * 1f;
+			arrowHeadSec[0] = EndPosition - dir2 * 2 + orthoptics;
+			arrowHeadSec[1] = EndPosition - dir2 * 2 - orthoptics;
+			arrowHeadSec[2] = EndPosition - dir2;
+			// Draw the arraw part.
+			switch (this.Arrow) {
+			case ConnectionArrowType.Normal:
+				EditorCanvas.DrawTriangle(arrowHead, OutlineColor);
+				break;
+			case ConnectionArrowType.Double:
+				EditorCanvas.DrawTriangle(arrowHead, OutlineColor);
+				EditorCanvas.DrawTriangle(arrowHeadSec, OutlineColor);
+				break;
+			case ConnectionArrowType.WithCircle:
+				EditorCanvas.DrawTriangle(arrowHead, OutlineColor);
+				EditorCanvas.DrawDisc(EndPosition - dir2 / 2f, LineThickness, OutlineColor);
+				EditorCanvas.DrawDisc(EndPosition - dir2 / 2f, LineThickness - 1, Color.white);
+				break;
+			}
+			// Endpoints of conneciton.
+			if (Selected) {
+				EditorCanvas.DrawQuad(StartpointScope, Color.red);
+				EditorCanvas.DrawQuad(EndpointScope, Color.blue);
+			}
 		}
 	}
 }

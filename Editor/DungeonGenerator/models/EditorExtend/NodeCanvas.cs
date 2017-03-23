@@ -4,9 +4,10 @@ using System.Collections;
 
 namespace EditorExtend {
 	public class NodeCanvas {
+		private static Texture2D _texture2D = new Texture2D(1, 1);
 		// Draw a quad.
 		public static void DrawQuad(Rect rect, Color color) {
-			Texture2D texture = new Texture2D(1, 1);
+			Texture2D texture = _texture2D;
 			texture.SetPixel(0, 0, color);
 			texture.Apply();
 			GUI.skin.box.normal.background = texture;
@@ -14,7 +15,7 @@ namespace EditorExtend {
 		}
 		// Draw a quad with the text.
 		public static void DrawQuad(Rect rect, Color color, string content, Color textColor) {
-			Texture2D texture = new Texture2D(1, 1);
+			Texture2D texture = _texture2D;
 			texture.SetPixel(0, 0, color);
 			texture.Apply();
 			GUI.skin.box.normal.background = texture;
@@ -28,14 +29,12 @@ namespace EditorExtend {
 			Handles.DrawSolidDisc(position, Vector3.forward, radius);
 			Handles.EndGUI();
 		}
-		// [TODO] Will remove.
-		public static void DrawQuad(int x, int y, int width, int height, Color color) {
-			Rect rect = new Rect(x, y, width, height);
-			Texture2D texture = new Texture2D(1, 1);
-			texture.SetPixel(0, 0, color);
-			texture.Apply();
-			GUI.skin.box.normal.background = texture;
-			GUI.Box(rect, GUIContent.none);
+		// Draw a triangle.
+		public static void DrawTriangle(Vector3[] position, Color color) {
+			Handles.BeginGUI();
+			Handles.color = color;
+			Handles.DrawAAConvexPolygon(position);
+			Handles.EndGUI();
 		}
 		// Draw a line with two positions.
 		public static void DrawLine(Vector2 startPos, Vector2 endPos, Color color, float thickness) {
