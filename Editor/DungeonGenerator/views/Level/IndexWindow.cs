@@ -24,13 +24,13 @@ namespace DungeonLevel {
 			if (GUILayout.Button("Create Level", EditorStyles.miniButtonLeft, EditorStyle.TabButtonHeight)) {
 				// Create Level.
 			}
-			if (GUILayout.Button("Import Level", EditorStyles.miniButtonLeft, EditorStyle.TabButtonHeight)) {
+			if (GUILayout.Button("Import Level", EditorStyles.miniButtonMid, EditorStyle.TabButtonHeight)) {
 				// Import Level.
 			}
-			if (GUILayout.Button("Import Rewrite", EditorStyles.miniButtonLeft, EditorStyle.TabButtonHeight)) {
+			if (GUILayout.Button("Import Rewrite", EditorStyles.miniButtonMid, EditorStyle.TabButtonHeight)) {
 				// Import Rewrite.
 			}
-			if (GUILayout.Button("Export Level", EditorStyles.miniButtonLeft, EditorStyle.TabButtonHeight)) {
+			if (GUILayout.Button("Export Level", EditorStyles.miniButtonRight, EditorStyle.TabButtonHeight)) {
 				// Export Level.
 			}
 			GUILayout.EndHorizontal();
