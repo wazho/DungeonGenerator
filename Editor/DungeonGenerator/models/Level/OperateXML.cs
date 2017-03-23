@@ -3,7 +3,9 @@ using System.Collections;
 using System.Xml.Linq;
 using System;
 
-namespace MissionGrammarSystem {
+using Mission = MissionGrammarSystem;
+
+namespace DungeonLevel {
 	public static class OperateXML {
 
 		// Static method for other file calling.
@@ -20,7 +22,7 @@ namespace MissionGrammarSystem {
 			XElement elementNodes = elementMissionAlphabet.Element("Nodes");
 			XElement elementConnections = elementMissionAlphabet.Element("Connections");
 			// Serialize nodes
-			foreach (var node in Alphabet.Nodes) {
+			foreach (var node in Mission.Alphabet.Nodes) {
 				XElement elementNode = new XElement("Node", new XAttribute("id", node.ID));
 				elementNode.Add(new XElement("AlphabetID", node.AlphabetID));
 				elementNode.Add(new XElement("Name", node.Name));
@@ -45,11 +47,10 @@ namespace MissionGrammarSystem {
 				foreach (var guid in node.StickiedConnectionsGuid) {
 					elementStickiedConnection.Add(new XElement(guid.ToString()));
 				}
-
 				elementNodes.Add(elementNode);
 			}
 			// Serialize connections
-			foreach (var connection in Alphabet.Connections) {
+			foreach (var connection in Mission.Alphabet.Connections) {
 				XElement elementConnection = new XElement("Connection", new XAttribute("id", connection.ID));
 				elementConnection.Add(new XElement("AlphabetID", connection.AlphabetID));
 				elementConnection.Add(new XElement("Name", connection.Name));
@@ -70,7 +71,6 @@ namespace MissionGrammarSystem {
 				elementConnection.Add(new XElement("EndpointStickyOn", connection.EndpointStickyOn == null ? "" : connection.EndpointStickyOn.ID.ToString()));
 				elementConnection.Add(new XElement("StartSelected", connection.StartSelected.ToString()));
 				elementConnection.Add(new XElement("EndSelected", connection.EndSelected.ToString()));
-
 				elementConnections.Add(elementConnection);
 			}
 			xmlDocument.Add(elementMissionAlphabet);

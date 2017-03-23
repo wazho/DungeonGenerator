@@ -2,8 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections;
 
-using EditorAdvance = EditorExtend.Advance;
-using EditorStyle   = EditorExtend.Style;
+using EditorStyle = EditorExtend.Style;
 
 namespace DungeonLevel {
 	public class IndexWindow : EditorWindow {
@@ -24,16 +23,16 @@ namespace DungeonLevel {
 			if (GUILayout.Button("Create Level", EditorStyles.miniButtonLeft, EditorStyle.TabButtonHeight)) {
 				// Create Level.
 			}
-			if (GUILayout.Button("Import Level", EditorStyles.miniButtonLeft, EditorStyle.TabButtonHeight)) {
+			if (GUILayout.Button("Import Level", EditorStyles.miniButtonMid, EditorStyle.TabButtonHeight)) {
 				// Import Level.
 			}
-			if (GUILayout.Button("Import Rewrite", EditorStyles.miniButtonLeft, EditorStyle.TabButtonHeight)) {
+			if (GUILayout.Button("Import Rewrite", EditorStyles.miniButtonMid, EditorStyle.TabButtonHeight)) {
 				// Import Rewrite.
 			}
-			if (GUILayout.Button("Export Level", EditorStyles.miniButtonLeft, EditorStyle.TabButtonHeight)) {
+			if (GUILayout.Button("Export Level", EditorStyles.miniButtonRight, EditorStyle.TabButtonHeight)) {
 				// Export Level.
-				string path = EditorUtility.SaveFilePanel("Export xml", "", "Test.xml", "xml");
-				MissionGrammarSystem.OperateXML.SerializeToXml(path);
+				string path = EditorUtility.SaveFilePanel("Export xml", "", "Level.xml", "xml");
+				DungeonLevel.OperateXML.SerializeToXml(path);
 			}
 			GUILayout.EndHorizontal();
 			GUILayout.Space(EditorStyle.PaddingAfterBlock);

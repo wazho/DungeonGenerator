@@ -41,6 +41,7 @@ namespace MissionGrammarSystem {
 		private bool                _endSelected;
 		// Basic construction.
 		public GraphGrammarConnection() : base() {
+			this._alphabetID         = Guid.NewGuid();
 			this._type               = SymbolType.Connection;
 			this._name               = string.Empty;
 			this._description        = string.Empty;
@@ -57,6 +58,7 @@ namespace MissionGrammarSystem {
 			// Generate new symbol ID, but use same alphabet ID.
 			this._symbolID           = Guid.NewGuid();
 			this._alphabetID         = connection.AlphabetID;
+			// Basic information to copy.
 			this._type               = SymbolType.Connection;
 			this._name               = connection.Name;
 			this._description        = connection.Description;
