@@ -521,6 +521,8 @@ namespace MissionGrammarSystem {
 				_missionRule.ReplacementRule.Connections.Clear();
 				foreach (GraphGrammarConnection connection in _missionRule.SourceRule.Connections) {
 					_missionRule.ReplacementRule.AddConnection(connection);
+					_missionRule.ReplacementRule.StickyNode(_missionRule.ReplacementRule.Connections.LastOrDefault(), connection.StartPosition, "start");
+					_missionRule.ReplacementRule.StickyNode(_missionRule.ReplacementRule.Connections.LastOrDefault(), connection.EndPosition, "end");
 				}
 				_missionRule.ReplacementRule.RevokeAllSelected();
 			} else if(_currentSelectedGraphGrammar != null && _currentSelectedGraphGrammar == _missionRule.ReplacementRule) {
@@ -533,6 +535,9 @@ namespace MissionGrammarSystem {
 				_missionRule.SourceRule.Connections.Clear();
 				foreach (GraphGrammarConnection connection in _missionRule.ReplacementRule.Connections) {
 					_missionRule.SourceRule.AddConnection(connection);
+					_missionRule.SourceRule.StickyNode(_missionRule.SourceRule.Connections.LastOrDefault(), connection.StartPosition, "start");
+					_missionRule.SourceRule.StickyNode(_missionRule.SourceRule.Connections.LastOrDefault(), connection.EndPosition, "end");
+					
 				}
 				_missionRule.SourceRule.RevokeAllSelected();
 			}
