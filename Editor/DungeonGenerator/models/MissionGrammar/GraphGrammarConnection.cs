@@ -35,6 +35,8 @@ namespace MissionGrammarSystem {
 		private Color               _outlineColor;
 		private GraphGrammarNode    _startpointStickyOn;
 		private GraphGrammarNode    _endpointStickyOn;
+		private bool                _startSelected;
+		private bool                _endSelected;
 		// Basic construction.
 		public GraphGrammarConnection() : base() {
 			this._type               = SymbolType.Connection;
@@ -97,11 +99,13 @@ namespace MissionGrammarSystem {
 		}
 		// .
 		public bool StartSelected {
-			get { return _startpointStickyOn != null; }
+			get { return _startSelected; }
+			set { _startSelected = value; }
 		}
 		// .
 		public bool EndSelected {
-			get { return _endpointStickyOn != null; }
+			get { return _endSelected; }
+			set { _endSelected = value; }
 		}
 		// .
 		public Vector2 StartPosition {

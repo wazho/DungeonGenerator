@@ -284,7 +284,7 @@ namespace MissionGrammarSystem {
 			}
 		}
 
-		// Click Event (Just copy-paste from example_window.cs)
+		// Click Event
 		void OnClickedSymbolInCanvas() {
 			if (_ruleSourceCanvasInWindow.Contains(Event.current.mousePosition)) {
 				_currentSelectedGraphGrammar = _missionRule.SourceRule;
@@ -315,14 +315,14 @@ namespace MissionGrammarSystem {
 				Repaint();
 			}
 		}
-		// Drag and drop event (Just copy-paste from example_window.cs)
+		// Drag and drop event
 		private static GraphGrammarNode tempNode;
 		private static GraphGrammarConnection tempConnection;
 		void OnDraggedAndDroppedInCanvas() {
 			// If mouse position is in the canvas of source rule. 
 			if (_ruleSourceCanvasInWindow.Contains(Event.current.mousePosition)) {
 				_missionRule.ReplacementRule.RevokeAllSelected();
-				_positionInCanvas = Event.current.mousePosition - _ruleSourceCanvasInWindow.position;
+				_positionInCanvas = Event.current.mousePosition - _ruleSourceCanvasInWindow.position + _sourceCanvasScrollPosition;
 				// Select node.
 				if (_missionRule.SourceRule.SelectedSymbol is GraphGrammarNode) {
 					tempNode = (GraphGrammarNode) _missionRule.SourceRule.SelectedSymbol;
@@ -346,7 +346,7 @@ namespace MissionGrammarSystem {
 			// If mouse position is in the canvas of replacement rule. 
 			else if (_ruleReplacementCanvasInWindow.Contains(Event.current.mousePosition)) {
 				_missionRule.SourceRule.RevokeAllSelected();
-				Vector2 positionInCanvas = Event.current.mousePosition - _ruleReplacementCanvasInWindow.position;
+				_positionInCanvas = Event.current.mousePosition - _ruleReplacementCanvasInWindow.position + _replacementCanvasScrollPosition;
 				// Select node.
 				if (_missionRule.ReplacementRule.SelectedSymbol is GraphGrammarNode) {
 					tempNode = (GraphGrammarNode) _missionRule.ReplacementRule.SelectedSymbol;
@@ -357,13 +357,13 @@ namespace MissionGrammarSystem {
 						tempConnection = (GraphGrammarConnection) _missionRule.ReplacementRule.SelectedSymbol;
 					// Start point.
 					if (tempConnection.StartSelected) {
-						tempConnection.StartPosition = positionInCanvas;
-						_missionRule.ReplacementRule.StickyNode(tempConnection, positionInCanvas, "start");
+						tempConnection.StartPosition = _positionInCanvas;
+						_missionRule.ReplacementRule.StickyNode(tempConnection, _positionInCanvas, "start");
 					}
 					// End point.
 					else if (tempConnection.EndSelected) {
-						tempConnection.EndPosition = positionInCanvas;
-						_missionRule.ReplacementRule.StickyNode(tempConnection, positionInCanvas, "end");
+						tempConnection.EndPosition = _positionInCanvas;
+						_missionRule.ReplacementRule.StickyNode(tempConnection, _positionInCanvas, "end");
 					}
 				}
 			} else {

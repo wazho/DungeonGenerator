@@ -47,10 +47,10 @@ namespace MissionGrammarSystem {
 					// Update the symbol status. If out of selecting, disabled the connection.
 					if (symbol.IsInStartscope(pos)) {
 						symbol.Selected = true;
-						// symbol.StartSelected = true;
+						symbol.StartSelected = true;
 					} else if (symbol.IsInEndscope(pos)) {
 						symbol.Selected = true;
-						// symbol.EndSelected = true;
+						symbol.EndSelected = true;
 					} else {
 						break;
 					}
@@ -178,25 +178,13 @@ namespace MissionGrammarSystem {
 				symbol.Selected = false;
 			}
 			foreach (GraphGrammarConnection symbol in _connections) {
-				symbol.Selected = false;
-				// symbol.StartSelected = symbol.EndSelected = false;
+				symbol.Selected = symbol.StartSelected = symbol.EndSelected = false;
 			}
 			_selectedSymbol = null;
 			return;
 		}
 		
 		// [Draw on canvas] Draw the node on canvas.
-		public static void DrawNode(Vector2 pos, bool isTerminal, bool isSelected) {
-			int thickness = 2;
-			int size = 35;
-			// If this node is activated (selected), add the highlight boarder.
-			if (isSelected) {
-				EditorCanvas.DrawQuad((int) pos[0]-thickness, (int) pos[1]-thickness, size+thickness*4, size+thickness*4, Color.red);
-			}
-			// Basic square and boarder.
-			EditorCanvas.DrawQuad((int) pos[0], (int) pos[1], size+thickness*2, size+thickness*2, Color.black);
-			EditorCanvas.DrawQuad((int) pos[0]+thickness, (int) pos[1]+thickness, size, size, isTerminal ? Color.green : Color.yellow);
-		}
 		public static void DrawNode(GraphGrammarNode node) {
 			int thickness = 2;
 
@@ -224,22 +212,19 @@ namespace MissionGrammarSystem {
 		public static void DrawConnection(GraphGrammarConnection connection) {
 			// Setting of endpoints and line.
 			int pBorder      = 2;
-			int pSize        = connection.PointScopeSize;
 			float lThickness = connection.LineThickness;
-			Vector2 posA     = connection.StartPosition;
-			Vector2 posB     = connection.EndPosition;
 			//Vector2 offset   = new Vector2(pSize/2, pSize/2);
 
 			// Line between two points.
-			// EditorCanvas.DrawLine(posA + offset, posB + offset, Color.white);
-			EditorCanvas.DrawLine(posA, posB, Color.white, lThickness);
+			EditorCanvas.DrawLine(connection.StartPosition, connection.EndPosition, connection.OutlineColor, lThickness);
 
 			// Basic square and boarder.
 			if (connection.Selected) {
-				EditorCanvas.DrawQuad((int) posA[0], (int) posA[1], pSize+pBorder*2, pSize+pBorder*2, Color.black);
-				EditorCanvas.DrawQuad((int) posA[0]+pBorder, (int) posA[1]+pBorder, pSize, pSize, Color.red);
-				EditorCanvas.DrawQuad((int) posB[0], (int) posB[1], pSize+pBorder*2, pSize+pBorder*2, Color.black);
-				EditorCanvas.DrawQuad((int) posB[0]+pBorder, (int) posB[1]+pBorder, pSize, pSize, Color.blue);
+				EditorCanvas.DrawQuad((int) connection.StartpointScope.x - pBorder, (int) connection.StartpointScope.y - pBorder, (int) connection.StartpointScope.width + pBorder*2, (int) connection.StartpointScope.height + pBorder*2, Color.black);
+				EditorCanvas.DrawQuad((int) connection.StartpointScope.x, (int) connection.StartpointScope.y, (int) connection.StartpointScope.width, (int) connection.StartpointScope.height, Color.red);
+				EditorCanvas.DrawQuad((int) connection.EndpointScope.x - pBorder, (int) connection.EndpointScope.y - pBorder, (int) connection.EndpointScope.width + pBorder * 2, (int) connection.EndpointScope.height + pBorder * 2, Color.black);
+				EditorCanvas.DrawQuad((int) connection.EndpointScope.x, (int) connection.EndpointScope.y, (int) connection.EndpointScope.width, (int) connection.EndpointScope.height, Color.blue);
+
 			}
 		}
 	}
