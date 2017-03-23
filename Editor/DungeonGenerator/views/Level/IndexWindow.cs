@@ -32,7 +32,7 @@ namespace DungeonLevel {
 			}
 			if (GUILayout.Button("Export Level", EditorStyles.miniButtonLeft, EditorStyle.TabButtonHeight)) {
 				// Export Level.
-				string path = EditorUtility.SaveFilePanel("Save texture as PNG", "", "Test.xml", "xml");
+				string path = EditorUtility.SaveFilePanel("Export xml", "", "Test.xml", "xml");
 				MissionGrammarSystem.OperateXML.SerializeToXml(path);
 			}
 			GUILayout.EndHorizontal();
