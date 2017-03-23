@@ -38,9 +38,12 @@ namespace MissionGrammarSystem {
 		// The index of group & rule.
 		private int _indexOfGroupsOptions;
 		private int _indexOfRulesOptions;
+		private int _tempIndexOfGroupsOptions;
+		private int _tempIndexOfRulesOptions;
 		// The description of group or rule.
 		private string _name;
 		private string _description;
+		private bool _nameCanBeUsed;
 		// Enabled Button-Apply
 		private bool _applyEditingButtonEnabled;
 		private bool _applySymbolEditingButtonEnabled;
@@ -75,8 +78,11 @@ namespace MissionGrammarSystem {
 			_rulesOptions         = MissionGrammar.Groups[0].Rules.Select(r => r.Name).ToArray();
 			_indexOfGroupsOptions = 0;
 			_indexOfRulesOptions  = 0;
+			_tempIndexOfGroupsOptions = 0;
+			_tempIndexOfRulesOptions = 0;
 			_name                 = string.Empty;
 			_description          = string.Empty;
+			_nameCanBeUsed = false;
 			_applyEditingButtonEnabled = false;
 			_applySymbolEditingButtonEnabled = false;
 			_edit                 = Resources.Load<Texture2D>("Icons/edit");
@@ -131,16 +137,38 @@ namespace MissionGrammarSystem {
 			EditorGUILayout.BeginHorizontal();
 			// Dropdown list of current group type.
 			_indexOfGroupsOptions = EditorGUILayout.Popup("Current Group", _indexOfGroupsOptions, _groupsOptions);
+			if(_tempIndexOfGroupsOptions != _indexOfGroupsOptions) {
+				_editingMode = EditingMode.None;
+				_tempIndexOfGroupsOptions = _indexOfGroupsOptions;
+				_indexOfRulesOptions = 0;
+				// Update the rules of selected group.
+				_rulesOptions = MissionGrammar.Groups[_indexOfGroupsOptions].Rules.Select(r => r.Name).ToArray();
+			}
 			// Editor buttons, edit, delete and create.
 			if (GUILayout.Button(_edit, EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
 				_editingMode = EditingMode.EditGroup;
+				_name = MissionGrammar.Groups[_indexOfGroupsOptions].Name;
+				_description = MissionGrammar.Groups[_indexOfGroupsOptions].Description;
 			}
 			if (GUILayout.Button(_delete, EditorStyles.miniButtonMid, EditorStyle.ButtonHeight)) {
 				_editingMode = EditingMode.DeleteGroup;
+				MissionGrammar.RemoveGroup(MissionGrammar.Groups[_indexOfGroupsOptions]);
+				// If user delete the least one, add the new one.
+				if (_groupsOptions.Length <= 1) {
+					_name = "New group";
+					_description = "Description here.";
+					AddGroup();
+				}
+				_indexOfGroupsOptions = 0;
+				_editingMode = EditingMode.None;
 			}
 			if (GUILayout.Button("Add New", EditorStyles.miniButtonRight, EditorStyle.ButtonHeight)) {
 				_editingMode = EditingMode.CreateGroup;
+				_name = string.Empty;
+				_description = string.Empty;
 			}
+			// Update the content of Dropdown.
+			_groupsOptions = MissionGrammar.Groups.Select(s => s.Name).ToArray();
 			EditorGUILayout.EndHorizontal();
 		}
 		// Layout the combobox and editor of mission rule, mission rule is sub-member in current mission group.
@@ -149,34 +177,78 @@ namespace MissionGrammarSystem {
 			EditorGUILayout.BeginHorizontal();
 			// Dropdown list of Currect Rule Type.
 			_indexOfRulesOptions = EditorGUILayout.Popup("Current Rule", _indexOfRulesOptions, _rulesOptions);
+			if (_tempIndexOfRulesOptions != _indexOfRulesOptions) {
+				_editingMode = EditingMode.None;
+				_tempIndexOfRulesOptions = _indexOfRulesOptions;
+			}
 			// Buttons - Editor, Delete and Add new.
 			if (GUILayout.Button(_edit, EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
 				_editingMode = EditingMode.EditRule;
+				_name = MissionGrammar.Groups[_indexOfGroupsOptions].Rules[_indexOfRulesOptions].Name;
+				_description = MissionGrammar.Groups[_indexOfGroupsOptions].Rules[_indexOfRulesOptions].Description;
 			}
 			if (GUILayout.Button(_delete, EditorStyles.miniButtonMid, EditorStyle.ButtonHeight)) {
 				_editingMode = EditingMode.DeleteRule;
+				MissionGrammar.Groups[_indexOfGroupsOptions].RemoveRule(MissionGrammar.Groups[_indexOfGroupsOptions].Rules[_indexOfRulesOptions]);
+				// If user delete the least one, add the new one.
+				if (_rulesOptions.Length <= 1) {
+					_name = "New rule";
+					_description = "Description here.";
+					AddRule(_indexOfGroupsOptions);
+				}
+				_indexOfRulesOptions = 0;
+				_editingMode = EditingMode.None;
 			}
 			if (GUILayout.Button("Add New", EditorStyles.miniButtonRight, EditorStyle.ButtonHeight)) {
 				_editingMode = EditingMode.CreateRule;
+				_name = string.Empty;
+				_description = string.Empty;
 			}
+			// Update the content of Dropdown.
+			_rulesOptions = MissionGrammar.Groups[_indexOfGroupsOptions].Rules.Select(r => r.Name).ToArray();
 			EditorGUILayout.EndHorizontal();
 		}
 		// Layout the editor of mission group or mission rule.
 		void LayoutBasicInfoEditor() {
-			// Information.
-			_name = EditorGUILayout.TextField("Name", _name);
-			_description = EditorGUILayout.TextField("Description", _description);
+			// Information of mission group or mission rule.
+			switch (_editingMode) {
+				case EditingMode.EditGroup:
+				case EditingMode.CreateGroup:
+					_name = EditorGUILayout.TextField("Group Name", _name);
+					_description = EditorGUILayout.TextField("Group Description", _description);
+					// Check the name has never used before.
+					_nameCanBeUsed = !IsGroupNameUsed(_name);
+					break;
+				case EditingMode.EditRule:
+				case EditingMode.CreateRule:
+					_name = EditorGUILayout.TextField("Rule Name", _name);
+					_description = EditorGUILayout.TextField("Rule Description", _description);
+					// Check the name has never used before.
+					_nameCanBeUsed = !IsRuleNameUsed(_name, _indexOfGroupsOptions);
+					break;
+			}
 			// Remind user [need Modify]
 			if (_name == string.Empty && _description == string.Empty) {
 				EditorGUILayout.HelpBox("Info \nThe name is empty. \nThe description is empty.", MessageType.Info);
+				_applyEditingButtonEnabled = false;
 			}
 			if (_name == string.Empty && _description != string.Empty) {
+				_applyEditingButtonEnabled = false;
 				EditorGUILayout.HelpBox("Info \nThe name is empty.", MessageType.Info);
 			}
-			if (_name != string.Empty && _description == string.Empty) {
+			if (_name != string.Empty && _description == string.Empty && _nameCanBeUsed == false) {
+				_applyEditingButtonEnabled = false;
+				EditorGUILayout.HelpBox("Info  \nThe name has been used before. \nThe description is empty.", MessageType.Info);
+			}
+			if (_name != string.Empty && _description == string.Empty && _nameCanBeUsed == true) {
+				_applyEditingButtonEnabled = false;
 				EditorGUILayout.HelpBox("Info \nThe description is empty.", MessageType.Info);
 			}
-			if (_name != string.Empty && _description != string.Empty) {
+			if (_name != string.Empty && _description != string.Empty && _nameCanBeUsed == false) {
+				_applyEditingButtonEnabled = false;
+				EditorGUILayout.HelpBox("Info \nThe name has been used before.", MessageType.Info);
+			}
+			if (_name != string.Empty && _description != string.Empty && _nameCanBeUsed == true) {
 				_applyEditingButtonEnabled = true;
 				EditorGUILayout.HelpBox("Info \nNothing.", MessageType.Info);
 			}
@@ -186,6 +258,21 @@ namespace MissionGrammarSystem {
 				if (EditorUtility.DisplayDialog("Saving", 
 				"Are you sure to save?",
 				"Yes", "No")) {
+					switch (_editingMode) {
+						case EditingMode.EditGroup:
+							UpdateGroup(MissionGrammar.Groups[_indexOfGroupsOptions]);
+							break;
+						case EditingMode.CreateGroup:
+							AddGroup();
+							break;
+						case EditingMode.EditRule:
+							UpdateRule(MissionGrammar.Groups[_indexOfGroupsOptions].Rules[_indexOfRulesOptions]);
+							break;
+						case EditingMode.CreateRule:
+							AddRule(_indexOfGroupsOptions);
+							break;
+					}
+					_editingMode = EditingMode.None;
 				} else {
 
 				}
@@ -536,6 +623,48 @@ namespace MissionGrammarSystem {
 				}
 				_missionRule.SourceRule.RevokeAllSelected();
 			}
+		}
+
+		void AddGroup() {
+			MissionGroup newGroup = new MissionGroup();
+			newGroup.Name = _name;
+			newGroup.Description = _description;
+			MissionGrammar.AddGroup(newGroup);
+			// Show the new one in dropdown list
+			_indexOfGroupsOptions = _groupsOptions.Length;
+		}
+
+		void AddRule(int indexGroup) {
+			MissionRule newRule = new MissionRule();
+			newRule.Name = _name;
+			newRule.Description = _description;
+			MissionGrammar.Groups[indexGroup].AddRule(newRule);
+			// Show the new one in dropdown list
+			_indexOfRulesOptions = _rulesOptions.Length;
+		}
+
+		void UpdateGroup(MissionGroup group) {
+			group.Name = _name;
+			group.Description = _description;
+		}
+
+		void UpdateRule(MissionRule rule) {
+			rule.Name = _name;
+			rule.Description = _description;
+		}
+		// Return a boolean about name of group has never used before.
+		bool IsGroupNameUsed(string nameNewGroup) {
+			return (from usedGroup in MissionGrammar.Groups
+					where usedGroup.Name.ToLower() == nameNewGroup.ToLower()
+					select usedGroup)
+				.Any();
+		}
+		// Return a boolean about name of rule has never used before.
+		bool IsRuleNameUsed(string nameNewRule, int indexGroup) {
+			return (from usedRule in MissionGrammar.Groups[indexGroup].Rules
+					where usedRule.Name.ToLower() == nameNewRule.ToLower()
+					select usedRule)
+				.Any();
 		}
 	}
 }
