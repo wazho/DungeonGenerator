@@ -6,161 +6,239 @@ using EditorAdvance = EditorExtend.Advance;
 using EditorStyle   = EditorExtend.Style;
 
 namespace SpaceGrammar {
-	//Enums 
-	public enum SymbolTerminalType {
-		NonTerminal,
-		Terminal
-	}
-
 	public class AlphabetWindow : EditorWindow {
-		//Color properties
+		// Tabs interface modes
+		public enum InterfaceTab{
+			Points, 
+			Edges,
+			Areas
+		}
+
+		// Edit modes
+		public enum EditingMode{
+			None,
+			Create, 
+			Modify,
+			Delete
+		}
+
+		// Interface mode
+		private InterfaceTab _currentInterfaceTab;
+		// Edit mode
+		private EditingMode _editingMode;
+
+		// Symbol description
+		private string _symbolName;
+		private string _symbolAbbreviation;
+		private string _symbolDescription;
+
+		// Symbol's color properties
 		private Color _symbolOutlineColor;
 		private Color _symbolFilledColor;
 		private Color _symbolTextColor;
 	
-		//Modes of buttons
-		private bool _isInPointsInterface;
-		private bool _isInEdgesInterface;
-		private bool _isInAreasInterface;
+		// [Edit later]
+		// Exclusive types
+		private int _pointSymbolTypeIndex;
+		private string[] _pointSymbolTypes;
+		private string _pointSymbolType;
 
-		//Scrollbar of list
-		private Vector2 _scrollPosition;
+		// [Edit later]
+		// Interface button's textures
+		private static Texture2D _miniButtonLeftNormalTexture;
+		private static Texture2D _miniButtonMidNormalTexture;
+		private static Texture2D _miniButtonRightNormalTexture;
+		private static Texture2D _miniButtonLeftActiveTexture;
+		private static Texture2D _miniButtonMidActiveTexture;
+		private static Texture2D _miniButtonRightActiveTexture;
 
-		//Label of Points, Edges, or Areas
-		private string _pointName;
-		private string _pointAbbreviation;
-		private string _pointDescription;
-		private string _edgesName;
-		private string _edgesAbbreviation;
-		private string _edgesDescription; 
-		private string _areasName;
-		private string _areasAbbreviation;
-		private string _areasDescription;
+		// Interface tab styles
+		private GUIStyle _pointsInterfaceStyle;
+		private GUIStyle _edgesInterfaceStyle;
+		private GUIStyle _areasInterfaceStyle;
 
-		//Canvas
-		private Rect _canvas;
+		// Canvas
+		private Rect _symbolListCanvas;
+		private Rect _symbolPreviewCanvas;
 
-		//Symbol Type
-		private SymbolTerminalType _symbolType;
+		private bool _isInterfaceInit; 
 
-		//[Remove soon] Testing content for scroll area. 
-		private string testString;
-
-		//Information
+		// Information
 		private string _messageInfo;
 
+		// Scroll bar of list
+		private Vector2 _scrollPosition;
+
 		void Awake() {
+			// Initialize the fields
+			_symbolName = string.Empty;
+			_symbolAbbreviation = string.Empty;
+			_symbolDescription = string.Empty;
 			_symbolOutlineColor = Color.cyan;
 			_symbolFilledColor = Color.green;
 			_symbolTextColor = Color.black;
-			_isInPointsInterface = true;
-			_isInEdgesInterface = _isInAreasInterface = false;
+
+			// Symbol type
+			_pointSymbolTypeIndex = 1;
+			_pointSymbolTypes = new string[]{ "Non-Terminal", "Terminal" };
+			_pointSymbolType = _pointSymbolTypes[_pointSymbolTypeIndex];
+
+			// Interface
+			_currentInterfaceTab = InterfaceTab.Points;
+			_symbolListCanvas = new Rect(0, 0, Screen.width, Screen.height);
+			_symbolPreviewCanvas = new Rect(0, 0, Screen.width, Screen.height);
+
+			_messageInfo = "Nothing to show.";
+
+			_isInterfaceInit = true;
 			_scrollPosition = Vector2.zero;
-			//[Remove soon] string.Empty, to be "" 
-			_pointName = string.Empty;
-			_pointAbbreviation = string.Empty;
-			_pointDescription = string.Empty;
-			_edgesName = string.Empty;
-			_edgesAbbreviation = string.Empty;
-			_edgesDescription = string.Empty;
-			_areasName = string.Empty;
-			_areasAbbreviation = string.Empty;
-			_areasDescription = string.Empty;
-			_canvas = new Rect (0, 0, Screen.width, Screen.height);
-			_symbolType = SymbolTerminalType.Terminal;
-			_messageInfo = "Info\nStill Empty!";
-			//[Remove soon]
-			testString = "1. Element of List";
+			_editingMode = EditingMode.None;
 		}
 
 		void OnGUI() {
-			//Interface buttons
+			// Initialize interface style
+			if (_isInterfaceInit) {
+				//points
+				_pointsInterfaceStyle = new GUIStyle(EditorStyles.miniButtonLeft);
+				_miniButtonLeftNormalTexture = _pointsInterfaceStyle.normal.background;
+				_miniButtonLeftActiveTexture = _pointsInterfaceStyle.active.background;
+				//edges
+				_edgesInterfaceStyle = new GUIStyle(EditorStyles.miniButtonMid);
+				_miniButtonMidNormalTexture = _edgesInterfaceStyle.normal.background;
+				_miniButtonMidActiveTexture = _edgesInterfaceStyle.active.background;
+				//areas
+				_areasInterfaceStyle = new GUIStyle(EditorStyles.miniButtonRight);
+				_miniButtonRightNormalTexture = _areasInterfaceStyle.normal.background;
+				_miniButtonRightActiveTexture = _areasInterfaceStyle.active.background;
+				_isInterfaceInit = false;
+			}
+			// Interface buttons 
 			EditorGUILayout.BeginHorizontal();
-			if (GUILayout.Button ("Points", EditorStyles.miniButtonLeft, EditorStyle.TabButtonHeight)) {
-				_isInPointsInterface = true;
-				_isInEdgesInterface = _isInAreasInterface = false;
-			} else if (GUILayout.Button ("Edges", EditorStyles.miniButtonMid, EditorStyle.TabButtonHeight)) {
-				_isInEdgesInterface = true;
-				_isInPointsInterface = _isInAreasInterface = false;
-			} else if (GUILayout.Button ("Areas", EditorStyles.miniButtonRight, EditorStyle.TabButtonHeight)) {
-				_isInAreasInterface = true;
-				_isInPointsInterface = _isInEdgesInterface = false;
-			} 
+			if (GUILayout.Button("Points", _pointsInterfaceStyle, EditorStyle.TabButtonHeight)) {
+				_currentInterfaceTab = InterfaceTab.Points;
+			} else if (GUILayout.Button("Edges", _edgesInterfaceStyle, EditorStyle.TabButtonHeight)) {
+				_currentInterfaceTab = InterfaceTab.Edges;
+			} else if (GUILayout.Button("Areas", _areasInterfaceStyle, EditorStyle.TabButtonHeight)) {
+				_currentInterfaceTab = InterfaceTab.Areas;
+			}
 			EditorGUILayout.EndHorizontal();
 
-			if (_isInPointsInterface) { 
-				//Drawing the interface's contents
-				GUI.skin.label.fontSize = EditorStyle.HeaderFontSize;
-				GUI.skin.label.alignment = TextAnchor.MiddleCenter;
-				GUILayout.Label ("List of Points");
-				GUI.skin.label.fontSize = EditorStyle.ContentFontSize;
-				GUI.skin.label.alignment = TextAnchor.UpperLeft;
-
-				ShowPointsInterface ();	
+			// Switch the interface tab & switch the content
+			// [Edit later] GUI.skin.label...
+			GUI.skin.label.fontSize = EditorStyle.HeaderFontSize;
+			GUI.skin.label.alignment = TextAnchor.MiddleCenter;
+			// Interface contents
+			switch(_currentInterfaceTab){
+			case InterfaceTab.Points:
+				// Interface button
+				_pointsInterfaceStyle.normal.background = _miniButtonLeftActiveTexture;
+				_edgesInterfaceStyle.normal.background = _miniButtonMidNormalTexture;
+				_areasInterfaceStyle.normal.background = _miniButtonRightNormalTexture;
+				GUILayout.Label("List of Points");
+				break;
+			case InterfaceTab.Edges:
+				// Interface button
+				_pointsInterfaceStyle.normal.background = _miniButtonLeftNormalTexture;
+				_edgesInterfaceStyle.normal.background = _miniButtonMidActiveTexture;
+				_areasInterfaceStyle.normal.background = _miniButtonRightNormalTexture;
+				GUILayout.Label("List of Edges");
+				break;
+			case InterfaceTab.Areas:
+				// Interface button
+				_pointsInterfaceStyle.normal.background = _miniButtonLeftNormalTexture;
+				_edgesInterfaceStyle.normal.background = _miniButtonMidNormalTexture;
+				_areasInterfaceStyle.normal.background = _miniButtonRightActiveTexture;
+				GUILayout.Label("List of Areas");
+				break;
 			}
-			else if (_isInEdgesInterface) { 
-				//Drawing the interface's contents
-				GUI.skin.label.fontSize = EditorStyle.HeaderFontSize;
-				GUI.skin.label.alignment = TextAnchor.MiddleCenter;
-				GUILayout.Label ("List of Edges");
-				GUI.skin.label.fontSize = EditorStyle.ContentFontSize;
-				GUI.skin.label.alignment = TextAnchor.UpperLeft;
+			GUI.skin.label.fontSize = EditorStyle.ContentFontSize;
+			GUI.skin.label.alignment = TextAnchor.UpperLeft;
 
-				ShowEdgesInterface (); 
-			}
-			else if (_isInAreasInterface){ 
-				//Drawing the interface's contents
-				GUI.skin.label.fontSize = EditorStyle.HeaderFontSize;
-				GUI.skin.label.alignment = TextAnchor.MiddleCenter;
-				GUILayout.Label ("List of Areas");
-				GUI.skin.label.fontSize = EditorStyle.ContentFontSize;
-				GUI.skin.label.alignment = TextAnchor.UpperLeft;
-
-				ShowAreasInterface (); 
-			}
+			ShowInterface(_currentInterfaceTab);
 		}
 
-		void ShowPointsInterface(){
-			//Showing content of points interface	
-			//Scroll area
-			_scrollPosition = GUILayout.BeginScrollView(_scrollPosition, GUILayout.Height(100));
-			GUILayout.Label(testString, EditorStyles.label);
+		void LayoutSymbolList(InterfaceTab tab){
+			// Scroll position
+			_scrollPosition = GUILayout.BeginScrollView(_scrollPosition, EditorStyle.AlphabetSymbolListHeight);
+
+			// Contents of scroll area
+			GUILayout.BeginArea(EditorStyle.AlphabetSymbolListArea);
+			_symbolListCanvas = EditorStyle.AlphabetSymbolListCanvas;
+			EditorGUI.DrawRect(_symbolListCanvas, Color.gray);
+			GUILayout.EndArea();
+
+			// [Edit later] draw based on the current interface tab
+			// To do : Drawing the list elements
+
 			GUILayout.EndScrollView();
 
-			//Modify and Delete buttons
+			// To do : get the a rect for element list
+		}
+
+		void LayoutEditingButtons(InterfaceTab tab){
 			EditorGUILayout.BeginHorizontal();
-			if (GUILayout.Button("Modify", EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
-				testString += "\nHere is another line";
+			if (GUILayout.Button("Add New", EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
+				_editingMode = EditingMode.Create;
+				// To do : Re-initilaize 
+				// To do : Manage the availability of Modify and delete button
+				// To do : Action based on interface tab
+			}
+			if (GUILayout.Button("Modify", EditorStyles.miniButtonMid, EditorStyle.ButtonHeight)) {
+				_editingMode = EditingMode.Modify;
+				// To do : Re-initilaize 
+				// To do : Action based on interface tab
 			}
 			if (GUILayout.Button("Delete", EditorStyles.miniButtonRight, EditorStyle.ButtonHeight)) {
-				testString = "1. Element of List";
+				_editingMode = EditingMode.Delete;
+				// To do : Re-initilaize 
+				// To do : Action based on interface tab
 			}
-			EditorGUILayout.EndHorizontal ();
+			// To do : Manage the availability of Modify and delete button
 
-			//Canvas
+			EditorGUILayout.EndHorizontal();
+		}
+
+		void LayoutSymbolPreview(InterfaceTab tab){
 			GUILayout.BeginArea(EditorStyle.AlphabetPreviewArea);
-			_canvas = EditorStyle.AlphabetPreviewCanvas;
-			EditorGUI.DrawRect (_canvas, Color.white);
+			_symbolPreviewCanvas = EditorStyle.AlphabetPreviewCanvas;
+			EditorGUI.DrawRect(_symbolPreviewCanvas, Color.gray);
+			// To do : Draw the previewed symbol based on interface tab
 			GUILayout.EndArea ();
+		}
 
-			//Content of properties
-			GUILayout.BeginArea(EditorStyle.AfterAlphabetPreviewArea);
-			EditorGUILayout.BeginVertical ();
-			GUILayout.Space (EditorStyle.PaddingAfterBlock);
-
-			//Dropdown list of symbol type
-			_symbolType = (SymbolTerminalType) EditorGUILayout.EnumPopup("Symbol Type", _symbolType);
-		
-			//Information of points
-			_pointName = EditorGUILayout.TextField ("Name", _pointName);
-			_pointAbbreviation = EditorGUILayout.TextField ("Abbreviation", _pointAbbreviation);
-			_pointDescription = EditorGUILayout.TextField ("Description", _pointDescription);
-
+		void LayoutFields(InterfaceTab tab){
+			// Symbol type
+			_pointSymbolTypeIndex = EditorGUILayout.Popup("Symbol Type", _pointSymbolTypeIndex, _pointSymbolTypes);
+			_pointSymbolType = _pointSymbolTypes[_pointSymbolTypeIndex];
+			// Fields
+			// To do : Show the field based on interface tab
+			// To do : Validate the input field
+			_symbolName = EditorGUILayout.TextField("name", _symbolName);
+			_symbolAbbreviation = EditorGUILayout.TextField ("Abbreviation", _symbolAbbreviation);
+			_symbolDescription = EditorGUILayout.TextField ("Description", _symbolDescription);
 			_symbolOutlineColor = EditorGUILayout.ColorField ("Outline Color", _symbolOutlineColor);
 			_symbolFilledColor = EditorGUILayout.ColorField ("Filled Color", _symbolFilledColor);
 			_symbolTextColor = EditorGUILayout.ColorField ("Text Color", _symbolTextColor);
+		}
 
-			//Info box
+		void ShowInterface(InterfaceTab tab){
+			// Showing content of points interface	
+			// List of symbol canvas
+			LayoutSymbolList(tab);
+			// Editing buttons
+			LayoutEditingButtons(tab);
+
+			// Symbol preview canvas 
+			LayoutSymbolPreview(tab);
+
+			// Property fields
+			GUILayout.BeginArea(EditorStyle.AfterAlphabetPreviewArea);
+			EditorGUILayout.BeginVertical ();
+			GUILayout.Space (EditorStyle.PaddingAfterBlock);
+			// Fields
+			LayoutFields(tab);
+			// Info box
+			// To do : show the information based on the current action
 			EditorGUILayout.HelpBox(_messageInfo, MessageType.Info);
 			if (GUILayout.Button("Apply", EditorStyles.miniButton, EditorStyle.ButtonHeight)) { //, GUILayout.Width(50))) {
 				if (EditorUtility.DisplayDialog ("Apply on the element", 
@@ -169,116 +247,6 @@ namespace SpaceGrammar {
 					_messageInfo = "Info\nNew point has been added";
 				} else {
 					_messageInfo = "Info\nNew point cancelled";
-				}
-			}
-			EditorGUILayout.EndVertical ();
-			GUILayout.EndArea ();
-		}
-
-		void ShowEdgesInterface(){
-			//Showing content of edges interface
-			//Scroll area
-			_scrollPosition = GUILayout.BeginScrollView(_scrollPosition, GUILayout.Height(100));
-			GUILayout.Label(testString, EditorStyles.label);
-			GUILayout.EndScrollView();
-
-			//Modify and Delete buttons
-			EditorGUILayout.BeginHorizontal();
-			if (GUILayout.Button("Modify", EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
-				testString += "\nHere is another line";
-			}
-			if (GUILayout.Button("Delete", EditorStyles.miniButtonRight, EditorStyle.ButtonHeight)) {
-				testString = "1. Element of List";
-			}
-			EditorGUILayout.EndHorizontal ();
-
-			//Canvas
-			GUILayout.BeginArea(EditorStyle.AlphabetPreviewArea);
-			_canvas = EditorStyle.AlphabetPreviewCanvas;
-			EditorGUI.DrawRect (_canvas, Color.white);
-			GUILayout.EndArea ();
-
-			//Content of properties
-			GUILayout.BeginArea(EditorStyle.AfterAlphabetPreviewArea);
-			EditorGUILayout.BeginVertical ();
-			GUILayout.Space (EditorStyle.PaddingAfterBlock);
-
-			//Dropdown list of symbol type
-			_symbolType = (SymbolTerminalType) EditorGUILayout.EnumPopup("Symbol Type", _symbolType);
-
-			//Information of edges
-			_pointName = EditorGUILayout.TextField ("Name", _pointName);
-			_pointAbbreviation = EditorGUILayout.TextField ("Abbreviation", _pointAbbreviation);
-			_pointDescription = EditorGUILayout.TextField ("Description", _pointDescription);
-
-			_symbolOutlineColor = EditorGUILayout.ColorField ("Outline Color", _symbolOutlineColor);
-			_symbolFilledColor = EditorGUILayout.ColorField ("Filled Color", _symbolFilledColor);
-			_symbolTextColor = EditorGUILayout.ColorField ("Text Color", _symbolTextColor);
-
-			//Info box
-			EditorGUILayout.HelpBox(_messageInfo, MessageType.Info);
-			if (GUILayout.Button("Apply", EditorStyles.miniButton, EditorStyle.ButtonHeight)) { //, GUILayout.Width(50))) {
-				if (EditorUtility.DisplayDialog ("Apply on the element", 
-					"Are you sure want to apply the operation?", 
-					"Yes", "No")) {
-					_messageInfo = "Info\nNew edge has been added";
-				} else {
-					_messageInfo = "Info\nNew edge cancelled";
-				}
-			}
-			EditorGUILayout.EndVertical ();
-			GUILayout.EndArea ();
-		}
-
-		void ShowAreasInterface(){
-			//Showing content of areas interface
-			//Scroll area
-			_scrollPosition = GUILayout.BeginScrollView(_scrollPosition, GUILayout.Height(100));
-			GUILayout.Label(testString, EditorStyles.label);
-			GUILayout.EndScrollView();
-
-			//Modify and Delete buttons
-			EditorGUILayout.BeginHorizontal();
-			if (GUILayout.Button("Modify", EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
-				testString += "\nHere is another line";
-			}
-			if (GUILayout.Button("Delete", EditorStyles.miniButtonRight, EditorStyle.ButtonHeight)) {
-				testString = "1. Element of List";
-			}
-			EditorGUILayout.EndHorizontal ();
-
-			//Canvas
-			GUILayout.BeginArea(EditorStyle.AlphabetPreviewArea);
-			_canvas = EditorStyle.AlphabetPreviewCanvas;
-			EditorGUI.DrawRect (_canvas, Color.white);
-			GUILayout.EndArea ();
-
-			//Content of properties
-			GUILayout.BeginArea(EditorStyle.AfterAlphabetPreviewArea);
-			EditorGUILayout.BeginVertical ();
-			GUILayout.Space (EditorStyle.PaddingAfterBlock);
-
-			//Dropdown list of symbol type
-			_symbolType = (SymbolTerminalType) EditorGUILayout.EnumPopup("Symbol Type", _symbolType);
-
-			//Information of points
-			_pointName = EditorGUILayout.TextField ("Name", _pointName);
-			_pointAbbreviation = EditorGUILayout.TextField ("Abbreviation", _pointAbbreviation);
-			_pointDescription = EditorGUILayout.TextField ("Description", _pointDescription);
-
-			_symbolOutlineColor = EditorGUILayout.ColorField ("Outline Color", _symbolOutlineColor);
-			_symbolFilledColor = EditorGUILayout.ColorField ("Filled Color", _symbolFilledColor);
-			_symbolTextColor = EditorGUILayout.ColorField ("Text Color", _symbolTextColor);
-
-			//Info box
-			EditorGUILayout.HelpBox(_messageInfo, MessageType.Info);
-			if (GUILayout.Button("Apply", EditorStyles.miniButton, EditorStyle.ButtonHeight)) { //, GUILayout.Width(50))) {
-				if (EditorUtility.DisplayDialog ("Apply on the element", 
-						"Are you sure want to apply the operation?", 
-						"Yes", "No")) {
-					_messageInfo = "Info\nNew area has been added";
-				} else {
-					_messageInfo = "Info\nNew area cancelled";
 				}
 			}
 			EditorGUILayout.EndVertical ();
