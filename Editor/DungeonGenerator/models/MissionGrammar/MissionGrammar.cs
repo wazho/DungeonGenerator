@@ -20,7 +20,17 @@ namespace MissionGrammarSystem {
 		public static MissionGroup Group(string name) {
 			return _groups.Where(s => s.Name == name).FirstOrDefault();
 		}
-		// Add a mission group.
+		// Add a mission group by default.
+		public static void AddGroup() {
+			_groups.Add(new MissionGroup());
+			return;
+		}
+		// Add a mission group by default.
+		public static void AddGroup(string name, string description) {
+			_groups.Add(new MissionGroup(name, description));
+			return;
+		}
+		// Add a mission group from another group.
 		public static void AddGroup(MissionGroup group) {
 			_groups.Add(group);
 			return;
@@ -72,6 +82,20 @@ namespace MissionGrammarSystem {
 					}
 				}
 			}
+		}
+		// Return a boolean about name of group has never used before.
+		public static bool IsGroupNameUsed(string newGroup) {
+			return (from usedGroup in MissionGrammar.Groups
+				where usedGroup.Name.ToLower() == newGroup.ToLower()
+				select usedGroup)
+				.Any();
+		}
+		// Return a boolean about name of rule has never used before.
+		public static bool IsRuleNameUsed(string newRule, int groupIndex) {
+			return (from usedRule in MissionGrammar.Groups[groupIndex].Rules
+				where usedRule.Name.ToLower() == newRule.ToLower()
+				select usedRule)
+				.Any();
 		}
 	}
 }
