@@ -2,8 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections;
 
-using EditorAdvance = EditorExtend.Advance;
-using EditorStyle   = EditorExtend.Style;
+using EditorStyle = EditorExtend.Style;
 
 namespace DungeonLevel {
 	public class IndexWindow : EditorWindow {
@@ -32,6 +31,8 @@ namespace DungeonLevel {
 			}
 			if (GUILayout.Button("Export Level", EditorStyles.miniButtonRight, EditorStyle.TabButtonHeight)) {
 				// Export Level.
+				string path = EditorUtility.SaveFilePanel("Export xml", "", "Level.xml", "xml");
+				DungeonLevel.OperateXML.SerializeToXml(path);
 			}
 			GUILayout.EndHorizontal();
 			GUILayout.Space(EditorStyle.PaddingAfterBlock);
