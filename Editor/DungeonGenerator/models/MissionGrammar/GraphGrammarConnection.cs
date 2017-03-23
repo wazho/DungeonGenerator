@@ -206,7 +206,7 @@ namespace MissionGrammarSystem {
 				EditorCanvas.DrawTriangle(arrowHeadSec, OutlineColor);
 				break;
 			case ConnectionArrowType.WithCircle:
-				EditorCanvas.DrawTriangle(arrowHead, OutlineColor);
+				EditorCanvas.DrawTriangle(arrowHeadSec, OutlineColor);
 				EditorCanvas.DrawDisc(EndPosition - dir2 / 2f, LineThickness, OutlineColor);
 				EditorCanvas.DrawDisc(EndPosition - dir2 / 2f, LineThickness - 1, Color.white);
 				break;
