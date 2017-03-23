@@ -213,10 +213,40 @@ namespace MissionGrammarSystem {
 			// Setting of endpoints and line.
 			int pBorder      = 2;
 			float lThickness = connection.LineThickness;
-			//Vector2 offset   = new Vector2(pSize/2, pSize/2);
 
 			// Line between two points.
 			EditorCanvas.DrawLine(connection.StartPosition, connection.EndPosition, connection.OutlineColor, lThickness);
+
+			// Head size
+			Vector2 dir = (connection.EndPosition - connection.StartPosition).normalized * 5f;
+			Vector2 orth = new Vector2(-dir.y, dir.x);
+			// Arrow cap's points
+			Vector3[] arrowHead = new Vector3[3];
+			arrowHead [0] = connection.EndPosition - dir * 2 + orth; 
+			arrowHead [1] = connection.EndPosition - dir * 2 - orth; 
+			arrowHead [2] = connection.EndPosition; 
+			Vector3[] arrowHeadSec = new Vector3[3];
+			Vector2 dir2 = dir = dir + dir * 1f;
+			arrowHeadSec [0] = connection.EndPosition - dir2 * 2 + orth;
+			arrowHeadSec [1] = connection.EndPosition - dir2 * 2 - orth;
+			arrowHeadSec [2] = connection.EndPosition - dir2;
+			
+			switch (connection.Arrow) {
+			case ConnectionArrowType.Normal:
+				Handles.color = connection.OutlineColor;
+				Handles.DrawAAConvexPolygon (arrowHead);	
+				break;
+			case ConnectionArrowType.Double:
+				Handles.color = connection.OutlineColor;
+				Handles.DrawAAConvexPolygon (arrowHead);
+				Handles.DrawAAConvexPolygon (arrowHeadSec);
+				break;
+			case ConnectionArrowType.WithCircle:
+				Handles.DrawAAConvexPolygon (arrowHeadSec);
+				EditorCanvas.DrawDisc(connection.EndPosition - dir2 / 2f, 5f, connection.OutlineColor);
+				EditorCanvas.DrawDisc(connection.EndPosition - dir2 / 2f, 4f, Color.white);
+				break;
+			}
 
 			// Basic square and boarder.
 			if (connection.Selected) {
@@ -224,7 +254,6 @@ namespace MissionGrammarSystem {
 				EditorCanvas.DrawQuad((int) connection.StartpointScope.x, (int) connection.StartpointScope.y, (int) connection.StartpointScope.width, (int) connection.StartpointScope.height, Color.red);
 				EditorCanvas.DrawQuad((int) connection.EndpointScope.x - pBorder, (int) connection.EndpointScope.y - pBorder, (int) connection.EndpointScope.width + pBorder * 2, (int) connection.EndpointScope.height + pBorder * 2, Color.black);
 				EditorCanvas.DrawQuad((int) connection.EndpointScope.x, (int) connection.EndpointScope.y, (int) connection.EndpointScope.width, (int) connection.EndpointScope.height, Color.blue);
-
 			}
 		}
 	}

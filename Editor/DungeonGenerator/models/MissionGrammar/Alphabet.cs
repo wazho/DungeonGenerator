@@ -113,12 +113,12 @@ namespace MissionGrammarSystem {
 			DrawNode(node);
 		}
 		// Draw the connection on canvas.
-		// [TODO] Task C2-2-2. (you can remove these lines)
 		// This part need to fix. The arrow is static not dynamic with rotate.
 		public static void DrawConnection(GraphGrammarConnection connection) {
 			// [Remove soon] Just to test --> connection.EndPosition += new Vector2(100,50);
 			EditorCanvas.DrawLine(connection.StartPosition, connection.EndPosition, connection.OutlineColor, 5f);
-			Vector2 dir = (connection.EndPosition - connection.StartPosition).normalized * 5f; // Head size
+			// Head size
+			Vector2 dir = (connection.EndPosition - connection.StartPosition).normalized * 5f;
 			Vector2 orth = new Vector2(-dir.y, dir.x);
 			// Arrow cap's points
 			Vector3[] arrowHead = new Vector3[3];
@@ -143,8 +143,8 @@ namespace MissionGrammarSystem {
 				break;
 			case ConnectionArrowType.WithCircle:
 				Handles.DrawAAConvexPolygon (arrowHeadSec);
-				EditorCanvas.DrawDics (connection.EndPosition - dir2 / 2f, 5f, connection.OutlineColor);
-				EditorCanvas.DrawDics (connection.EndPosition - dir2 / 2f, 4f, Color.white);
+				EditorCanvas.DrawDisc(connection.EndPosition - dir2 / 2f, 5f, connection.OutlineColor);
+				EditorCanvas.DrawDisc(connection.EndPosition - dir2 / 2f, 4f, Color.white);
 				break;
 			}
 			// [Remove soon] Seems like switch is better
@@ -157,8 +157,8 @@ namespace MissionGrammarSystem {
 				Handles.DrawAAConvexPolygon (arrowHeadSec);
 			}
 			if (connection.Arrow == ConnectionArrowType.WithCircle || connection.Arrow == ConnectionArrowType.WithCircle) {
-				EditorCanvas.DrawDics (connection.EndPosition - dir2 / 2f, 5f, connection.OutlineColor);
-				EditorCanvas.DrawDics (connection.EndPosition - dir2 / 2f, 4f, Color.white);
+				EditorCanvas.DrawDisc(connection.EndPosition - dir2 / 2f, 5f, connection.OutlineColor);
+				EditorCanvas.DrawDisc(connection.EndPosition - dir2 / 2f, 4f, Color.white);
 			}*/
 		}
 		// Draw the connection in the connection list.
