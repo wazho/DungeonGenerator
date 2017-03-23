@@ -54,6 +54,9 @@ namespace MissionGrammarSystem {
 		}
 		// Clone construction for basic informations.
 		public GraphGrammarConnection(GraphGrammarConnection connection) {
+			// Generate new symbol ID, but use same alphabet ID.
+			this._symbolID           = Guid.NewGuid();
+			this._alphabetID         = connection.AlphabetID;
 			this._type               = SymbolType.Connection;
 			this._name               = connection.Name;
 			this._description        = connection.Description;

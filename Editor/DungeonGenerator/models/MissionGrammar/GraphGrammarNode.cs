@@ -210,6 +210,16 @@ namespace MissionGrammarSystem {
 			// If connection is store here, remove this connection.
 			_stickiedConnections.Remove(_stickiedConnections.Find(e => e.connection == connection && e.location == location));
 		}
+		//Get stickiedConnections.ID array.
+		public Guid[] StickiedConnectionsGuid{
+			get {
+				Guid[] guids = new Guid[_stickiedConnections.Count];
+				for(int i=0;i< _stickiedConnections.Count; i++) {
+					guids[i] = _stickiedConnections[i].connection.ID;
+				}
+				return guids;
+			}
+		}
 		// Return the position is contained in this symbol or not.
 		public bool IsInScope(Vector2 pos) {
 			return _filledScope.Contains(pos);
