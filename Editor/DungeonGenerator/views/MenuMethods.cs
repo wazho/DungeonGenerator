@@ -43,7 +43,7 @@ public class DungeonWindow : EditorWindow {
 	[MenuItem("Dungeon/Mission/Rules %#&mr", false, 13)]
 	public static void ShowMissionRulesWindow() {
 		_window = EditorWindow.GetWindow<Mission.RulesWindow>("Mission rules", true);
-		_window.position = new Rect(35, 60, 750, 495);
+		_window.position = new Rect(35, 60, 750, 665);
 	}
 
 	// Add the 'Space > Grammar settings' in 'Dungeon' menu.
