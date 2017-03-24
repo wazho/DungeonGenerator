@@ -150,10 +150,12 @@ namespace MissionGrammarSystem {
 		// Startpoint scope, getter.
 		public Rect StartpointScope {
 			get { return _startpointScope; }
+			set { _startpointScope = value; }
 		}
 		// Endpoint scope, getter.
 		public Rect EndpointScope {
 			get { return _endpointScope; }
+			set { _endpointScope = value; }
 		}
 		// Outline color, getter and setter.
 		public Color OutlineColor {

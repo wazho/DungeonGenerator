@@ -47,8 +47,8 @@ namespace MissionGrammarSystem {
 		private Color                    _filledColor;
 		private Color                    _textColor;
 		private List<StickiedConnection> _stickiedConnections;
-		// Construction (private).
-		private GraphGrammarNode() : base() {
+		// Construction
+		public GraphGrammarNode() : base() {
 			this._alphabetID          = Guid.NewGuid();
 			this._type                = SymbolType.Node;
 			this._name                = string.Empty;
@@ -164,14 +164,17 @@ namespace MissionGrammarSystem {
 		// Outline scope, getter.
 		public Rect OutlineScope {
 			get { return _outlineScope; }
+			set { _outlineScope = value; }
 		}
 		// Filled scope, getter.
 		public Rect FilledScope {
 			get { return _filledScope; }
+			set { _filledScope = value; }
 		}
 		// Text scope, getter.
 		public Rect TextScope {
 			get { return _textScope; }
+			set { _textScope = value; }
 		}
 		// Outline color, getter and setter.
 		public Color OutlineColor {

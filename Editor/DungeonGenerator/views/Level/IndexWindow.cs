@@ -28,11 +28,17 @@ namespace DungeonLevel {
 			}
 			if (GUILayout.Button("Import Rewrite", EditorStyles.miniButtonMid, EditorStyle.TabButtonHeight)) {
 				// Import Rewrite.
+				string path = EditorUtility.OpenFilePanel("Import xml", "", "xml");
+				if(path.Length > 0) {
+					DungeonLevel.OperateXML.Unserialize.UnserializeFromXml(path);
+				}
 			}
 			if (GUILayout.Button("Export Level", EditorStyles.miniButtonRight, EditorStyle.TabButtonHeight)) {
 				// Export Level.
 				string path = EditorUtility.SaveFilePanel("Export xml", "", "Level.xml", "xml");
-				DungeonLevel.OperateXML.SerializeToXml(path);
+				if (path.Length > 0) {
+					DungeonLevel.OperateXML.Serialize.SerializeToXml(path);
+				}
 			}
 			GUILayout.EndHorizontal();
 			GUILayout.Space(EditorStyle.PaddingAfterBlock);
