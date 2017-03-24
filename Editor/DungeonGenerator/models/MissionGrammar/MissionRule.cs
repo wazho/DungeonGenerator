@@ -23,7 +23,7 @@ namespace MissionGrammarSystem {
 			this._description     = "Description here.";
 			this._sourceRule      = new GraphGrammar();
 			this._replacementRule = new GraphGrammar();
-			this._isEnable        = false;
+			this._isEnable        = true;
 		}
 		// Constructor - Pass name and description.
 		public MissionRule(string name, string description) : this() {

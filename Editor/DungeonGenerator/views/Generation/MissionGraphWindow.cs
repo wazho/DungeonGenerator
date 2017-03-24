@@ -5,6 +5,8 @@ using System.Collections;
 using EditorAdvance = EditorExtend.Advance;
 using EditorStyle   = EditorExtend.Style;
 
+using Mission = MissionGrammarSystem;
+
 namespace GraphGeneration {
 	// Error type. 
 	public enum ErrorType {
@@ -20,12 +22,15 @@ namespace GraphGeneration {
 	public class MissionGraphWindow : EditorWindow {
 		//Scroll view
 		private Vector2 _scrollView;
+		//canvas
+		private Rect _tempCanvasView;
 		//error type & selected graph
 		private ErrorType _errorType;
 		private GraphState _graphState;
 
 		void Awake() {
-			_scrollView = new Vector2(0, 50);
+			_scrollView     = new Vector2(0, 50);
+			_tempCanvasView = new Rect(0, 30 , Screen.width, 300);
 
 			_errorType  = ErrorType.None;
 			_graphState = GraphState.Mission;
@@ -41,9 +46,28 @@ namespace GraphGeneration {
 				_graphState = GraphState.Space;
 			}
 			GUILayout.EndHorizontal();
+
 			//[Temp]Canvas
-			EditorGUILayout.TextArea("\n\t\t\tCanvas", GUILayout.Height(80));
-			//HelpBox
+			GUILayout.BeginArea(_tempCanvasView);
+			_tempCanvasView.width = Screen.width;
+			EditorGUI.DrawRect(_tempCanvasView, Color.gray);
+			// Node
+
+
+			// Connection 
+			foreach (Mission.GraphGrammarConnection connection in Mission.MissionGrammar.Groups[0].Rules[0].SourceRule.Connections) {
+				connection.Draw();
+			}
+
+			foreach (Mission.GraphGrammarNode node in Mission.MissionGrammar.Groups[0].Rules[0].SourceRule.Nodes) {
+				node.Draw();
+			}
+
+
+			GUILayout.EndArea();
+
+			GUILayout.BeginArea(new Rect(0, 350, Screen.width, Screen.height));
+			// HelpBox
 			EditorGUILayout.HelpBox(FormValidation(), MessageType.Info, true);
 			//Check boxies.
 			_scrollView = EditorGUILayout.BeginScrollView(_scrollView,GUILayout.Height(150));
@@ -61,10 +85,13 @@ namespace GraphGeneration {
 			//Mission and Space Graph button.
 			GUILayout.BeginHorizontal();
 			if (GUILayout.Button("Initial",EditorStyles.miniButtonLeft, EditorStyle.SubmitButtonHeight)) {
+
 			}
-			if(GUILayout.Button("Iterate", EditorStyles.miniButtonMid, EditorStyle.SubmitButtonHeight)) {
+			if (GUILayout.Button("Iterate", EditorStyles.miniButtonMid, EditorStyle.SubmitButtonHeight)) {
+
 			}
-			if(GUILayout.Button("Complete", EditorStyles.miniButtonRight, EditorStyle.SubmitButtonHeight)) {
+			if (GUILayout.Button("Complete", EditorStyles.miniButtonRight, EditorStyle.SubmitButtonHeight)) {
+
 			}
 			GUILayout.EndHorizontal();
 			// Apply button and popup
@@ -80,6 +107,7 @@ namespace GraphGeneration {
 				}
 			}
 			EditorGUI.EndDisabledGroup();
+			GUILayout.EndArea();
 		}
 		// Form validation can determine the error type.
 		string FormValidation() {
