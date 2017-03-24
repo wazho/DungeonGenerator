@@ -1,8 +1,10 @@
 using UnityEngine;
 using UnityEditor;
+using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 using EditorCanvas = EditorExtend.NodeCanvas;
 using EditorStyle  = EditorExtend.Style;
@@ -97,6 +99,50 @@ namespace MissionGrammarSystem {
 				where usedRule.Name.ToLower() == newRule.ToLower()
 				select usedRule)
 				.Any();
+		}
+		// Get the default group name.
+		public static string GetDefaultGroupName(string[] groupsOptions) {
+			// The member of all default name. 
+			List<int> members = new List<int>();
+			// The new default name.
+			string newName = string.Empty;
+			// Match the regular expression pattern against the name of groups.
+			for (int _index = 0; _index < groupsOptions.Length; _index++) {
+				Match match = new Regex(@"^New group (\d+)$", RegexOptions.IgnoreCase)
+									.Match(MissionGrammar.Groups[_index].Name);
+				while (match.Success) { members.Add(Int32.Parse(match.Groups[1].ToString())); }
+			}
+			// Sort the member of all the default name.
+			members.Sort();
+			// Find the empty number in sort.
+			for (int i = 0; i < members.Count && newName != string.Empty; i++) {
+				if (i + 1 != members[i]) { newName = "New group " + (i + 1); }
+			}
+			// If there is not the empty number in sort, create new number.
+			if (newName == string.Empty) { newName = "New group " + (members.Count + 1); }
+			return newName;
+		}
+		// Get the default rule name.
+		public static string GetDefaultRuleName(string[] rulesOptions, int indexOfGroup) {
+			// The member of all default name. 
+			List<int> members = new List<int>();
+			// The new default name.
+			string newName = string.Empty;
+			// Match the regular expression pattern against the name of rules.
+			for (int i = 0; i < rulesOptions.Length; i++) {
+				Match match = new Regex(@"^New rule (\d+)$", RegexOptions.IgnoreCase)
+									.Match(MissionGrammar.Groups[indexOfGroup].Rules[i].Name);
+				if (match.Success) { members.Add(Int32.Parse(match.Groups[1].ToString())); }
+			}
+			// Sort the member of all the default name.
+			members.Sort();
+			// Find the empty number in sort.
+			for (int i = 0; i < members.Count && newName != string.Empty; i++) {
+				if (i + 1 != members[i]) { newName = "New rule " + (i + 1); }
+			}
+			// If there is not the empty number in sort, create new number.
+			if (newName == string.Empty) { newName = "New rule " + (members.Count + 1); }
+			return newName;
 		}
 	}
 }

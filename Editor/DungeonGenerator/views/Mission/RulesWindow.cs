@@ -112,8 +112,11 @@ namespace MissionGrammarSystem {
 				LayoutBasicInfoEditor();
 				break;
 			}
-			// Update the graph grammars below canvas.
-			_missionRule = MissionGrammar.Groups[_indexOfGroupsOptions].Rules[_indexOfRulesOptions];
+			// Avoid the out of index.
+			if (_indexOfGroupsOptions < _groupsOptions.Length && _indexOfRulesOptions < _rulesOptions.Length) {
+				// Update the graph grammars below canvas.
+				_missionRule = MissionGrammar.Groups[_indexOfGroupsOptions].Rules[_indexOfRulesOptions];
+			}
 			// Layout the canvas areas of two graph grammars.
 			LayoutRulesCanvasArea();
 			// Show the area of after-rule-preview.
@@ -173,8 +176,8 @@ namespace MissionGrammarSystem {
 				// Switch mode.
 				_editingMode = EditingMode.CreateGroup;
 				// Update info.
-				_name        = string.Empty;
-				_description = string.Empty;
+				_name        = MissionGrammar.GetDefaultGroupName(_groupsOptions);
+				_description = "Description here.";
 			}
 			// Update the content of dropdown.
 			_groupsOptions = MissionGrammar.Groups.Select(s => s.Name).ToArray();
@@ -216,8 +219,8 @@ namespace MissionGrammarSystem {
 				// Switch mode.
 				_editingMode = EditingMode.CreateRule;
 				// Update info.
-				_name        = string.Empty;
-				_description = string.Empty;
+				_name        = MissionGrammar.GetDefaultRuleName(_rulesOptions, _indexOfGroupsOptions);
+				_description = "Description here.";
 			}
 			// Update the content of dropdown.
 			_rulesOptions = MissionGrammar.Groups[_indexOfGroupsOptions].Rules.Select(r => r.Name).ToArray();
@@ -635,10 +638,10 @@ namespace MissionGrammarSystem {
 			//return while not selected symbol.
 			if (_currentSelectedGraphGrammar.SelectedSymbol == null) { return; }
 			if (_currentSelectedGraphGrammar.SelectedSymbol is GraphGrammarNode) {
-				//Is node.
+				// Is node.
 				_currentSelectedGraphGrammar.Nodes.Remove((GraphGrammarNode)_currentSelectedGraphGrammar.SelectedSymbol);
-			}else if(_currentSelectedGraphGrammar.SelectedSymbol is GraphGrammarConnection) {
-				//Is connection.
+			} else if(_currentSelectedGraphGrammar.SelectedSymbol is GraphGrammarConnection) {
+				// Is connection.
 				_currentSelectedGraphGrammar.Connections.Remove((GraphGrammarConnection)_currentSelectedGraphGrammar.SelectedSymbol);
 			}
 			
@@ -646,12 +649,12 @@ namespace MissionGrammarSystem {
 		// Copy selected canvas to another one.
 		void CopySelectedCanvas() {
 			if(_currentSelectedGraphGrammar != null && _currentSelectedGraphGrammar == _missionRule.SourceRule) {
-				//Copy nodes.
+				// Copy nodes.
 				_missionRule.ReplacementRule.Nodes.Clear();
 				foreach (GraphGrammarNode node in _missionRule.SourceRule.Nodes) {
 					_missionRule.ReplacementRule.AddNode(node);
 				}
-				//Copy Connections.
+				// Copy Connections.
 				_missionRule.ReplacementRule.Connections.Clear();
 				foreach (GraphGrammarConnection connection in _missionRule.SourceRule.Connections) {
 					_missionRule.ReplacementRule.AddConnection(connection);
@@ -660,12 +663,12 @@ namespace MissionGrammarSystem {
 				}
 				_missionRule.ReplacementRule.RevokeAllSelected();
 			} else if(_currentSelectedGraphGrammar != null && _currentSelectedGraphGrammar == _missionRule.ReplacementRule) {
-				//Copy nodes.
+				// Copy nodes.
 				_missionRule.SourceRule.Nodes.Clear();
 				foreach (GraphGrammarNode node in _missionRule.ReplacementRule.Nodes) {
 					_missionRule.SourceRule.AddNode(node);
 				}
-				//Copy connections.
+				// Copy connections.
 				_missionRule.SourceRule.Connections.Clear();
 				foreach (GraphGrammarConnection connection in _missionRule.ReplacementRule.Connections) {
 					_missionRule.SourceRule.AddConnection(connection);
