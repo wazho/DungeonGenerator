@@ -132,9 +132,12 @@ namespace MissionGrammarSystem {
 		}
 		// Update symbol appearance.
 		public void UpdateSymbol(GraphGrammarSymbol before, GraphGrammarSymbol after) {
+			int symbolIndex                   = -1;
+			GraphGrammarNode       node       = null;
+			GraphGrammarConnection connection = null;
 			if (before is GraphGrammarNode) {
-				GraphGrammarNode node = (GraphGrammarNode) after;
-				int symbolIndex = _nodes.FindIndex(x => x.Equals(before));
+				node = (GraphGrammarNode) after;
+				symbolIndex = _nodes.FindIndex(x => x.Equals(before));
 				Debug.Log(symbolIndex + "/" + _nodes.Count);
 				_nodes[symbolIndex].Terminal     = node.Terminal;
 				_nodes[symbolIndex].Name         = node.Name;
@@ -144,13 +147,13 @@ namespace MissionGrammarSystem {
 				_nodes[symbolIndex].FilledColor  = node.FilledColor;
 				_nodes[symbolIndex].TextColor    = node.TextColor;
 			} else if (before is GraphGrammarConnection) {
-				GraphGrammarConnection connection = (GraphGrammarConnection) after;
-				int symbolIndex = _connections.FindIndex(x => x.Equals(before));
-				// [TODO] Will modify
-				_connections[symbolIndex].Requirement  = connection.Requirement;
+				connection = (GraphGrammarConnection) after;
+				symbolIndex = _connections.FindIndex(x => x.Equals(before));
 				_connections[symbolIndex].Name         = connection.Name;
 				_connections[symbolIndex].Description  = connection.Description;
 				_connections[symbolIndex].OutlineColor = connection.OutlineColor;
+				_connections[symbolIndex].Requirement  = connection.Requirement;
+				_connections[symbolIndex].Arrow        = connection.Arrow;
 			}
 		}
 		// Add a new connection.
