@@ -15,12 +15,14 @@ namespace MissionGrammarSystem {
 		private string            _name;
 		private string            _description;
 		private List<MissionRule> _rules;
+		private bool              _isSelected;
 		// Constructor - Default.
 		public MissionGroup() {
 			this._name        = "New group";
 			this._description = "Description here.";
 			// Default mission rule.
 			this._rules       = new List<MissionRule>() { new MissionRule() };
+			this._isSelected  = false;
 		}
 		// Constructor - Pass name and description.
 		// Constructor - Pass name and description.
@@ -71,6 +73,11 @@ namespace MissionGrammarSystem {
 		public void RemoveRule(string name) {
 			_rules.Remove(_rules.Where(r => r.Name == name).FirstOrDefault());
 			return;
+		}
+		// Enable, getter and setter.
+		public bool Selected {
+			get { return _isSelected; }
+			set { _isSelected = value; }
 		}
 	}
 }
