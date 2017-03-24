@@ -15,6 +15,7 @@ namespace MissionGrammarSystem {
 		// Groups, getter.
 		public static List<MissionGroup> Groups {
 			get { return _groups; }
+			set { _groups = value; }
 		}
 		// Get the specified mission group by name.
 		public static MissionGroup Group(string name) {

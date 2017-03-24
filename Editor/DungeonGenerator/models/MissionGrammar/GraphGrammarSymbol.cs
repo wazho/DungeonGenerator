@@ -30,6 +30,7 @@ namespace MissionGrammarSystem {
 		// Return the ID.
 		public Guid ID {
 			get { return _symbolID; }
+			set { _symbolID = value; }
 		}
 		// Return the symbol type.
 		public SymbolType Type {

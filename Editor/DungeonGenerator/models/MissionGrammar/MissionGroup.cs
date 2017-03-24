@@ -41,6 +41,7 @@ namespace MissionGrammarSystem {
 		// MissionRules, getter.
 		public List<MissionRule> Rules {
 			get { return _rules; }
+			set { _rules = value; }
 		}
 		// Get the specified mission rule by name.
 		public MissionRule Rule(string name) {
