@@ -138,7 +138,6 @@ namespace MissionGrammarSystem {
 			if (before is GraphGrammarNode) {
 				node = (GraphGrammarNode) after;
 				symbolIndex = _nodes.FindIndex(x => x.Equals(before));
-				Debug.Log(symbolIndex + "/" + _nodes.Count);
 				_nodes[symbolIndex].Terminal     = node.Terminal;
 				_nodes[symbolIndex].Name         = node.Name;
 				_nodes[symbolIndex].Abbreviation = node.Abbreviation;
