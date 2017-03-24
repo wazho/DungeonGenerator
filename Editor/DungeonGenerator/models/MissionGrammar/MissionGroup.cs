@@ -15,7 +15,7 @@ namespace MissionGrammarSystem {
 		private string            _name;
 		private string            _description;
 		private List<MissionRule> _rules;
-		private bool			  _isSelected;
+		private bool              _isSelected;
 		// Constructor - Default.
 		public MissionGroup() {
 			this._name        = "New group";
