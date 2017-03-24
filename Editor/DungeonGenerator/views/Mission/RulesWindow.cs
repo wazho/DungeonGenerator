@@ -89,9 +89,9 @@ namespace MissionGrammarSystem {
 			_delete               = Resources.Load<Texture2D>("Icons/delete");
 			_sourceCanvasScrollPosition      = Vector2.zero;
 			_replacementCanvasScrollPosition = Vector2.zero;
-			_listScrollPosition       = Vector2.zero;
-			_sourceCanvasSizeWidth       = 8000;
-			_sourceCanvasSizeHeight      = 1000;
+			_listScrollPosition          = Vector2.zero;
+			_sourceCanvasSizeWidth       = 1500;
+			_sourceCanvasSizeHeight      = 750;
 			_replacementCanvasSizeWidth  = 1000;
 			_replacementCanvasSizeHeight = 300;
 			_currentSelectedGraphGrammar = _missionRule.SourceRule;
@@ -112,6 +112,8 @@ namespace MissionGrammarSystem {
 				LayoutBasicInfoEditor();
 				break;
 			}
+			// Update the graph grammars below canvas.
+			_missionRule = MissionGrammar.Groups[_indexOfGroupsOptions].Rules[_indexOfRulesOptions];
 			// Layout the canvas areas of two graph grammars.
 			LayoutRulesCanvasArea();
 			// Show the area of after-rule-preview.
@@ -119,6 +121,7 @@ namespace MissionGrammarSystem {
 			// Control whole events.
 			EventController();
 
+/*
 			// [Remove soon] Just Testing
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.BeginVertical();
@@ -130,6 +133,7 @@ namespace MissionGrammarSystem {
 			_replacementCanvasSizeHeight = EditorAdvance.LimitedIntField("ReplacementCanvasSizeHeight:", _replacementCanvasSizeHeight, 100, 5000);
 			EditorGUILayout.EndVertical();
 			EditorGUILayout.EndHorizontal();
+*/
 		}
 		// Layout the combobox and editor of mission group.
 		void LayoutMissionGroupOptions() {
