@@ -16,14 +16,14 @@ namespace MissionGrammarSystem {
 		private string       _description;
 		private GraphGrammar _sourceRule;
 		private GraphGrammar _replacementRule;
-		private bool         _isEnable;
+		private bool         _isEnabled;
 		// Constructor - Default.
 		public MissionRule() {
 			this._name            = "New rule";
 			this._description     = "Description here.";
 			this._sourceRule      = new GraphGrammar();
 			this._replacementRule = new GraphGrammar();
-			this._isEnable        = true;
+			this._isEnabled       = true;
 		}
 		// Constructor - Pass name and description.
 		public MissionRule(string name, string description) : this() {
@@ -52,8 +52,8 @@ namespace MissionGrammarSystem {
 		}
 		// Enable, getter and setter.
 		public bool Enable {
-			get { return _isEnable; }
-			set { _isEnable = value; }
+			get { return _isEnabled; }
+			set { _isEnabled = value; }
 		}
 	}
 }

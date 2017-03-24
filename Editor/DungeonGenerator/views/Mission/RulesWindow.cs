@@ -612,11 +612,21 @@ namespace MissionGrammarSystem {
 			EditorStyle.ResizeRuleReplacementCanvas(_replacementCanvasSizeWidth, _replacementCanvasSizeHeight);
 			EditorGUI.DrawRect(EditorStyle.RuleReplacementCanvas, _missionRule.ReplacementRule.Equals(_currentSelectedGraphGrammar) ? Color.white : Color.gray);
 			GUILayout.Label(string.Empty, EditorStyle.RuleReplacementCanvasContent);
+			// Draw Nodes and Connections.
+			GraphGrammarConnection _currentSelectedConnection = null;
+			foreach (GraphGrammarConnection connection in _missionRule.ReplacementRule.Connections) {
+				if (connection.Selected) {
+					_currentSelectedConnection = connection;
+				} else {
+					connection.Draw();
+				}
+			}
 			foreach (GraphGrammarNode node in _missionRule.ReplacementRule.Nodes) {
 				node.Draw();
 			}
-			foreach (GraphGrammarConnection connection in _missionRule.ReplacementRule.Connections) {
-				connection.Draw();
+			// Only selected connection need to place at the top.
+			if (_currentSelectedConnection != null) {
+				_currentSelectedConnection.Draw();
 			}
 			GUILayout.EndScrollView();
 		}

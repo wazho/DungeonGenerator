@@ -166,6 +166,7 @@ namespace MissionGrammarSystem {
 			// Update the current connection.
 			_selectedSymbol = connection;
 		}
+		// Add a new connection from another exist connection.
 		public void AddConnection(GraphGrammarConnection connectionClone) {
 			RevokeAllSelected();
 			// Deep copy.
