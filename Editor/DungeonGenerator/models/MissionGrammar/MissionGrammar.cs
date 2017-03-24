@@ -3,6 +3,8 @@ using UnityEditor;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using System;
+using System.Text.RegularExpressions;
 
 using EditorCanvas = EditorExtend.NodeCanvas;
 using EditorStyle  = EditorExtend.Style;
@@ -96,6 +98,76 @@ namespace MissionGrammarSystem {
 				where usedRule.Name.ToLower() == newRule.ToLower()
 				select usedRule)
 				.Any();
+		}
+		// Add the default group name.
+		public static string AddNewDefaultGroup(string[] groupsOptions) {
+			string _pattern = @"^New group (\d+)$";
+			// The member of all default name. 
+			List<int> _member = new List<int>() { };
+			// The new default name.
+			string _newDefaultName = string.Empty;
+			// Match the regular expression pattern against the name of groups.
+			for (int _index = 0; _index < groupsOptions.Length; _index++) {
+				Match _newGroup = new Regex(_pattern, RegexOptions.IgnoreCase).Match(MissionGrammar.Groups[_index].Name);
+				while (_newGroup.Success) {
+					Group _idOfGroupNeme = _newGroup.Groups[1];
+					_member.Add(Int32.Parse(_idOfGroupNeme.ToString()));
+					_newGroup = _newGroup.NextMatch();
+				}
+			}
+			// Sort the member of all the default name.
+			_member.Sort();
+			// Find the empty number in sort.
+			int _id = 0;
+			while (_id < _member.Count) {
+				if (_id > 0 && _member[_id] != _member[_id - 1] + 1) {
+					_newDefaultName = "New group " + (_id + 1);
+					break;
+				} else if (_id == 0 && _member[_id] != 1) {
+					_newDefaultName = "New group 1";
+					break;
+				}
+				_id++;
+			}
+			// If there are not the empty number in sort, create new number.
+			if (_newDefaultName == string.Empty) _newDefaultName = "New group " + (_member.Count + 1);
+
+			return _newDefaultName;
+		}
+		// Add the default rule name.
+		public static string AddNewDefaultRule(string[] rulesOptions, int indexOfGroup) {
+			string _pattern = @"^New rule (\d+)$";
+			// The member of all default name. 
+			List<int> _member = new List<int>() { };
+			// The new default name.
+			string _newDefaultName = string.Empty;
+			// Match the regular expression pattern against the name of rules.
+			for (int _index = 0; _index < rulesOptions.Length; _index++) {
+				Match _newRule = new Regex(_pattern, RegexOptions.IgnoreCase).Match(MissionGrammar.Groups[indexOfGroup].Rules[_index].Name);
+				while (_newRule.Success) {
+					Group _idOfRuleNeme = _newRule.Groups[1];
+					_member.Add(Int32.Parse(_idOfRuleNeme.ToString()));
+					_newRule = _newRule.NextMatch();
+				}
+			}
+			// Sort the member of all the default name.
+			_member.Sort();
+			// Find the empty number in sort.
+			int _id = 0;
+			while (_id < _member.Count) {
+				if (_id > 0 && _member[_id] != _member[_id - 1] + 1) {
+					_newDefaultName = "New rule " + (_id + 1);
+					break;
+				} else if (_id == 0 && _member[_id] != 1) {
+					_newDefaultName = "New rule 1";
+					break;
+				}
+				_id++;
+			}
+			// If there are not the empty number in sort, create new number.
+			if (_newDefaultName == string.Empty) _newDefaultName = "New rule " + (_member.Count + 1);
+
+			return _newDefaultName;
 		}
 	}
 }
