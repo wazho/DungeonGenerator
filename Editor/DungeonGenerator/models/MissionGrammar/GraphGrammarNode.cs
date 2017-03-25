@@ -57,7 +57,7 @@ namespace MissionGrammarSystem {
 			this._terminal            = NodeTerminalType.Terminal;
 			this._outlineScope        = new Rect(0, 0, 39, 39);
 			this._filledScope         = new Rect(2, 2, 35, 35);
-			this._textScope           = new Rect(0, 0, 35, 21);
+			this._textScope           = new Rect(0, 0, 45, 34);
 			this._outlineColor        = Color.black;
 			this._filledColor         = Color.white;
 			this._textColor           = Color.black;
@@ -238,7 +238,7 @@ namespace MissionGrammarSystem {
 				// Main part of node.
 				EditorCanvas.DrawQuad(OutlineScope, OutlineColor);
 				EditorCanvas.DrawQuad(FilledScope, FilledColor);
-				EditorCanvas.DrawQuad(TextScope, Color.clear, Abbreviation, TextColor);
+				EditorCanvas.DrawQuad(TextScope, Color.clear, "<" + Ordering + ">\n" + Abbreviation, TextColor);
 				break;
 			case NodeTerminalType.Terminal:
 				// Highlighting.
@@ -248,7 +248,7 @@ namespace MissionGrammarSystem {
 				// Main part of node.
 				EditorCanvas.DrawDisc(Position, OutlineScope.width / 2, OutlineColor);
 				EditorCanvas.DrawDisc(Position, OutlineScope.width / 2 - _thickness, FilledColor);
-				EditorCanvas.DrawQuad(TextScope, Color.clear, Abbreviation, TextColor);
+				EditorCanvas.DrawQuad(TextScope, Color.clear, "<" + Ordering + ">\n" + Abbreviation, TextColor);
 				break;
 			}
 		}

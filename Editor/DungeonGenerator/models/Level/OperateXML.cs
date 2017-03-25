@@ -67,6 +67,7 @@ namespace DungeonLevel {
 				foreach (var node in nodes) {
 					XElement elementNode = new XElement("Node", new XAttribute("id", node.ID));
 					elementNode.Add(new XElement("AlphabetID", node.AlphabetID));
+					elementNode.Add(new XElement("Ordering", node.Ordering));
 					elementNode.Add(new XElement("Name", node.Name));
 					elementNode.Add(new XElement("Abbreviation", node.Abbreviation));
 					elementNode.Add(new XElement("Description", node.Description));
@@ -211,6 +212,7 @@ namespace DungeonLevel {
 
 					node.ID = new Guid(elementNode.Attribute("id").Value);
 					node.AlphabetID = new Guid(elementNode.Element("AlphabetID").Value);
+					node.Ordering = System.Int32.Parse(elementNode.Element("Ordering").Value);
 					node.Name = elementNode.Element("Name").Value;
 					node.Abbreviation = elementNode.Element("Abbreviation").Value;
 					node.Description = elementNode.Element("Description").Value;
