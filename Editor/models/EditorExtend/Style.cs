@@ -189,16 +189,10 @@ namespace EditorExtend {
 			}
 		}
 		// MissionGraphCanvas
-		private static int _missionGraphCanvasWidth = 10;
+		private static int _missionGraphCanvasWidth  = 10;
 		private static int _missionGraphCanvasHeight = 10;
-		private static int _missionGraphCanvasRightBorder = (int) ( _missionGraphCanvasWidth -10);
-		private static int _missionGraphCanvasBottomBorder = (int) ( _missionGraphCanvasHeight -20);
-		public static void ResizeMissionGraphCanvas(int width, int height) {
-			_missionGraphCanvasWidth = width;
-			_missionGraphCanvasHeight = height;
-			_missionGraphCanvasRightBorder = width - 10;
-			_missionGraphCanvasBottomBorder = height - 20;
-		}
+		private static int _missionGraphCanvasRightBorder  = (int) (_missionGraphCanvasWidth - 10);
+		private static int _missionGraphCanvasBottomBorder = (int) (_missionGraphCanvasHeight - 20);
 		private static Rect _missionGraphCanvas = new Rect(0, 0, _missionGraphCanvasWidth, _missionGraphCanvasHeight);
 		public static Rect MissionGraphCanvas {
 			get {
@@ -207,10 +201,16 @@ namespace EditorExtend {
 				return _missionGraphCanvas;
 			}
 		}
+		public static void ResizeMissionGraphCanvas(int width, int height) {
+			_missionGraphCanvasWidth  = width;
+			_missionGraphCanvasHeight = height;
+			_missionGraphCanvasRightBorder  = width - 10;
+			_missionGraphCanvasBottomBorder = height - 20;
+		}
 		private static GUIStyle _missionGraphCanvasContent = new GUIStyle(GUI.skin.label);
 		public static GUIStyle MissionGraphCanvasContent {
 			get {
-				_missionGraphCanvasContent.padding.right = _missionGraphCanvasRightBorder;
+				_missionGraphCanvasContent.padding.right  = _missionGraphCanvasRightBorder;
 				_missionGraphCanvasContent.padding.bottom = _missionGraphCanvasBottomBorder;
 				return _missionGraphCanvasContent;
 			}

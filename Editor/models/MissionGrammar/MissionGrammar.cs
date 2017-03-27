@@ -110,7 +110,7 @@ namespace MissionGrammarSystem {
 			for (int _index = 0; _index < groupsOptions.Length; _index++) {
 				Match match = new Regex(@"^New group (\d+)$", RegexOptions.IgnoreCase)
 									.Match(MissionGrammar.Groups[_index].Name);
-				while (match.Success) { members.Add(Int32.Parse(match.Groups[1].ToString())); }
+				if (match.Success) { members.Add(Int32.Parse(match.Groups[1].ToString())); }
 			}
 			// Sort the member of all the default name.
 			members.Sort();
