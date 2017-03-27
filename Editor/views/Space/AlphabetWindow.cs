@@ -5,17 +5,17 @@ using System.Collections;
 using EditorAdvance = EditorExtend.Advance;
 using EditorStyle   = EditorExtend.Style;
 
-namespace SpaceGrammar {
+namespace SpaceGrammarSystem {
 	public class AlphabetWindow : EditorWindow {
 		// Tabs interface modes
-		public enum InterfaceTab{
+		public enum InterfaceTab {
 			Points, 
 			Edges,
 			Areas
 		}
 
 		// Edit modes
-		public enum EditingMode{
+		public enum EditingMode {
 			None,
 			Create, 
 			Modify,

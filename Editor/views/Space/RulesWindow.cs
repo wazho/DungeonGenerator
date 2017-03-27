@@ -5,7 +5,7 @@ using System.Collections;
 using EditorAdvance = EditorExtend.Advance;
 using EditorStyle = EditorExtend.Style;
 
-namespace SpaceGrammar {
+namespace SpaceGrammarSystem {
 	public class RulesWindow : EditorWindow {
 		// Group editing modes
 		public enum GroupEditingModes {

@@ -5,7 +5,7 @@ using System.Collections;
 using EditorAdvance = EditorExtend.Advance;
 using EditorStyle = EditorExtend.Style;
 
-namespace SpaceGrammar {
+namespace SpaceGrammarSystem {
 	public class SettingsWindow : EditorWindow {
 		// [Edit later] change the string type with SpaceGrammar...
 		// Types - Symbol & Connection
