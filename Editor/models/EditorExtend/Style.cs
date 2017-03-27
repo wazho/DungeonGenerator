@@ -37,6 +37,8 @@ namespace EditorExtend {
 		private static Rect _indexWindowCanvas = new Rect(0, 0, Screen.width, 250);
 		private static Rect _afterIndexWindowCanvasArea = new Rect(0, 250, Screen.width, Screen.height);
 
+		private static Rect _missionGraphCanvasArea = new Rect(0, 30, Screen.width, 300);
+
 		// Font size.
 		public static int HeaderFontSize {
 			get { return _headerFontSize; }
@@ -186,6 +188,33 @@ namespace EditorExtend {
 				return _ruleReplacementCanvasContent;
 			}
 		}
+		// MissionGraphCanvas
+		private static int _missionGraphCanvasWidth = 10;
+		private static int _missionGraphCanvasHeight = 10;
+		private static int _missionGraphCanvasRightBorder = (int) ( _missionGraphCanvasWidth -10);
+		private static int _missionGraphCanvasBottomBorder = (int) ( _missionGraphCanvasHeight -20);
+		public static void ResizeMissionGraphCanvas(int width, int height) {
+			_missionGraphCanvasWidth = width;
+			_missionGraphCanvasHeight = height;
+			_missionGraphCanvasRightBorder = width - 10;
+			_missionGraphCanvasBottomBorder = height - 20;
+		}
+		private static Rect _missionGraphCanvas = new Rect(0, 0, _missionGraphCanvasWidth, _missionGraphCanvasHeight);
+		public static Rect MissionGraphCanvas {
+			get {
+				_missionGraphCanvas.width = _missionGraphCanvasWidth;
+				_missionGraphCanvas.height = _missionGraphCanvasHeight;
+				return _missionGraphCanvas;
+			}
+		}
+		private static GUIStyle _missionGraphCanvasContent = new GUIStyle(GUI.skin.label);
+		public static GUIStyle MissionGraphCanvasContent {
+			get {
+				_missionGraphCanvasContent.padding.right = _missionGraphCanvasRightBorder;
+				_missionGraphCanvasContent.padding.bottom = _missionGraphCanvasBottomBorder;
+				return _missionGraphCanvasContent;
+			}
+		}
 
 		public static Rect AfterRulePreviewArea {
 			get {
@@ -227,8 +256,13 @@ namespace EditorExtend {
 				return _ruleGraphGrammarCanvas;
 			}
 		}
-
-
+		public static Rect MissionGraphCanvasArea {
+			get {
+				_missionGraphCanvasArea.width = Screen.width;
+				return _missionGraphCanvasArea;
+			}
+		}
+		
 
 
 		private static GUIStyle _labelInNodeList       = new GUIStyle(GUI.skin.label);

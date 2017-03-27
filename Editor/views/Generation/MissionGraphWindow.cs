@@ -27,13 +27,19 @@ namespace GraphGeneration {
 		//error type & selected graph
 		private ErrorType _errorType;
 		private GraphState _graphState;
+		private Vector2 _canvasScrollPosition;
+
+		private int _missionGraphCanvasSizeWidth;
+		private int _missionGraphCanvasSizeHeight;
 
 		void Awake() {
 			_scrollView     = new Vector2(0, 50);
-			_tempCanvasView = new Rect(0, 30 , Screen.width, 300);
 
 			_errorType  = ErrorType.None;
 			_graphState = GraphState.Mission;
+
+			_missionGraphCanvasSizeWidth  = (int) EditorStyle.MissionGraphCanvasArea.width;
+			_missionGraphCanvasSizeHeight = (int) EditorStyle.MissionGraphCanvasArea.height;
 		}
 
 		void OnGUI() {
@@ -42,28 +48,14 @@ namespace GraphGeneration {
 			if (GUILayout.Button("Mission Graph",EditorStyles.miniButtonLeft, EditorStyle.SubmitButtonHeight)) {
 				_graphState = GraphState.Mission;
 			}
-			if(GUILayout.Button("Mission Graph", EditorStyles.miniButtonRight, EditorStyle.SubmitButtonHeight)) {
+			if(GUILayout.Button("Space Graph", EditorStyles.miniButtonRight, EditorStyle.SubmitButtonHeight)) {
 				_graphState = GraphState.Space;
 			}
 			GUILayout.EndHorizontal();
 
 			//[Temp]Canvas
-			GUILayout.BeginArea(_tempCanvasView);
-			_tempCanvasView.width = Screen.width;
-			EditorGUI.DrawRect(_tempCanvasView, Color.gray);
-			// Node
-
-
-			// Connection 
-			foreach (Mission.GraphGrammarConnection connection in Mission.MissionGrammar.Groups[0].Rules[0].SourceRule.Connections) {
-				connection.Draw();
-			}
-
-			foreach (Mission.GraphGrammarNode node in Mission.MissionGrammar.Groups[0].Rules[0].SourceRule.Nodes) {
-				node.Draw();
-			}
-
-
+			GUILayout.BeginArea(EditorStyle.MissionGraphCanvasArea);
+			ShowMissionGraphCanvas();
 			GUILayout.EndArea();
 
 			GUILayout.BeginArea(new Rect(0, 350, Screen.width, Screen.height));
@@ -109,6 +101,36 @@ namespace GraphGeneration {
 			EditorGUI.EndDisabledGroup();
 			GUILayout.EndArea();
 		}
+		void ShowMissionGraphCanvas() {
+			_canvasScrollPosition = GUILayout.BeginScrollView(_canvasScrollPosition, GUILayout.Width(Screen.width), GUILayout.Height(300));
+			EditorStyle.ResizeMissionGraphCanvas(_missionGraphCanvasSizeWidth, _missionGraphCanvasSizeHeight);
+			//Debug.Log(EditorStyle.MissionGraphCanvas);
+			EditorGUI.DrawRect(EditorStyle.MissionGraphCanvas, Color.gray);
+			GUILayout.Label(string.Empty, EditorStyle.MissionGraphCanvasContent);
+			// Connection 
+			foreach (Mission.GraphGrammarConnection connection in Mission.MissionGrammar.Groups[0].Rules[0].SourceRule.Connections) {
+				connection.Draw();
+			}
+			// Node
+			// Draw and get right bottom position.
+			Vector2 positionRightBotton = new Vector2(0,0);
+			foreach (Mission.GraphGrammarNode node in Mission.MissionGrammar.Groups[0].Rules[0].SourceRule.Nodes) {
+				// Get right position
+				if (node.PositionX > positionRightBotton.x) {
+					positionRightBotton.x = node.PositionX;
+				}
+				// Get bottom position
+				if (node.PositionY > positionRightBotton.y) {
+					positionRightBotton.y = node.PositionY;
+				}
+				node.Draw();
+			}
+			// Compare with screen size.
+			_missionGraphCanvasSizeWidth = Mathf.Max((int) EditorStyle.MissionGraphCanvasArea.width, (int) positionRightBotton.x + 25);
+			_missionGraphCanvasSizeHeight = Mathf.Max((int) EditorStyle.MissionGraphCanvasArea.height, (int) positionRightBotton.y + 25);
+			GUILayout.EndScrollView();
+		}
+
 		// Form validation can determine the error type.
 		string FormValidation() {
 			/*
