@@ -348,10 +348,10 @@ namespace MissionGrammarSystem {
 				! _ruleOfNonTerminalSymbolAbbreviation.IsMatch(_symbolAbbreviation)) {
 				_messageHint = "Abbreviation field error! \nPlease use only uppercase letters (A-Z) and 4 characters or less.";
 				_messageType = MessageType.Error;
-			} else if (Alphabet.IsNodeNameUsed(Alphabet.SelectedNode)) {
+			} else if (Alphabet.IsNodeNameUsed(_node)) {
 				_messageHint = "Node name has been used!\nPlease try another one.";
 				_messageType = MessageType.Error;
-			} else if (Alphabet.IsNodeAbbreviationUsed(Alphabet.SelectedNode)) {
+			} else if (Alphabet.IsNodeAbbreviationUsed(_node)) {
 				_messageHint = "Node abbreviation has been used!\nPlease try another one.";
 				_messageType = MessageType.Error;
 			} else {
