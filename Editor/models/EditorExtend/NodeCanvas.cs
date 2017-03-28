@@ -53,5 +53,18 @@ namespace EditorExtend {
 			Handles.DrawBezier(startPos, endPos, startTangent, endTangent, color, null, 3f);
 			Handles.EndGUI();
 		}
+		// Draw a Convex polygon with border.
+		public static void DrawConvexPolygon(Vector2 position, Vector3[] points, Color fillColor, Color borderColor, float thickness) {
+			// Add offset.
+			for (int i = 0; i < points.Length; i++) {
+				points[i] += (Vector3)position;
+			}
+			Handles.color = fillColor;
+			Handles.DrawAAConvexPolygon(points);
+			// Draw border.
+			Handles.color = borderColor;
+			Handles.DrawAAPolyLine(thickness, points);
+			Handles.DrawAAPolyLine(thickness, points[points.Length - 1], points[0]);
+		}
 	}
 }
