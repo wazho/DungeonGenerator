@@ -15,12 +15,32 @@ namespace MissionGrammarSystem {
 				new GraphGrammarNode("entrance", "en",   "System default.", NodeTerminalType.Terminal),
 				new GraphGrammarNode("goal",     "go",   "System default.", NodeTerminalType.Terminal),
 			};
+		// Default connections in alphabet.
 		private static List<GraphGrammarConnection> _connections = new List<GraphGrammarConnection>() {
 				new GraphGrammarConnection("Weak requirement",   "System default.", ConnectionType.WeakRequirement,   ConnectionArrowType.Normal),
 				new GraphGrammarConnection("Strong requirement", "System default.", ConnectionType.StrongRequirement, ConnectionArrowType.Double),
 				new GraphGrammarConnection("Inhibition",         "System default.", ConnectionType.Inhibition,        ConnectionArrowType.WithCircle),
 			};
+		// Default settings.
+		private static GraphGrammarNode _startingNode = _nodes[0];
+		private static GraphGrammarNode _defaultNode  = _nodes[0];
+		private static ConnectionType   _defaultConnectionType;
 
+		// Starting node in alphabet.
+		public static GraphGrammarNode StartingNode {
+			get { return _startingNode; }
+			set { _startingNode = value; }
+		}
+		// Default node in alphabet.
+		public static GraphGrammarNode DefaultNode {
+			get { return _defaultNode; }
+			set { _defaultNode = value; }
+		}
+		// Default connection type in alphabet.
+		public static ConnectionType DefaultConnectionType {
+			get { return _defaultConnectionType; }
+			set { _defaultConnectionType = value; }
+		}
 		// Node list in alphabet.
 		public static List<GraphGrammarNode> Nodes {
 			get { return _nodes; }

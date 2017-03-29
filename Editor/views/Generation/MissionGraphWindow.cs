@@ -115,10 +115,10 @@ namespace GraphGeneration {
 			// Mission and Space Graph button.
 			GUILayout.BeginHorizontal();
 			if (GUILayout.Button("Initial",EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
-
+				Mission.RewriteSystem.Initial();
 			}
 			if (GUILayout.Button("Iterate", EditorStyles.miniButtonMid, EditorStyle.ButtonHeight)) {
-
+				Mission.RewriteSystem.Iterate();
 			}
 			if (GUILayout.Button("Complete", EditorStyles.miniButtonRight, EditorStyle.ButtonHeight)) {
 

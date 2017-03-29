@@ -78,11 +78,12 @@ namespace MissionGrammarSystem {
 						_defaultNode.Name.ToString() + ", " +
 						_symbolTerminal.ToString() + ", " +
 						_connectionType.ToString() + " have been saved. ";
-					//apply changes
+					// Apply changes.
 					_startingNodeIndex = _tempStartingNodeIndex;
-					_defaultNodeIndex = _tempDefaultNodeIndex;
-					_symbolTerminal = _tempSymbolTerminal;
-					_connectionType = _tempConnectionType;
+					_defaultNodeIndex  = _tempDefaultNodeIndex;
+					_symbolTerminal    = _tempSymbolTerminal;
+					_connectionType    = _tempConnectionType;
+					UpdateSettings();
 					_applyButtonEnabled = false;
 				} else {
 					_messageInfo = "Info\n" +
@@ -93,6 +94,11 @@ namespace MissionGrammarSystem {
 				}
 			}
 			GUI.enabled = true;
+		}
+		void UpdateSettings() {
+			Alphabet.StartingNode          = Alphabet.Nodes[_startingNodeIndex];
+			Alphabet.DefaultNode           = Alphabet.Nodes[_defaultNodeIndex];
+			Alphabet.DefaultConnectionType = _connectionType;
 		}
 	}
 }

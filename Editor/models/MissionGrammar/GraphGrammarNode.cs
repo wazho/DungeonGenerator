@@ -93,6 +93,16 @@ namespace MissionGrammarSystem {
 			this._textColor           = node.TextColor;
 			this._stickiedConnections = new List<StickiedConnection>();
 		}
+		// Get stickiedConnections. ID array.
+		public Guid[] StickiedConnectionsGuid {
+			get {
+				Guid[] guids = new Guid[_stickiedConnections.Count];
+				for (int i = 0; i < _stickiedConnections.Count; i++) {
+					guids[i] = _stickiedConnections[i].connection.ID;
+				}
+				return guids;
+			}
+		}
 		// Return the ID.
 		public Guid AlphabetID {
 			get { return _alphabetID; }
@@ -191,6 +201,30 @@ namespace MissionGrammarSystem {
 			get { return _textColor; }
 			set { _textColor = value; }
 		}
+		// Parents, getter.
+		public List<GraphGrammarNode> Parents {
+			get {
+				List<GraphGrammarNode> parents = new List<GraphGrammarNode>();
+				foreach (StickiedConnection stickiedConnection in _stickiedConnections) {
+					if (stickiedConnection.location.Equals("end")) {
+						parents.Add(stickiedConnection.connection.StartpointStickyOn);
+					}
+				}
+				return parents;
+			}
+		}
+		// Children, getter.
+		public List<GraphGrammarNode> Children {
+			get {
+				List<GraphGrammarNode> children = new List<GraphGrammarNode>();
+				foreach (StickiedConnection stickiedConnection in _stickiedConnections) {
+					if (stickiedConnection.location.Equals("start")) {
+						children.Add(stickiedConnection.connection.EndpointStickyOn);
+					}
+				}
+				return children;
+			}
+		}
 		// Update the information form another node, mostly reference is in Alphabet.
 		public void UpdateSymbolInfo(GraphGrammarNode referenceNode) {
 			_terminal     = referenceNode.Terminal;
@@ -212,16 +246,6 @@ namespace MissionGrammarSystem {
 		public void RemoveStickiedConnection(GraphGrammarConnection connection, string location) {
 			// If connection is store here, remove this connection.
 			_stickiedConnections.Remove(_stickiedConnections.Find(e => e.connection == connection && e.location == location));
-		}
-		//Get stickiedConnections.ID array.
-		public Guid[] StickiedConnectionsGuid{
-			get {
-				Guid[] guids = new Guid[_stickiedConnections.Count];
-				for(int i=0;i< _stickiedConnections.Count; i++) {
-					guids[i] = _stickiedConnections[i].connection.ID;
-				}
-				return guids;
-			}
 		}
 		// Return the position is contained in this symbol or not.
 		public bool IsInScope(Vector2 pos) {
