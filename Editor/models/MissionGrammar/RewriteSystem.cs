@@ -51,28 +51,45 @@ namespace MissionGrammarSystem {
 		private static void TransformRules() {
 			foreach (var originGroup in MissionGrammar.Groups) {
 				foreach (var originRule in originGroup.Rules) {
+					Debug.Log(originRule.Name + "-" + originRule.Description);
 					// Declare the rule. Can use 'rule.SourceRoot' and 'rule.ReplacementRoot'.
 					Rule rule = new Rule();
-
-					// You can delete this line.
-					Debug.Log("===========  [" + originGroup.Name + ", " + originRule.Name + "]");
-
-					/* ====== Start code ======
-
-						Now can use GraphGrammarNode.Parents and GraphGrammarNode.Children.
-
-
-
-
-					   ====== End here ====== */
+					// Transform
+					rule.SourceRoot = TransformGraph(originRule.SourceRule);
+					rule.ReplacementRoot = TransformGraph(originRule.ReplacementRule);
 
 					// Show the message to proof you code is correct.
-					// ProgressIteration(rule.SourceRoot);
+					//ProgressIteration(rule.SourceRoot);
 					ProgressIteration(rule.ReplacementRoot);
 				}
 			}
 		}
-
+		// Transform a graph into tree struct. Return root.
+		private static Node TransformGraph(GraphGrammar graph) {
+			// Initialize nodes
+			Node[] Nodes = new Node[graph.Nodes.Count];
+			for (int i = 0; i < graph.Nodes.Count; i++) {
+				Nodes[i] = new Node(graph.Nodes[i], graph.Nodes[i].Ordering);
+			}
+			// Set parents and children
+			for (int i = 0; i < graph.Nodes.Count; i++) {
+				foreach (var childNode in graph.Nodes[i].Children) {
+					int index = graph.Nodes.FindIndex(x => x.ID == childNode.ID);
+					if (Nodes[i].Children == null) {
+						Nodes[i].Children = new List<Node>();
+					}
+					Nodes[i].Children.Add(Nodes[index]);
+				}
+				foreach (var parentsNode in graph.Nodes[i].Parents) {
+					int index = graph.Nodes.FindIndex(x => x.ID == parentsNode.ID);
+					if (Nodes[i].Parents == null) {
+						Nodes[i].Parents = new List<Node>();
+					}
+					Nodes[i].Parents.Add(Nodes[index]);
+				}
+			}
+			return Nodes.First<Node>( x => x.Index == 1);
+		}
 		private static void ProgressIteration(Node node) {
 			Debug.Log(node.Index + " - " + node.Name);
 			// Recursive for children.

@@ -196,7 +196,7 @@ namespace DungeonLevel {
 					if (!elementConnection.Element("EndpointStickyOn").IsEmpty) {
 						Guid guid = new Guid(elementConnection.Element("EndpointStickyOn").Value);
 						int nodeIndex = graph.Nodes.FindIndex(x => x.ID == guid);
-						graph.Connections[connectionIndex].StartpointStickyOn = graph.Nodes[nodeIndex];
+						graph.Connections[connectionIndex].EndpointStickyOn = graph.Nodes[nodeIndex];
 						graph.Nodes[nodeIndex].AddStickiedConnection(graph.Connections[connectionIndex], "end");
 					}
 					connectionIndex++;
