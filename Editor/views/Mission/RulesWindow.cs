@@ -92,8 +92,8 @@ namespace MissionGrammarSystem {
 			_listScrollPosition          = Vector2.zero;
 			_sourceCanvasSizeWidth       = 1500;
 			_sourceCanvasSizeHeight      = 750;
-			_replacementCanvasSizeWidth  = 1000;
-			_replacementCanvasSizeHeight = 300;
+			_replacementCanvasSizeWidth  = 1500;
+			_replacementCanvasSizeHeight = 750;
 			_currentSelectedGraphGrammar = _missionRule.SourceRule;
 			Alphabet.RevokeAllSelected();
 		}
@@ -461,7 +461,7 @@ namespace MissionGrammarSystem {
 				// Select node.
 				if (_missionRule.SourceRule.SelectedSymbol is GraphGrammarNode) {
 					tempNode = (GraphGrammarNode) _missionRule.SourceRule.SelectedSymbol;
-					tempNode.Position += Event.current.delta;
+					tempNode.Position = _positionInCanvas;
 				}
 				// Select connection.
 				else if (_missionRule.SourceRule.SelectedSymbol is GraphGrammarConnection) {
@@ -485,7 +485,7 @@ namespace MissionGrammarSystem {
 				// Select node.
 				if (_missionRule.ReplacementRule.SelectedSymbol is GraphGrammarNode) {
 					tempNode = (GraphGrammarNode) _missionRule.ReplacementRule.SelectedSymbol;
-					tempNode.Position += Event.current.delta;
+					tempNode.Position = _positionInCanvas;
 				}
 					// Select connection.
 				else if (_missionRule.ReplacementRule.SelectedSymbol is GraphGrammarConnection) {
@@ -501,10 +501,6 @@ namespace MissionGrammarSystem {
 						_missionRule.ReplacementRule.StickyNode(tempConnection, _positionInCanvas, "end");
 					}
 				}
-			} else {
-				// Revoke all 'selected' to false.
-				_missionRule.SourceRule.RevokeAllSelected();
-				_missionRule.ReplacementRule.RevokeAllSelected();
 			}
 			// Refresh the layout.
 			Repaint();
@@ -538,6 +534,9 @@ namespace MissionGrammarSystem {
 			_listScrollPosition = GUILayout.BeginScrollView(_listScrollPosition, EditorStyle.AlphabetSymbolListHeight);
 			// Content of scroll area.
 			GUILayout.BeginArea(EditorStyle.AlphabetSymbolListArea);
+			// Set the scroll position.
+			_symbolListCanvasInWindow.position = GUIUtility.GUIToScreenPoint(EditorStyle.AlphabetSymbolListCanvas.position) - this.position.position;
+			_symbolListCanvasInWindow.size = _symbolListCanvasInWindow.size = EditorStyle.AlphabetSymbolListCanvas.size;
 			EditorGUI.DrawRect(EditorStyle.AlphabetSymbolListCanvas, Color.gray);
 			GUILayout.EndArea();
 			// Layout each symbols in list.:
@@ -639,10 +638,22 @@ namespace MissionGrammarSystem {
 			if (_currentSelectedGraphGrammar.SelectedSymbol == null) { return; }
 			if (_currentSelectedGraphGrammar.SelectedSymbol is GraphGrammarNode) {
 				// Is node.
-				_currentSelectedGraphGrammar.Nodes.Remove((GraphGrammarNode)_currentSelectedGraphGrammar.SelectedSymbol);
+				GraphGrammarNode node = (GraphGrammarNode) _currentSelectedGraphGrammar.SelectedSymbol;
+				foreach (var connection in _currentSelectedGraphGrammar.Connections) {
+					node.RemoveStickiedConnection(connection, "start");
+					node.RemoveStickiedConnection(connection, "end");
+				}
+				_currentSelectedGraphGrammar.Nodes.Remove(node);
 			} else if(_currentSelectedGraphGrammar.SelectedSymbol is GraphGrammarConnection) {
 				// Is connection.
-				_currentSelectedGraphGrammar.Connections.Remove((GraphGrammarConnection)_currentSelectedGraphGrammar.SelectedSymbol);
+				GraphGrammarConnection connection = (GraphGrammarConnection) _currentSelectedGraphGrammar.SelectedSymbol;
+				if(connection.StartpointStickyOn != null) {
+					connection.StartpointStickyOn.RemoveStickiedConnection(connection, "start");
+				}
+				if(connection.EndpointStickyOn != null) {
+					connection.EndpointStickyOn.RemoveStickiedConnection(connection, "end");
+				}
+				_currentSelectedGraphGrammar.Connections.Remove(connection);
 			}
 			
 		}

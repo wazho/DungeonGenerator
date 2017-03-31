@@ -31,12 +31,11 @@ namespace MissionGrammarSystem {
 			_entrance.Children = new List<Node>();
 			_go.Children = new List<Node>();
 			_start.Children = new List<Node>();
-			_explore.Children = new List<Node>() { _fork};
+			_explore.Children = new List<Node>() { _fork, _boss };
 			_crossRoad.Children = new List<Node>();
-			_boss.Children = new List<Node>();
+			_boss.Children = new List<Node>() { _explore };
 			_gate.Children = new List<Node>() { _explore, _entrance, _boss};
-			_fork.Children = new List<Node>() { _go};
-			_explore.Children.Add(_boss);
+			_fork.Children = new List<Node>() { _boss, _go};
 			Debug.Log("Starting node : " + _root.Name);
 			//---------------------
 			_rules = new List<Rule>();
@@ -46,6 +45,7 @@ namespace MissionGrammarSystem {
 
 		public static void Iterate() {
 			ProgressIteration(_root);
+			ClearExplored(_root);
 		}
 		// Depth-first search.
 		private static void ProgressIteration(Node node) {
@@ -67,7 +67,14 @@ namespace MissionGrammarSystem {
 				}
 			}
 		}
-
+		private static void ClearExplored(Node node) {
+			node.Explored = false;
+			foreach (Node childNode in node.Children) {
+				if (childNode.Explored) {
+					ClearExplored(childNode);
+				}
+			}
+		}
 		// According to current rules of mission grammar, transform them to tree structure.
 		private static void TransformRules() {
 			foreach (var originGroup in MissionGrammar.Groups) {
@@ -119,8 +126,9 @@ namespace MissionGrammarSystem {
 			return nodes.FirstOrDefault<Node>(n => n.Index == 1);
 		}
 
-		private static bool[] _usedIndexTable;
+		private static bool[,] _usedIndexTable;
 		private static List<Node> matchNodes;
+		private static List<Node> exploredNodes;
 		private static Rule FindMatchs(Node node) {
 			if(matchNodes != null) {
 				for (int i = 0; i < matchNodes.Count; i++) {
@@ -130,7 +138,9 @@ namespace MissionGrammarSystem {
 			foreach (var rule in _rules) {
 				if (rule.SourceRoot.AlphabetID == node.AlphabetID) {
 					matchNodes = new List<Node>();
-					_usedIndexTable = new bool[rule.SourceNodeCount + 1];
+					exploredNodes = new List<Node>();
+					_usedIndexTable = new bool[rule.SourceNodeCount + 1, rule.SourceNodeCount + 1];
+					node.Index = rule.SourceRoot.Index;
 					if (RecursionMatch(node, rule.SourceRoot)) {
 						return rule;
 					}
@@ -145,17 +155,20 @@ namespace MissionGrammarSystem {
 		}
 		// Confirm the children are match
 		private static bool RecursionMatch(Node node, Node matchNode) {
-			_usedIndexTable[matchNode.Index] = true;
-			node.Index = matchNode.Index;
+			exploredNodes.Add(node);
 			foreach (Node childMatchNode in matchNode.Children) {
 				bool _isMatch = false;
 				foreach (Node childNode in node.Children) {
 					// If this node index and the rule index have not be used
-					if (childNode.Index == 0 &&
-						! _usedIndexTable[childMatchNode.Index] &&
+					if (((childNode.Index == 0 &&
+						! _usedIndexTable[matchNode.Index, childMatchNode.Index] ) ||
+						childNode.Index == childMatchNode.Index) &&
 						childNode.AlphabetID == childMatchNode.AlphabetID) {
+						// Record used connection, not node.
+						_usedIndexTable[matchNode.Index, childMatchNode.Index] = true;
+						childNode.Index = childMatchNode.Index;
 						// If the children are also match.
-						if (RecursionMatch(childNode, childMatchNode)) {
+						if (exploredNodes.Exists(x => ReferenceEquals(x, childNode)) || RecursionMatch(childNode, childMatchNode)) {
 							_isMatch = true;
 							matchNodes.Add(childNode);
 							break;
