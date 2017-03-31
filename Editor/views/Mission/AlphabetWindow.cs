@@ -242,6 +242,9 @@ namespace MissionGrammarSystem {
 			if (GUILayout.Button("Add New", EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
 				// Switch the mode.
 				_editingMode = EditingMode.Create;
+				// Initial the preview node and connection.
+				_node       = new GraphGrammarNode();
+				_connection = new GraphGrammarConnection();
 				// Initial all fields and repaint.
 				Alphabet.RevokeAllSelected();
 				InitFields();

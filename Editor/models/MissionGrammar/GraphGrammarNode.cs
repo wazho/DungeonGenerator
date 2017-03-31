@@ -91,6 +91,7 @@ namespace MissionGrammarSystem {
 			this._outlineColor        = node.OutlineColor;
 			this._filledColor         = node.FilledColor;
 			this._textColor           = node.TextColor;
+			// Keep it empty.
 			this._stickiedConnections = new List<StickiedConnection>();
 		}
 		// Get stickiedConnections. ID array.
