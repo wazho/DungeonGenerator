@@ -138,6 +138,7 @@ namespace MissionGrammarSystem {
 			if (before is GraphGrammarNode) {
 				node = (GraphGrammarNode) after;
 				symbolIndex = _nodes.FindIndex(x => x.Equals(before));
+				_nodes[symbolIndex].AlphabetID   = node.AlphabetID;
 				_nodes[symbolIndex].Terminal     = node.Terminal;
 				_nodes[symbolIndex].Name         = node.Name;
 				_nodes[symbolIndex].Abbreviation = node.Abbreviation;
@@ -148,6 +149,7 @@ namespace MissionGrammarSystem {
 			} else if (before is GraphGrammarConnection) {
 				connection = (GraphGrammarConnection) after;
 				symbolIndex = _connections.FindIndex(x => x.Equals(before));
+				_connections[symbolIndex].AlphabetID   = connection.AlphabetID;
 				_connections[symbolIndex].Name         = connection.Name;
 				_connections[symbolIndex].Description  = connection.Description;
 				_connections[symbolIndex].OutlineColor = connection.OutlineColor;

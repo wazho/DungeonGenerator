@@ -1040,36 +1040,36 @@
           <MissionGraph>
             <Nodes>
               <Node id="bdf2b6ab-8dfe-4428-a8bf-7a414a97557f">
-                <AlphabetID>0ba17b5e-b5dc-4000-92cd-60c8bad3f0b5</AlphabetID>
+                <AlphabetID>e052e0e0-fe18-40d6-895e-3cbe93f34be2</AlphabetID>
                 <Ordering>1</Ordering>
-                <Name>CrossRoad</Name>
-                <Abbreviation>CR</Abbreviation>
-                <Description>CrossRoad</Description>
+                <Name>Fork</Name>
+                <Abbreviation>F</Abbreviation>
+                <Description>Fork</Description>
                 <Terminal>NonTerminal</Terminal>
                 <Scope>
                   <Outline>
-                    <X>102.5</X>
-                    <Y>74.5</Y>
+                    <X>152.5</X>
+                    <Y>44.5</Y>
                     <Width>39</Width>
                     <Height>39</Height>
                   </Outline>
                   <Filled>
-                    <X>104.5</X>
-                    <Y>76.5</Y>
+                    <X>154.5</X>
+                    <Y>46.5</Y>
                     <Width>35</Width>
                     <Height>35</Height>
                   </Filled>
                   <Text>
-                    <X>99.5</X>
-                    <Y>77</Y>
+                    <X>149.5</X>
+                    <Y>47</Y>
                     <Width>45</Width>
                     <Height>34</Height>
                   </Text>
                 </Scope>
                 <SymbolColor>
                   <Outline>#000000</Outline>
-                  <Filled>#0559FF</Filled>
-                  <Text>#FFFFFF</Text>
+                  <Filled>#00F3D5</Filled>
+                  <Text>#000000</Text>
                 </SymbolColor>
                 <StickiedConnections>
                   <ConnectionID>075f4040-a9ce-4369-8785-393d604405d6</ConnectionID>
@@ -1084,20 +1084,20 @@
                 <Terminal>Terminal</Terminal>
                 <Scope>
                   <Outline>
-                    <X>220.5</X>
-                    <Y>72.5</Y>
+                    <X>263.5</X>
+                    <Y>63.5</Y>
                     <Width>39</Width>
                     <Height>39</Height>
                   </Outline>
                   <Filled>
-                    <X>222.5</X>
-                    <Y>74.5</Y>
+                    <X>265.5</X>
+                    <Y>65.5</Y>
                     <Width>35</Width>
                     <Height>35</Height>
                   </Filled>
                   <Text>
-                    <X>217.5</X>
-                    <Y>75</Y>
+                    <X>260.5</X>
+                    <Y>66</Y>
                     <Width>45</Width>
                     <Height>34</Height>
                   </Text>
@@ -1121,14 +1121,14 @@
                 <ArrowType>Double</ArrowType>
                 <Scope>
                   <Startpoint>
-                    <X>116.5</X>
-                    <Y>88.5</Y>
+                    <X>166.5</X>
+                    <Y>58.5</Y>
                     <Width>11</Width>
                     <Height>11</Height>
                   </Startpoint>
                   <Endpoint>
-                    <X>234.5</X>
-                    <Y>86.5</Y>
+                    <X>277.5</X>
+                    <Y>77.5</Y>
                     <Width>11</Width>
                     <Height>11</Height>
                   </Endpoint>
@@ -1400,11 +1400,11 @@
                 </StickiedConnections>
               </Node>
               <Node id="27b2c70e-0e57-44d2-87cc-40bf86aaf433">
-                <AlphabetID>850ce73b-1c70-4b0c-8d73-2deff20021fa</AlphabetID>
+                <AlphabetID>14dc378c-61da-4f02-935b-20c72b0be3e1</AlphabetID>
                 <Ordering>3</Ordering>
-                <Name>entrance</Name>
-                <Abbreviation>en</Abbreviation>
-                <Description>System default.</Description>
+                <Name>boss</Name>
+                <Abbreviation>boss</Abbreviation>
+                <Description>boss</Description>
                 <Terminal>Terminal</Terminal>
                 <Scope>
                   <Outline>
@@ -1428,8 +1428,8 @@
                 </Scope>
                 <SymbolColor>
                   <Outline>#000000</Outline>
-                  <Filled>#76FF34</Filled>
-                  <Text>#000000</Text>
+                  <Filled>#FF0000</Filled>
+                  <Text>#FFFFFF</Text>
                 </SymbolColor>
                 <StickiedConnections>
                   <ConnectionID>17ca1c4c-cf1a-4871-8326-f1542eb8fc9d</ConnectionID>

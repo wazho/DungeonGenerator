@@ -15,57 +15,68 @@ namespace MissionGrammarSystem {
 		public static void Initial() {
 			// Initial the current graph.
 			_root = new Node(Alphabet.StartingNode);
+			// [TEST]-----------
+			Node _entrance = new Node(Alphabet.Nodes[1]);
+			Node _go = new Node(Alphabet.Nodes[2]);
+			Node _start = new Node(Alphabet.Nodes[3]);
+			Node _explore = new Node(Alphabet.Nodes[4]);
+			Node _crossRoad = new Node(Alphabet.Nodes[5]);
+			Node _boss = new Node(Alphabet.Nodes[6]);
+			Node _gate = new Node(Alphabet.Nodes[7]);
+			Node _fork = new Node(Alphabet.Nodes[8]);
+			//     ¢z> entrance
+			// root -> gate -> explore -> fork -> go
+			//             ¢|> entrance
+			_root.Children = new List<Node>() { _entrance, _gate};
+			_entrance.Children = new List<Node>();
+			_go.Children = new List<Node>();
+			_start.Children = new List<Node>();
+			_explore.Children = new List<Node>() { _fork};
+			_crossRoad.Children = new List<Node>();
+			_boss.Children = new List<Node>();
+			_gate.Children = new List<Node>() { _explore, _entrance};
+			_fork.Children = new List<Node>() { _go};
+			_explore.Children.Add(_boss);
+			Debug.Log("Starting node : " + _root.Name);
+			//---------------------
+			_rules = new List<Rule>();
 			// According to current rules of mission grammar, transform them to tree structure.
 			TransformRules();
 		}
 
 		public static void Iterate() {
-			// This is EXAMPLE.
-			Node exampleRoot  = new Node(new GraphGrammarNode("en", "", "", NodeTerminalType.Terminal), 1);
-			Node exampleNode2 = new Node(new GraphGrammarNode("x",  "", "", NodeTerminalType.Terminal), 2);
-			Node exampleNode3 = new Node(new GraphGrammarNode("CR", "", "", NodeTerminalType.NonTerminal), 3);
-			Node exampleNode4 = new Node(new GraphGrammarNode("x",  "", "", NodeTerminalType.Terminal), 4);
-			Node exampleNode5 = new Node(new GraphGrammarNode("CR", "", "", NodeTerminalType.NonTerminal), 5);
-			Node exampleNode6 = new Node(new GraphGrammarNode("go", "", "", NodeTerminalType.Terminal), 6);
-
-			// 6
-			exampleNode6.Parents  = new List<Node>() { exampleNode5 };
-			// 5
-			exampleNode5.Parents  = new List<Node>() { exampleNode4 };
-			// 4
-			exampleNode4.Parents  = new List<Node>() { exampleNode3, exampleNode4 };
-			exampleNode4.Children = new List<Node>() { exampleNode5, exampleNode6 };
-			// 3
-			exampleNode3.Parents  = new List<Node>() { exampleNode2 };
-			exampleNode3.Children = new List<Node>() { exampleNode4 };
-			// 2
-			exampleNode2.Parents  = new List<Node>() { exampleRoot };
-			exampleNode2.Children = new List<Node>() { exampleNode3, exampleNode4 };
-			// 1
-			exampleRoot.Children  = new List<Node>() { exampleNode2 };
-
-			ProgressIteration(exampleRoot);
+			Match result = FindMatchs();
+			if (result != null) {
+				Debug.Log("Match Rule : " + result.rule.name);
+				ProgressIteration(result.root);
+			} else {
+				Debug.Log("Not found.");
+			}
 		}
 
 		// According to current rules of mission grammar, transform them to tree structure.
 		private static void TransformRules() {
 			foreach (var originGroup in MissionGrammar.Groups) {
 				foreach (var originRule in originGroup.Rules) {
-					Debug.Log(originRule.Name + "-" + originRule.Description);
+					//Debug.Log(originRule.Name + "-" + originRule.Description);
 					// Declare the rule. Can use 'rule.SourceRoot' and 'rule.ReplacementRoot'.
 					Rule rule = new Rule();
 					// Transform
-					rule.SourceRoot      = TransformGraph(originRule.SourceRule);
-					rule.ReplacementRoot = TransformGraph(originRule.ReplacementRule);
-
+					int nodeCount;
+					rule.name = originRule.Name;
+					rule.SourceRoot = TransformGraph(originRule.SourceRule, out nodeCount);
+					rule.SourceNodeCount = nodeCount;
+					rule.ReplacementRoot = TransformGraph(originRule.ReplacementRule, out nodeCount);
+					rule.ReplacementNodeCount = nodeCount;
+					_rules.Add(rule);
 					// Show the message to proof you code is correct.
 					//ProgressIteration(rule.SourceRoot);
-					ProgressIteration(rule.ReplacementRoot);
+					//ProgressIteration(rule.ReplacementRoot);
 				}
 			}
 		}
 		// Transform a graph into tree struct. Return root.
-		private static Node TransformGraph(GraphGrammar graph) {
+		private static Node TransformGraph(GraphGrammar graph, out int nodeCount) {
 			// Initialize nodes
 			Node[] nodes = new Node[graph.Nodes.Count];
 			for (int i = 0; i < graph.Nodes.Count; i++) {
@@ -88,27 +99,80 @@ namespace MissionGrammarSystem {
 					nodes[i].Parents.Add(nodes[index]);
 				}
 			}
+			nodeCount = graph.Nodes.Count;
 			return nodes.FirstOrDefault<Node>(n => n.Index == 1);
 		}
 		private static void ProgressIteration(Node node) {
-			// If this node is null then throw error. (Current just return void.)
-			if (node == null) { return; }
-			
 			Debug.Log(node.Index + " - " + node.Name);
 			// Recursive for children.
 			foreach (Node childNode in node.Children) {
-				ProgressIteration(childNode);
+				if (childNode.Index > 0)
+					ProgressIteration(childNode);
 			}
 			if (node.Children.Count == 0) {
 				Debug.Log("null");
 			}
 		}
 
-		private static void FindMatchs() {
-
+		private static bool[] _usedIndexTable;
+		private static List<Node> matchNodes;
+		private static Match FindMatchs() {
+			Node fakeRoot = new Node();
+			fakeRoot.Children = new List<Node>();
+			fakeRoot.Children.Add(_root);
+			return RecursionFindRoot(fakeRoot);
 		}
-		private static void SetIndexs() {
-
+		// Find root.
+		private static Match RecursionFindRoot(Node node) {
+			foreach (var childNode in node.Children) {
+				foreach (var rule in _rules) {
+					if (rule.SourceRoot.AlphabetID == childNode.AlphabetID) {
+						matchNodes = new List<Node>();
+						_usedIndexTable = new bool[rule.SourceNodeCount + 1];
+						if (RecursionMatch(childNode, rule.SourceRoot)) {
+							return new Match(childNode, rule);
+						}
+						// If not match then clear index.
+						for(int i=0;i< matchNodes.Count; i++) {
+							matchNodes[i].Index = 0;
+						}
+					}
+				}
+				// Recursion children node 
+				// If find then return it. else continue find other children.
+				Match match = RecursionFindRoot(childNode);
+				if (match != null)
+					return match;
+			}
+			// Not found.
+			return null;
+		}
+		// Confirm the children are match
+		private static bool RecursionMatch(Node node, Node matchNode) {
+			_usedIndexTable[matchNode.Index] = true;
+			node.Index = matchNode.Index;
+			foreach (Node childMatchNode in matchNode.Children) {
+				bool _isMatch = false;
+				foreach (Node childNode in node.Children) {
+					// If this node index and the rule index have not be used
+					if (childNode.Index == 0 &&
+						! _usedIndexTable[childMatchNode.Index] &&
+						childNode.AlphabetID == childMatchNode.AlphabetID) {
+						// If the children are also match.
+						if (RecursionMatch(childNode, childMatchNode)) {
+							_isMatch = true;
+							matchNodes.Add(childNode);
+							break;
+						}
+					}
+				}
+				// If no child is match.
+				if (! _isMatch) {
+					return false;
+				}
+			}
+			// If rule node have no child, or said this rule is match.
+			return true;
 		}
 		private static void RemoveConnections() {
 
@@ -177,11 +241,18 @@ namespace MissionGrammarSystem {
 				get { return _children; }
 				set { _children = value; }
 			}
+			// AlphabetID, getter and setter
+			public Guid AlphabetID {
+				get { return _alphabetID; }
+			}
 		}
 		// This is a pair of source rule and replacement rule.
 		private class Rule {
+			public string name;
 			private Node _sourceRoot;
 			private Node _replacementRoot;
+			private int _sourceNodeCount;
+			private int _replacementNodeCount;
 			// Constructor.
 			public Rule() {
 				this._sourceRoot      = new Node();
@@ -197,6 +268,33 @@ namespace MissionGrammarSystem {
 				get { return _replacementRoot; }
 				set { _replacementRoot = value; }
 			}
+			// Source node count, getter and setter.
+			public int SourceNodeCount {
+				get { return _sourceNodeCount; }
+				set { _sourceNodeCount = value; }
+			}
+			// Source node count, getter and setter.
+			public int ReplacementNodeCount {
+				get { return _replacementNodeCount; }
+				set { _replacementNodeCount = value; }
+			}
+		}
+		private struct CompareNode {
+			public Node node;
+			public Node matchNode;
+			public CompareNode(Node node, Node matchNode) {
+				this.node = node;
+				this.matchNode = matchNode;
+			}
+		}
+		private class Match {
+			public Node root;
+			public Rule rule;
+			public Match(Node root, Rule rule) {
+				this.root = root;
+				this.rule = rule;
+			}
 		}
 	}
+	
 }
