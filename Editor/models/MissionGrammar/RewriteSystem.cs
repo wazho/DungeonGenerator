@@ -34,7 +34,7 @@ namespace MissionGrammarSystem {
 			_explore.Children = new List<Node>() { _fork};
 			_crossRoad.Children = new List<Node>();
 			_boss.Children = new List<Node>();
-			_gate.Children = new List<Node>() { _explore, _entrance};
+			_gate.Children = new List<Node>() { _explore, _entrance, _boss};
 			_fork.Children = new List<Node>() { _go};
 			_explore.Children.Add(_boss);
 			Debug.Log("Starting node : " + _root.Name);
@@ -122,6 +122,11 @@ namespace MissionGrammarSystem {
 		private static bool[] _usedIndexTable;
 		private static List<Node> matchNodes;
 		private static Rule FindMatchs(Node node) {
+			if(matchNodes != null) {
+				for (int i = 0; i < matchNodes.Count; i++) {
+					matchNodes[i].Index = 0;
+				}
+			}
 			foreach (var rule in _rules) {
 				if (rule.SourceRoot.AlphabetID == node.AlphabetID) {
 					matchNodes = new List<Node>();
