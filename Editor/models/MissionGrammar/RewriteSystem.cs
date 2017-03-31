@@ -50,10 +50,10 @@ namespace MissionGrammarSystem {
 		// Depth-first search.
 		private static void ProgressIteration(Node node) {
 			// Step 1: Find matchs.
-			Match result = FindMatchs(node);
+			Rule result = FindMatchs(node);
 
 			if (result != null) {
-				Debug.Log("Current node: " + node.Name + " is match the rule : " + result.rule.Name);
+				Debug.Log("Current node: " + node.Name + " is match the rule : " + result.Name);
 			} else {
 				Debug.Log("Current node: " + node.Name + " doesn't match any rule.");
 			}
@@ -121,33 +121,18 @@ namespace MissionGrammarSystem {
 
 		private static bool[] _usedIndexTable;
 		private static List<Node> matchNodes;
-		private static Match FindMatchs(Node node) {
-			Node fakeRoot = new Node();
-			fakeRoot.Children = new List<Node>();
-			fakeRoot.Children.Add(node);
-			return RecursionFindRoot(fakeRoot);
-		}
-		// Find root.
-		private static Match RecursionFindRoot(Node node) {
-			foreach (var childNode in node.Children) {
-				foreach (var rule in _rules) {
-					if (rule.SourceRoot.AlphabetID == childNode.AlphabetID) {
-						matchNodes = new List<Node>();
-						_usedIndexTable = new bool[rule.SourceNodeCount + 1];
-						if (RecursionMatch(childNode, rule.SourceRoot)) {
-							return new Match(childNode, rule);
-						}
-						// If not match then clear index.
-						for (int i = 0; i < matchNodes.Count; i++) {
-							matchNodes[i].Index = 0;
-						}
+		private static Rule FindMatchs(Node node) {
+			foreach (var rule in _rules) {
+				if (rule.SourceRoot.AlphabetID == node.AlphabetID) {
+					matchNodes = new List<Node>();
+					_usedIndexTable = new bool[rule.SourceNodeCount + 1];
+					if (RecursionMatch(node, rule.SourceRoot)) {
+						return rule;
 					}
-				}
-				// Recursion children node 
-				// If find then return it. else continue find other children.
-				Match match = RecursionFindRoot(childNode);
-				if (match != null) {
-					return match;
+					// If not match then clear index.
+					for (int i = 0; i < matchNodes.Count; i++) {
+						matchNodes[i].Index = 0;
+					}
 				}
 			}
 			// Not found.
@@ -304,14 +289,6 @@ namespace MissionGrammarSystem {
 			public CompareNode(Node node, Node matchNode) {
 				this.node = node;
 				this.matchNode = matchNode;
-			}
-		}
-		private class Match {
-			public Node root;
-			public Rule rule;
-			public Match(Node root, Rule rule) {
-				this.root = root;
-				this.rule = rule;
 			}
 		}
 	}
