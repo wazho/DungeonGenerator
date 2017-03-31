@@ -47,7 +47,7 @@ namespace MissionGrammarSystem {
 		public static void Iterate() {
 			Match result = FindMatchs();
 			if (result != null) {
-				Debug.Log("Match Rule : " + result.rule.name);
+				Debug.Log("Match Rule : " + result.rule.Name);
 				ProgressIteration(result.root);
 			} else {
 				Debug.Log("Not found.");
@@ -63,7 +63,9 @@ namespace MissionGrammarSystem {
 					Rule rule = new Rule();
 					// Transform
 					int nodeCount;
-					rule.name = originRule.Name;
+					// [Will remove just for test] 
+					rule.Name = originRule.Name;
+
 					rule.SourceRoot = TransformGraph(originRule.SourceRule, out nodeCount);
 					rule.SourceNodeCount = nodeCount;
 					rule.ReplacementRoot = TransformGraph(originRule.ReplacementRule, out nodeCount);
@@ -248,7 +250,9 @@ namespace MissionGrammarSystem {
 		}
 		// This is a pair of source rule and replacement rule.
 		private class Rule {
-			public string name;
+			// [Will remove just for test]
+			public string Name;
+
 			private Node _sourceRoot;
 			private Node _replacementRoot;
 			private int _sourceNodeCount;
