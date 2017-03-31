@@ -25,7 +25,7 @@ namespace MissionGrammarSystem {
 			Node _gate = new Node(Alphabet.Nodes[7]);
 			Node _fork = new Node(Alphabet.Nodes[8]);
 			//     ¢z> entrance
-			// root -> gate -> explore -> fork -> go
+			// root -> gate -> explore -> fork -> go -> boss
 			//             ¢|> entrance
 			_root.Children = new List<Node>() { _entrance, _gate};
 			_entrance.Children = new List<Node>();
@@ -45,12 +45,26 @@ namespace MissionGrammarSystem {
 		}
 
 		public static void Iterate() {
-			Match result = FindMatchs();
+			ProgressIteration(_root);
+		}
+		// Depth-first search.
+		private static void ProgressIteration(Node node) {
+			// Step 1: Find matchs.
+			Match result = FindMatchs(node);
+
 			if (result != null) {
-				Debug.Log("Match Rule : " + result.rule.Name);
-				ProgressIteration(result.root);
+				Debug.Log("Current node: " + node.Name + " is match the rule : " + result.rule.Name);
 			} else {
-				Debug.Log("Not found.");
+				Debug.Log("Current node: " + node.Name + " doesn't match any rule.");
+			}
+
+			// Has explored this node.
+			node.Explored = true;
+			// For each children.
+			foreach (Node childNode in node.Children) {
+				if (childNode.Explored == false) {
+					ProgressIteration(childNode);
+				}
 			}
 		}
 
@@ -104,24 +118,13 @@ namespace MissionGrammarSystem {
 			nodeCount = graph.Nodes.Count;
 			return nodes.FirstOrDefault<Node>(n => n.Index == 1);
 		}
-		private static void ProgressIteration(Node node) {
-			Debug.Log(node.Index + " - " + node.Name);
-			// Recursive for children.
-			foreach (Node childNode in node.Children) {
-				if (childNode.Index > 0)
-					ProgressIteration(childNode);
-			}
-			if (node.Children.Count == 0) {
-				Debug.Log("null");
-			}
-		}
 
 		private static bool[] _usedIndexTable;
 		private static List<Node> matchNodes;
-		private static Match FindMatchs() {
+		private static Match FindMatchs(Node node) {
 			Node fakeRoot = new Node();
 			fakeRoot.Children = new List<Node>();
-			fakeRoot.Children.Add(_root);
+			fakeRoot.Children.Add(node);
 			return RecursionFindRoot(fakeRoot);
 		}
 		// Find root.
@@ -135,7 +138,7 @@ namespace MissionGrammarSystem {
 							return new Match(childNode, rule);
 						}
 						// If not match then clear index.
-						for(int i=0;i< matchNodes.Count; i++) {
+						for (int i = 0; i < matchNodes.Count; i++) {
 							matchNodes[i].Index = 0;
 						}
 					}
@@ -143,8 +146,9 @@ namespace MissionGrammarSystem {
 				// Recursion children node 
 				// If find then return it. else continue find other children.
 				Match match = RecursionFindRoot(childNode);
-				if (match != null)
+				if (match != null) {
 					return match;
+				}
 			}
 			// Not found.
 			return null;
@@ -202,6 +206,7 @@ namespace MissionGrammarSystem {
 			private NodeTerminalType _terminal;
 			private List<Node>       _parents;
 			private List<Node>       _children;
+			private bool             _isExplored; 
 			// Constructor.
 			public Node() {
 				this._alphabetID = Guid.Empty;
@@ -210,6 +215,7 @@ namespace MissionGrammarSystem {
 				this._terminal   = NodeTerminalType.Terminal;
 				this._parents    = new List<Node>();
 				this._children   = new List<Node>();
+				this._isExplored = false;
 			}
 			public Node(GraphGrammarNode node) : this() {
 				this._alphabetID = node.AlphabetID;
@@ -246,6 +252,15 @@ namespace MissionGrammarSystem {
 			// AlphabetID, getter and setter
 			public Guid AlphabetID {
 				get { return _alphabetID; }
+			}
+			// Explored, getter and setter.
+			public bool Explored {
+				get { return _isExplored; }
+				set { _isExplored = value; }
+			}
+			// Explored, getter.
+			public Node UnexploredChild {
+				get { return _children.FirstOrDefault<Node>(n => n.Explored == false); }
 			}
 		}
 		// This is a pair of source rule and replacement rule.
