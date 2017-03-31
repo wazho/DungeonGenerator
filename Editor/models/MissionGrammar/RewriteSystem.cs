@@ -55,7 +55,7 @@ namespace MissionGrammarSystem {
 					// Declare the rule. Can use 'rule.SourceRoot' and 'rule.ReplacementRoot'.
 					Rule rule = new Rule();
 					// Transform
-					rule.SourceRoot = TransformGraph(originRule.SourceRule);
+					rule.SourceRoot      = TransformGraph(originRule.SourceRule);
 					rule.ReplacementRoot = TransformGraph(originRule.ReplacementRule);
 
 					// Show the message to proof you code is correct.
@@ -67,30 +67,33 @@ namespace MissionGrammarSystem {
 		// Transform a graph into tree struct. Return root.
 		private static Node TransformGraph(GraphGrammar graph) {
 			// Initialize nodes
-			Node[] Nodes = new Node[graph.Nodes.Count];
+			Node[] nodes = new Node[graph.Nodes.Count];
 			for (int i = 0; i < graph.Nodes.Count; i++) {
-				Nodes[i] = new Node(graph.Nodes[i], graph.Nodes[i].Ordering);
+				nodes[i] = new Node(graph.Nodes[i], graph.Nodes[i].Ordering);
 			}
 			// Set parents and children
 			for (int i = 0; i < graph.Nodes.Count; i++) {
 				foreach (var childNode in graph.Nodes[i].Children) {
-					int index = graph.Nodes.FindIndex(x => x.ID == childNode.ID);
-					if (Nodes[i].Children == null) {
-						Nodes[i].Children = new List<Node>();
+					int index = graph.Nodes.FindIndex(n => n.ID == childNode.ID);
+					if (nodes[i].Children == null) {
+						nodes[i].Children = new List<Node>();
 					}
-					Nodes[i].Children.Add(Nodes[index]);
+					nodes[i].Children.Add(nodes[index]);
 				}
 				foreach (var parentsNode in graph.Nodes[i].Parents) {
-					int index = graph.Nodes.FindIndex(x => x.ID == parentsNode.ID);
-					if (Nodes[i].Parents == null) {
-						Nodes[i].Parents = new List<Node>();
+					int index = graph.Nodes.FindIndex(n => n.ID == parentsNode.ID);
+					if (nodes[i].Parents == null) {
+						nodes[i].Parents = new List<Node>();
 					}
-					Nodes[i].Parents.Add(Nodes[index]);
+					nodes[i].Parents.Add(nodes[index]);
 				}
 			}
-			return Nodes.First<Node>( x => x.Index == 1);
+			return nodes.FirstOrDefault<Node>(n => n.Index == 1);
 		}
 		private static void ProgressIteration(Node node) {
+			// If this node is null then throw error. (Current just return void.)
+			if (node == null) { return; }
+			
 			Debug.Log(node.Index + " - " + node.Name);
 			// Recursive for children.
 			foreach (Node childNode in node.Children) {
