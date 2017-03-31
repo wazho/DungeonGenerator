@@ -104,11 +104,31 @@ namespace MissionGrammarSystem {
 			}
 		}
 
-		private static void FindMatchs() {
-
+		private static void RemoveConnections(ref Node rootNode) {
+			foreach(Node node in rootNode.Children) {
+				// RemoveConnections if node have index.
+				if(node.Index != 0) {
+					node.Parents.Clear();
+					node.Children.Clear();
+					}
+				}
+			ReplaceNodes(ref rootNode);
 		}
-		private static void SetIndexs() {
+ 
+		private static void ReplaceNodes(ref Node rootNode) {
+			// [Temporary]****
+			Rule testRule = new Rule();
+			Node tempNode;
+			//****************
 
+			foreach (Node node in rootNode.Children) {
+				if (node.Index != 0) {
+					tempNode = testRule.SourceRoot.Children.Where(e => e.Index == node.Index).FirstOrDefault();
+					if(tempNode != null) {
+						node.Clone(tempNode);
+					}
+				}
+			}
 		}
 		private static void RemoveConnections() {
 
@@ -177,6 +197,27 @@ namespace MissionGrammarSystem {
 				get { return _children; }
 				set { _children = value; }
 			}
+
+			// Copy node.
+			public void Clone(Node node) {
+				this._name       = node.Name;
+				this._index      = node.Index;
+				this._alphabetID = node.AlphabetID;
+				this._terminal   = node.Terminal;
+ 
+				if (node.Children.Count > 0) {
+					foreach(Node n in node.Children) {
+						this.Children.Add(_root.Children.Where(e => e.Index == n.Index).FirstOrDefault());
+					}
+				}
+ 
+				if (node.Parents.Count > 0) {
+					foreach (Node n in node.Parents) {
+						this.Parents.Add(_root.Children.Where(e => e.Index == n.Index).FirstOrDefault());
+					}
+				}
+			}
+
 		}
 		// This is a pair of source rule and replacement rule.
 		private class Rule {
