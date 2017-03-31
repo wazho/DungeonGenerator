@@ -28,13 +28,13 @@ namespace MissionGrammarSystem {
 		private string _messageInfo;
 
 		void Awake() {  
-			_nodeNames = Alphabet.Nodes.Select(n => n.ExpressName).ToArray();
+			_nodeNames             = Alphabet.Nodes.Select(n => n.ExpressName).ToArray();
 			_symbolTerminal        = NodeTerminalType.Terminal;
 			_connectionType        = ConnectionType.WeakRequirement;
 			_applyButtonEnabled    = false;
 			_messageInfo           = "Nothing changed.";
-			_tempStartingNodeIndex = _startingNodeIndex;
-			_tempDefaultNodeIndex = _defaultNodeIndex;
+			_tempStartingNodeIndex = Alphabet.Nodes.FindIndex(n => n.AlphabetID == Alphabet.StartingNode.AlphabetID);
+			_tempDefaultNodeIndex  = _defaultNodeIndex;
 		}
 
 		void OnGUI() {

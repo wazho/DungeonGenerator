@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <MissionGrammar>
+  <GrammarSetting>
+    <StartingNode>ef17f412-bddd-46d9-9311-4888eb4b7c7b</StartingNode>
+  </GrammarSetting>
   <MissionAlphabet>
     <Nodes>
       <Node id="dcac17a9-84f5-438c-891e-1208f71ef974">

@@ -18,10 +18,18 @@ namespace DungeonLevel {
 			// Serialize MissionGrammar
 			private static XElement SerializeMissionGrammar() {
 				XElement elementMissionGrammar = new XElement("MissionGrammar");
+				elementMissionGrammar.Add(SerializeGrammarSetting());
 				elementMissionGrammar.Add(SerializeMissionAlphabet());
 				elementMissionGrammar.Add(SerializeMissionRules());
 
 				return elementMissionGrammar;
+			}
+			// Serialize grammar setting.
+			private static XElement SerializeGrammarSetting() {
+				XElement elementGrammarSetting = new XElement("GrammarSetting");
+				elementGrammarSetting.Add(new XElement("StartingNode", Mission.Alphabet.StartingNode.AlphabetID));
+
+				return elementGrammarSetting;
 			}
 			// Serialize MissionAlphabet
 			private static XElement SerializeMissionAlphabet() {
@@ -148,6 +156,14 @@ namespace DungeonLevel {
 				XElement elementMissionGrammar = xmlDocument.Element("MissionGrammar");
 				UnserializeMissionAlphabet(elementMissionGrammar);
 				UnserializeMissionRules(elementMissionGrammar);
+				UnserializeGrammarSetting(elementMissionGrammar);
+			}
+			// Unserialize GrammarSetting
+			private static void UnserializeGrammarSetting(XElement elementMissionGrammar) {
+				XElement elementGrammarSetting = elementMissionGrammar.Element("GrammarSetting");
+				Guid guid = new Guid(elementGrammarSetting.Element("StartingNode").Value);
+				int index = Mission.Alphabet.Nodes.FindIndex(x => x.AlphabetID == guid);
+				Mission.Alphabet.StartingNode = Mission.Alphabet.Nodes[index];
 			}
 			// Unserialize MissionAlphabet
 			private static void UnserializeMissionAlphabet(XElement elementMissionGrammar) {
