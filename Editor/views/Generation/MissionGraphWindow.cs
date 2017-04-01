@@ -29,11 +29,13 @@ namespace GraphGeneration {
 		private Vector2 _canvasScrollPosition;
 		private int _missionGraphCanvasSizeWidth;
 		private int _missionGraphCanvasSizeHeight;
+		private Mission.GraphGrammar _currentGraph = new Mission.GraphGrammar();
 
 		void Awake() {
-			_scrollView = new Vector2(0, 50);
-			_errorType  = ErrorType.None;
-			_graphState = GraphState.Mission;
+			_scrollView   = new Vector2(0, 50);
+			_errorType    = ErrorType.None;
+			_graphState   = GraphState.Mission;
+			_currentGraph = new Mission.GraphGrammar();
 		}
 
 		void OnGUI() {
@@ -66,13 +68,13 @@ namespace GraphGeneration {
 			EditorGUI.DrawRect(EditorStyle.MissionGraphCanvas, Color.gray);
 			GUILayout.Label(string.Empty, EditorStyle.MissionGraphCanvasContent);
 			// Connection 
-			foreach (Mission.GraphGrammarConnection connection in Mission.MissionGrammar.Groups[0].Rules[0].SourceRule.Connections) {
+			foreach (Mission.GraphGrammarConnection connection in _currentGraph.Connections) {
 				connection.Draw();
 			}
 			// Node
 			// Draw and get right bottom position.
 			Vector2 positionRightBotton = new Vector2(0,0);
-			foreach (Mission.GraphGrammarNode node in Mission.MissionGrammar.Groups[0].Rules[0].SourceRule.Nodes) {
+			foreach (Mission.GraphGrammarNode node in _currentGraph.Nodes) {
 				// Get right position
 				if (node.PositionX > positionRightBotton.x) {
 					positionRightBotton.x = node.PositionX;
@@ -115,10 +117,16 @@ namespace GraphGeneration {
 			// Mission and Space Graph button.
 			GUILayout.BeginHorizontal();
 			if (GUILayout.Button("Initial",EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
+				// Rewrite system initialization.
 				Mission.RewriteSystem.Initial();
+				// Update the current graph.
+				_currentGraph = Mission.RewriteSystem.TransformFromGraph();
 			}
 			if (GUILayout.Button("Iterate", EditorStyles.miniButtonMid, EditorStyle.ButtonHeight)) {
+				// Rewrite system iteration.
 				Mission.RewriteSystem.Iterate();
+				// Update the current graph.
+				_currentGraph = Mission.RewriteSystem.TransformFromGraph();
 			}
 			if (GUILayout.Button("Complete", EditorStyles.miniButtonRight, EditorStyle.ButtonHeight)) {
 

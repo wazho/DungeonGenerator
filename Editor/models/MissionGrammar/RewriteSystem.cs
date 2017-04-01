@@ -22,6 +22,21 @@ namespace MissionGrammarSystem {
 			_root = _rules[0].SourceRoot;
 			TestClearIndex(_root);
 		}
+		// When click the iterate button of generate graph page.
+		public static void Iterate() {
+			ProgressIteration(_root);
+			ClearExplored(_root);
+		}
+		// Export the original structure from tree structure to canvas.
+		public static GraphGrammar TransformFromGraph() {
+			GraphGrammar graphGrammar = new GraphGrammar();
+
+			// Code here.
+			// Parsing from '_root'.
+
+			return graphGrammar;
+		}
+
 		// [TEST] 
 		private static void TestClearIndex(Node node) {
 			node.Index = 0;
@@ -30,10 +45,6 @@ namespace MissionGrammarSystem {
 					TestClearIndex(childNode);
 				}
 			}
-		}
-		public static void Iterate() {
-			ProgressIteration(_root);
-			ClearExplored(_root);
 		}
 		// Depth-first search.
 		private static void ProgressIteration(Node node) {
