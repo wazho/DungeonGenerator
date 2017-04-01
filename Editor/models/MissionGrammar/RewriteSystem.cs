@@ -15,34 +15,22 @@ namespace MissionGrammarSystem {
 		public static void Initial() {
 			// Initial the current graph.
 			_root = new Node(Alphabet.StartingNode);
-			// [TEST]-----------
-			Node _entrance = new Node(Alphabet.Nodes[1]);
-			Node _go = new Node(Alphabet.Nodes[2]);
-			Node _start = new Node(Alphabet.Nodes[3]);
-			Node _explore = new Node(Alphabet.Nodes[4]);
-			Node _crossRoad = new Node(Alphabet.Nodes[5]);
-			Node _boss = new Node(Alphabet.Nodes[6]);
-			Node _gate = new Node(Alphabet.Nodes[7]);
-			Node _fork = new Node(Alphabet.Nodes[8]);
-			//     ¢z> entrance
-			// root -> gate -> explore -> fork -> go -> boss
-			//             ¢|> entrance
-			_root.Children = new List<Node>() { _entrance, _gate};
-			_entrance.Children = new List<Node>();
-			_go.Children = new List<Node>();
-			_start.Children = new List<Node>();
-			_explore.Children = new List<Node>() { _fork, _boss };
-			_crossRoad.Children = new List<Node>();
-			_boss.Children = new List<Node>() { _explore };
-			_gate.Children = new List<Node>() { _explore, _entrance, _boss};
-			_fork.Children = new List<Node>() { _boss, _go};
-			Debug.Log("Starting node : " + _root.Name);
-			//---------------------
 			_rules = new List<Rule>();
 			// According to current rules of mission grammar, transform them to tree structure.
 			TransformRules();
+			// [TEST] 
+			_root = _rules[0].SourceRoot;
+			TestClearIndex(_root);
 		}
-
+		// [TEST] 
+		private static void TestClearIndex(Node node) {
+			node.Index = 0;
+			foreach (Node childNode in node.Children) {
+				if (childNode.Index > 0) {
+					TestClearIndex(childNode);
+				}
+			}
+		}
 		public static void Iterate() {
 			ProgressIteration(_root);
 			ClearExplored(_root);
@@ -126,28 +114,26 @@ namespace MissionGrammarSystem {
 			return nodes.FirstOrDefault<Node>(n => n.Index == 1);
 		}
 
-		private static bool[,] _usedIndexTable;
-		private static List<Node> matchNodes;
-		private static List<Node> exploredNodes;
+		private static bool[] _usedIndexTable;
+		private static List<Node> matchNodes = new List<Node>();
+		private static List<Node> exploredNodes = new List<Node>();
 		private static Rule FindMatchs(Node node) {
-			if(matchNodes != null) {
-				for (int i = 0; i < matchNodes.Count; i++) {
-					matchNodes[i].Index = 0;
-				}
-			}
 			foreach (var rule in _rules) {
 				if (rule.SourceRoot.AlphabetID == node.AlphabetID) {
-					matchNodes = new List<Node>();
-					exploredNodes = new List<Node>();
-					_usedIndexTable = new bool[rule.SourceNodeCount + 1, rule.SourceNodeCount + 1];
-					node.Index = rule.SourceRoot.Index;
-					if (RecursionMatch(node, rule.SourceRoot)) {
-						return rule;
-					}
-					// If not match then clear index.
+					// Clear index.
 					for (int i = 0; i < matchNodes.Count; i++) {
 						matchNodes[i].Index = 0;
 					}
+					matchNodes.Clear();
+					exploredNodes.Clear();
+					_usedIndexTable = new bool[rule.SourceNodeCount + 1];
+					node.Index = rule.SourceRoot.Index;
+					matchNodes.Add(node);
+					_usedIndexTable[node.Index] = true;
+					if (RecursionMatch(node, rule.SourceRoot)) {
+						return rule;
+					}
+					
 				}
 			}
 			// Not found.
@@ -160,25 +146,30 @@ namespace MissionGrammarSystem {
 				bool _isMatch = false;
 				foreach (Node childNode in node.Children) {
 					// If this node index and the rule index have not be used
-					if (((childNode.Index == 0 &&
-						! _usedIndexTable[matchNode.Index, childMatchNode.Index] ) ||
-						childNode.Index == childMatchNode.Index) &&
+					if (childNode.Index == 0 &&
+						! _usedIndexTable[childMatchNode.Index]  &&
 						childNode.AlphabetID == childMatchNode.AlphabetID) {
 						// Record used connection, not node.
-						_usedIndexTable[matchNode.Index, childMatchNode.Index] = true;
+						_usedIndexTable[childMatchNode.Index] = true;
 						childNode.Index = childMatchNode.Index;
+						matchNodes.Add(childNode);
 						// If the children are also match.
 						if (exploredNodes.Exists(x => ReferenceEquals(x, childNode)) || RecursionMatch(childNode, childMatchNode)) {
 							_isMatch = true;
-							matchNodes.Add(childNode);
 							break;
 						}
+					}else if (childNode.Index == childMatchNode.Index &&
+						_usedIndexTable[childMatchNode.Index]) {
+						_isMatch = true;
+						break;
 					}
 				}
+				
 				// If no child is match.
 				if (! _isMatch) {
 					return false;
 				}
+					
 			}
 			// If rule node have no child, or said this rule is match.
 			return true;
