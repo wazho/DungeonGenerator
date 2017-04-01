@@ -27,16 +27,64 @@ namespace MissionGrammarSystem {
 			ProgressIteration(_root);
 			ClearExplored(_root);
 		}
+		// Reference table is used to get the symbol of Alphabet via the AlphabetID.
+		private static Dictionary<Guid, GraphGrammarNode> _referenceNodeTable;
+		private static Dictionary<Guid, GraphGrammarConnection> _referenceConnectionTable;
+		// Mapping table is used to get the GraphGrammarNode via the Node.
+		private static Dictionary<Node, GraphGrammarNode> _nodeMappingTable;
+		private static Vector2 LEFT_TOP_POSITION = new Vector2(20, 30);
+		private static int PADDING = 50;
 		// Export the original structure from tree structure to canvas.
 		public static GraphGrammar TransformFromGraph() {
 			GraphGrammar graphGrammar = new GraphGrammar();
-
-			// Code here.
-			// Parsing from '_root'.
-
+			// Get reference table (For getting the symbol of Alphabet.) 
+			_referenceNodeTable = Alphabet.ReferenceNodeTable;
+			_referenceConnectionTable = Alphabet.ReferenceConnectionTable;
+			// Initialize mapping table.
+			_nodeMappingTable = new Dictionary<Node, GraphGrammarNode>();
+			// Add root node.
+			_nodeMappingTable[_root] = new GraphGrammarNode(_referenceNodeTable[_root.AlphabetID]) { Position = LEFT_TOP_POSITION };
+			graphGrammar.Nodes.Add(_nodeMappingTable[_root]);
+			RecursionGraphGrammar(_root, ref graphGrammar, 1);
+			ClearExplored(_root);
 			return graphGrammar;
 		}
-
+		// Add node and connection to graph grammar by dfs.
+		// "layer" is used to calculate x position
+		private static void RecursionGraphGrammar(Node node, ref GraphGrammar graphGrammar, int layer) {
+			// Mark this node.
+			node.Explored = true;
+			// "index" is used to calculate y position.
+			int index = 0;
+			foreach (Node childNode in node.Children) {
+				// Add connection (Now only use Connections[0], will modify).
+				GraphGrammarConnection connection = new GraphGrammarConnection(Alphabet.Connections[0]);
+				graphGrammar.Connections.Add(connection);
+				// Set starting sticked attribute.
+				_nodeMappingTable[node].AddStickiedConnection(connection, "start");
+				connection.StartpointStickyOn = _nodeMappingTable[node];
+				connection.StartPosition = _nodeMappingTable[node].Position;
+				// If mapping table have not contained this Node then add it.
+				if(! _nodeMappingTable.ContainsKey(childNode)) {
+					// Set position.
+					_nodeMappingTable[childNode] = new GraphGrammarNode(_referenceNodeTable[childNode.AlphabetID]) {
+						Position = new Vector2(LEFT_TOP_POSITION.x + layer * PADDING,
+						                       LEFT_TOP_POSITION.y + index * PADDING)
+					};
+					graphGrammar.Nodes.Add(_nodeMappingTable[childNode]);
+				}
+				// Set ending sticked attribute.
+				_nodeMappingTable[childNode].AddStickiedConnection(connection, "end");
+				connection.EndpointStickyOn = _nodeMappingTable[childNode];
+				connection.EndPosition = _nodeMappingTable[childNode].Position;
+				// Check the mark exist.
+				if (!childNode.Explored) {
+					// Search deeper, so "layer" must increase.
+					RecursionGraphGrammar(childNode, ref graphGrammar, layer + 1);
+				}
+				index++;
+			}
+		}
 		// [TEST] 
 		private static void TestClearIndex(Node node) {
 			node.Index = 0;
@@ -301,14 +349,6 @@ namespace MissionGrammarSystem {
 			public int ReplacementNodeCount {
 				get { return _replacementNodeCount; }
 				set { _replacementNodeCount = value; }
-			}
-		}
-		private struct CompareNode {
-			public Node node;
-			public Node matchNode;
-			public CompareNode(Node node, Node matchNode) {
-				this.node = node;
-				this.matchNode = matchNode;
 			}
 		}
 	}

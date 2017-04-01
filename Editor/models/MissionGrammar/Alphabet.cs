@@ -131,5 +131,25 @@ namespace MissionGrammarSystem {
 			// Draw this connection.
 			connection.Draw();
 		}
+		// Get Node table that refer to Guid.
+		public static Dictionary<System.Guid,GraphGrammarNode> ReferenceNodeTable {
+			get {
+				Dictionary<System.Guid, GraphGrammarNode> table = new Dictionary<System.Guid, GraphGrammarNode>();
+				foreach (GraphGrammarNode node in _nodes) {
+					table[node.AlphabetID] = node;
+				}
+				return table;
+			}
+		}
+		// Get Connection table that refer to Guid.
+		public static Dictionary<System.Guid, GraphGrammarConnection> ReferenceConnectionTable {
+			get {
+				Dictionary<System.Guid, GraphGrammarConnection> table = new Dictionary<System.Guid, GraphGrammarConnection>();
+				foreach (GraphGrammarConnection connection in _connections) {
+					table[connection.AlphabetID] = connection;
+				}
+				return table;
+			}
+		}
 	}
 }
