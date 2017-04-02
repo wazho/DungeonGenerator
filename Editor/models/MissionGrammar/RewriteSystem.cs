@@ -242,11 +242,12 @@ namespace MissionGrammarSystem {
 		}
 		private static void RemoveConnections(Rule matchedRule) {
 			foreach (Node node in matchNodes) {
-				foreach (Node childNode in node.Children) {
+				for (int i = 0; i < node.Children.Count; i++) {
 					// If this node and its child are in the rule, remove the connective.
-					if (childNode.Index != 0) {
-						node.Children.Remove(childNode);
-						childNode.Parents.Remove(node);
+					if (node.Children[i].Index != 0) {
+						node.Children[i].Parents.Remove(node);
+						node.Children.RemoveAt(i);
+						i--;
 					}
 				}
 			}
