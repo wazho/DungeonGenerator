@@ -14,14 +14,16 @@ namespace MissionGrammarSystem {
 		// When click the initial button of generate graph page.
 		public static void Initial() {
 			// Initial the current graph.
-			_root = new Node(Alphabet.StartingNode);
+			_root  = new Node(Alphabet.StartingNode);
 			_rules = new List<Rule>();
 			// According to current rules of mission grammar, transform them to tree structure.
 			TransformRules();
 		}
 		// When click the iterate button of generate graph page.
 		public static void Iterate() {
-			ProgressIteration(_root);
+			List<Node> relatedNodes = new List<Node>();
+			// Start interating.
+			ProgressIteration(_root, relatedNodes);
 			ClearExplored(_root);
 		}
 		// Reference table is used to get the symbol of Alphabet via the AlphabetID.
@@ -35,7 +37,7 @@ namespace MissionGrammarSystem {
 		public static GraphGrammar TransformFromGraph() {
 			GraphGrammar graphGrammar = new GraphGrammar();
 			// Get reference table (For getting the symbol of Alphabet.) 
-			_referenceNodeTable = Alphabet.ReferenceNodeTable;
+			_referenceNodeTable       = Alphabet.ReferenceNodeTable;
 			_referenceConnectionTable = Alphabet.ReferenceConnectionTable;
 			// Initialize mapping table.
 			_nodeMappingTable = new Dictionary<Node, GraphGrammarNode>();
@@ -83,9 +85,10 @@ namespace MissionGrammarSystem {
 			}
 		}
 		// Depth-first search.
-		private static void ProgressIteration(Node node) {
+		private static void ProgressIteration(Node node, List<Node> relatedNodes) {
 			// Step 1: Find matchs and set indexes.
-			Rule matchedRule = FindMatchs(node);
+			Rule matchedRule = FindMatchs(node, relatedNodes);
+			/*
 			// Step 2: Remove connections.
 			RemoveConnections(node, matchedRule);
 			// Step 3: Remove connections from replacement rule.
@@ -96,6 +99,7 @@ namespace MissionGrammarSystem {
 			ReAddConnection(node, matchedRule);
 			// Step 6: Remove indexes.
 			RemoveIndexes(node, matchedRule);
+			*/
 
 			if (matchedRule != null) {
 				Debug.Log("Current node: '" + node.Name + "' is match the rule : " + matchedRule.Name + "  " + node.Index);
@@ -108,7 +112,7 @@ namespace MissionGrammarSystem {
 			// For each children.
 			foreach (Node childNode in node.Children) {
 				if (! childNode.Explored) {
-					ProgressIteration(childNode);
+					ProgressIteration(childNode, relatedNodes);
 				}
 			}
 		}
@@ -124,20 +128,18 @@ namespace MissionGrammarSystem {
 		private static void TransformRules() {
 			foreach (var originGroup in MissionGrammar.Groups) {
 				foreach (var originRule in originGroup.Rules) {
-					//Debug.Log(originRule.Name + "-" + originRule.Description);
 					// Declare the rule. Can use 'rule.SourceRoot' and 'rule.ReplacementRoot'.
 					Rule rule = new Rule();
-					// Transform
 					int nodeCount;
-					// [Will remove just for test] 
-					rule.Name = originRule.Name;
-
+					// Transform source and replacement.
+					rule.Name = originGroup.Name + " - " + originRule.Name;
 					rule.SourceNodeTable      = TransformGraph(originRule.SourceRule, out nodeCount);
 					rule.SourceRoot           = rule.SourceNodeTable.FirstOrDefault();
 					rule.SourceNodeCount      = nodeCount;
 					rule.ReplacementNodeTable = TransformGraph(originRule.ReplacementRule, out nodeCount);
 					rule.ReplacementRoot      = rule.ReplacementNodeTable.FirstOrDefault();
 					rule.ReplacementNodeCount = nodeCount;
+					// Insert into the '_rules'.
 					_rules.Add(rule);
 				}
 			}
@@ -173,15 +175,14 @@ namespace MissionGrammarSystem {
 		}
 
 		private static bool[] _usedIndexTable;
-		private static List<Node> matchNodes = new List<Node>();
+		private static List<Node> matchNodes    = new List<Node>();
 		private static List<Node> exploredNodes = new List<Node>();
-		private static Rule FindMatchs(Node node) {
+		private static Rule FindMatchs(Node node, List<Node> relatedNodes) {
 			foreach (var rule in _rules) {
+				// Compare the root node of rule.
 				if (rule.SourceRoot.AlphabetID == node.AlphabetID) {
-					// Clear index.
-					for (int i = 0; i < matchNodes.Count; i++) {
-						matchNodes[i].Index = 0;
-					}
+					// Clear index of all nodes.
+					for (int i = 0; i < matchNodes.Count; i++) { matchNodes[i].Index = 0; }
 					matchNodes.Clear();
 					exploredNodes.Clear();
 					_usedIndexTable = new bool[rule.SourceNodeCount + 1];
@@ -191,7 +192,6 @@ namespace MissionGrammarSystem {
 					if (RecursionMatch(node, rule.SourceRoot)) {
 						return rule;
 					}
-					
 				}
 			}
 			// Not found.
@@ -205,18 +205,19 @@ namespace MissionGrammarSystem {
 				foreach (Node childNode in node.Children) {
 					// If this node index and the rule index have not be used
 					if (childNode.Index == 0 &&
-						! _usedIndexTable[childMatchNode.Index]  &&
+						! _usedIndexTable[childMatchNode.Index] &&
 						childNode.AlphabetID == childMatchNode.AlphabetID) {
 						// Record used connection, not node.
 						_usedIndexTable[childMatchNode.Index] = true;
 						childNode.Index = childMatchNode.Index;
 						matchNodes.Add(childNode);
 						// If the children are also match.
-						if (exploredNodes.Exists(x => ReferenceEquals(x, childNode)) || RecursionMatch(childNode, childMatchNode)) {
+						if (exploredNodes.Exists(x => ReferenceEquals(x, childNode)) ||
+							RecursionMatch(childNode, childMatchNode)) {
 							_isMatch = true;
 							break;
 						}
-					}else if (childNode.Index == childMatchNode.Index &&
+					} else if (childNode.Index == childMatchNode.Index &&
 						_usedIndexTable[childMatchNode.Index]) {
 						_isMatch = true;
 						break;
@@ -227,7 +228,6 @@ namespace MissionGrammarSystem {
 				if (! _isMatch) {
 					return false;
 				}
-					
 			}
 			// If rule node have no child, or said this rule is match.
 			return true;
@@ -236,7 +236,7 @@ namespace MissionGrammarSystem {
 			// If doesn't match any rule, skip this step.
 			if (matchedRule == null) { return; }
 			// Mark node that explored this node.
-			node.Explored2 = true;
+			node.Explored = true;
 			foreach (Node childNode in node.Children) {
 				// If this node and its child are in the rule, remove the connective.
 				if (node.Index != 0 && childNode.Index != 0) {
@@ -244,21 +244,21 @@ namespace MissionGrammarSystem {
 					childNode.Parents.Remove(node);
 				}
 				// Next child recursive.
-				if (! childNode.Explored2) { RemoveConnections(childNode, matchedRule); }
+				if (! childNode.Explored) { RemoveConnections(childNode, matchedRule); }
 			}
 		}
 		private static void ReplaceNodes(Node node, Rule matchedRule) {
 			// If doesn't match any rule, skip this step.
 			if (matchedRule == null) { return; }
 			// Mark node that explored this node.
-			node.Explored3 = true;
+			node.Explored = true;
 			// Replace the node from matched rule.
 			if (node.Index != 0) {
 				node.Update(matchedRule.FindReplacementByIndex(node.Index));
 			}
 			foreach (Node childNode in node.Children) {
 				// Next child recursive.
-				if (! childNode.Explored3) { ReplaceNodes(childNode, matchedRule); }
+				if (! childNode.Explored) { ReplaceNodes(childNode, matchedRule); }
 			}
 		}
 		private static void AppendNodes(Node node, Rule matchedRule) {
@@ -347,24 +347,15 @@ namespace MissionGrammarSystem {
 				get { return _isExplored; }
 				set { _isExplored = value; }
 			}
-			// [Will remove] Explored, getter and setter.
-			public bool Explored2 {
-				get { return _isExplored; }
-				set { _isExplored = value; }
-			}
-			// [Will remove] Explored, getter and setter.
-			public bool Explored3 {
-				get { return _isExplored; }
-				set { _isExplored = value; }
-			}
 			// Explored, getter.
 			public Node UnexploredChild {
 				get { return _children.FirstOrDefault<Node>(n => n.Explored == false); }
 			}
 			// Update the node information, only name and terminal.
 			public void Update(Node node) {
-				_name     = node.Name;
-				_terminal = node.Terminal;
+				_alphabetID = node.AlphabetID;
+				_name       = node.Name;
+				_terminal   = node.Terminal;
 			}
 		}
 		// This is a pair of source rule and replacement rule.
