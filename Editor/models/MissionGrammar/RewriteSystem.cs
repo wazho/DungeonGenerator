@@ -9,21 +9,24 @@ namespace MissionGrammarSystem {
 	public static class RewriteSystem {
 		// Current root of the mission graph.
 		private static Node       _root;
+		// Related nodes are a table that can quickly access nodes that are related with rule.
+		private static List<Node> _relatedNodes;
 		// The rules that are transformed to the tree structure.
 		private static List<Rule> _rules;
 		// When click the initial button of generate graph page.
 		public static void Initial() {
 			// Initial the current graph.
-			_root  = new Node(Alphabet.StartingNode);
-			_rules = new List<Rule>();
+			_root         = new Node(Alphabet.StartingNode);
+			_relatedNodes = new List<Node>();
+			_rules        = new List<Rule>();
 			// According to current rules of mission grammar, transform them to tree structure.
 			TransformRules();
 		}
 		// When click the iterate button of generate graph page.
 		public static void Iterate() {
-			List<Node> relatedNodes = new List<Node>();
+			_relatedNodes.Clear();
 			// Start interating.
-			ProgressIteration(_root, relatedNodes);
+			ProgressIteration(_root);
 			ClearExplored(_root);
 		}
 		// Reference table is used to get the symbol of Alphabet via the AlphabetID.
@@ -54,8 +57,9 @@ namespace MissionGrammarSystem {
 		// Add node and connection to graph grammar by dfs.
 		// "layer" is used to calculate x position
 		private static void RecursionGraphGrammar(Node node, ref GraphGrammar graphGrammar, int layer) {
-			if (CountInLayer.Count <= layer)
+			if (CountInLayer.Count <= layer) {
 				CountInLayer.Add(0);
+			}
 			// Mark this node.
 			node.Explored = true;
 			// "index" is used to calculate y position.
@@ -91,28 +95,21 @@ namespace MissionGrammarSystem {
 			CountInLayer[layer] += index;
 		}
 		// Depth-first search.
-		private static bool ProgressIteration(Node node, List<Node> relatedNodes) {
+		private static bool ProgressIteration(Node node) {
 			// Step 1: Find matchs and set indexes.
-			Rule matchedRule = FindMatchs(node, relatedNodes);
-			/*
-			// Step 2: Remove connections.
-			RemoveConnections(node, matchedRule);
-			// Step 3: Remove connections from replacement rule.
-			ReplaceNodes(node, matchedRule);
-			// Step 4: Append the new nodes from replacement rule.
-			AppendNodes(node, matchedRule);
-			// Step 5: Re-add the connections from replacement rule.
-			ReAddConnection(node, matchedRule);
-			// Step 6: Remove indexes.
-			RemoveIndexes(node, matchedRule);
-			*/
+			Rule matchedRule = FindMatchs(node);
 
 			if (matchedRule != null) {
 				Debug.Log("Current node: '" + node.Name + "' is match the rule : " + matchedRule.Name + "  " + node.Index);
+				// Step 2: Remove connections.
 				RemoveConnections(matchedRule);
+				// Step 3: Remove connections from replacement rule.
 				ReplaceNodes(matchedRule);
+				// Step 4: Append the new nodes from replacement rule.
 				AppendNodes(matchedRule);
+				// Step 5: Re-add the connections from replacement rule.
 				ReAddConnection(matchedRule);
+				// Step 6: Remove indexes.
 				RemoveIndexes();
 				return true;
 			} else {
@@ -124,8 +121,9 @@ namespace MissionGrammarSystem {
 			// For each children.
 			foreach (Node childNode in node.Children) {
 				if (! childNode.Explored) {
-					if (ProgressIteration(childNode, relatedNodes))
+					if (ProgressIteration(childNode)) {
 						return true;
+					}
 				}
 			}
 			return false;
@@ -183,19 +181,18 @@ namespace MissionGrammarSystem {
 		}
 
 		private static bool[] _usedIndexTable;
-		private static List<Node> matchNodes    = new List<Node>();
 		private static List<Node> exploredNodes = new List<Node>();
-		private static Rule FindMatchs(Node node, List<Node> relatedNodes) {
+		private static Rule FindMatchs(Node node) {
 			foreach (var rule in _rules) {
 				// Compare the root node of rule.
 				if (rule.SourceRoot.AlphabetID == node.AlphabetID) {
 					// Clear index of all nodes.
-					for (int i = 0; i < matchNodes.Count; i++) { matchNodes[i].Index = 0; }
-					matchNodes.Clear();
+					for (int i = 0; i < _relatedNodes.Count; i++) { _relatedNodes[i].Index = 0; }
+					_relatedNodes.Clear();
 					exploredNodes.Clear();
 					_usedIndexTable = new bool[rule.SourceNodeCount + 1];
 					node.Index = rule.SourceRoot.Index;
-					matchNodes.Add(node);
+					_relatedNodes.Add(node);
 					_usedIndexTable[node.Index] = true;
 					if (RecursionMatch(node, rule.SourceRoot)) {
 						return rule;
@@ -218,7 +215,7 @@ namespace MissionGrammarSystem {
 						// Record used connection, not node.
 						_usedIndexTable[childMatchNode.Index] = true;
 						childNode.Index = childMatchNode.Index;
-						matchNodes.Add(childNode);
+						_relatedNodes.Add(childNode);
 						// If the children are also match.
 						if (exploredNodes.Exists(x => ReferenceEquals(x, childNode)) ||
 							RecursionMatch(childNode, childMatchNode)) {
@@ -240,8 +237,9 @@ namespace MissionGrammarSystem {
 			// If rule node have no child, or said this rule is match.
 			return true;
 		}
+		// Step 2: Remove connections.
 		private static void RemoveConnections(Rule matchedRule) {
-			foreach (Node node in matchNodes) {
+			foreach (Node node in _relatedNodes) {
 				for (int i = 0; i < node.Children.Count; i++) {
 					// If this node and its child are in the rule, remove the connective.
 					if (node.Children[i].Index != 0) {
@@ -252,32 +250,36 @@ namespace MissionGrammarSystem {
 				}
 			}
 		}
+		// Step 3: Remove connections from replacement rule.
 		private static void ReplaceNodes(Rule matchedRule) {
 			// Replace the node from matched rule.
-			foreach (var node in matchNodes) {
+			foreach (var node in _relatedNodes) {
 				node.Update(matchedRule.FindReplacementByIndex(node.Index));
 			}
 		}
+		// Step 4: Append the new nodes from replacement rule.
 		private static void AppendNodes(Rule matchedRule) {
 			foreach (var matchedRuleNode in matchedRule.ReplacementNodeTable) {
 				// If index does not exist then add.
-				if(! matchNodes.Exists(x => x.Index == matchedRuleNode.Index)) {
-					matchNodes.Add(new Node(matchedRuleNode));
+				if (! _relatedNodes.Exists(x => x.Index == matchedRuleNode.Index)) {
+					_relatedNodes.Add(new Node(matchedRuleNode));
 				}
 			}
 			// Order by Index.
-			matchNodes = matchNodes.OrderBy(x => x.Index).ToList();
+			_relatedNodes = _relatedNodes.OrderBy(x => x.Index).ToList();
 		}
+		// Step 5: Re-add the connections from replacement rule.
 		private static void ReAddConnection(Rule matchedRule) {
-			for (int i = 0;i < matchNodes.Count; i++) {
-				foreach (Node matchedRuleNode in matchedRule.FindReplacementByIndex(matchNodes[i].Index).Children) {
-					matchNodes[i].Children.Add(matchNodes[matchedRuleNode.Index - 1]);
-					matchNodes[matchedRuleNode.Index - 1].Parents.Add(matchNodes[i]);
+			for (int i = 0; i < _relatedNodes.Count; i++) {
+				foreach (Node matchedRuleNode in matchedRule.FindReplacementByIndex(_relatedNodes[i].Index).Children) {
+					_relatedNodes[i].Children.Add(_relatedNodes[matchedRuleNode.Index - 1]);
+					_relatedNodes[matchedRuleNode.Index - 1].Parents.Add(_relatedNodes[i]);
 				}
 			}
 		}
+		// Step 6: Remove indexes.
 		private static void RemoveIndexes() {
-			foreach (var node in matchNodes) {
+			foreach (var node in _relatedNodes) {
 				node.Index = 0;
 			}
 		}
