@@ -15,57 +15,97 @@ namespace MissionGrammarSystem {
 		public static void Initial() {
 			// Initial the current graph.
 			_root = new Node(Alphabet.StartingNode);
+			_rules = new List<Rule>();
 			// According to current rules of mission grammar, transform them to tree structure.
 			TransformRules();
+			// [TEST] 
+			_root = _rules[0].SourceRoot;
+			TestClearIndex(_root);
 		}
-
+		// When click the iterate button of generate graph page.
 		public static void Iterate() {
-			// This is EXAMPLE.
-			Node exampleRoot  = new Node(new GraphGrammarNode("en", "", "", NodeTerminalType.Terminal), 1);
-			Node exampleNode2 = new Node(new GraphGrammarNode("x",  "", "", NodeTerminalType.Terminal), 2);
-			Node exampleNode3 = new Node(new GraphGrammarNode("CR", "", "", NodeTerminalType.NonTerminal), 3);
-			Node exampleNode4 = new Node(new GraphGrammarNode("x",  "", "", NodeTerminalType.Terminal), 4);
-			Node exampleNode5 = new Node(new GraphGrammarNode("CR", "", "", NodeTerminalType.NonTerminal), 5);
-			Node exampleNode6 = new Node(new GraphGrammarNode("go", "", "", NodeTerminalType.Terminal), 6);
+			ProgressIteration(_root);
+			ClearExplored(_root);
+		}
+		// Export the original structure from tree structure to canvas.
+		public static GraphGrammar TransformFromGraph() {
+			GraphGrammar graphGrammar = new GraphGrammar();
 
-			// 6
-			exampleNode6.Parents  = new List<Node>() { exampleNode5 };
-			// 5
-			exampleNode5.Parents  = new List<Node>() { exampleNode4 };
-			// 4
-			exampleNode4.Parents  = new List<Node>() { exampleNode3, exampleNode4 };
-			exampleNode4.Children = new List<Node>() { exampleNode5, exampleNode6 };
-			// 3
-			exampleNode3.Parents  = new List<Node>() { exampleNode2 };
-			exampleNode3.Children = new List<Node>() { exampleNode4 };
-			// 2
-			exampleNode2.Parents  = new List<Node>() { exampleRoot };
-			exampleNode2.Children = new List<Node>() { exampleNode3, exampleNode4 };
-			// 1
-			exampleRoot.Children  = new List<Node>() { exampleNode2 };
+			// Code here.
+			// Parsing from '_root'.
 
-			ProgressIteration(exampleRoot);
+			return graphGrammar;
 		}
 
+		// [TEST] 
+		private static void TestClearIndex(Node node) {
+			node.Index = 0;
+			foreach (Node childNode in node.Children) {
+				if (childNode.Index > 0) {
+					TestClearIndex(childNode);
+				}
+			}
+		}
+		// Depth-first search.
+		private static void ProgressIteration(Node node) {
+			// Step 1: Find matchs.
+			Rule result = FindMatchs(node);
+
+			if (result != null) {
+				Debug.Log("Current node: " + node.Name + " is match the rule : " + result.Name);
+			} else {
+				Debug.Log("Current node: " + node.Name + " doesn't match any rule.");
+			}
+
+			// Step 2: Remove connections.
+			RemoveConnections();
+			// Step 3: Replace nodes.
+			ReplaceNodes(result);
+			AppendNodes(result);
+			ShrinkNodes(result);
+
+			// Has explored this node.
+			node.Explored = true;
+			// For each children.
+			foreach (Node childNode in node.Children) {
+				if (childNode.Explored == false) {
+					ProgressIteration(childNode);
+				}
+			}
+		}
+		private static void ClearExplored(Node node) {
+			node.Explored = false;
+			foreach (Node childNode in node.Children) {
+				if (childNode.Explored) {
+					ClearExplored(childNode);
+				}
+			}
+		}
 		// According to current rules of mission grammar, transform them to tree structure.
 		private static void TransformRules() {
 			foreach (var originGroup in MissionGrammar.Groups) {
 				foreach (var originRule in originGroup.Rules) {
-					Debug.Log(originRule.Name + "-" + originRule.Description);
+					//Debug.Log(originRule.Name + "-" + originRule.Description);
 					// Declare the rule. Can use 'rule.SourceRoot' and 'rule.ReplacementRoot'.
 					Rule rule = new Rule();
 					// Transform
-					rule.SourceRoot      = TransformGraph(originRule.SourceRule);
-					rule.ReplacementRoot = TransformGraph(originRule.ReplacementRule);
+					int nodeCount;
+					// [Will remove just for test] 
+					rule.Name = originRule.Name;
 
+					rule.SourceRoot = TransformGraph(originRule.SourceRule, out nodeCount);
+					rule.SourceNodeCount = nodeCount;
+					rule.ReplacementRoot = TransformGraph(originRule.ReplacementRule, out nodeCount);
+					rule.ReplacementNodeCount = nodeCount;
+					_rules.Add(rule);
 					// Show the message to proof you code is correct.
 					//ProgressIteration(rule.SourceRoot);
-					ProgressIteration(rule.ReplacementRoot);
+					//ProgressIteration(rule.ReplacementRoot);
 				}
 			}
 		}
 		// Transform a graph into tree struct. Return root.
-		private static Node TransformGraph(GraphGrammar graph) {
+		private static Node TransformGraph(GraphGrammar graph, out int nodeCount) {
 			// Initialize nodes
 			Node[] nodes = new Node[graph.Nodes.Count];
 			for (int i = 0; i < graph.Nodes.Count; i++) {
@@ -88,56 +128,108 @@ namespace MissionGrammarSystem {
 					nodes[i].Parents.Add(nodes[index]);
 				}
 			}
+			nodeCount = graph.Nodes.Count;
 			return nodes.FirstOrDefault<Node>(n => n.Index == 1);
 		}
-		private static void ProgressIteration(Node node) {
-			// If this node is null then throw error. (Current just return void.)
-			if (node == null) { return; }
-			
-			Debug.Log(node.Index + " - " + node.Name);
-			// Recursive for children.
-			foreach (Node childNode in node.Children) {
-				ProgressIteration(childNode);
-			}
-			if (node.Children.Count == 0) {
-				Debug.Log("null");
-			}
-		}
 
-		private static void RemoveConnections(ref Node rootNode) {
-			foreach(Node node in rootNode.Children) {
-				// RemoveConnections if node have index.
-				if(node.Index != 0) {
-					node.Parents.Clear();
-					node.Children.Clear();
+		private static bool[] _usedIndexTable;
+		private static List<Node> matchNodes = new List<Node>();
+		private static List<Node> exploredNodes = new List<Node>();
+		private static Rule FindMatchs(Node node) {
+			foreach (var rule in _rules) {
+				if (rule.SourceRoot.AlphabetID == node.AlphabetID) {
+					// Clear index.
+					for (int i = 0; i < matchNodes.Count; i++) {
+						matchNodes[i].Index = 0;
 					}
-				}
-			ReplaceNodes(ref rootNode);
-		}
- 
-		private static void ReplaceNodes(ref Node rootNode) {
-			// [Temporary]****
-			Rule testRule = new Rule();
-			Node tempNode;
-			//****************
-
-			foreach (Node node in rootNode.Children) {
-				if (node.Index != 0) {
-					tempNode = testRule.SourceRoot.Children.Where(e => e.Index == node.Index).FirstOrDefault();
-					if(tempNode != null) {
-						node.Clone(tempNode);
+					matchNodes.Clear();
+					exploredNodes.Clear();
+					_usedIndexTable = new bool[rule.SourceNodeCount + 1];
+					node.Index = rule.SourceRoot.Index;
+					matchNodes.Add(node);
+					_usedIndexTable[node.Index] = true;
+					if (RecursionMatch(node, rule.SourceRoot)) {
+						return rule;
 					}
+					
 				}
 			}
+			// Not found.
+			return null;
+		}
+		// Confirm the children are match
+		private static bool RecursionMatch(Node node, Node matchNode) {
+			exploredNodes.Add(node);
+			foreach (Node childMatchNode in matchNode.Children) {
+				bool _isMatch = false;
+				foreach (Node childNode in node.Children) {
+					// If this node index and the rule index have not be used
+					if (childNode.Index == 0 &&
+						! _usedIndexTable[childMatchNode.Index]  &&
+						childNode.AlphabetID == childMatchNode.AlphabetID) {
+						// Record used connection, not node.
+						_usedIndexTable[childMatchNode.Index] = true;
+						childNode.Index = childMatchNode.Index;
+						matchNodes.Add(childNode);
+						// If the children are also match.
+						if (exploredNodes.Exists(x => ReferenceEquals(x, childNode)) || RecursionMatch(childNode, childMatchNode)) {
+							_isMatch = true;
+							break;
+						}
+					}else if (childNode.Index == childMatchNode.Index &&
+						_usedIndexTable[childMatchNode.Index]) {
+						_isMatch = true;
+						break;
+					}
+				}
+				
+				// If no child is match.
+				if (! _isMatch) {
+					return false;
+				}
+					
+			}
+			// If rule node have no child, or said this rule is match.
+			return true;
 		}
 		private static void RemoveConnections() {
-
+			foreach(Node node in matchNodes) {
+				node.Parents.Clear();
+				node.Children.Clear();
+				Debug.Log("Index: " + node.Index + "Is Removed");
+			}
 		}
-		private static void ReplaceNodes() {
-
+		private static void ReplaceNodes(Rule replaceRule) {
+			foreach (Node node in matchNodes) {
+				node.Name = findNode(node.Index + 1,replaceRule.ReplacementRoot).Name;
+			}
 		}
-		private static void AppendNodes() {
-
+		// Return node have same index from rule.
+		private static Node findNode(int index,Node root) {
+			Node temp;
+			if (root.Index == index) {
+				return root;
+			}
+			foreach(Node node in root.Children) {
+				temp = findNode(index, node);
+				if(temp != null) {
+					return temp;
+				}
+			}
+			return null;
+		}
+		private static void AppendNodes(Rule replaceRule) {
+			for (;matchNodes.ToArray().Length < replaceRule.ReplacementNodeCount;) {
+				matchNodes.Add(findNode(matchNodes.ToArray().Length + 1, replaceRule.ReplacementRoot));
+				Debug.Log("Add: " + matchNodes.Last().Name);
+			}
+		}
+		private static void ShrinkNodes(Rule replaceRule) {
+			for (; matchNodes.ToArray().Length > replaceRule.ReplacementNodeCount;) {
+				if(matchNodes.Remove(matchNodes.Where(e=>e.Index> replaceRule.ReplacementNodeCount).FirstOrDefault())) {
+					Debug.Log("Minor: " + matchNodes.Last().Name);
+				}
+			}
 		}
 		private static void ReAddConnection() {
 
@@ -156,6 +248,7 @@ namespace MissionGrammarSystem {
 			private NodeTerminalType _terminal;
 			private List<Node>       _parents;
 			private List<Node>       _children;
+			private bool             _isExplored; 
 			// Constructor.
 			public Node() {
 				this._alphabetID = Guid.Empty;
@@ -164,6 +257,7 @@ namespace MissionGrammarSystem {
 				this._terminal   = NodeTerminalType.Terminal;
 				this._parents    = new List<Node>();
 				this._children   = new List<Node>();
+				this._isExplored = false;
 			}
 			public Node(GraphGrammarNode node) : this() {
 				this._alphabetID = node.AlphabetID;
@@ -197,32 +291,29 @@ namespace MissionGrammarSystem {
 				get { return _children; }
 				set { _children = value; }
 			}
-
-			// Copy node.
-			public void Clone(Node node) {
-				this._name       = node.Name;
-				this._index      = node.Index;
-				this._alphabetID = node.AlphabetID;
-				this._terminal   = node.Terminal;
- 
-				if (node.Children.Count > 0) {
-					foreach(Node n in node.Children) {
-						this.Children.Add(_root.Children.Where(e => e.Index == n.Index).FirstOrDefault());
-					}
-				}
- 
-				if (node.Parents.Count > 0) {
-					foreach (Node n in node.Parents) {
-						this.Parents.Add(_root.Children.Where(e => e.Index == n.Index).FirstOrDefault());
-					}
-				}
+			// AlphabetID, getter and setter
+			public Guid AlphabetID {
+				get { return _alphabetID; }
 			}
-
+			// Explored, getter and setter.
+			public bool Explored {
+				get { return _isExplored; }
+				set { _isExplored = value; }
+			}
+			// Explored, getter.
+			public Node UnexploredChild {
+				get { return _children.FirstOrDefault<Node>(n => n.Explored == false); }
+			}
 		}
 		// This is a pair of source rule and replacement rule.
 		private class Rule {
+			// [Will remove just for test]
+			public string Name;
+
 			private Node _sourceRoot;
 			private Node _replacementRoot;
+			private int _sourceNodeCount;
+			private int _replacementNodeCount;
 			// Constructor.
 			public Rule() {
 				this._sourceRoot      = new Node();
@@ -238,6 +329,25 @@ namespace MissionGrammarSystem {
 				get { return _replacementRoot; }
 				set { _replacementRoot = value; }
 			}
+			// Source node count, getter and setter.
+			public int SourceNodeCount {
+				get { return _sourceNodeCount; }
+				set { _sourceNodeCount = value; }
+			}
+			// Source node count, getter and setter.
+			public int ReplacementNodeCount {
+				get { return _replacementNodeCount; }
+				set { _replacementNodeCount = value; }
+			}
+		}
+		private struct CompareNode {
+			public Node node;
+			public Node matchNode;
+			public CompareNode(Node node, Node matchNode) {
+				this.node = node;
+				this.matchNode = matchNode;
+			}
 		}
 	}
+	
 }
