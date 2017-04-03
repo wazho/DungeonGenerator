@@ -349,6 +349,18 @@ namespace MissionGrammarSystem {
 		}
 		// Layout the canvas editor of current selected rules.
 		void LayoutRuleCanvasEditor() {
+			// Show ordering slider
+			GUILayout.BeginArea(EditorStyle.RuleOrderingSliderArea);
+			if (_currentSelectedGraphGrammar != null && _currentSelectedGraphGrammar.SelectedSymbol is GraphGrammarNode) {
+				int sliderOrdering = EditorGUILayout.IntSlider("Ordering", _currentSelectedGraphGrammar.SelectedSymbol.Ordering, 1, _currentSelectedGraphGrammar.Nodes.Count);
+				if(sliderOrdering != _currentSelectedGraphGrammar.SelectedSymbol.Ordering) {
+					_currentSelectedGraphGrammar.Nodes.Find(x => x.Ordering == sliderOrdering).Ordering = _currentSelectedGraphGrammar.SelectedSymbol.Ordering;
+					_currentSelectedGraphGrammar.SelectedSymbol.Ordering = sliderOrdering;
+				}
+
+			}
+			GUILayout.EndArea();
+
 			GUILayout.BeginArea(EditorStyle.AfterRulePreviewArea);
 			// Buttons - Add Node & Add Connection & Copy & Delete.
 			EditorGUILayout.BeginHorizontal();
@@ -644,6 +656,7 @@ namespace MissionGrammarSystem {
 					node.RemoveStickiedConnection(connection, "end");
 				}
 				_currentSelectedGraphGrammar.Nodes.Remove(node);
+				_currentSelectedGraphGrammar.SelectedSymbol = null;
 			} else if(_currentSelectedGraphGrammar.SelectedSymbol is GraphGrammarConnection) {
 				// Is connection.
 				GraphGrammarConnection connection = (GraphGrammarConnection) _currentSelectedGraphGrammar.SelectedSymbol;
@@ -654,6 +667,7 @@ namespace MissionGrammarSystem {
 					connection.EndpointStickyOn.RemoveStickiedConnection(connection, "end");
 				}
 				_currentSelectedGraphGrammar.Connections.Remove(connection);
+				_currentSelectedGraphGrammar.SelectedSymbol = null;
 			}
 			
 		}
