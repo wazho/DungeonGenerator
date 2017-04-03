@@ -31,7 +31,8 @@ namespace EditorExtend {
 		private static Rect _ruleSourceCanvasArea     = new Rect(0,  25, Screen.width / 2, 200);
 		private static Rect _ruleReplacementCanvasArea= new Rect(Screen.width / 2, 25, Screen.width / 2, 200);
 		private static Rect _ruleGraphGrammarCanvas   = new Rect(0, 0, Screen.width, 200);
-		private static Rect _afterRulePreviewArea     = new Rect(0, 400, Screen.width, Screen.height);
+		private static Rect _ruleOrderingSliderArea   = new Rect(0, 390, Screen.width, 30);
+		private static Rect _afterRulePreviewArea     = new Rect(0, 420, Screen.width, Screen.height);
 
 		private static Rect _indexWindowCanvasArea = new Rect(0, 0, Screen.width, 250);
 		private static Rect _indexWindowCanvas = new Rect(0, 0, Screen.width, 250);
@@ -215,7 +216,12 @@ namespace EditorExtend {
 				return _missionGraphCanvasContent;
 			}
 		}
-
+		public static Rect RuleOrderingSliderArea {
+			get {
+				_ruleOrderingSliderArea.width  = Screen.width;
+				return _ruleOrderingSliderArea;
+			}
+		}
 		public static Rect AfterRulePreviewArea {
 			get {
 				_afterRulePreviewArea.width  = Screen.width;
