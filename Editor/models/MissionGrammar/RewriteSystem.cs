@@ -13,18 +13,18 @@ namespace MissionGrammarSystem {
 		private static List<Node> _relatedNodes;
 		// The rules that are transformed to the tree structure.
 		private static List<Rule> _rules;
-		// Get non-terminal nodes
-		private static List<Node> nonTerminalNodes;
+		// Get non-terminal nodes.
+		private static List<Node> _nonTerminalNodes;
 		// When click the initial button of generate graph page.
 		public static void Initial() {
 			// Initial the current graph.
-			_root         = new Node(Alphabet.StartingNode);
-			_relatedNodes = new List<Node>();
-			_rules        = new List<Rule>();
-			nonTerminalNodes = new List<Node>();
-			// Update nonTerminalNodes.
+			_root             = new Node(Alphabet.StartingNode);
+			_relatedNodes     = new List<Node>();
+			_rules            = new List<Rule>();
+			_nonTerminalNodes = new List<Node>();
+			// Update _nonTerminalNodes.
 			if (_root.Terminal == NodeTerminalType.NonTerminal) {
-				nonTerminalNodes.Add(_root);
+				_nonTerminalNodes.Add(_root);
 			}
 			// According to current rules of mission grammar, transform them to tree structure.
 			TransformRules();
@@ -79,7 +79,7 @@ namespace MissionGrammarSystem {
 				connection.StartpointStickyOn = _nodeMappingTable[node];
 				connection.StartPosition = _nodeMappingTable[node].Position;
 				// If mapping table have not contained this Node then add it.
-				if(! _nodeMappingTable.ContainsKey(childNode)) {
+				if (! _nodeMappingTable.ContainsKey(childNode)) {
 					// Set position.
 					_nodeMappingTable[childNode] = new GraphGrammarNode(_referenceNodeTable[childNode.AlphabetID]) {
 						Position = new Vector2(LEFT_TOP_POSITION.x + layer * PADDING,
@@ -102,7 +102,7 @@ namespace MissionGrammarSystem {
 		}
 		// Depth-first search.
 		private static void ProgressIteration() {
-			foreach (Node node in nonTerminalNodes) {
+			foreach (Node node in _nonTerminalNodes) {
 				// Step 1: Find matchs and set indexes.
 				Rule matchedRule = FindMatchs(node);
 
@@ -250,12 +250,12 @@ namespace MissionGrammarSystem {
 		private static void ReplaceNodes(Rule matchedRule) {
 			// Replace the node from matched rule.
 			foreach (var node in _relatedNodes) {
-				// Remove the replaced node from nonTerminalNodes.
-				nonTerminalNodes.Remove(node);
+				// Remove the replaced node from _nonTerminalNodes.
+				_nonTerminalNodes.Remove(node);
 				node.Update(matchedRule.FindReplacementByIndex(node.Index));
-				// Update nonTerminalNodes.
+				// Update _nonTerminalNodes.
 				if (node.Terminal == NodeTerminalType.NonTerminal) {
-					nonTerminalNodes.Add(node);
+					_nonTerminalNodes.Add(node);
 				}
 			}
 		}
@@ -266,9 +266,9 @@ namespace MissionGrammarSystem {
 				if (! _relatedNodes.Exists(x => x.Index == matchedRuleNode.Index)) {
 					Node node = new Node(matchedRuleNode);
 					_relatedNodes.Add(node);
-					// Update nonTerminalNodes.
+					// Update _nonTerminalNodes.
 					if (node.Terminal == NodeTerminalType.NonTerminal) {
-						nonTerminalNodes.Add(node);
+						_nonTerminalNodes.Add(node);
 					}
 				}
 			}
