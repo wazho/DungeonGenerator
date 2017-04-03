@@ -105,7 +105,7 @@ namespace MissionGrammarSystem {
 			Node[] _nonTerminalNodesClone = _nonTerminalNodes.ToArray();
 			foreach (Node node in _nonTerminalNodesClone) {
 				// If not be replaced.
-				if(node.Terminal == NodeTerminalType.NonTerminal) { 
+				if (node.Terminal == NodeTerminalType.NonTerminal) { 
 					// Step 1: Find matchs and set indexes.
 					Rule matchedRule = FindMatchs(node);
 				
