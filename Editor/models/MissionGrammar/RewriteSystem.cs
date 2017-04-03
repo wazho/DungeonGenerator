@@ -102,25 +102,28 @@ namespace MissionGrammarSystem {
 		}
 		// Depth-first search.
 		private static void ProgressIteration() {
-			foreach (Node node in _nonTerminalNodes) {
-				// Step 1: Find matchs and set indexes.
-				Rule matchedRule = FindMatchs(node);
-
-				if (matchedRule != null) {
-					Debug.Log("Current node: '" + node.Name + "' is match the rule : " + matchedRule.Name + "  " + node.Index);
-					// Step 2: Remove connections.
-					RemoveConnections(matchedRule);
-					// Step 3: Remove connections from replacement rule.
-					ReplaceNodes(matchedRule);
-					// Step 4: Append the new nodes from replacement rule.
-					AppendNodes(matchedRule);
-					// Step 5: Re-add the connections from replacement rule.
-					ReAddConnection(matchedRule);
-					// Step 6: Remove indexes.
-					RemoveIndexes();
-					return;
-				} else {
-					Debug.Log("Current node: '" + node.Name + "'.");
+			Node[] _nonTerminalNodesClone = _nonTerminalNodes.ToArray();
+			foreach (Node node in _nonTerminalNodesClone) {
+				// If not be replaced.
+				if(node.Terminal == NodeTerminalType.NonTerminal) { 
+					// Step 1: Find matchs and set indexes.
+					Rule matchedRule = FindMatchs(node);
+				
+					if (matchedRule != null) {
+						Debug.Log("Current node: '" + node.Name + "' is match the rule : " + matchedRule.Name + "  " + node.Index);
+						// Step 2: Remove connections.
+						RemoveConnections(matchedRule);
+						// Step 3: Remove connections from replacement rule.
+						ReplaceNodes(matchedRule);
+						// Step 4: Append the new nodes from replacement rule.
+						AppendNodes(matchedRule);
+						// Step 5: Re-add the connections from replacement rule.
+						ReAddConnection(matchedRule);
+						// Step 6: Remove indexes.
+						RemoveIndexes();
+					} else {
+						Debug.Log("Current node: '" + node.Name + "'.");
+					}
 				}
 			}
 		}
@@ -249,9 +252,11 @@ namespace MissionGrammarSystem {
 		// Step 3: Remove connections from replacement rule.
 		private static void ReplaceNodes(Rule matchedRule) {
 			// Replace the node from matched rule.
-			foreach (var node in _relatedNodes) {
+			foreach (Node node in _relatedNodes) {
 				// Remove the replaced node from _nonTerminalNodes.
-				_nonTerminalNodes.Remove(node);
+				if(node.Terminal == NodeTerminalType.NonTerminal) {
+					_nonTerminalNodes.Remove(node);
+				}
 				node.Update(matchedRule.FindReplacementByIndex(node.Index));
 				// Update _nonTerminalNodes.
 				if (node.Terminal == NodeTerminalType.NonTerminal) {
