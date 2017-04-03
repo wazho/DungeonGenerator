@@ -182,7 +182,9 @@ namespace MissionGrammarSystem {
 		private static bool[] _usedIndexTable;
 		private static List<Node> exploredNodes = new List<Node>();
 		private static Rule FindMatchs(Node node) {
-			foreach (var rule in _rules) {
+			// [TEST] random rule
+			Rule[] randomRules = _rules.OrderBy(x => Random.value).ToArray();
+			foreach (var rule in randomRules) {
 				// Compare the root node of rule.
 				if (rule.SourceRoot.AlphabetID == node.AlphabetID) {
 					// Clear index of all nodes.

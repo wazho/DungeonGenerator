@@ -151,6 +151,7 @@ namespace MissionGrammarSystem {
 				_indexOfRulesOptions = 0;
 				// Update the rules of selected group.
 				_rulesOptions = MissionGrammar.Groups[_indexOfGroupsOptions].Rules.Select(r => r.Name).ToArray();
+				_currentSelectedGraphGrammar = null;
 			}
 			// Sub-button of editor, edit the group.
 			if (GUILayout.Button(_edit, EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
@@ -193,6 +194,7 @@ namespace MissionGrammarSystem {
 				// Switch mode.
 				_editingMode             = EditingMode.None;
 				_tempIndexOfRulesOptions = _indexOfRulesOptions;
+				_currentSelectedGraphGrammar = null;
 			}
 			// Sub-button of editor, edit the rule.
 			if (GUILayout.Button(_edit, EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
@@ -223,7 +225,9 @@ namespace MissionGrammarSystem {
 				_description = "Description here.";
 			}
 			// Update the content of dropdown.
-			_rulesOptions = MissionGrammar.Groups[_indexOfGroupsOptions].Rules.Select(r => r.Name).ToArray();
+			if(_indexOfGroupsOptions< MissionGrammar.Groups.Count) {
+				_rulesOptions = MissionGrammar.Groups[_indexOfGroupsOptions].Rules.Select(r => r.Name).ToArray();
+			}
 			EditorGUILayout.EndHorizontal();
 		}
 		// Layout the editor of mission group or mission rule.
@@ -354,7 +358,10 @@ namespace MissionGrammarSystem {
 			if (_currentSelectedGraphGrammar != null && _currentSelectedGraphGrammar.SelectedSymbol is GraphGrammarNode) {
 				int sliderOrdering = EditorGUILayout.IntSlider("Ordering", _currentSelectedGraphGrammar.SelectedSymbol.Ordering, 1, _currentSelectedGraphGrammar.Nodes.Count);
 				if(sliderOrdering != _currentSelectedGraphGrammar.SelectedSymbol.Ordering) {
-					_currentSelectedGraphGrammar.Nodes.Find(x => x.Ordering == sliderOrdering).Ordering = _currentSelectedGraphGrammar.SelectedSymbol.Ordering;
+					GraphGrammarNode node = _currentSelectedGraphGrammar.Nodes.Find(x => x.Ordering == sliderOrdering);
+					if(node != null) {
+						node.Ordering = _currentSelectedGraphGrammar.SelectedSymbol.Ordering;
+					}
 					_currentSelectedGraphGrammar.SelectedSymbol.Ordering = sliderOrdering;
 				}
 
@@ -365,12 +372,7 @@ namespace MissionGrammarSystem {
 			// Buttons - Add Node & Add Connection & Copy & Delete.
 			EditorGUILayout.BeginHorizontal();
 			if (GUILayout.Button("Add Node", EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
-				// [Will remove] Just test canvas.
 				// Add Alphabet's Node 
-				
-				_missionRule.SourceRule.RevokeAllSelected();
-				_missionRule.ReplacementRule.RevokeAllSelected();
-
 				_applySymbolEditingButtonEnabled = true;
 				_currentTab = SymbolEditingMode.AddNode;
 			}
@@ -563,7 +565,14 @@ namespace MissionGrammarSystem {
 		void LayoutEditingButtonGroup() {
 			EditorGUILayout.BeginHorizontal();
 			// Button of adding new symbol.
-			GUI.enabled = (_currentSelectedGraphGrammar != null);
+			switch (_currentTab) {
+			case SymbolEditingMode.AddNode:
+				GUI.enabled = ( _currentSelectedGraphGrammar != null && Alphabet.SelectedNode != null );
+				break;
+			case SymbolEditingMode.AddConnection:
+				GUI.enabled = ( _currentSelectedGraphGrammar != null && Alphabet.SelectedConnection != null );
+				break;
+			}
 			if (GUILayout.Button("Add New", EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
 				// Add symbol.
 				switch (_currentTab) {
@@ -577,7 +586,14 @@ namespace MissionGrammarSystem {
 				Repaint();
 			}
 			// Button of modifying new symbol.
-			GUI.enabled = (_currentSelectedGraphGrammar != null && _currentSelectedGraphGrammar.SelectedSymbol != null);
+			switch (_currentTab) {
+			case SymbolEditingMode.AddNode:
+				GUI.enabled = ( GUI.enabled && _currentSelectedGraphGrammar.SelectedSymbol is GraphGrammarNode);
+				break;
+			case SymbolEditingMode.AddConnection:
+				GUI.enabled = ( GUI.enabled && _currentSelectedGraphGrammar.SelectedSymbol is GraphGrammarConnection );
+				break;
+			}
 			if (GUILayout.Button("Modify", EditorStyles.miniButtonMid, EditorStyle.ButtonHeight)) {
 				switch (_currentTab) {
 				case SymbolEditingMode.AddNode:
@@ -654,6 +670,11 @@ namespace MissionGrammarSystem {
 				foreach (var connection in _currentSelectedGraphGrammar.Connections) {
 					node.RemoveStickiedConnection(connection, "start");
 					node.RemoveStickiedConnection(connection, "end");
+				}
+				GraphGrammarNode[] nodesOrdering = _currentSelectedGraphGrammar.Nodes.OrderBy(x => x.Ordering).ToArray();
+				// Following ordering -1
+				for (int i = node.Ordering; i < nodesOrdering.Length; i++) {
+					nodesOrdering[i].Ordering -= 1;
 				}
 				_currentSelectedGraphGrammar.Nodes.Remove(node);
 				_currentSelectedGraphGrammar.SelectedSymbol = null;
