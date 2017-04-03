@@ -13,12 +13,19 @@ namespace MissionGrammarSystem {
 		private static List<Node> _relatedNodes;
 		// The rules that are transformed to the tree structure.
 		private static List<Rule> _rules;
+		// Get non-terminal nodes
+		private static List<Node> nonTerminalNodes;
 		// When click the initial button of generate graph page.
 		public static void Initial() {
 			// Initial the current graph.
 			_root         = new Node(Alphabet.StartingNode);
 			_relatedNodes = new List<Node>();
 			_rules        = new List<Rule>();
+			nonTerminalNodes = new List<Node>();
+			// Update nonTerminalNodes.
+			if (_root.Terminal == NodeTerminalType.NonTerminal) {
+				nonTerminalNodes.Add(_root);
+			}
 			// According to current rules of mission grammar, transform them to tree structure.
 			TransformRules();
 		}
@@ -26,8 +33,7 @@ namespace MissionGrammarSystem {
 		public static void Iterate() {
 			_relatedNodes.Clear();
 			// Start interating.
-			ProgressIteration(_root);
-			ClearExplored(_root);
+			ProgressIteration();
 		}
 		// Reference table is used to get the symbol of Alphabet via the AlphabetID.
 		private static Dictionary<Guid, GraphGrammarNode> _referenceNodeTable;
@@ -95,38 +101,28 @@ namespace MissionGrammarSystem {
 			CountInLayer[layer] += index;
 		}
 		// Depth-first search.
-		private static bool ProgressIteration(Node node) {
-			// Step 1: Find matchs and set indexes.
-			Rule matchedRule = FindMatchs(node);
+		private static void ProgressIteration() {
+			foreach (Node node in nonTerminalNodes) {
+				// Step 1: Find matchs and set indexes.
+				Rule matchedRule = FindMatchs(node);
 
-			if (matchedRule != null) {
-				Debug.Log("Current node: '" + node.Name + "' is match the rule : " + matchedRule.Name + "  " + node.Index);
-				// Step 2: Remove connections.
-				RemoveConnections(matchedRule);
-				// Step 3: Remove connections from replacement rule.
-				ReplaceNodes(matchedRule);
-				// Step 4: Append the new nodes from replacement rule.
-				AppendNodes(matchedRule);
-				// Step 5: Re-add the connections from replacement rule.
-				ReAddConnection(matchedRule);
-				// Step 6: Remove indexes.
-				RemoveIndexes();
-				return true;
-			} else {
-				Debug.Log("Current node: '" + node.Name + "'.");
-			}
-
-			// Has explored this node.
-			node.Explored = true;
-			// For each children.
-			foreach (Node childNode in node.Children) {
-				if (! childNode.Explored) {
-					if (ProgressIteration(childNode)) {
-						return true;
-					}
+				if (matchedRule != null) {
+					Debug.Log("Current node: '" + node.Name + "' is match the rule : " + matchedRule.Name + "  " + node.Index);
+					// Step 2: Remove connections.
+					RemoveConnections(matchedRule);
+					// Step 3: Remove connections from replacement rule.
+					ReplaceNodes(matchedRule);
+					// Step 4: Append the new nodes from replacement rule.
+					AppendNodes(matchedRule);
+					// Step 5: Re-add the connections from replacement rule.
+					ReAddConnection(matchedRule);
+					// Step 6: Remove indexes.
+					RemoveIndexes();
+					return;
+				} else {
+					Debug.Log("Current node: '" + node.Name + "'.");
 				}
 			}
-			return false;
 		}
 		private static void ClearExplored(Node node) {
 			node.Explored = false;
@@ -254,15 +250,26 @@ namespace MissionGrammarSystem {
 		private static void ReplaceNodes(Rule matchedRule) {
 			// Replace the node from matched rule.
 			foreach (var node in _relatedNodes) {
+				// Remove the replaced node from nonTerminalNodes.
+				nonTerminalNodes.Remove(node);
 				node.Update(matchedRule.FindReplacementByIndex(node.Index));
+				// Update nonTerminalNodes.
+				if (node.Terminal == NodeTerminalType.NonTerminal) {
+					nonTerminalNodes.Add(node);
+				}
 			}
 		}
 		// Step 4: Append the new nodes from replacement rule.
 		private static void AppendNodes(Rule matchedRule) {
-			foreach (var matchedRuleNode in matchedRule.ReplacementNodeTable) {
+			foreach (Node matchedRuleNode in matchedRule.ReplacementNodeTable) {
 				// If index does not exist then add.
 				if (! _relatedNodes.Exists(x => x.Index == matchedRuleNode.Index)) {
-					_relatedNodes.Add(new Node(matchedRuleNode));
+					Node node = new Node(matchedRuleNode);
+					_relatedNodes.Add(node);
+					// Update nonTerminalNodes.
+					if (node.Terminal == NodeTerminalType.NonTerminal) {
+						nonTerminalNodes.Add(node);
+					}
 				}
 			}
 			// Order by Index.
