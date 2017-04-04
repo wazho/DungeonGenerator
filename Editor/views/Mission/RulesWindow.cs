@@ -585,7 +585,25 @@ namespace MissionGrammarSystem {
 					}
 					break;
 				case SymbolEditingMode.AddConnection:
-					_currentSelectedGraphGrammar.AddConnection(Alphabet.SelectedConnection);
+					GraphGrammarNode selectedNode = null;
+					if (_currentSelectedGraphGrammar.SelectedSymbol is GraphGrammarNode) {
+						selectedNode = (GraphGrammarNode) _currentSelectedGraphGrammar.SelectedSymbol;
+					} 
+					GraphGrammarConnection newConnection = _currentSelectedGraphGrammar.AddConnection(Alphabet.SelectedConnection);
+					if (selectedNode != null) {
+						// Auto stick on the node.
+						_currentSelectedGraphGrammar.StickyNode(newConnection, selectedNode.Position, "start");
+						newConnection.EndPosition = selectedNode.Position + new Vector2(35, 35);
+					} else {
+						// Appear the connection on the left-top of current canvas scroll position.
+						if (_currentSelectedGraphGrammar == _missionRule.SourceRule) {
+							newConnection.StartPosition = _sourceCanvasScrollPosition + new Vector2(10, 20);
+							newConnection.EndPosition   = _sourceCanvasScrollPosition + new Vector2(60, 20);
+						} else if(_currentSelectedGraphGrammar == _missionRule.ReplacementRule) {
+							newConnection.StartPosition = _replacementCanvasScrollPosition + new Vector2(10, 20);
+							newConnection.EndPosition   = _replacementCanvasScrollPosition + new Vector2(60, 20);
+						}
+					}
 					break;
 				}
 				Repaint();
