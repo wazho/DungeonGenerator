@@ -585,16 +585,18 @@ namespace MissionGrammarSystem {
 						selectedNode = (GraphGrammarNode) _currentSelectedGraphGrammar.SelectedSymbol;
 					} 
 					GraphGrammarConnection newConnection = _currentSelectedGraphGrammar.AddConnection(Alphabet.SelectedConnection);
-					if(selectedNode != null) {
+					if (selectedNode != null) {
+						// Auto stick on the node.
 						_currentSelectedGraphGrammar.StickyNode(newConnection, selectedNode.Position, "start");
-						newConnection.EndPosition = selectedNode.Position + new Vector2(20, -20);
+						newConnection.EndPosition = selectedNode.Position + new Vector2(35, 35);
 					} else {
-						if(_currentSelectedGraphGrammar == _missionRule.SourceRule) {
+						// Appear the connection on the left-top of current canvas scroll position.
+						if (_currentSelectedGraphGrammar == _missionRule.SourceRule) {
 							newConnection.StartPosition = _sourceCanvasScrollPosition + new Vector2(10, 20);
-							newConnection.EndPosition = _sourceCanvasScrollPosition + new Vector2(60, 20);
-						}else if(_currentSelectedGraphGrammar == _missionRule.ReplacementRule) {
+							newConnection.EndPosition   = _sourceCanvasScrollPosition + new Vector2(60, 20);
+						} else if(_currentSelectedGraphGrammar == _missionRule.ReplacementRule) {
 							newConnection.StartPosition = _replacementCanvasScrollPosition + new Vector2(10, 20);
-							newConnection.EndPosition = _replacementCanvasScrollPosition + new Vector2(60, 20);
+							newConnection.EndPosition   = _replacementCanvasScrollPosition + new Vector2(60, 20);
 						}
 					}
 					break;
