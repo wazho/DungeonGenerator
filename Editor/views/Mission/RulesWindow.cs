@@ -577,7 +577,8 @@ namespace MissionGrammarSystem {
 				// Add symbol.
 				switch (_currentTab) {
 				case SymbolEditingMode.AddNode:
-					_currentSelectedGraphGrammar.AddNode(Alphabet.SelectedNode);
+					GraphGrammarNode newNode = _currentSelectedGraphGrammar.AddNode(Alphabet.SelectedNode);
+					newNode.Position = _sourceCanvasScrollPosition + new Vector2(30, 30);
 					break;
 				case SymbolEditingMode.AddConnection:
 					_currentSelectedGraphGrammar.AddConnection(Alphabet.SelectedConnection);

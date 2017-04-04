@@ -121,7 +121,7 @@ namespace MissionGrammarSystem {
 			_selectedSymbol = node;
 		}
 		// Add a new node from another exist node.
-		public void AddNode(GraphGrammarNode nodeClone) {
+		public GraphGrammarNode AddNode(GraphGrammarNode nodeClone) {
 			RevokeAllSelected();
 			// Deep copy.
 			GraphGrammarNode node = new GraphGrammarNode(nodeClone);
@@ -129,6 +129,7 @@ namespace MissionGrammarSystem {
 			node.Selected = true;
 			_nodes.Add(node);
 			_selectedSymbol = node;
+			return node;
 		}
 		// Update symbol appearance.
 		public void UpdateSymbol(GraphGrammarSymbol before, GraphGrammarSymbol after) {
