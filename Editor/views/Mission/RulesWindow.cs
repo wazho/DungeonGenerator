@@ -578,7 +578,11 @@ namespace MissionGrammarSystem {
 				switch (_currentTab) {
 				case SymbolEditingMode.AddNode:
 					GraphGrammarNode newNode = _currentSelectedGraphGrammar.AddNode(Alphabet.SelectedNode);
-					newNode.Position = _sourceCanvasScrollPosition + new Vector2(30, 30);
+					if (_currentSelectedGraphGrammar == _missionRule.SourceRule) {
+						newNode.Position = _sourceCanvasScrollPosition + new Vector2(30, 30);
+					} else if ( _currentSelectedGraphGrammar == _missionRule.ReplacementRule ) {
+						newNode.Position = _replacementCanvasScrollPosition + new Vector2(30, 30);
+					}
 					break;
 				case SymbolEditingMode.AddConnection:
 					_currentSelectedGraphGrammar.AddConnection(Alphabet.SelectedConnection);
