@@ -1,12 +1,12 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
+using System.Linq;
 
 using EditorAdvance = EditorExtend.Advance;
-using EditorStyle = EditorExtend.Style;
+using EditorStyle   = EditorExtend.Style;
 
 using Mission = MissionGrammarSystem;
-using System.Linq;
 
 namespace GraphGeneration {
 	// Error type. 
