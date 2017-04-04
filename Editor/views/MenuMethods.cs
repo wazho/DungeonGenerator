@@ -25,22 +25,15 @@ public class DungeonWindow : EditorWindow {
 		_window.position = new Rect(35, 60, 500, 195);
 	}
 
-	// Add the 'Mission > Grammar settings' in 'Dungeon' menu.
-	[MenuItem("Dungeon/Mission/Grammar settings %#&ms", false, 11)]
-	public static void ShowMissionSettingWindow() {
-		_window = EditorWindow.GetWindow<Mission.SettingsWindow>("Mission settings", true);
-		_window.position = new Rect(35, 60, 500, 165);
-	}
-
 	// Add the 'Mission > Alphabet' in 'Dungeon' menu.
-	[MenuItem("Dungeon/Mission/Alphabet %#&ma", false, 12)]
+	[MenuItem("Dungeon/Mission/Alphabet %#&ma", false, 11)]
 	public static void ShowMissionAlphabetWindow() {
 		_window = EditorWindow.GetWindow<Mission.AlphabetWindow>("Mission alphabet", true);
 		_window.position = new Rect(35, 60, 500, 615);
 	}
 
 	// Add the 'Mission > Rules' in 'Dungeon' menu.
-	[MenuItem("Dungeon/Mission/Rules %#&mr", false, 13)]
+	[MenuItem("Dungeon/Mission/Rules %#&mr", false, 12)]
 	public static void ShowMissionRulesWindow() {
 		_window = EditorWindow.GetWindow<Mission.RulesWindow>("Mission rules", true);
 		_window.position = new Rect(35, 60, 750, 680);
