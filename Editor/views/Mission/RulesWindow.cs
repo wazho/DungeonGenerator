@@ -589,8 +589,13 @@ namespace MissionGrammarSystem {
 						_currentSelectedGraphGrammar.StickyNode(newConnection, selectedNode.Position, "start");
 						newConnection.EndPosition = selectedNode.Position + new Vector2(20, -20);
 					} else {
-						newConnection.StartPosition = _sourceCanvasScrollPosition + new Vector2(10, 20);
-						newConnection.EndPosition = _sourceCanvasScrollPosition + new Vector2(60, 20);
+						if(_currentSelectedGraphGrammar == _missionRule.SourceRule) {
+							newConnection.StartPosition = _sourceCanvasScrollPosition + new Vector2(10, 20);
+							newConnection.EndPosition = _sourceCanvasScrollPosition + new Vector2(60, 20);
+						}else if(_currentSelectedGraphGrammar == _missionRule.ReplacementRule) {
+							newConnection.StartPosition = _replacementCanvasScrollPosition + new Vector2(10, 20);
+							newConnection.EndPosition = _replacementCanvasScrollPosition + new Vector2(60, 20);
+						}
 					}
 					break;
 				}
