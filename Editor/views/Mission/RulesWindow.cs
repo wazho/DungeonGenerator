@@ -580,7 +580,7 @@ namespace MissionGrammarSystem {
 					GraphGrammarNode newNode = _currentSelectedGraphGrammar.AddNode(Alphabet.SelectedNode);
 					if (_currentSelectedGraphGrammar == _missionRule.SourceRule) {
 						newNode.Position = _sourceCanvasScrollPosition + new Vector2(30, 30);
-					} else if ( _currentSelectedGraphGrammar == _missionRule.ReplacementRule ) {
+					} else if (_currentSelectedGraphGrammar == _missionRule.ReplacementRule) {
 						newNode.Position = _replacementCanvasScrollPosition + new Vector2(30, 30);
 					}
 					break;
@@ -593,10 +593,10 @@ namespace MissionGrammarSystem {
 			// Button of modifying new symbol.
 			switch (_currentTab) {
 			case SymbolEditingMode.AddNode:
-				GUI.enabled = ( GUI.enabled && _currentSelectedGraphGrammar.SelectedSymbol is GraphGrammarNode);
+				GUI.enabled = (GUI.enabled && _currentSelectedGraphGrammar.SelectedSymbol is GraphGrammarNode);
 				break;
 			case SymbolEditingMode.AddConnection:
-				GUI.enabled = ( GUI.enabled && _currentSelectedGraphGrammar.SelectedSymbol is GraphGrammarConnection );
+				GUI.enabled = (GUI.enabled && _currentSelectedGraphGrammar.SelectedSymbol is GraphGrammarConnection);
 				break;
 			}
 			if (GUILayout.Button("Modify", EditorStyles.miniButtonMid, EditorStyle.ButtonHeight)) {
