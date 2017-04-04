@@ -169,13 +169,14 @@ namespace MissionGrammarSystem {
 			_selectedSymbol = connection;
 		}
 		// Add a new connection from another exist connection.
-		public void AddConnection(GraphGrammarConnection connectionClone) {
+		public GraphGrammarConnection AddConnection(GraphGrammarConnection connectionClone) {
 			RevokeAllSelected();
 			// Deep copy.
 			GraphGrammarConnection connection = new GraphGrammarConnection(connectionClone);
 			connection.Selected = true;
 			_connections.Add(connection);
 			_selectedSymbol = connection;
+			return connection;
 		}
 		// Set all 'seleted' of symbols to false.
 		public void RevokeAllSelected() {

@@ -580,7 +580,18 @@ namespace MissionGrammarSystem {
 					_currentSelectedGraphGrammar.AddNode(Alphabet.SelectedNode);
 					break;
 				case SymbolEditingMode.AddConnection:
-					_currentSelectedGraphGrammar.AddConnection(Alphabet.SelectedConnection);
+					GraphGrammarNode selectedNode = null;
+					if (_currentSelectedGraphGrammar.SelectedSymbol is GraphGrammarNode) {
+						selectedNode = (GraphGrammarNode) _currentSelectedGraphGrammar.SelectedSymbol;
+					} 
+					GraphGrammarConnection newConnection = _currentSelectedGraphGrammar.AddConnection(Alphabet.SelectedConnection);
+					if(selectedNode != null) {
+						_currentSelectedGraphGrammar.StickyNode(newConnection, selectedNode.Position, "start");
+						newConnection.EndPosition = selectedNode.Position + new Vector2(20, -20);
+					} else {
+						newConnection.StartPosition = _sourceCanvasScrollPosition + new Vector2(10, 20);
+						newConnection.EndPosition = _sourceCanvasScrollPosition + new Vector2(60, 20);
+					}
 					break;
 				}
 				Repaint();
