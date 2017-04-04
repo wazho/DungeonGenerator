@@ -38,7 +38,7 @@ namespace EditorExtend {
 		private static Rect _indexWindowCanvas = new Rect(0, 0, Screen.width, 250);
 		private static Rect _afterIndexWindowCanvasArea = new Rect(0, 250, Screen.width, Screen.height);
 
-		private static Rect _missionGraphCanvasArea = new Rect(0, 30, Screen.width, 300);
+		private static Rect _missionGraphCanvasArea = new Rect(0, 50, Screen.width, 300);
 
 		// Font size.
 		public static int HeaderFontSize {

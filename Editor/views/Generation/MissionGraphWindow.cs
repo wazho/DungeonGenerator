@@ -3,9 +3,10 @@ using UnityEditor;
 using System.Collections;
 
 using EditorAdvance = EditorExtend.Advance;
-using EditorStyle   = EditorExtend.Style;
+using EditorStyle = EditorExtend.Style;
 
 using Mission = MissionGrammarSystem;
+using System.Linq;
 
 namespace GraphGeneration {
 	// Error type. 
@@ -25,6 +26,10 @@ namespace GraphGeneration {
 		// error type & selected graph
 		private ErrorType  _errorType;
 		private GraphState _graphState;
+		// Starting index
+		private int _startingNodeIndex;
+		private int _tempStartingNodeIndex;
+		private string[] _nodeNames = Mission.Alphabet.Nodes.Select(n => n.ExpressName).ToArray();
 		// Canvas.
 		private Vector2 _canvasScrollPosition;
 		private int _missionGraphCanvasSizeWidth;
@@ -36,11 +41,22 @@ namespace GraphGeneration {
 			_errorType    = ErrorType.None;
 			_graphState   = GraphState.Mission;
 			_currentGraph = new Mission.GraphGrammar();
+			_startingNodeIndex = Mission.Alphabet.Nodes.FindIndex(x => x == Mission.Alphabet.StartingNode);
+			_nodeNames = Mission.Alphabet.Nodes.Select(n => n.ExpressName).ToArray();
 		}
-
+		// If Alphabet updated then update too.
+		void OnFocus() {
+			_startingNodeIndex = Mission.Alphabet.Nodes.FindIndex(x => x == Mission.Alphabet.StartingNode);
+			_nodeNames = Mission.Alphabet.Nodes.Select(n => n.ExpressName).ToArray();
+		}
 		void OnGUI() {
 			// Buttons for switching mission graph and space graph.
 			LayoutStateButtons();
+			_startingNodeIndex = EditorGUILayout.Popup("Starting Node", _startingNodeIndex, _nodeNames);
+			if(_startingNodeIndex != _tempStartingNodeIndex) {
+				_tempStartingNodeIndex = _startingNodeIndex;
+				Mission.Alphabet.StartingNode = Mission.Alphabet.Nodes[_startingNodeIndex];
+			}
 			// Canvas to draw current mission graph.
 			LayoutMissionGraphCanvas();
 			// Layout the list of mission group.
@@ -93,7 +109,7 @@ namespace GraphGeneration {
 		}
 		// Layout the list of mission group.
 		private void LayoutMissionGroupList() {
-			GUILayout.BeginArea(new Rect(0, 340, Screen.width, Screen.height));
+			GUILayout.BeginArea(new Rect(0, 360, Screen.width, Screen.height));
 			// HelpBox
 			EditorGUILayout.HelpBox(FormValidation(), MessageType.Info, true);
 			// Check boxies.
@@ -111,7 +127,7 @@ namespace GraphGeneration {
 		}
 		// Buttons for operating the graph.
 		private void LayoutFunctionButtons() {
-			GUILayout.BeginArea(new Rect(0, 540, Screen.width, Screen.height));
+			GUILayout.BeginArea(new Rect(0, 560, Screen.width, Screen.height));
 			// If error occur, disable apply button.
 			EditorGUI.BeginDisabledGroup(_errorType != ErrorType.None);
 			// Mission and Space Graph button.
