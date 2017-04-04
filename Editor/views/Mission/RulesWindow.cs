@@ -66,11 +66,12 @@ namespace MissionGrammarSystem {
 		private Vector2 _listScrollPosition;
 		private static Vector2 _positionInCanvas;
 		private GraphGrammar _currentSelectedGraphGrammar;
-        // Validate that the GroupName or RuleName is legal.
-        private static Regex _nameStringNoDoubleSpace = new Regex(@"\s\s\w");
-        private static Regex _nameEndOfStringNoSpace = new Regex(@"\s$");
+		// Validate that the GroupName or RuleName is legal.
+		private static Regex _nameStringNoDoubleSpace = new Regex(@"\s\s\w");
+		private static Regex _nameEndOfStringNoSpace = new Regex(@"\s$");
 
-        void Awake() {
+
+		void Awake() {
 			_editingMode          = EditingMode.None;
 			_currentTab           = SymbolEditingMode.None;
 			// [TODO] Here doesn't avoid the out of index, 
@@ -283,36 +284,36 @@ namespace MissionGrammarSystem {
 				_applyEditingButtonEnabled = false;
 				EditorGUILayout.HelpBox("Info \nThe name is illegal. \nCan't use more than one space continuously. \nEnd of name string can't be space. \nThe description is empty.", MessageType.Info);
 			}
-            if (_name != string.Empty && _description == string.Empty && _nameCanBeUsed == true && _nameStringNoDoubleSpace.IsMatch(_name) == true)
-            {
-                _applyEditingButtonEnabled = false;
-                EditorGUILayout.HelpBox("Info \nThe name is illegal. \nCan't use more than one space continuously. \nThe description is empty.", MessageType.Info);
-            }
-            if (_name != string.Empty && _description == string.Empty && _nameCanBeUsed == true && _nameEndOfStringNoSpace.IsMatch(_name) == true)
-            {
-                _applyEditingButtonEnabled = false;
-                EditorGUILayout.HelpBox("Info \nThe name is illegal. \nEnd of name string can't be space. \nThe description is empty.", MessageType.Info);
-            }
-            if (_name != string.Empty && _description != string.Empty && _nameCanBeUsed == false) {
+			if (_name != string.Empty && _description == string.Empty && _nameCanBeUsed == true && _nameStringNoDoubleSpace.IsMatch(_name) == true)
+			{
+				_applyEditingButtonEnabled = false;
+				EditorGUILayout.HelpBox("Info \nThe name is illegal. \nCan't use more than one space continuously. \nThe description is empty.", MessageType.Info);
+			}
+			if (_name != string.Empty && _description == string.Empty && _nameCanBeUsed == true && _nameEndOfStringNoSpace.IsMatch(_name) == true)
+			{
+				_applyEditingButtonEnabled = false;
+				EditorGUILayout.HelpBox("Info \nThe name is illegal. \nEnd of name string can't be space. \nThe description is empty.", MessageType.Info);
+			}
+			if (_name != string.Empty && _description != string.Empty && _nameCanBeUsed == false) {
 				_applyEditingButtonEnabled = false;
 				EditorGUILayout.HelpBox("Info \nThe name has been used before.", MessageType.Info);
 			}
-            if (_name != string.Empty && _description != string.Empty && _nameCanBeUsed == true && _nameStringNoDoubleSpace.IsMatch(_name) == true && _nameEndOfStringNoSpace.IsMatch(_name) == true)
-            {
-                _applyEditingButtonEnabled = false;
-                EditorGUILayout.HelpBox("Info \nThe name is illegal. \nCan't use more than one space continuously. \nEnd of name string can't be space.", MessageType.Info);
-            }
-            if (_name != string.Empty && _description != string.Empty && _nameCanBeUsed == true && _nameStringNoDoubleSpace.IsMatch(_name) == true)
-            {
-                _applyEditingButtonEnabled = false;
-                EditorGUILayout.HelpBox("Info \nThe name is illegal. \nCan't use more than one space continuously.", MessageType.Info);
-            }
-            if (_name != string.Empty && _description != string.Empty && _nameCanBeUsed == true && _nameEndOfStringNoSpace.IsMatch(_name) == true)
-            {
-                _applyEditingButtonEnabled = false;
-                EditorGUILayout.HelpBox("Info \nThe name is illegal. \nEnd of name string can't be space.", MessageType.Info);
-            }
-            if (_name != string.Empty && _description != string.Empty && _nameCanBeUsed == true && _nameStringNoDoubleSpace.IsMatch(_name) == false && _nameEndOfStringNoSpace.IsMatch(_name) == false) {
+			if (_name != string.Empty && _description != string.Empty && _nameCanBeUsed == true && _nameStringNoDoubleSpace.IsMatch(_name) == true && _nameEndOfStringNoSpace.IsMatch(_name) == true)
+			{
+				_applyEditingButtonEnabled = false;
+				EditorGUILayout.HelpBox("Info \nThe name is illegal. \nCan't use more than one space continuously. \nEnd of name string can't be space.", MessageType.Info);
+			}
+			if (_name != string.Empty && _description != string.Empty && _nameCanBeUsed == true && _nameStringNoDoubleSpace.IsMatch(_name) == true)
+			{
+				_applyEditingButtonEnabled = false;
+				EditorGUILayout.HelpBox("Info \nThe name is illegal. \nCan't use more than one space continuously.", MessageType.Info);
+			}
+			if (_name != string.Empty && _description != string.Empty && _nameCanBeUsed == true && _nameEndOfStringNoSpace.IsMatch(_name) == true)
+			{
+				_applyEditingButtonEnabled = false;
+				EditorGUILayout.HelpBox("Info \nThe name is illegal. \nEnd of name string can't be space.", MessageType.Info);
+			}
+			if (_name != string.Empty && _description != string.Empty && _nameCanBeUsed == true && _nameStringNoDoubleSpace.IsMatch(_name) == false && _nameEndOfStringNoSpace.IsMatch(_name) == false) {
 				_applyEditingButtonEnabled = true;
 				EditorGUILayout.HelpBox("Info \nNothing.", MessageType.Info);
 			}
@@ -604,10 +605,33 @@ namespace MissionGrammarSystem {
 				// Add symbol.
 				switch (_currentTab) {
 				case SymbolEditingMode.AddNode:
-					_currentSelectedGraphGrammar.AddNode(Alphabet.SelectedNode);
+					GraphGrammarNode newNode = _currentSelectedGraphGrammar.AddNode(Alphabet.SelectedNode);
+					if (_currentSelectedGraphGrammar == _missionRule.SourceRule) {
+						newNode.Position = _sourceCanvasScrollPosition + new Vector2(30, 30);
+					} else if (_currentSelectedGraphGrammar == _missionRule.ReplacementRule) {
+						newNode.Position = _replacementCanvasScrollPosition + new Vector2(30, 30);
+					}
 					break;
 				case SymbolEditingMode.AddConnection:
-					_currentSelectedGraphGrammar.AddConnection(Alphabet.SelectedConnection);
+					GraphGrammarNode selectedNode = null;
+					if (_currentSelectedGraphGrammar.SelectedSymbol is GraphGrammarNode) {
+						selectedNode = (GraphGrammarNode) _currentSelectedGraphGrammar.SelectedSymbol;
+					} 
+					GraphGrammarConnection newConnection = _currentSelectedGraphGrammar.AddConnection(Alphabet.SelectedConnection);
+					if (selectedNode != null) {
+						// Auto stick on the node.
+						_currentSelectedGraphGrammar.StickyNode(newConnection, selectedNode.Position, "start");
+						newConnection.EndPosition = selectedNode.Position + new Vector2(35, 35);
+					} else {
+						// Appear the connection on the left-top of current canvas scroll position.
+						if (_currentSelectedGraphGrammar == _missionRule.SourceRule) {
+							newConnection.StartPosition = _sourceCanvasScrollPosition + new Vector2(10, 20);
+							newConnection.EndPosition   = _sourceCanvasScrollPosition + new Vector2(60, 20);
+						} else if(_currentSelectedGraphGrammar == _missionRule.ReplacementRule) {
+							newConnection.StartPosition = _replacementCanvasScrollPosition + new Vector2(10, 20);
+							newConnection.EndPosition   = _replacementCanvasScrollPosition + new Vector2(60, 20);
+						}
+					}
 					break;
 				}
 				Repaint();
@@ -615,10 +639,10 @@ namespace MissionGrammarSystem {
 			// Button of modifying new symbol.
 			switch (_currentTab) {
 			case SymbolEditingMode.AddNode:
-				GUI.enabled = ( GUI.enabled && _currentSelectedGraphGrammar.SelectedSymbol is GraphGrammarNode);
+				GUI.enabled = (GUI.enabled && _currentSelectedGraphGrammar.SelectedSymbol is GraphGrammarNode);
 				break;
 			case SymbolEditingMode.AddConnection:
-				GUI.enabled = ( GUI.enabled && _currentSelectedGraphGrammar.SelectedSymbol is GraphGrammarConnection );
+				GUI.enabled = (GUI.enabled && _currentSelectedGraphGrammar.SelectedSymbol is GraphGrammarConnection);
 				break;
 			}
 			if (GUILayout.Button("Modify", EditorStyles.miniButtonMid, EditorStyle.ButtonHeight)) {
