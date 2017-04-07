@@ -27,13 +27,6 @@ namespace EditorExtend {
 		private static Rect _spaceRulePreviewArea     = new Rect (0, 200, Screen.width, 150);
 		private static Rect _spaceRulePreviewCanvas   = new Rect (0,   0, Screen.width, 150);
 
-		private static Rect _rulePreviewArea          = new Rect(0, 150, Screen.width, 300);
-		private static Rect _ruleSourceCanvasArea     = new Rect(0,  25, Screen.width / 2, 200);
-		private static Rect _ruleReplacementCanvasArea= new Rect(Screen.width / 2, 25, Screen.width / 2, 200);
-		private static Rect _ruleGraphGrammarCanvas   = new Rect(0, 0, Screen.width, 200);
-		private static Rect _ruleOrderingSliderArea   = new Rect(0, 390, Screen.width, 30);
-		private static Rect _afterRulePreviewArea     = new Rect(0, 420, Screen.width, Screen.height);
-
 		private static Rect _indexWindowCanvasArea = new Rect(0, 0, Screen.width, 250);
 		private static Rect _indexWindowCanvas = new Rect(0, 0, Screen.width, 250);
 		private static Rect _afterIndexWindowCanvasArea = new Rect(0, 250, Screen.width, Screen.height);
@@ -106,6 +99,8 @@ namespace EditorExtend {
 				return _afterAlphabetPreviewArea;
 			}
 		}
+
+		private static Rect _rulePreviewArea          = new Rect(0, 150, Screen.width, 300);
 		public static Rect RulePreviewArea {
 			get {
 				_rulePreviewArea.width = Screen.width;
@@ -138,8 +133,6 @@ namespace EditorExtend {
 		// RuleSourceCanvas
 		private static int _ruleSourceCanvasWidth = 10;
 		private static int _ruleSourceCanvasHeight = 10;
-		private static int _ruleSourceCanvasRightBorder = (int) (_ruleSourceCanvasWidth * 0.9);
-		private static int _ruleSourceCanvasBottomBorder = (int) (_ruleSourceCanvasHeight * 0.9);    
 		public static void ResizeRuleSourceCanvas(int width, int height) {
 			_ruleSourceCanvasWidth  = width;
 			_ruleSourceCanvasHeight = height;
@@ -154,6 +147,8 @@ namespace EditorExtend {
 				return _ruleSourceCanvas;
 			}
 		}
+		private static int _ruleSourceCanvasRightBorder = (int) (_ruleSourceCanvasWidth * 0.9);
+		private static int _ruleSourceCanvasBottomBorder = (int) (_ruleSourceCanvasHeight * 0.9);
 		private static GUIStyle _ruleSourceCanvasContent = new GUIStyle(GUI.skin.label);
 		public static GUIStyle RuleSourceCanvasContent {
 			get {
@@ -242,6 +237,12 @@ namespace EditorExtend {
 			}
 		}
 
+
+		private static Rect _ruleSourceCanvasArea     = new Rect(0,  25, Screen.width / 2, 200);
+		private static Rect _ruleReplacementCanvasArea= new Rect(Screen.width / 2, 25, Screen.width / 2, 200);
+		private static Rect _ruleGraphGrammarCanvas   = new Rect(0, 0, Screen.width, 200);
+		private static Rect _ruleOrderingSliderArea   = new Rect(0, 390, Screen.width, 30);
+		private static Rect _afterRulePreviewArea     = new Rect(0, 420, Screen.width, Screen.height);
 
 		public static Rect RuleSourceCanvasArea {
 			get {
