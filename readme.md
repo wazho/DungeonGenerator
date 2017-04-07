@@ -1,6 +1,6 @@
 ## Getting Started
 
-Clone or download in your Unity project folder **Editor**. Then extension will appear on the top of menu, it's called **Dungeon**.
+Clone or download in your Unity project folder **Assets**. Then extension will appear on the top of menu, it's called **Dungeon**.
 
 You can see some examples in the menu.
 
