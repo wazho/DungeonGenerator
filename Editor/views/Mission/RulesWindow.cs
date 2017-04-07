@@ -3,12 +3,12 @@ using UnityEditor;
 using System.Linq;
 using System.Collections;
 using System.Text.RegularExpressions;
+using System.Collections.Generic;
+using System;
 using Math = System.Math;
 
 using EditorAdvance = EditorExtend.Advance;
-using EditorStyle = EditorExtend.Style;
-using System.Collections.Generic;
-using System;
+using EditorStyle   = EditorExtend.Style;
 
 namespace MissionGrammarSystem {	
 	public class RulesWindow : EditorWindow {
@@ -576,6 +576,7 @@ namespace MissionGrammarSystem {
 		// Mouse up event
 		void OnMouseUpInCanvas() {
 			OnDraggedAndDroppedInCanvas();
+			// When mouse up and selected conecction stick successfully then record state.
 			if (_tempSticked) {
 				RecordState();
 			}
@@ -741,16 +742,20 @@ namespace MissionGrammarSystem {
 			// Redo & Undo Area
 			GUILayout.BeginArea(RedoUndoArea);
 			GUILayout.BeginHorizontal();
+			// Set the button disabled when it have no redo state.
 			EditorGUI.BeginDisabledGroup(!_sourceRuleState.hasRedoState);
 			if (GUILayout.Button(_redoTexture, EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
+				// Redo.
 				_currentSelectedGraphGrammar = _missionRule.SourceRule;
 				RedoState();
 				Repaint();
 				_currentTab = SymbolEditingMode.None;
 			}
 			EditorGUI.EndDisabledGroup();
+			// Set the button disabled when it have no undo state.
 			EditorGUI.BeginDisabledGroup(!_sourceRuleState.hasUndoState);
 			if (GUILayout.Button(_undoTexture, EditorStyles.miniButtonRight, EditorStyle.ButtonHeight)) {
+				// Undo.
 				_currentSelectedGraphGrammar = _missionRule.SourceRule;
 				UndoState();
 				Repaint();
@@ -788,16 +793,20 @@ namespace MissionGrammarSystem {
 			// Redo & Undo Area
 			GUILayout.BeginArea(RedoUndoArea);
 			GUILayout.BeginHorizontal();
+			// Set the button disabled when it have no redo state.
 			EditorGUI.BeginDisabledGroup(!_replaceRuleState.hasRedoState);
 			if (GUILayout.Button(_redoTexture, EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
+				// Redo.
 				_currentSelectedGraphGrammar = _missionRule.ReplacementRule;
 				RedoState();
 				Repaint();
 				_currentTab = SymbolEditingMode.None;
 			}
 			EditorGUI.EndDisabledGroup();
+			// Set the button disabled when it have no undo state.
 			EditorGUI.BeginDisabledGroup(!_replaceRuleState.hasUndoState);
 			if (GUILayout.Button(_undoTexture, EditorStyles.miniButtonRight, EditorStyle.ButtonHeight)) {
+				// Undo.
 				_currentSelectedGraphGrammar = _missionRule.ReplacementRule;
 				UndoState();
 				Repaint();
@@ -825,6 +834,7 @@ namespace MissionGrammarSystem {
 				}
 				_currentSelectedGraphGrammar.Nodes.Remove(node);
 				_currentSelectedGraphGrammar.SelectedSymbol = null;
+				// Record state when node has deleted.
 				RecordState();
 			} else if (_currentSelectedGraphGrammar.SelectedSymbol is GraphGrammarConnection) {
 				// Is connection.
@@ -837,6 +847,7 @@ namespace MissionGrammarSystem {
 				}
 				_currentSelectedGraphGrammar.Connections.Remove(connection);
 				_currentSelectedGraphGrammar.SelectedSymbol = null;
+				// Record state when connection has deleted.
 				RecordState();
 			}
 			
@@ -857,6 +868,7 @@ namespace MissionGrammarSystem {
 					_missionRule.ReplacementRule.StickyNode(_missionRule.ReplacementRule.Connections.LastOrDefault(), connection.EndPosition, "end");
 				}
 				_missionRule.ReplacementRule.RevokeAllSelected();
+				// Record state when grammar has copied. 
 				RecordState(_missionRule.ReplacementRule);
 			} else if (_currentSelectedGraphGrammar != null && _currentSelectedGraphGrammar == _missionRule.ReplacementRule) {
 				// Copy nodes.
@@ -873,10 +885,11 @@ namespace MissionGrammarSystem {
 					
 				}
 				_missionRule.SourceRule.RevokeAllSelected();
+				// Record state when grammar has copied. 
 				RecordState(_missionRule.SourceRule);
 			}
 		}
-
+		// Record State via _currentSelectedGraphGrammar.
 		void RecordState() {
 			if (_currentSelectedGraphGrammar == _missionRule.SourceRule) {
 				_sourceRuleState.AddState(_currentSelectedGraphGrammar);
@@ -884,6 +897,7 @@ namespace MissionGrammarSystem {
 				_replaceRuleState.AddState(_currentSelectedGraphGrammar);
 			}
 		}
+		// Record State via GraphGrammar parameter.
 		void RecordState(GraphGrammar graph) {
 			if (graph == _missionRule.SourceRule) {
 				_sourceRuleState.AddState(graph);
@@ -891,7 +905,7 @@ namespace MissionGrammarSystem {
 				_replaceRuleState.AddState(graph);
 			}
 		}
-
+		// Undo via _currentSelectedGraphGrammar.
 		void UndoState() {
 			if (_currentSelectedGraphGrammar == _missionRule.SourceRule) {
 				_sourceRuleState.Undo(ref _currentSelectedGraphGrammar);
@@ -899,6 +913,7 @@ namespace MissionGrammarSystem {
 				_replaceRuleState.Undo(ref _currentSelectedGraphGrammar);
 			}
 		}
+		// Redo via _currentSelectedGraphGrammar.
 		void RedoState() {
 			if (_currentSelectedGraphGrammar == _missionRule.SourceRule) {
 				_sourceRuleState.Redo(ref _currentSelectedGraphGrammar);
@@ -906,21 +921,28 @@ namespace MissionGrammarSystem {
 				_replaceRuleState.Redo(ref _currentSelectedGraphGrammar);
 			}
 		}
+		// The class used to record the state and execute redo/undo.
 		class StateRecorder {
+			// Default constructor.
 			public StateRecorder() {
 				_states = new List<State>() { new State() };
 				_index = 0;
 			}
+			// A constructor via GraphGrammar parameter.
 			public StateRecorder(GraphGrammar graph) {
+				// Add the GraphGrammar as origin.
 				_states = new List<State>() { new State(graph)};
 				_index = 0;
 			}
+			// Return true when this state can undo.
 			public bool hasUndoState {
 				get { return _index > 0; }
 			}
+			// Return true when this state can redo.
 			public bool hasRedoState {
 				get { return  _index < _states.Count - 1 ; }
 			}
+			// Add state
 			public void AddState(GraphGrammar graph) {
 				// Remove redo range.
 				if(_index < _states.Count - 1) {
@@ -928,16 +950,19 @@ namespace MissionGrammarSystem {
 				}
 				// Add state.
 				_states.Add(new State(graph));
-				// Full then pop.
+				// Full then remove it. Now can store 10 state(contain current state).
 				if (_states.Count > 10) {
 					_states.RemoveAt(0);
 				} else {
 					_index++;
 				}
 			}
+			// Undo.
 			public void Undo(ref GraphGrammar graph) {
+				// Back to previous state.
 				_index--;
 				State state = _states[_index];
+				// Transform state into GraphGrammar.
 				// Deep copy.
 				graph.Nodes = new List<GraphGrammarNode>();
 				for (int i = 0; i < state.Nodes.Length; i++) {
@@ -951,14 +976,17 @@ namespace MissionGrammarSystem {
 					graph.Connections[i].StartPosition = state.Connections[i].StartPosition;
 					graph.Connections[i].EndPosition = state.Connections[i].EndPosition;
 					graph.Connections[i].Ordering = state.Connections[i].Ordering;
+					// Stick.
 					graph.StickyNode(graph.Connections[i], graph.Connections[i].StartPosition, "start");
 					graph.StickyNode(graph.Connections[i], graph.Connections[i].EndPosition, "end");
 				}
 				graph.RevokeAllSelected();
 			}
 			public void Redo(ref GraphGrammar graph) {
+				// Next state.
 				_index++;
 				State state = _states[_index];
+				// Transform state into GraphGrammar.
 				// Deep copy.
 				graph.Nodes = new List<GraphGrammarNode>();
 				for (int i = 0; i < state.Nodes.Length; i++) {
@@ -972,11 +1000,13 @@ namespace MissionGrammarSystem {
 					graph.Connections[i].StartPosition = state.Connections[i].StartPosition;
 					graph.Connections[i].EndPosition = state.Connections[i].EndPosition;
 					graph.Connections[i].Ordering = state.Connections[i].Ordering;
+					// Stick.
 					graph.StickyNode(graph.Connections[i], graph.Connections[i].StartPosition, "start");
 					graph.StickyNode(graph.Connections[i], graph.Connections[i].EndPosition, "end");
 				}
 				graph.RevokeAllSelected();
 			}
+			
 			private List<State> _states;
 			private int _index;
 
@@ -984,6 +1014,7 @@ namespace MissionGrammarSystem {
 			private struct State {
 				public GraphGrammarNode[] Nodes;
 				public GraphGrammarConnection[] Connections;
+				// Transform GraphGrammar into State.
 				public State(GraphGrammar graph) {
 					// Deep copy.
 					Nodes = new GraphGrammarNode[graph.Nodes.Count];
