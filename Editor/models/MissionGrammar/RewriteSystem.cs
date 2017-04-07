@@ -140,21 +140,20 @@ namespace MissionGrammarSystem {
 			foreach (var originGroup in MissionGrammar.Groups) {
 				foreach (var originRule in originGroup.Rules) {
 					// If the rule is enabled.
-					if (originRule.Enable) {
-						// Declare the rule. Can use 'rule.SourceRoot' and 'rule.ReplacementRoot'.
-						Rule rule = new Rule();
-						int nodeCount;
-						// Transform source and replacement.
-						rule.Name = originGroup.Name + " - " + originRule.Name;
-						rule.SourceNodeTable      = TransformGraph(originRule.SourceRule, out nodeCount);
-						rule.SourceRoot           = rule.SourceNodeTable.FirstOrDefault();
-						rule.SourceNodeCount      = nodeCount;
-						rule.ReplacementNodeTable = TransformGraph(originRule.ReplacementRule, out nodeCount);
-						rule.ReplacementRoot      = rule.ReplacementNodeTable.FirstOrDefault();
-						rule.ReplacementNodeCount = nodeCount;
-						// Insert into the '_rules'.	
-						_rules.Add(rule);
-					}
+					if (originRule.Enable) { continue; }
+					// Declare the rule. Can use 'rule.SourceRoot' and 'rule.ReplacementRoot'.
+					Rule rule = new Rule();
+					int nodeCount;
+					// Transform source and replacement.
+					rule.Name = originGroup.Name + " - " + originRule.Name;
+					rule.SourceNodeTable      = TransformGraph(originRule.SourceRule, out nodeCount);
+					rule.SourceRoot           = rule.SourceNodeTable.FirstOrDefault();
+					rule.SourceNodeCount      = nodeCount;
+					rule.ReplacementNodeTable = TransformGraph(originRule.ReplacementRule, out nodeCount);
+					rule.ReplacementRoot      = rule.ReplacementNodeTable.FirstOrDefault();
+					rule.ReplacementNodeCount = nodeCount;
+					// Insert into the '_rules'.	
+					_rules.Add(rule);
 				}
 			}
 		}
