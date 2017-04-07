@@ -140,7 +140,7 @@ namespace MissionGrammarSystem {
 			foreach (var originGroup in MissionGrammar.Groups) {
 				foreach (var originRule in originGroup.Rules) {
 					// If the rule is enabled.
-					if (originRule.Enable) { continue; }
+					if (!originRule.Enable) { continue; }
 					// Declare the rule. Can use 'rule.SourceRoot' and 'rule.ReplacementRoot'.
 					Rule rule = new Rule();
 					int nodeCount;
