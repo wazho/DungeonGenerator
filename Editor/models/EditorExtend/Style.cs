@@ -4,20 +4,7 @@ using System.Collections;
 
 namespace EditorExtend {
 	public class Style {
-		// Font size.
-		private const int _headerFontSize  = 24;
-		private const int _contentFontSize = 12;
-		// Text field.
-		private const int _textFieldHeight = 15;
-		private const int _textAreaHeight  = 60;
-		// Button.
-		private const int _buttonHeight       = 20;
-		private const int _tabButtonHeight    = 25;
-		private const int _submitButtonHeight = 30;
-		// Block.
-		private const int _paddingAfterBlock = 10;
 		// Canvas.
-		private const int _alphabetSymbolListHeight = 150;
 		private static Rect _alphabetSymbolListArea   = new Rect(0,   0, Screen.width, 1000);
 		private static Rect _alphabetSymbolListCanvas = new Rect(0,   0, Screen.width, 1000);
 		private static Rect _alphabetPreviewArea      = new Rect(0, 250, Screen.width,  150);
@@ -34,34 +21,43 @@ namespace EditorExtend {
 		private static Rect _missionGraphCanvasArea = new Rect(0, 50, Screen.width, 300);
 
 		// Font size.
+		private const int _headerFontSize = 24;
 		public static int HeaderFontSize {
 			get { return _headerFontSize; }
 		}
+		private const int _contentFontSize = 12;
 		public static int ContentFontSize {
 			get { return _contentFontSize; }
 		}
 		// Text field.
+		private const int _textFieldHeight = 15;
 		public static GUILayoutOption TextFieldHeight {
 			get { return GUILayout.Height(_textFieldHeight); }
 		}
+		private const int _textAreaHeight  = 60;
 		public static GUILayoutOption TextAreaHeight {
 			get { return GUILayout.Height(_textAreaHeight); }
 		}
 		// Button.
+		private const int _buttonHeight = 20;
 		public static GUILayoutOption ButtonHeight {
 			get { return GUILayout.Height(_buttonHeight); }
 		}
+		private const int _tabButtonHeight = 25;
 		public static GUILayoutOption TabButtonHeight {
 			get { return GUILayout.Height(_tabButtonHeight); }
 		}
+		private const int _submitButtonHeight = 30;
 		public static GUILayoutOption SubmitButtonHeight {
 			get { return GUILayout.Height(_submitButtonHeight); }
 		}
 		// Block.
+		private const int _paddingAfterBlock = 10;
 		public static int PaddingAfterBlock {
 			get { return _paddingAfterBlock; }
 		}
 		// Canvas.
+		private const int _alphabetSymbolListHeight = 150;
 		public static GUILayoutOption AlphabetSymbolListHeight {
 			get { return GUILayout.Height(_alphabetSymbolListHeight); }
 		}

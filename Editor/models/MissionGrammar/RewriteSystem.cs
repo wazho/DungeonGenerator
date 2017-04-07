@@ -139,8 +139,8 @@ namespace MissionGrammarSystem {
 		private static void TransformRules() {
 			foreach (var originGroup in MissionGrammar.Groups) {
 				foreach (var originRule in originGroup.Rules) {
-					// If the rule is enabled.
-					if (!originRule.Enable) { continue; }
+					// If the rule isn't enabled, then skip it.
+					if (! originRule.Enable) { continue; }
 					// Declare the rule. Can use 'rule.SourceRoot' and 'rule.ReplacementRoot'.
 					Rule rule = new Rule();
 					int nodeCount;
@@ -152,7 +152,7 @@ namespace MissionGrammarSystem {
 					rule.ReplacementNodeTable = TransformGraph(originRule.ReplacementRule, out nodeCount);
 					rule.ReplacementRoot      = rule.ReplacementNodeTable.FirstOrDefault();
 					rule.ReplacementNodeCount = nodeCount;
-					// Insert into the '_rules'.	
+					// Insert into the '_rules'.
 					_rules.Add(rule);
 				}
 			}
@@ -187,7 +187,6 @@ namespace MissionGrammarSystem {
 			// [TEST] random rule
 			Rule[] randomRules = _rules.OrderBy(x => Random.value).ToArray();
 			foreach (var rule in randomRules) {
-				
 				// Compare the root node of rule.
 				if (rule.SourceRoot.AlphabetID == node.AlphabetID) {
 					// Clear index of all nodes.
