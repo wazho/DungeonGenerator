@@ -150,8 +150,10 @@ namespace MissionGrammarSystem {
 					rule.ReplacementNodeTable = TransformGraph(originRule.ReplacementRule, out nodeCount);
 					rule.ReplacementRoot      = rule.ReplacementNodeTable.FirstOrDefault();
 					rule.ReplacementNodeCount = nodeCount;
-					// Insert into the '_rules'.
-					_rules.Add(rule);
+					// If rule is enabled then insert into the '_rules'.
+					if (originRule.Enable) {
+						_rules.Add(rule);
+					}
 				}
 			}
 		}
@@ -185,6 +187,7 @@ namespace MissionGrammarSystem {
 			// [TEST] random rule
 			Rule[] randomRules = _rules.OrderBy(x => Random.value).ToArray();
 			foreach (var rule in randomRules) {
+				
 				// Compare the root node of rule.
 				if (rule.SourceRoot.AlphabetID == node.AlphabetID) {
 					// Clear index of all nodes.
