@@ -203,7 +203,11 @@ namespace SpaceGrammarSystem {
 			_symbolPreviewCanvas = EditorStyle.AlphabetPreviewCanvas;
 			EditorGUI.DrawRect(_symbolPreviewCanvas, Color.gray);
 			// To do : Draw the previewed symbol based on interface tab
-			GUILayout.EndArea ();
+			SpaceGrammarArea _area = new SpaceGrammarArea();
+			// [Will modify]
+			_area.Position = new Vector2(Screen.width / 2, _symbolPreviewCanvas.height / 2);
+			_area.Draw();
+			GUILayout.EndArea();
 		}
 
 		void LayoutFields(InterfaceTab tab){
