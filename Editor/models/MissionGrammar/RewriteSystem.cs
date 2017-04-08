@@ -184,7 +184,7 @@ namespace MissionGrammarSystem {
 			Rule[] randomRules = _rules.OrderBy(x => Random.value).ToArray();
 			foreach (var rule in randomRules) {
 				// Compare the root node of rule.
-				if (rule.SourceRoot.AlphabetID == node.AlphabetID) {
+				if (rule.SourceRoot.AlphabetID == Alphabet.AnyNode.AlphabetID || rule.SourceRoot.AlphabetID == node.AlphabetID) {
 					// Clear index of all nodes.
 					for (int i = 0; i < _relatedNodes.Count; i++) { _relatedNodes[i].Index = 0; }
 					_relatedNodes.Clear();
@@ -210,7 +210,8 @@ namespace MissionGrammarSystem {
 					// If this node index and the rule index have not be used
 					if (childNode.Index == 0 &&
 						! _usedIndexTable[childMatchNode.Index] &&
-						childNode.AlphabetID == childMatchNode.AlphabetID) {
+						(childNode.AlphabetID == childMatchNode.AlphabetID ||
+						childMatchNode.AlphabetID == Alphabet.AnyNode.AlphabetID )) {
 						// Record used connection, not node.
 						_usedIndexTable[childMatchNode.Index] = true;
 						childNode.Index = childMatchNode.Index;
@@ -253,7 +254,12 @@ namespace MissionGrammarSystem {
 		private static void ReplaceNodes(Rule matchedRule) {
 			// Replace the node from matched rule.
 			foreach (Node node in _relatedNodes) {
-				node.Update(matchedRule.FindReplacementByIndex(node.Index));
+				Node replaceNode = matchedRule.FindReplacementByIndex(node.Index);
+				// If any node then keep origin node.
+				if(replaceNode.AlphabetID == Alphabet.AnyNode.AlphabetID) {
+					continue;
+				}
+				node.Update(replaceNode);
 			}
 		}
 		// Step 4: Append the new nodes from replacement rule.

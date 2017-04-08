@@ -11,6 +11,7 @@ namespace MissionGrammarSystem {
 	public static class Alphabet {
 		// Default nodes in alphabet.
 		private static List<GraphGrammarNode> _nodes = new List<GraphGrammarNode>() {
+				new GraphGrammarNode("any",      "?",    "System default.", NodeTerminalType.Terminal),
 				new GraphGrammarNode("none",     "none", "System default.", NodeTerminalType.Terminal),
 				new GraphGrammarNode("entrance", "en",   "System default.", NodeTerminalType.Terminal),
 				new GraphGrammarNode("goal",     "go",   "System default.", NodeTerminalType.Terminal),
@@ -22,9 +23,10 @@ namespace MissionGrammarSystem {
 				new GraphGrammarConnection("Inhibition",         "System default.", ConnectionType.Inhibition,        ConnectionArrowType.WithCircle),
 			};
 		// Default settings.
-		private static GraphGrammarNode _startingNode = _nodes[0];
-		private static GraphGrammarNode _defaultNode  = _nodes[0];
+		private static GraphGrammarNode _startingNode = _nodes[1];
+		private static GraphGrammarNode _defaultNode  = _nodes[1];
 		private static ConnectionType   _defaultConnectionType;
+		private static GraphGrammarNode _anyNode = _nodes[0];
 
 		// Starting node in alphabet.
 		public static GraphGrammarNode StartingNode {
@@ -40,6 +42,11 @@ namespace MissionGrammarSystem {
 		public static ConnectionType DefaultConnectionType {
 			get { return _defaultConnectionType; }
 			set { _defaultConnectionType = value; }
+		}
+		// Default "Any" node.
+		public static GraphGrammarNode AnyNode {
+			get { return _anyNode; }
+			set { _anyNode = value; }
 		}
 		// Node list in alphabet.
 		public static List<GraphGrammarNode> Nodes {
