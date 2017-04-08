@@ -73,4 +73,11 @@ public class DungeonWindow : EditorWindow {
 		_window = EditorWindow.GetWindow<Generation.SpaceGraphWindow>("Generate space graph", true);
 		_window.position = _defaultSize;
 	}
+
+	// Add the 'SampleStyleWindow' in 'Dungeon' menu.
+	[MenuItem("Dungeon/SampleStyle", false, 33)]
+	public static void ShowSampleStyleWindow(){
+		_window = EditorWindow.GetWindow<SampleStyleWindow>("Sample Style Window");
+		_window.position = _defaultSize;
+	}
 }
