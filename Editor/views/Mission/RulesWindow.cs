@@ -100,10 +100,10 @@ namespace MissionGrammarSystem {
 			_nameCanBeUsed = false;
 			_applyEditingButtonEnabled = false;
 			_applySymbolEditingButtonEnabled = false;
-			_editIcon             = Resources.Load<Texture2D>("Icons/edit");
-			_deleteIcon           = Resources.Load<Texture2D>("Icons/delete");
-			_redoTexture          = Resources.Load<Texture2D>("Icons/redo");
-			_undoTexture          = Resources.Load<Texture2D>("Icons/undo");
+			_editIcon    = Resources.Load<Texture2D>("Icons/edit");
+			_deleteIcon  = Resources.Load<Texture2D>("Icons/delete");
+			_redoTexture = Resources.Load<Texture2D>("Icons/redo");
+			_undoTexture = Resources.Load<Texture2D>("Icons/undo");
 			_sourceCanvasScrollPosition      = Vector2.zero;
 			_replacementCanvasScrollPosition = Vector2.zero;
 			_listScrollPosition      = Vector2.zero;
@@ -743,9 +743,18 @@ namespace MissionGrammarSystem {
 			// Redo & Undo Area
 			GUILayout.BeginArea(RedoUndoArea);
 			GUILayout.BeginHorizontal();
+			// Set the button disabled when it have no undo state.
+			EditorGUI.BeginDisabledGroup(!_sourceRuleState.hasUndoState);
+			if (GUILayout.Button(_undoTexture, EditorStyles.miniButtonRight, Style.ButtonHeight)) {
+				// Undo.
+				_currentSelectedGraphGrammar = _missionRule.SourceRule;
+				UndoState();
+				Repaint();
+				_currentTab = SymbolEditingMode.None;
+			}
 			// Set the button disabled when it have no redo state.
 			EditorGUI.BeginDisabledGroup(!_sourceRuleState.hasRedoState);
-			if (GUILayout.Button(_redoTexture, EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
+			if (GUILayout.Button(_redoTexture, EditorStyles.miniButtonLeft, Style.ButtonHeight)) {
 				// Redo.
 				_currentSelectedGraphGrammar = _missionRule.SourceRule;
 				RedoState();
@@ -753,15 +762,6 @@ namespace MissionGrammarSystem {
 				_currentTab = SymbolEditingMode.None;
 			}
 			EditorGUI.EndDisabledGroup();
-			// Set the button disabled when it have no undo state.
-			EditorGUI.BeginDisabledGroup(!_sourceRuleState.hasUndoState);
-			if (GUILayout.Button(_undoTexture, EditorStyles.miniButtonRight, EditorStyle.ButtonHeight)) {
-				// Undo.
-				_currentSelectedGraphGrammar = _missionRule.SourceRule;
-				UndoState();
-				Repaint();
-				_currentTab = SymbolEditingMode.None;
-			}
 			EditorGUI.EndDisabledGroup();
 			GUILayout.EndHorizontal();
 			GUILayout.EndArea();
@@ -794,9 +794,18 @@ namespace MissionGrammarSystem {
 			// Redo & Undo Area
 			GUILayout.BeginArea(RedoUndoArea);
 			GUILayout.BeginHorizontal();
+			// Set the button disabled when it have no undo state.
+			EditorGUI.BeginDisabledGroup(!_replaceRuleState.hasUndoState);
+			if (GUILayout.Button(_undoTexture, EditorStyles.miniButtonRight, Style.ButtonHeight)) {
+				// Undo.
+				_currentSelectedGraphGrammar = _missionRule.ReplacementRule;
+				UndoState();
+				Repaint();
+				_currentTab = SymbolEditingMode.None;
+			}
 			// Set the button disabled when it have no redo state.
 			EditorGUI.BeginDisabledGroup(!_replaceRuleState.hasRedoState);
-			if (GUILayout.Button(_redoTexture, EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
+			if (GUILayout.Button(_redoTexture, EditorStyles.miniButtonLeft, Style.ButtonHeight)) {
 				// Redo.
 				_currentSelectedGraphGrammar = _missionRule.ReplacementRule;
 				RedoState();
@@ -804,15 +813,6 @@ namespace MissionGrammarSystem {
 				_currentTab = SymbolEditingMode.None;
 			}
 			EditorGUI.EndDisabledGroup();
-			// Set the button disabled when it have no undo state.
-			EditorGUI.BeginDisabledGroup(!_replaceRuleState.hasUndoState);
-			if (GUILayout.Button(_undoTexture, EditorStyles.miniButtonRight, EditorStyle.ButtonHeight)) {
-				// Undo.
-				_currentSelectedGraphGrammar = _missionRule.ReplacementRule;
-				UndoState();
-				Repaint();
-				_currentTab = SymbolEditingMode.None;
-			}
 			EditorGUI.EndDisabledGroup();
 			GUILayout.EndHorizontal();
 			GUILayout.EndArea();
