@@ -4,22 +4,72 @@ using System.Collections;
 
 namespace EditorExtend {
 	public class Style {
-		// Canvas.
-		private static Rect _alphabetSymbolListArea   = new Rect(0,   0, Screen.width, 1000);
-		private static Rect _alphabetSymbolListCanvas = new Rect(0,   0, Screen.width, 1000);
-		private static Rect _alphabetPreviewArea      = new Rect(0, 250, Screen.width,  150);
-		private static Rect _alphabetPreviewCanvas    = new Rect(0,   0, Screen.width,  150);
-		private static Rect _afterAlphabetPreviewArea = new Rect(0, 400, Screen.width, Screen.height);
-
-		private static Rect _spaceRulePreviewArea     = new Rect (0, 200, Screen.width, 150);
-		private static Rect _spaceRulePreviewCanvas   = new Rect (0,   0, Screen.width, 150);
-
 		private static Rect _indexWindowCanvasArea = new Rect(0, 0, Screen.width, 250);
 		private static Rect _indexWindowCanvas = new Rect(0, 0, Screen.width, 250);
 		private static Rect _afterIndexWindowCanvasArea = new Rect(0, 250, Screen.width, Screen.height);
 
-		private static Rect _missionGraphCanvasArea = new Rect(0, 50, Screen.width, 300);
+		// Block.
+		private const int _paddingAfterBlock = 10;
+		public static int PaddingAfterBlock {
+			get { return _paddingAfterBlock; }
+		}
 
+		public static Rect IndexWindowCanvas {
+			get {
+				_indexWindowCanvas.width = Screen.width;
+				return _indexWindowCanvas;
+			}
+		}
+		public static Rect IndexWindowCanvasArea {
+			get {
+				_indexWindowCanvasArea.width = Screen.width;
+				return _indexWindowCanvasArea;
+			}
+		}
+		public static Rect AfterIndexWindowCanvasArea {
+			get {
+				_afterIndexWindowCanvasArea.width = Screen.width;
+				return _afterIndexWindowCanvasArea;
+			}
+		}
+	}
+
+	public class CommonStyle {
+		// Header 1.
+		private static GUIStyle _headerOne = new GUIStyle(GUI.skin.label);
+		public static GUIStyle HeaderOne {
+			get {
+				if (_headerOne.name != "HeaderOne") {
+					_headerOne.fontSize  = 24;
+					_headerOne.alignment = TextAnchor.MiddleCenter;
+				}
+				return _headerOne;
+			}
+		}
+		// Height of header 1.
+		private const int _headerOneHeight = 30;
+		public static int HeaderOneHeight {
+			get { return _headerOneHeight; }
+		}
+		public static GUILayoutOption HeaderOneHeightLayout {
+			get { return GUILayout.Height(_headerOneHeight); }
+		}
+		// Header 2.
+		private static GUIStyle _headerTwo = new GUIStyle(GUI.skin.label);
+		public static GUIStyle HeaderTwo {
+			get {
+				if (_headerTwo.name != "HeaderTwo") {
+					_headerTwo.fontSize  = 18;
+					_headerTwo.alignment = TextAnchor.UpperLeft;
+				}
+				return _headerTwo;
+			}
+		}
+		// Block.
+		private const int _paddingSpace = 10;
+		public static int PaddingSpace {
+			get { return _paddingSpace; }
+		}
 		// Font size.
 		private const int _headerFontSize = 24;
 		public static int HeaderFontSize {
@@ -51,140 +101,119 @@ namespace EditorExtend {
 		public static GUILayoutOption SubmitButtonHeight {
 			get { return GUILayout.Height(_submitButtonHeight); }
 		}
-		// Block.
-		private const int _paddingAfterBlock = 10;
-		public static int PaddingAfterBlock {
-			get { return _paddingAfterBlock; }
-		}
-		// Canvas.
-		private const int _alphabetSymbolListHeight = 150;
-		public static GUILayoutOption AlphabetSymbolListHeight {
-			get { return GUILayout.Height(_alphabetSymbolListHeight); }
-		}
-		public static int AlphabetSymbolListHeightValue {
-			get { return _alphabetSymbolListHeight; }
-		}
-		public static Rect AlphabetSymbolListArea {
-			get {
-				_alphabetSymbolListArea.width = Screen.width;
-				return _alphabetSymbolListArea;
-			}
-		}
-		public static Rect AlphabetSymbolListCanvas {
-			get {
-				_alphabetSymbolListCanvas.width = Screen.width;
-				return _alphabetSymbolListCanvas;
-			}
-		}
-		public static Rect AlphabetPreviewArea {
-			get {
-				_alphabetPreviewArea.width = Screen.width;
-				return _alphabetPreviewArea;
-			}
-		}
-		public static Rect AlphabetPreviewCanvas {
-			get {
-				_alphabetPreviewCanvas.width = Screen.width;
-				return _alphabetPreviewCanvas;
-			}
-		}
-		public static Rect AfterAlphabetPreviewArea {
-			get {
-				_afterAlphabetPreviewArea.width  = Screen.width;
-				_afterAlphabetPreviewArea.height = Screen.height;
-				return _afterAlphabetPreviewArea;
-			}
-		}
+	}
 
-		private static Rect _rulePreviewArea          = new Rect(0, 150, Screen.width, 300);
-		public static Rect RulePreviewArea {
+	public class MissionAlphabetWindow {
+		private static Rect _symbolListArea = new Rect(0, 0, Screen.width, 1000);
+		public static Rect SymbolListArea {
 			get {
-				_rulePreviewArea.width = Screen.width;
-				return _rulePreviewArea;
+				_symbolListArea.width = Screen.width;
+				return _symbolListArea;
 			}
 		}
-		public static Rect IndexWindowCanvas {
+		private static Rect _symbolListCanvas = new Rect(0, 0, Screen.width, 1000);
+		public static Rect SymbolListCanvas {
 			get {
-				_indexWindowCanvas.width = Screen.width;
-				return _indexWindowCanvas;
+				_symbolListCanvas.width = Screen.width;
+				return _symbolListCanvas;
 			}
 		}
-		public static Rect IndexWindowCanvasArea {
+		private static Rect _symbolPreviewArea = new Rect(0, 250, Screen.width, 150);
+		public static Rect SymbolPreviewArea {
 			get {
-				_indexWindowCanvasArea.width = Screen.width;
-				return _indexWindowCanvasArea;
+				_symbolPreviewArea.width = Screen.width;
+				return _symbolPreviewArea;
 			}
 		}
-		public static Rect AfterIndexWindowCanvasArea {
+		private static Rect _symbolPreviewCanvas = new Rect(0, 0, Screen.width, 150);
+		public static Rect SymbolPreviewCanvas {
 			get {
-				_afterIndexWindowCanvasArea.width = Screen.width;
-				return _afterIndexWindowCanvasArea;
+				_symbolPreviewCanvas.width = Screen.width;
+				return _symbolPreviewCanvas;
 			}
 		}
+		private static Rect _symbolPropertiesArea = new Rect(0, 400, Screen.width, Screen.height);
+		public static Rect SymbolPropertiesArea {
+			get {
+				_symbolPropertiesArea.width  = Screen.width;
+				_symbolPropertiesArea.height = Screen.height;
+				return _symbolPropertiesArea;
+			}
+		}
+	}
 
-		private const int _ruleScrollViewHeight = 200;
-		public static GUILayoutOption RuleScrollViewHeight {
-			get { return GUILayout.Height(_ruleScrollViewHeight); }
-		}
-		// RuleSourceCanvas
-		private static int _ruleSourceCanvasWidth = 10;
-		private static int _ruleSourceCanvasHeight = 10;
-		public static void ResizeRuleSourceCanvas(int width, int height) {
-			_ruleSourceCanvasWidth  = width;
-			_ruleSourceCanvasHeight = height;
-			_ruleSourceCanvasRightBorder  = (int) (width * 0.9);
-			_ruleSourceCanvasBottomBorder = (int) (height * 0.9);
-		}
-		private static Rect _ruleSourceCanvas = new Rect(0, 0, _ruleSourceCanvasWidth, _ruleSourceCanvasHeight);
-		public static Rect RuleSourceCanvas {
+	public class MissionRuleWindow {
+		private static Rect _rulesArea = new Rect(0, 150, Screen.width, 300);
+		public static Rect RulesArea {
 			get {
-				_ruleSourceCanvas.width = _ruleSourceCanvasWidth;
-				_ruleSourceCanvas.height = _ruleSourceCanvasHeight;
-				return _ruleSourceCanvas;
+				_rulesArea.width = Screen.width;
+				return _rulesArea;
 			}
 		}
-		private static int _ruleSourceCanvasRightBorder = (int) (_ruleSourceCanvasWidth * 0.9);
-		private static int _ruleSourceCanvasBottomBorder = (int) (_ruleSourceCanvasHeight * 0.9);
-		private static GUIStyle _ruleSourceCanvasContent = new GUIStyle(GUI.skin.label);
-		public static GUIStyle RuleSourceCanvasContent {
+		private static Rect _sourceRuleArea = new Rect(0, 25, Screen.width / 2, 200);
+		public static Rect SourceRuleArea {
 			get {
-				_ruleSourceCanvasContent.padding.right  = _ruleSourceCanvasRightBorder;
-				_ruleSourceCanvasContent.padding.bottom = _ruleSourceCanvasBottomBorder;
-				return _ruleSourceCanvasContent;
+				_sourceRuleArea.width = Screen.width/2;
+				return _sourceRuleArea;
 			}
 		}
-		// RuleReplacementCanvas
-		private static int _ruleReplacementCanvasWidth = 10;
-		private static int _ruleReplacementCanvasHeight = 10;
-		private static int _ruleReplacementCanvasRightBorder = (int)(_ruleReplacementCanvasWidth * 0.9);
-		private static int _ruleReplacementCanvasBottomBorder = (int)(_ruleReplacementCanvasHeight * 0.9);
-		public static void ResizeRuleReplacementCanvas(int width, int height) {
-			_ruleReplacementCanvasWidth  = width;
-			_ruleReplacementCanvasHeight = height;
-			_ruleReplacementCanvasRightBorder  = (int)(width * 0.9);
-			_ruleReplacementCanvasBottomBorder = (int)(height * 0.9);
-		}
-		private static Rect _ruleReplacementCanvas = new Rect(0, 0, _ruleReplacementCanvasWidth, _ruleReplacementCanvasHeight);
-		public static Rect RuleReplacementCanvas {
+		private static Rect _replacementRuleArea = new Rect(Screen.width / 2, 25, Screen.width / 2, 200);
+		public static Rect ReplacementRuleArea {
 			get {
-				_ruleReplacementCanvas.width  = _ruleReplacementCanvasWidth;
-				_ruleReplacementCanvas.height = _ruleReplacementCanvasHeight;
-				return _ruleReplacementCanvas;
+				_replacementRuleArea.x = Screen.width / 2;
+				_replacementRuleArea.width = Screen.width/2;
+				return _replacementRuleArea;
 			}
 		}
-		private static GUIStyle _ruleReplacementCanvasContent = new GUIStyle(GUI.skin.label);
-		public static GUIStyle RuleReplacementCanvasContent {
+		private static Rect _ruleGraphGrammarCanvas = new Rect(0, 0, Screen.width, 200);
+		public static Rect RuleGraphGrammarCanvas {
 			get {
-				_ruleReplacementCanvasContent.padding.right  = _ruleReplacementCanvasRightBorder;
-				_ruleReplacementCanvasContent.padding.bottom = _ruleReplacementCanvasBottomBorder;
-				return _ruleReplacementCanvasContent;
+				_ruleGraphGrammarCanvas.width = Screen.width / 2;
+				return _ruleGraphGrammarCanvas;
+			}
+		}
+		private static Rect _orderingSliderArea = new Rect(0, 390, Screen.width, 30);
+		public static Rect OrderingSliderArea {
+			get {
+				_orderingSliderArea.width  = Screen.width;
+				return _orderingSliderArea;
+			}
+		}
+		private static Rect _editorArea = new Rect(0, 420, Screen.width, Screen.height);
+		public static Rect EditorArea {
+			get {
+				_editorArea.width  = Screen.width;
+				_editorArea.height = Screen.height;
+				return _editorArea;
+			}
+		}
+		private static Rect _symbolListArea = new Rect(0, 0, Screen.width, 1000);
+		public static Rect SymbolListArea {
+			get {
+				_symbolListArea.width = Screen.width;
+				return _symbolListArea;
+			}
+		}
+		private static Rect _symbolListCanvas = new Rect(0, 0, Screen.width, 1000);
+		public static Rect SymbolListCanvas {
+			get {
+				_symbolListCanvas.width = Screen.width;
+				return _symbolListCanvas;
+			}
+		}
+	}
+
+	public class GenerationWindow {
+		private static Rect _missionGraphCanvasArea = new Rect(0, 50, Screen.width, 300);
+		public static Rect MissionGraphArea {
+			get {
+				_missionGraphCanvasArea.width = Screen.width;
+				return _missionGraphCanvasArea;
 			}
 		}
 		// MissionGraphCanvas
 		private static int _missionGraphCanvasWidth  = 10;
 		private static int _missionGraphCanvasHeight = 10;
-		private static int _missionGraphCanvasRightBorder  = (int) (_missionGraphCanvasWidth - 10);
-		private static int _missionGraphCanvasBottomBorder = (int) (_missionGraphCanvasHeight - 20);
 		private static Rect _missionGraphCanvas = new Rect(0, 0, _missionGraphCanvasWidth, _missionGraphCanvasHeight);
 		public static Rect MissionGraphCanvas {
 			get {
@@ -196,83 +225,32 @@ namespace EditorExtend {
 		public static void ResizeMissionGraphCanvas(int width, int height) {
 			_missionGraphCanvasWidth  = width;
 			_missionGraphCanvasHeight = height;
-			_missionGraphCanvasRightBorder  = width - 10;
-			_missionGraphCanvasBottomBorder = height - 20;
 		}
 		private static GUIStyle _missionGraphCanvasContent = new GUIStyle(GUI.skin.label);
 		public static GUIStyle MissionGraphCanvasContent {
 			get {
-				_missionGraphCanvasContent.padding.right  = _missionGraphCanvasRightBorder;
-				_missionGraphCanvasContent.padding.bottom = _missionGraphCanvasBottomBorder;
+				// Values are ordered to avoid the boundary of canvas.
+				_missionGraphCanvasContent.padding.right  = _missionGraphCanvasWidth - 10;
+				_missionGraphCanvasContent.padding.bottom = _missionGraphCanvasHeight - 20;
 				return _missionGraphCanvasContent;
 			}
 		}
-		public static Rect RuleOrderingSliderArea {
-			get {
-				_ruleOrderingSliderArea.width  = Screen.width;
-				return _ruleOrderingSliderArea;
-			}
-		}
-		public static Rect AfterRulePreviewArea {
-			get {
-				_afterRulePreviewArea.width  = Screen.width;
-				_afterRulePreviewArea.height = Screen.height;
-				return _afterRulePreviewArea;
-			}
-		}
-		public static Rect SpaceRulePreviewArea {
-			get{
-				_spaceRulePreviewArea.width = Screen.width;
-				return _spaceRulePreviewArea;
-			}
-		}
-		public static Rect SpaceRulePreviewCanvas {
-			get{
-				_spaceRulePreviewCanvas.width = Screen.width;
-				return _spaceRulePreviewCanvas;
-			}
-		}
+	}
 
-
-		private static Rect _ruleSourceCanvasArea     = new Rect(0,  25, Screen.width / 2, 200);
-		private static Rect _ruleReplacementCanvasArea= new Rect(Screen.width / 2, 25, Screen.width / 2, 200);
-		private static Rect _ruleGraphGrammarCanvas   = new Rect(0, 0, Screen.width, 200);
-		private static Rect _ruleOrderingSliderArea   = new Rect(0, 390, Screen.width, 30);
-		private static Rect _afterRulePreviewArea     = new Rect(0, 420, Screen.width, Screen.height);
-
-		public static Rect RuleSourceCanvasArea {
-			get {
-				_ruleSourceCanvasArea.width = Screen.width/2;
-				return _ruleSourceCanvasArea;
-			}
+	public class SymbolList {
+		// Height of the container.
+		private const int _height = 150;
+		public static int Height {
+			get { return _height; }
 		}
-		public static Rect RuleReplacementCanvasArea {
-			get {
-				_ruleReplacementCanvasArea.x = Screen.width / 2;
-				_ruleReplacementCanvasArea.width = Screen.width/2;
-				return _ruleReplacementCanvasArea;
-			}
+		public static GUILayoutOption HeightLayout {
+			get { return GUILayout.Height(_height); }
 		}
-		public static Rect RuleGraphGrammarCanvas {
-			get {
-				_ruleGraphGrammarCanvas.width = Screen.width / 2;
-				return _ruleGraphGrammarCanvas;
-			}
-		}
-		public static Rect MissionGraphCanvasArea {
-			get {
-				_missionGraphCanvasArea.width = Screen.width;
-				return _missionGraphCanvasArea;
-			}
-		}
-		
-
-
-		private static GUIStyle _labelInNodeList       = new GUIStyle(GUI.skin.label);
+		// Using label to express the element border.
 		private static Font     _labelInNodeListFont   = Resources.Load("Fonts/texgyrecursor") as Font;
+		private static GUIStyle _labelInNodeList       = new GUIStyle(GUI.skin.label);
 		private static Vector2  _labelInNodeListOffset = new Vector2(55, 0);
-
-		public static GUIStyle LabelInNodeList {
+		public static GUIStyle NodeElement {
 			get {
 				if (_labelInNodeList.name != "LabelInNodeList") {
 					_labelInNodeList.name           = "LabelInNodeList";
@@ -286,11 +264,10 @@ namespace EditorExtend {
 				return _labelInNodeList;
 			}
 		}
-
+		// Using label to express the element border.
 		private static GUIStyle _labelInConnectionList       = new GUIStyle(GUI.skin.label);
 		private static Vector2  _labelInConnectionListOffset = new Vector2(75, 0);
-
-		public static GUIStyle LabelInConnectionList {
+		public static GUIStyle ConnectionElement {
 			get {
 				if (_labelInNodeList.name != "LabelInConnectionList") {
 					_labelInNodeList.name           = "LabelInConnectionList";
@@ -304,20 +281,60 @@ namespace EditorExtend {
 				return _labelInNodeList;
 			}
 		}
+	}
 
-
-		private const int _header2FontSize = 18;
-		private static GUIStyle _header2 = new GUIStyle(GUI.skin.label);
-
-		public static GUIStyle Header2 {
+	public class GraphCanvas {
+		private const int _ruleScrollViewHeight = 200;
+		public static GUILayoutOption RuleScrollViewHeightLayout {
+			get { return GUILayout.Height(_ruleScrollViewHeight); }
+		}
+		// RuleSourceCanvas
+		private static int _sourceCanvasWidth  = 10;
+		private static int _sourceCanvasHeight = 10;
+		public static void ResizeSourceCanvas(int width, int height) {
+			_sourceCanvasWidth  = width;
+			_sourceCanvasHeight = height;
+		}
+		private static Rect _sourceCanvas = new Rect(0, 0, _sourceCanvasWidth, _sourceCanvasHeight);
+		public static Rect SourceCanvas {
 			get {
-				if (_header2.name != "Header2") {
-					_header2.fontSize  = _header2FontSize;
-					_header2.alignment = TextAnchor.UpperLeft;
-				}
-				return _header2;
+				_sourceCanvas.width = _sourceCanvasWidth;
+				_sourceCanvas.height = _sourceCanvasHeight;
+				return _sourceCanvas;
 			}
 		}
-
+		private static GUIStyle _sourceCanvasContent = new GUIStyle(GUI.skin.label);
+		public static GUIStyle SourceCanvasContent {
+			get {
+				// 0.9 value is ordered to avoid the boundary of canvas.
+				_sourceCanvasContent.padding.right  = (int) (_sourceCanvasWidth * 0.9);
+				_sourceCanvasContent.padding.bottom = (int) (_sourceCanvasHeight * 0.9);
+				return _sourceCanvasContent;
+			}
+		}
+		// RuleReplacementCanvas
+		private static int _replacementCanvasWidth  = 10;
+		private static int _replacementCanvasHeight = 10;
+		public static void ResizeReplacementCanvas(int width, int height) {
+			_replacementCanvasWidth  = width;
+			_replacementCanvasHeight = height;
+		}
+		private static Rect _replacementCanvas = new Rect(0, 0, _replacementCanvasWidth, _replacementCanvasHeight);
+		public static Rect ReplacementCanvas {
+			get {
+				_replacementCanvas.width  = _replacementCanvasWidth;
+				_replacementCanvas.height = _replacementCanvasHeight;
+				return _replacementCanvas;
+			}
+		}
+		private static GUIStyle _replacementCanvasContent = new GUIStyle(GUI.skin.label);
+		public static GUIStyle ReplacementCanvasContent {
+			get {
+				// 0.9 value is ordered to avoid the boundary of canvas.
+				_replacementCanvasContent.padding.right  = (int) (_replacementCanvasWidth * 0.9);
+				_replacementCanvasContent.padding.bottom = (int) (_replacementCanvasHeight * 0.9);
+				return _replacementCanvasContent;
+			}
+		}
 	}
 }

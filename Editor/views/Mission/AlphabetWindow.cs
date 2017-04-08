@@ -3,9 +3,10 @@ using UnityEditor;
 using System.Linq;
 using System.Collections;
 using System.Text.RegularExpressions;
-
-using EditorAdvance = EditorExtend.Advance;
-using EditorStyle   = EditorExtend.Style;
+// Stylesheet.
+using Style      = EditorExtend.CommonStyle;
+using Container  = EditorExtend.MissionAlphabetWindow;
+using SymbolList = EditorExtend.SymbolList;
 
 namespace MissionGrammarSystem {
 	// The mission alphabet window.
@@ -48,7 +49,6 @@ namespace MissionGrammarSystem {
 		// The drawing canvas.
 		private Rect    _symbolListCanvas;
 		private Rect    _symbolListCanvasInWindow;
-		private Rect    _canvas;
 		private Vector2 _centerPosition;
 
 		// Native function for Editor Window. Trigger via opening the window.
@@ -65,7 +65,6 @@ namespace MissionGrammarSystem {
 			_connection               = new GraphGrammarConnection();
 			_symbolListCanvas         = new Rect(0, 0, Screen.width, Screen.height);
 			_symbolListCanvasInWindow = _symbolListCanvas;
-			_canvas                   = new Rect(0, 0, Screen.width, Screen.height);
 			_centerPosition           = new Vector2(Screen.width / 2, 75);
 			_connectionType           = ConnectionType.WeakRequirement;
 			_connectionArrowType      = ConnectionArrowType.Normal;
@@ -88,11 +87,11 @@ namespace MissionGrammarSystem {
 		void OnGUI() {
 			// Buttons - Nodes or Connections.
 			EditorGUILayout.BeginHorizontal();
-			if (GUILayout.Button("Nodes", EditorStyles.miniButtonLeft, EditorStyle.TabButtonHeight)) {
+			if (GUILayout.Button("Nodes", EditorStyles.miniButtonLeft, Style.TabButtonHeight)) {
 				_editingMode = EditingMode.None;
 				_currentTab  = AlphabetWindowTab.Nodes;
 			}
-			if (GUILayout.Button("Connections", EditorStyles.miniButtonRight, EditorStyle.TabButtonHeight)) {
+			if (GUILayout.Button("Connections", EditorStyles.miniButtonRight, Style.TabButtonHeight)) {
 				_editingMode = EditingMode.None;
 				_currentTab  = AlphabetWindowTab.Connections;
 			}
@@ -100,37 +99,30 @@ namespace MissionGrammarSystem {
 			// Toggle for nodes interface and connection interface.
 			switch (_currentTab) {
 			case AlphabetWindowTab.Nodes:
-				// [TODO] This style value is wrong format, must modify soon.
-				GUI.skin.label.fontSize  = EditorStyle.HeaderFontSize;
-				GUI.skin.label.alignment = TextAnchor.MiddleCenter;
-				GUILayout.Label("List of Nodes", GUILayout.Height(30));
-				GUI.skin.label.fontSize  = EditorStyle.ContentFontSize;
-				GUI.skin.label.alignment = TextAnchor.UpperLeft;
-				ShowNodesInterface();
+				// Header.
+				GUILayout.Label("List of Nodes", Style.HeaderOne, Style.HeaderOneHeightLayout);
+				// Content of nodes.
+				LayoutNodesInterface();
 				break;
 			case AlphabetWindowTab.Connections:
-				// [TODO] This style value is wrong format, must modify soon.
-				GUI.skin.label.fontSize  = EditorStyle.HeaderFontSize;
-				GUI.skin.label.alignment = TextAnchor.MiddleCenter;
-				GUILayout.Label("List of Connections", GUILayout.Height(30));
-				GUI.skin.label.fontSize  = EditorStyle.ContentFontSize;
-				GUI.skin.label.alignment = TextAnchor.UpperLeft;
-				ShowConnectionsInterface();
+				// Header.
+				GUILayout.Label("List of Connections", Style.HeaderOne, Style.HeaderOneHeightLayout);
+				// Content of connections.
+				LayoutConnectionsInterface();
 				break;
 			}
 			// Event controller.
 			EventController();
 		}
 		// Content of nodes.
-		void ShowNodesInterface() {
+		void LayoutNodesInterface() {
 			// Show the canvas, that is the list of nodes.
 			LayoutSymbolList();
 			// Buttons for switching editing mode.
 			LayoutEditingModeButtonGroup();
 			// Canvas for preview symbol.
-			GUILayout.BeginArea(EditorStyle.AlphabetPreviewArea);
-			_canvas = EditorStyle.AlphabetPreviewCanvas;
-			EditorGUI.DrawRect(_canvas, Color.gray);
+			GUILayout.BeginArea(Container.SymbolPreviewArea);
+			EditorGUI.DrawRect(Container.SymbolPreviewCanvas, Color.gray);
 			_centerPosition.x = Screen.width / 2;
 			_node.Position    = _centerPosition;
 			_node.Draw();
@@ -140,9 +132,9 @@ namespace MissionGrammarSystem {
 			case EditingMode.Create:
 			case EditingMode.Modify:
 				// Content of property.
-				GUILayout.BeginArea(EditorStyle.AfterAlphabetPreviewArea);
+				GUILayout.BeginArea(Container.SymbolPropertiesArea);
 				EditorGUILayout.BeginVertical();
-				GUILayout.Space(EditorStyle.PaddingAfterBlock);
+				GUILayout.Space(Style.PaddingSpace);
 				// Information of node.
 				_symbolTerminal     = (NodeTerminalType) EditorGUILayout.EnumPopup("Symbol Type", _symbolTerminal);
 				_symbolName         = EditorGUILayout.TextField("Name", _symbolName);
@@ -154,7 +146,7 @@ namespace MissionGrammarSystem {
 				// Update the node.
 				UpdateNode(_node);
 				EditorGUILayout.EndVertical();
-				GUILayout.Space(EditorStyle.PaddingAfterBlock);
+				GUILayout.Space(Style.PaddingSpace);
 				// Show content of submition.
 				LayoutSubmitionHint();
 				LayoutSubmitionButton();
@@ -163,15 +155,14 @@ namespace MissionGrammarSystem {
 			}
 		}
 		// Content of connections.
-		void ShowConnectionsInterface() {
+		void LayoutConnectionsInterface() {
 			// Show the canvas, that is the list of nodes.
 			LayoutSymbolList();
-			// Buttons for switching editing mode./*
+			// Buttons for switching editing mode.
 			LayoutEditingModeButtonGroup();
-			// Canvas.
-			GUILayout.BeginArea(EditorStyle.AlphabetPreviewArea);
-			_canvas = EditorStyle.AlphabetPreviewCanvas;
-			EditorGUI.DrawRect(_canvas, Color.gray);
+			// Canvas for preview symbol.
+			GUILayout.BeginArea(Container.SymbolPreviewArea);
+			EditorGUI.DrawRect(Container.SymbolPreviewCanvas, Color.gray);
 			// [TODO] This part (value assign) is temporary.
 			_centerPosition.x         = Screen.width / 2 - 25;
 			_connection.StartPosition = _centerPosition;
@@ -184,9 +175,9 @@ namespace MissionGrammarSystem {
 			case EditingMode.Create:
 			case EditingMode.Modify:
 				// Content of property.
-				GUILayout.BeginArea(EditorStyle.AfterAlphabetPreviewArea);
+				GUILayout.BeginArea(Container.SymbolPropertiesArea);
 				EditorGUILayout.BeginVertical();
-				GUILayout.Space(EditorStyle.PaddingAfterBlock);
+				GUILayout.Space(Style.PaddingSpace);
 				// Information of connection.
 				_symbolName          = EditorGUILayout.TextField("Name", _symbolName);
 				_symbolDescription   = EditorGUILayout.TextField("Description", _symbolDescription);
@@ -196,7 +187,7 @@ namespace MissionGrammarSystem {
 				// Update the conntection.
 				UpdateConnection(_connection);
 				EditorGUILayout.EndVertical();
-				GUILayout.Space(EditorStyle.PaddingAfterBlock);
+				GUILayout.Space(Style.PaddingSpace);
 				// Show content of submition.
 				LayoutSubmitionHint();
 				LayoutSubmitionButton();
@@ -207,10 +198,10 @@ namespace MissionGrammarSystem {
 		// Symbol list in node tab and connection tab.
 		void LayoutSymbolList() {
 			// Set the scroll position.
-			_scrollPosition = GUILayout.BeginScrollView(_scrollPosition, EditorStyle.AlphabetSymbolListHeight);
+			_scrollPosition = GUILayout.BeginScrollView(_scrollPosition, SymbolList.HeightLayout);
 			// Content of scroll area.
-			GUILayout.BeginArea(EditorStyle.AlphabetSymbolListArea);
-			_symbolListCanvas = EditorStyle.AlphabetSymbolListCanvas;
+			GUILayout.BeginArea(Container.SymbolListArea);
+			_symbolListCanvas = Container.SymbolListCanvas;
 			EditorGUI.DrawRect(_symbolListCanvas, Color.gray);
 			GUILayout.EndArea();
 			// Layout each symbols in list.
@@ -219,14 +210,14 @@ namespace MissionGrammarSystem {
 				foreach (var node in Alphabet.Nodes) {
 					Alphabet.DrawNodeInList(node);
 					// Custom style to modify padding and margin for label.
-					GUILayout.Label(node.ExpressName, EditorStyle.LabelInNodeList);
+					GUILayout.Label(node.ExpressName, SymbolList.NodeElement);
 				}
 				break;
 			case AlphabetWindowTab.Connections:
 				foreach (var connection in Alphabet.Connections) {
 					Alphabet.DrawConnectionInList(connection);
 					// Custom style to modify padding and margin for label.
-					GUILayout.Label(connection.Name, EditorStyle.LabelInConnectionList);
+					GUILayout.Label(connection.Name, SymbolList.ConnectionElement);
 				}
 				break;
 			}
@@ -239,7 +230,7 @@ namespace MissionGrammarSystem {
 		// Buttons about adding new symbol, modifying and deleting.
 		void LayoutEditingModeButtonGroup() {
 			EditorGUILayout.BeginHorizontal();
-			if (GUILayout.Button("Add New", EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
+			if (GUILayout.Button("Add New", EditorStyles.miniButtonLeft, Style.ButtonHeight)) {
 				// Switch the mode.
 				_editingMode = EditingMode.Create;
 				// Initial the preview node and connection.
@@ -258,11 +249,11 @@ namespace MissionGrammarSystem {
 				EditorGUI.BeginDisabledGroup(Alphabet.SelectedConnection == null);
 				break;
 			}
-			if (GUILayout.Button("Modify", EditorStyles.miniButtonMid, EditorStyle.ButtonHeight)) {
+			if (GUILayout.Button("Modify", EditorStyles.miniButtonMid, Style.ButtonHeight)) {
 				// Switch the mode.
 				_editingMode = EditingMode.Modify;
 			}
-			if (GUILayout.Button("Delete", EditorStyles.miniButtonRight, EditorStyle.ButtonHeight)) {
+			if (GUILayout.Button("Delete", EditorStyles.miniButtonRight, Style.ButtonHeight)) {
 				// Switch the mode.
 				_editingMode = EditingMode.Delete;
 				// Remove the node or connection from alphabet and repaint.
@@ -429,7 +420,7 @@ namespace MissionGrammarSystem {
 			switch (_editingMode) {
 			case EditingMode.Create:
 				GUI.enabled = (_messageType != MessageType.Error && _messageType != MessageType.Warning);
-				if (! GUILayout.Button("Add this symbol into alphabet", EditorStyles.miniButton, EditorStyle.ButtonHeight)) { break; }
+				if (! GUILayout.Button("Add this symbol into alphabet", EditorStyles.miniButton, Style.ButtonHeight)) { break; }
 				// When click the button, revoke all selected symbols and add the symbon in list.
 				switch (_currentTab) {
 				case AlphabetWindowTab.Nodes:
@@ -452,7 +443,7 @@ namespace MissionGrammarSystem {
 				break;
 			case EditingMode.Modify:
 				GUI.enabled = (_messageType != MessageType.Error && _messageType != MessageType.Warning);
-				if (! GUILayout.Button("Update the changed", EditorStyles.miniButton, EditorStyle.ButtonHeight)) { break; }
+				if (! GUILayout.Button("Update the changed", EditorStyles.miniButton, Style.ButtonHeight)) { break; }
 				// When click the button, update the symbol informations.
 				switch (_currentTab) {
 				case AlphabetWindowTab.Nodes:
@@ -480,7 +471,7 @@ namespace MissionGrammarSystem {
 		}
 		// [TODO] Temporary. The click event listener for list canvas.
 		void OnClickedElementInList(float y) {
-			if (y > 0 && y < EditorStyle.AlphabetSymbolListHeightValue) {
+			if (y > 0 && y < SymbolList.Height) {
 				// [TODO] This is temporary to assign value, will promote it soon.
 				int index = (int) (y + _scrollPosition.y) / 50;
 				Alphabet.RevokeAllSelected();

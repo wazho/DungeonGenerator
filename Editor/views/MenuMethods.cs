@@ -39,6 +39,7 @@ public class DungeonWindow : EditorWindow {
 		_window.position = new Rect(35, 60, 750, 680);
 	}
 
+/*
 	// Add the 'Space > Grammar settings' in 'Dungeon' menu.
 	[MenuItem("Dungeon/Space/Grammar settings %#&sa", false, 21)]
 	public static void ShowSpaceSettingWindow() {
@@ -59,7 +60,8 @@ public class DungeonWindow : EditorWindow {
 		_window = EditorWindow.GetWindow<Space.RulesWindow>("Space rules", true);
 		_window.position = _defaultSize;
 	}
-	
+*/
+
 	// Add the 'Generation > Mission' in 'Dungeon' menu.
 	[MenuItem("Dungeon/Generation/Mission", false, 31)]
 	public static void ShowGenerateMissionWindow() {
@@ -67,10 +69,12 @@ public class DungeonWindow : EditorWindow {
 		_window.position = _defaultSize;
 	}
 	
+/*
 	// Add the 'Generation > Space' in 'Dungeon' menu.
 	[MenuItem("Dungeon/Generation/Space", false, 32)]
 	public static void ShowGenerateSpaceWindow() {
 		_window = EditorWindow.GetWindow<Generation.SpaceGraphWindow>("Generate space graph", true);
 		_window.position = _defaultSize;
 	}
+*/
 }
