@@ -66,9 +66,6 @@ namespace MissionGrammarSystem {
 		private Vector2 _listScrollPosition;
 		private static Vector2 _positionInCanvas;
 		private GraphGrammar _currentSelectedGraphGrammar;
-		// Validate that the GroupName or RuleName is legal.
-		private static Regex _nameStringNoDoubleSpace = new Regex(@"\s\s\w");
-		private static Regex _nameEndOfStringNoSpace = new Regex(@"\s$");
 
 
 		void Awake() {
@@ -233,6 +230,9 @@ namespace MissionGrammarSystem {
 			}
 			EditorGUILayout.EndHorizontal();
 		}
+		// Validate that the GroupName or RuleName is legal.
+		private static Regex _nameStringNoDoubleSpace = new Regex(@"\s\s\w");
+		private static Regex _nameEndOfStringNoSpace  = new Regex(@"\s$");
 		// Layout the editor of mission group or mission rule.
 		void LayoutBasicInfoEditor() {
 			// Information of mission group or mission rule.
