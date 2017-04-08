@@ -9,6 +9,14 @@ using EditorStyle  = EditorExtend.Style;
 
 namespace MissionGrammarSystem {
 	public static class Alphabet {
+		// Initialization.
+		public static void Initial() {
+			_nodes.Clear();
+			_connections.Clear();
+			_startingNode = null;
+			_defaultNode  = null;
+	}
+
 		// Default nodes in alphabet.
 		private static List<GraphGrammarNode> _nodes = new List<GraphGrammarNode>() {
 				new GraphGrammarNode("none",     "none", "System default.", NodeTerminalType.Terminal),

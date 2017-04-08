@@ -11,6 +11,11 @@ using EditorStyle  = EditorExtend.Style;
 
 namespace MissionGrammarSystem {
 	public static class MissionGrammar {
+		// Initialization.
+		public static void Initial() {
+			_groups = new List<MissionGroup>() { new MissionGroup() };
+		}
+		
 		// Default mission group.
 		private static List<MissionGroup> _groups = new List<MissionGroup>() { new MissionGroup() };
 
