@@ -26,8 +26,11 @@ namespace DungeonLevel {
 					"Are you sure want to create a new level, this will overwrite the origin level?",
 					"Yes", "No")) {
 					// Initialization.
+					LevelSettingsWindow.Initial();
 					MissionGrammarSystem.Alphabet.Initial();
 					MissionGrammarSystem.MissionGrammar.Initial();
+					MissionGrammarSystem.RewriteSystem.Initial();
+					GraphGeneration.MissionGraphWindow.Initial();
 				}
 			}
 			if (GUILayout.Button("Import Level", EditorStyles.miniButtonMid, EditorStyle.TabButtonHeight)) {

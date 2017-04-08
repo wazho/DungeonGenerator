@@ -21,6 +21,10 @@ namespace GraphGeneration {
 	}
 
 	public class MissionGraphWindow : EditorWindow {
+		// Initialize.
+		public static void Initial() {
+			_currentGraph = new Mission.GraphGrammar();
+		}
 		// Scroll view.
 		private Vector2 _scrollView;
 		// error type & selected graph
@@ -34,7 +38,7 @@ namespace GraphGeneration {
 		private Vector2 _canvasScrollPosition;
 		private int _missionGraphCanvasSizeWidth;
 		private int _missionGraphCanvasSizeHeight;
-		private Mission.GraphGrammar _currentGraph = new Mission.GraphGrammar();
+		private static Mission.GraphGrammar _currentGraph = new Mission.GraphGrammar();
 
 		void Awake() {
 			_scrollView   = new Vector2(0, 50);

@@ -11,12 +11,19 @@ namespace MissionGrammarSystem {
 	public static class Alphabet {
 		// Initialization.
 		public static void Initial() {
-			_nodes.Clear();
-			_connections.Clear();
-			_startingNode = null;
-			_defaultNode  = null;
-	}
-
+			_nodes = new List<GraphGrammarNode>() {
+				new GraphGrammarNode("none",     "none", "System default.", NodeTerminalType.Terminal),
+				new GraphGrammarNode("entrance", "en",   "System default.", NodeTerminalType.Terminal),
+				new GraphGrammarNode("goal",     "go",   "System default.", NodeTerminalType.Terminal),
+			};
+			_connections = new List<GraphGrammarConnection>() {
+				new GraphGrammarConnection("Weak requirement",   "System default.", ConnectionType.WeakRequirement,   ConnectionArrowType.Normal),
+				new GraphGrammarConnection("Strong requirement", "System default.", ConnectionType.StrongRequirement, ConnectionArrowType.Double),
+				new GraphGrammarConnection("Inhibition",         "System default.", ConnectionType.Inhibition,        ConnectionArrowType.WithCircle),
+			};
+			_startingNode = _nodes[0];
+			_defaultNode  = _nodes[0];
+		}
 		// Default nodes in alphabet.
 		private static List<GraphGrammarNode> _nodes = new List<GraphGrammarNode>() {
 				new GraphGrammarNode("none",     "none", "System default.", NodeTerminalType.Terminal),

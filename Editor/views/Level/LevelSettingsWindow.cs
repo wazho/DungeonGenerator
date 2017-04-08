@@ -13,21 +13,39 @@ namespace DungeonLevel {
 	}
 
 	public class LevelSettingsWindow : EditorWindow {
+		// Initialization
+		public static void Initial() {
+			// Setting properties.
+			_name = string.Empty;
+			_abbreviation = string.Empty;
+			_description = string.Empty;
+			_tag = string.Empty;
+		}
+
 		// Name, Abbreviation, description, tag & ErrorType.
-		private string _name;
-		private string _abbreviation;
-		private string _description;
-		private string _tag;
-		private ErrorType _errorType;
+		private static string _name;
+		private static string _abbreviation;
+		private static string _description;
+		private static string _tag;
+
+		private ErrorType     _errorType;
+
+		public static string Name {
+			get { return _name; }
+		}
+		public static string Abbreviation {
+			get { return _abbreviation; }
+		}
+		public static string Description {
+			get { return _description; }
+		}
+		public static string Tag {
+			get { return _tag; }
+		}
 
 		void Awake() {
-			// Setting properties.
-			_name         = string.Empty;
-			_abbreviation = string.Empty;
-			_description  = string.Empty;
-			_tag          = string.Empty;
 			// Setting errors.
-			_errorType    = ErrorType.NoError;
+			_errorType = ErrorType.NoError;
 		}
 
 		void OnGUI() {
