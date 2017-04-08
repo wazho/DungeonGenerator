@@ -3,6 +3,8 @@ using UnityEditor;
 using System.Linq;
 using System.Collections;
 using System.Text.RegularExpressions;
+using System.Collections.Generic;
+using System;
 using Math = System.Math;
 // Stylesheet.
 using Style       = EditorExtend.CommonStyle;
@@ -53,6 +55,8 @@ namespace MissionGrammarSystem {
 		// The texture of icons.
 		private Texture2D _editIcon;
 		private Texture2D _deleteIcon;
+		private Texture2D _redoTexture;
+		private Texture2D _undoTexture;
 		// The drawing canvas.
 		private Rect _sourceCanvas;
 		private Rect _replacementCanvas;
@@ -69,6 +73,16 @@ namespace MissionGrammarSystem {
 		private Vector2 _listScrollPosition;
 		private Vector2 _positionInCanvas;
 		private GraphGrammar _currentSelectedGraphGrammar;
+		private StateRecorder _sourceRuleState = new StateRecorder();
+		private StateRecorder _replaceRuleState = new StateRecorder();
+		// [Will move to Style.cs]
+		private static Rect _redoUndoArea = new Rect(Screen.width / 2 - 120, 0, 100, 25);
+		public static Rect RedoUndoArea {
+			get {
+				_redoUndoArea.x = Screen.width / 2 - 120;
+				return _redoUndoArea;
+			}
+		} 
 
 		void Awake() {
 			_editingMode          = EditingMode.None;
@@ -88,6 +102,8 @@ namespace MissionGrammarSystem {
 			_applySymbolEditingButtonEnabled = false;
 			_editIcon             = Resources.Load<Texture2D>("Icons/edit");
 			_deleteIcon           = Resources.Load<Texture2D>("Icons/delete");
+			_redoTexture          = Resources.Load<Texture2D>("Icons/redo");
+			_undoTexture          = Resources.Load<Texture2D>("Icons/undo");
 			_sourceCanvasScrollPosition      = Vector2.zero;
 			_replacementCanvasScrollPosition = Vector2.zero;
 			_listScrollPosition      = Vector2.zero;
@@ -96,7 +112,14 @@ namespace MissionGrammarSystem {
 			_replacementCanvasWidth  = Screen.width;
 			_replacementCanvasHeight = 200;
 			_currentSelectedGraphGrammar = _missionRule.SourceRule;
+			_sourceRuleState = new StateRecorder(_missionRule.SourceRule);
+			_replaceRuleState = new StateRecorder(_missionRule.ReplacementRule);
+			
 			Alphabet.RevokeAllSelected();
+		}
+		void OnFocus() {
+			_tempIndexOfGroupsOptions = -1;
+			_tempIndexOfRulesOptions = -1;
 		}
 
 		void OnGUI() {
@@ -112,11 +135,6 @@ namespace MissionGrammarSystem {
 			case EditingMode.CreateRule:
 				LayoutBasicInfoEditor();
 				break;
-			}
-			// Avoid the out of index.
-			if (_indexOfGroupsOptions < _groupsOptions.Length && _indexOfRulesOptions < _rulesOptions.Length) {
-				// Update the graph grammars below canvas.
-				_missionRule = MissionGrammar.Groups[_indexOfGroupsOptions].Rules[_indexOfRulesOptions];
 			}
 			// Layout the canvas areas of two graph grammars.
 			LayoutRulesCanvasArea();
@@ -138,7 +156,16 @@ namespace MissionGrammarSystem {
 				_indexOfRulesOptions = 0;
 				// Update the rules of selected group.
 				_rulesOptions = MissionGrammar.Groups[_indexOfGroupsOptions].Rules.Select(r => r.Name).ToArray();
+				// Avoid the out of index.
+				if (_indexOfGroupsOptions < _groupsOptions.Length && _indexOfRulesOptions < _rulesOptions.Length) {
+					// Update the graph grammars below canvas.
+					_missionRule = MissionGrammar.Groups[_indexOfGroupsOptions].Rules[_indexOfRulesOptions];
+					_sourceRuleState = new StateRecorder(_missionRule.SourceRule);
+					_replaceRuleState = new StateRecorder(_missionRule.ReplacementRule);
+				}
 				_currentSelectedGraphGrammar = null;
+				ResizeResponsiveCanvas(_missionRule.SourceRule);
+				ResizeResponsiveCanvas(_missionRule.ReplacementRule);
 			}
 			// Sub-button of editor, edit the group.
 			if (GUILayout.Button(_editIcon, EditorStyles.miniButtonLeft, Style.ButtonHeight)) {
@@ -181,7 +208,16 @@ namespace MissionGrammarSystem {
 				// Switch mode.
 				_editingMode             = EditingMode.None;
 				_tempIndexOfRulesOptions = _indexOfRulesOptions;
+				// Avoid the out of index.
+				if (_indexOfGroupsOptions < _groupsOptions.Length && _indexOfRulesOptions < _rulesOptions.Length) {
+					// Update the graph grammars below canvas.
+					_missionRule = MissionGrammar.Groups[_indexOfGroupsOptions].Rules[_indexOfRulesOptions];
+					_sourceRuleState = new StateRecorder(_missionRule.SourceRule);
+					_replaceRuleState = new StateRecorder(_missionRule.ReplacementRule);
+				}
 				_currentSelectedGraphGrammar = null;
+				ResizeResponsiveCanvas(_missionRule.SourceRule);
+				ResizeResponsiveCanvas(_missionRule.ReplacementRule);
 			}
 			// Sub-button of editor, edit the rule.
 			if (GUILayout.Button(_editIcon, EditorStyles.miniButtonLeft, Style.ButtonHeight)) {
@@ -349,6 +385,7 @@ namespace MissionGrammarSystem {
 						node.Ordering = _currentSelectedGraphGrammar.SelectedSymbol.Ordering;
 					}
 					_currentSelectedGraphGrammar.SelectedSymbol.Ordering = sliderOrdering;
+					RecordState();
 				}
 
 			}
@@ -415,10 +452,13 @@ namespace MissionGrammarSystem {
 				OnClickedSymbolInCanvas();
 			} else if (Event.current.type == EventType.MouseDrag) {
 				// Drag and drop event, could move the symbols of canvas.
-				OnDraggedAndDroppedInCanvas();
+				if (Event.current.delta.magnitude > 1.0f) {
+					OnDraggedAndDroppedInCanvas();
+				}
+			} else if (Event.current.type == EventType.MouseUp) {
+				OnMouseUpInCanvas();
 			}
 		}
-
 		// Click Event
 		void OnClickedSymbolInCanvas() {
 			if (_sourceCanvas.Contains(Event.current.mousePosition)) {
@@ -453,7 +493,9 @@ namespace MissionGrammarSystem {
 		// Drag and drop event
 		private static GraphGrammarNode       _tempNode;
 		private static GraphGrammarConnection _tempConnection;
+		private static bool _tempSticked;
 		void OnDraggedAndDroppedInCanvas() {
+			_tempSticked = false;
 			// If mouse position is in the canvas of source rule. 
 			if (_sourceCanvas.Contains(Event.current.mousePosition)) {
 				// Revoke all of the selected in replacement canvas.
@@ -470,16 +512,24 @@ namespace MissionGrammarSystem {
 					// Start point.
 					if (_tempConnection.StartSelected) {
 						_tempConnection.StartPosition = _positionInCanvas;
-						_missionRule.SourceRule.StickyNode(_tempConnection, _positionInCanvas, "start");
+						if(_missionRule.SourceRule.StickyNode(_tempConnection, _positionInCanvas, "start")) {
+							_tempSticked = true;
+						} else {
+							_tempSticked = false;
+						}
 					}
 					// End point.
 					else if (_tempConnection.EndSelected) {
 						_tempConnection.EndPosition = _positionInCanvas;
-						_missionRule.SourceRule.StickyNode(_tempConnection, _positionInCanvas, "end");
+						if(_missionRule.SourceRule.StickyNode(_tempConnection, _positionInCanvas, "end")) {
+							_tempSticked = true;
+						} else {
+							_tempSticked = false;
+						}
 					}
 				}
 				// When drag and drop the nodes, auto-resize the canvas size.
-				ResizeResponsiveCanvas();
+				ResizeResponsiveCanvas(_currentSelectedGraphGrammar);
 				// Refresh the layout.
 				Repaint();
 			}
@@ -499,16 +549,24 @@ namespace MissionGrammarSystem {
 					// Start point.
 					if (_tempConnection.StartSelected) {
 						_tempConnection.StartPosition = _positionInCanvas;
-						_missionRule.ReplacementRule.StickyNode(_tempConnection, _positionInCanvas, "start");
+						if(_missionRule.ReplacementRule.StickyNode(_tempConnection, _positionInCanvas, "start")) {
+							_tempSticked = true;
+						} else {
+							_tempSticked = false;
+						}
 					}
 					// End point.
 					else if (_tempConnection.EndSelected) {
 						_tempConnection.EndPosition = _positionInCanvas;
-						_missionRule.ReplacementRule.StickyNode(_tempConnection, _positionInCanvas, "end");
+						if (_missionRule.ReplacementRule.StickyNode(_tempConnection, _positionInCanvas, "end")) {
+							_tempSticked = true;
+						} else {
+							_tempSticked = false;
+						}
 					}
 				}
 				// When drag and drop the nodes, auto-resize the canvas size.
-				ResizeResponsiveCanvas();
+				ResizeResponsiveCanvas(_currentSelectedGraphGrammar);
 				// Refresh the layout.
 				Repaint();
 			}
@@ -516,21 +574,30 @@ namespace MissionGrammarSystem {
 			_tempNode = null;
 			_tempConnection = null;
 		}
+		// Mouse up event
+		void OnMouseUpInCanvas() {
+			OnDraggedAndDroppedInCanvas();
+			// When mouse up and selected conecction stick successfully then record state.
+			if (_tempSticked) {
+				RecordState();
+			}
+		}
+
 		// When drag and drop the nodes, auto-resize the canvas size.
 		// [TODO] Fixed the magic number after the Style.cs optimizing.
-		void ResizeResponsiveCanvas() {
-			if (_currentSelectedGraphGrammar == _missionRule.SourceRule) {
+		void ResizeResponsiveCanvas(GraphGrammar graph) {
+			if (graph == _missionRule.SourceRule) {
 				if (_missionRule.SourceRule.Nodes.Any()) {
-					_sourceCanvasWidth  = (int) Math.Max(_missionRule.SourceRule.Nodes.Max(n => n.PositionX) + 150, 200);
-					_sourceCanvasHeight = (int) Math.Max(_missionRule.SourceRule.Nodes.Max(n => n.PositionY) + 150, 200);
+					_sourceCanvasWidth  = (int) Math.Max(_missionRule.SourceRule.Nodes.Max(n => n.PositionX) + 150, Screen.width / 2);
+					_sourceCanvasHeight = (int) Math.Max(_missionRule.SourceRule.Nodes.Max(n => n.PositionY) + 150, 300);
 				} else {
 					_sourceCanvasWidth  = Screen.width / 2;
 					_sourceCanvasHeight = 300;
 				}
-			} else if (_currentSelectedGraphGrammar == _missionRule.ReplacementRule) {
+			} else if (graph == _missionRule.ReplacementRule) {
 				if (_missionRule.ReplacementRule.Nodes.Any()) {
-					_replacementCanvasWidth  = (int) Math.Max(_missionRule.ReplacementRule.Nodes.Max(n => n.PositionX) + 150, 200);
-					_replacementCanvasHeight = (int) Math.Max(_missionRule.ReplacementRule.Nodes.Max(n => n.PositionY) + 150, 200);
+					_replacementCanvasWidth  = (int) Math.Max(_missionRule.ReplacementRule.Nodes.Max(n => n.PositionX) + 150, Screen.width / 2);
+					_replacementCanvasHeight = (int) Math.Max(_missionRule.ReplacementRule.Nodes.Max(n => n.PositionY) + 150, 300);
 				} else {
 					_replacementCanvasWidth  = Screen.width / 2;
 					_replacementCanvasHeight = 300;
@@ -598,6 +665,7 @@ namespace MissionGrammarSystem {
 					} else if (_currentSelectedGraphGrammar == _missionRule.ReplacementRule) {
 						newNode.Position = _replacementCanvasScrollPosition + new Vector2(30, 30);
 					}
+					RecordState();
 					break;
 				case SymbolEditingMode.AddConnection:
 					GraphGrammarNode selectedNode = null;
@@ -619,6 +687,7 @@ namespace MissionGrammarSystem {
 							newConnection.EndPosition   = _replacementCanvasScrollPosition + new Vector2(60, 20);
 						}
 					}
+					RecordState();
 					break;
 				}
 				Repaint();
@@ -671,6 +740,31 @@ namespace MissionGrammarSystem {
 				_currentSelectedConnection.Draw();
 			}
 			GUILayout.EndScrollView();
+			// Redo & Undo Area
+			GUILayout.BeginArea(RedoUndoArea);
+			GUILayout.BeginHorizontal();
+			// Set the button disabled when it have no redo state.
+			EditorGUI.BeginDisabledGroup(!_sourceRuleState.hasRedoState);
+			if (GUILayout.Button(_redoTexture, EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
+				// Redo.
+				_currentSelectedGraphGrammar = _missionRule.SourceRule;
+				RedoState();
+				Repaint();
+				_currentTab = SymbolEditingMode.None;
+			}
+			EditorGUI.EndDisabledGroup();
+			// Set the button disabled when it have no undo state.
+			EditorGUI.BeginDisabledGroup(!_sourceRuleState.hasUndoState);
+			if (GUILayout.Button(_undoTexture, EditorStyles.miniButtonRight, EditorStyle.ButtonHeight)) {
+				// Undo.
+				_currentSelectedGraphGrammar = _missionRule.SourceRule;
+				UndoState();
+				Repaint();
+				_currentTab = SymbolEditingMode.None;
+			}
+			EditorGUI.EndDisabledGroup();
+			GUILayout.EndHorizontal();
+			GUILayout.EndArea();
 		}
 
 		void ShowReplacementCanvas() {
@@ -697,6 +791,31 @@ namespace MissionGrammarSystem {
 				_currentSelectedConnection.Draw();
 			}
 			GUILayout.EndScrollView();
+			// Redo & Undo Area
+			GUILayout.BeginArea(RedoUndoArea);
+			GUILayout.BeginHorizontal();
+			// Set the button disabled when it have no redo state.
+			EditorGUI.BeginDisabledGroup(!_replaceRuleState.hasRedoState);
+			if (GUILayout.Button(_redoTexture, EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
+				// Redo.
+				_currentSelectedGraphGrammar = _missionRule.ReplacementRule;
+				RedoState();
+				Repaint();
+				_currentTab = SymbolEditingMode.None;
+			}
+			EditorGUI.EndDisabledGroup();
+			// Set the button disabled when it have no undo state.
+			EditorGUI.BeginDisabledGroup(!_replaceRuleState.hasUndoState);
+			if (GUILayout.Button(_undoTexture, EditorStyles.miniButtonRight, EditorStyle.ButtonHeight)) {
+				// Undo.
+				_currentSelectedGraphGrammar = _missionRule.ReplacementRule;
+				UndoState();
+				Repaint();
+				_currentTab = SymbolEditingMode.None;
+			}
+			EditorGUI.EndDisabledGroup();
+			GUILayout.EndHorizontal();
+			GUILayout.EndArea();
 		}
 		// Delete selected symbol.
 		void DeleteSelectedNode() {
@@ -716,6 +835,8 @@ namespace MissionGrammarSystem {
 				}
 				_currentSelectedGraphGrammar.Nodes.Remove(node);
 				_currentSelectedGraphGrammar.SelectedSymbol = null;
+				// Record state when node has deleted.
+				RecordState();
 			} else if (_currentSelectedGraphGrammar.SelectedSymbol is GraphGrammarConnection) {
 				// Is connection.
 				GraphGrammarConnection connection = (GraphGrammarConnection) _currentSelectedGraphGrammar.SelectedSymbol;
@@ -727,6 +848,8 @@ namespace MissionGrammarSystem {
 				}
 				_currentSelectedGraphGrammar.Connections.Remove(connection);
 				_currentSelectedGraphGrammar.SelectedSymbol = null;
+				// Record state when connection has deleted.
+				RecordState();
 			}
 			
 		}
@@ -746,6 +869,8 @@ namespace MissionGrammarSystem {
 					_missionRule.ReplacementRule.StickyNode(_missionRule.ReplacementRule.Connections.LastOrDefault(), connection.EndPosition, "end");
 				}
 				_missionRule.ReplacementRule.RevokeAllSelected();
+				// Record state when grammar has copied. 
+				RecordState(_missionRule.ReplacementRule);
 			} else if (_currentSelectedGraphGrammar != null && _currentSelectedGraphGrammar == _missionRule.ReplacementRule) {
 				// Copy nodes.
 				_missionRule.SourceRule.Nodes.Clear();
@@ -761,6 +886,152 @@ namespace MissionGrammarSystem {
 					
 				}
 				_missionRule.SourceRule.RevokeAllSelected();
+				// Record state when grammar has copied. 
+				RecordState(_missionRule.SourceRule);
+			}
+		}
+		// Record State via _currentSelectedGraphGrammar.
+		void RecordState() {
+			if (_currentSelectedGraphGrammar == _missionRule.SourceRule) {
+				_sourceRuleState.AddState(_currentSelectedGraphGrammar);
+			} else if (_currentSelectedGraphGrammar == _missionRule.ReplacementRule) {
+				_replaceRuleState.AddState(_currentSelectedGraphGrammar);
+			}
+		}
+		// Record State via GraphGrammar parameter.
+		void RecordState(GraphGrammar graph) {
+			if (graph == _missionRule.SourceRule) {
+				_sourceRuleState.AddState(graph);
+			} else if (graph == _missionRule.ReplacementRule) {
+				_replaceRuleState.AddState(graph);
+			}
+		}
+		// Undo via _currentSelectedGraphGrammar.
+		void UndoState() {
+			if (_currentSelectedGraphGrammar == _missionRule.SourceRule) {
+				_sourceRuleState.Undo(ref _currentSelectedGraphGrammar);
+			} else if (_currentSelectedGraphGrammar == _missionRule.ReplacementRule) {
+				_replaceRuleState.Undo(ref _currentSelectedGraphGrammar);
+			}
+		}
+		// Redo via _currentSelectedGraphGrammar.
+		void RedoState() {
+			if (_currentSelectedGraphGrammar == _missionRule.SourceRule) {
+				_sourceRuleState.Redo(ref _currentSelectedGraphGrammar);
+			} else if (_currentSelectedGraphGrammar == _missionRule.ReplacementRule) {
+				_replaceRuleState.Redo(ref _currentSelectedGraphGrammar);
+			}
+		}
+		// The class used to record the state and execute redo/undo.
+		class StateRecorder {
+			// Default constructor.
+			public StateRecorder() {
+				_states = new List<State>() { new State() };
+				_index = 0;
+			}
+			// A constructor via GraphGrammar parameter.
+			public StateRecorder(GraphGrammar graph) {
+				// Add the GraphGrammar as origin.
+				_states = new List<State>() { new State(graph)};
+				_index = 0;
+			}
+			// Return true when this state can undo.
+			public bool hasUndoState {
+				get { return _index > 0; }
+			}
+			// Return true when this state can redo.
+			public bool hasRedoState {
+				get { return  _index < _states.Count - 1 ; }
+			}
+			// Add state
+			public void AddState(GraphGrammar graph) {
+				// Remove redo range.
+				if(_index < _states.Count - 1) {
+					_states.RemoveRange(_index + 1, _states.Count - 1 - _index);
+				}
+				// Add state.
+				_states.Add(new State(graph));
+				// Full then remove it. Now can store 10 state(contain current state).
+				if (_states.Count > 10) {
+					_states.RemoveAt(0);
+				} else {
+					_index++;
+				}
+			}
+			// Undo.
+			public void Undo(ref GraphGrammar graph) {
+				// Back to previous state.
+				_index--;
+				State state = _states[_index];
+				// Transform state into GraphGrammar.
+				// Deep copy.
+				graph.Nodes = new List<GraphGrammarNode>();
+				for (int i = 0; i < state.Nodes.Length; i++) {
+					graph.Nodes.Add(new GraphGrammarNode(state.Nodes[i]));
+					graph.Nodes[i].Position = state.Nodes[i].Position;
+					graph.Nodes[i].Ordering = state.Nodes[i].Ordering;
+				}
+				graph.Connections = new List<GraphGrammarConnection>();
+				for (int i = 0; i < state.Connections.Length; i++) {
+					graph.Connections.Add(new GraphGrammarConnection(state.Connections[i]));
+					graph.Connections[i].StartPosition = state.Connections[i].StartPosition;
+					graph.Connections[i].EndPosition = state.Connections[i].EndPosition;
+					graph.Connections[i].Ordering = state.Connections[i].Ordering;
+					// Stick.
+					graph.StickyNode(graph.Connections[i], graph.Connections[i].StartPosition, "start");
+					graph.StickyNode(graph.Connections[i], graph.Connections[i].EndPosition, "end");
+				}
+				graph.RevokeAllSelected();
+			}
+			public void Redo(ref GraphGrammar graph) {
+				// Next state.
+				_index++;
+				State state = _states[_index];
+				// Transform state into GraphGrammar.
+				// Deep copy.
+				graph.Nodes = new List<GraphGrammarNode>();
+				for (int i = 0; i < state.Nodes.Length; i++) {
+					graph.Nodes.Add(new GraphGrammarNode(state.Nodes[i]));
+					graph.Nodes[i].Position = state.Nodes[i].Position;
+					graph.Nodes[i].Ordering = state.Nodes[i].Ordering;
+				}
+				graph.Connections = new List<GraphGrammarConnection>();
+				for (int i = 0; i < state.Connections.Length; i++) {
+					graph.Connections.Add(new GraphGrammarConnection(state.Connections[i]));
+					graph.Connections[i].StartPosition = state.Connections[i].StartPosition;
+					graph.Connections[i].EndPosition = state.Connections[i].EndPosition;
+					graph.Connections[i].Ordering = state.Connections[i].Ordering;
+					// Stick.
+					graph.StickyNode(graph.Connections[i], graph.Connections[i].StartPosition, "start");
+					graph.StickyNode(graph.Connections[i], graph.Connections[i].EndPosition, "end");
+				}
+				graph.RevokeAllSelected();
+			}
+			
+			private List<State> _states;
+			private int _index;
+
+			// State struct used to save nodes and connections. 
+			private struct State {
+				public GraphGrammarNode[] Nodes;
+				public GraphGrammarConnection[] Connections;
+				// Transform GraphGrammar into State.
+				public State(GraphGrammar graph) {
+					// Deep copy.
+					Nodes = new GraphGrammarNode[graph.Nodes.Count];
+					for (int i = 0; i < graph.Nodes.Count; i++) {
+						Nodes[i] = new GraphGrammarNode(graph.Nodes[i]);
+						Nodes[i].Position = graph.Nodes[i].Position;
+						Nodes[i].Ordering = graph.Nodes[i].Ordering;
+					}
+					Connections = new GraphGrammarConnection[graph.Connections.Count];
+					for (int i = 0; i < graph.Connections.Count; i++) {
+						Connections[i] = new GraphGrammarConnection(graph.Connections[i]);
+						Connections[i].StartPosition = graph.Connections[i].StartPosition;
+						Connections[i].EndPosition = graph.Connections[i].EndPosition;
+						Connections[i].Ordering = graph.Connections[i].Ordering;
+					}
+				}
 			}
 		}
 	}
