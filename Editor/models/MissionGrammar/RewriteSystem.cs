@@ -24,6 +24,7 @@ namespace MissionGrammarSystem {
 		}
 		// When click the iterate button of generate graph page.
 		public static void Iterate() {
+			RemoveIndexes();
 			_relatedNodes.Clear();
 			// Start interating.
 			ProgressIteration(_root);
@@ -186,7 +187,7 @@ namespace MissionGrammarSystem {
 				// Compare the root node of rule.
 				if (rule.SourceRoot.AlphabetID == Alphabet.AnyNode.AlphabetID || rule.SourceRoot.AlphabetID == node.AlphabetID) {
 					// Clear index of all nodes.
-					for (int i = 0; i < _relatedNodes.Count; i++) { _relatedNodes[i].Index = 0; }
+					RemoveIndexes();
 					_relatedNodes.Clear();
 					exploredNodes.Clear();
 					_usedIndexTable = new bool[rule.SourceNodeCount + 1];
@@ -212,7 +213,7 @@ namespace MissionGrammarSystem {
 						! _usedIndexTable[childMatchNode.Index] &&
 						(childNode.AlphabetID == childMatchNode.AlphabetID ||
 						childMatchNode.AlphabetID == Alphabet.AnyNode.AlphabetID )) {
-						// Record used connection, not node.
+						// Record used node.
 						_usedIndexTable[childMatchNode.Index] = true;
 						childNode.Index = childMatchNode.Index;
 						_relatedNodes.Add(childNode);
