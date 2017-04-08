@@ -284,13 +284,11 @@ namespace MissionGrammarSystem {
 				_applyEditingButtonEnabled = false;
 				EditorGUILayout.HelpBox("Info \nThe name is illegal. \nCan't use more than one space continuously. \nEnd of name string can't be space. \nThe description is empty.", MessageType.Info);
 			}
-			if (_name != string.Empty && _description == string.Empty && _nameCanBeUsed == true && _nameStringNoDoubleSpace.IsMatch(_name) == true)
-			{
+			if (_name != string.Empty && _description == string.Empty && _nameCanBeUsed == true && _nameStringNoDoubleSpace.IsMatch(_name) == true) {
 				_applyEditingButtonEnabled = false;
 				EditorGUILayout.HelpBox("Info \nThe name is illegal. \nCan't use more than one space continuously. \nThe description is empty.", MessageType.Info);
 			}
-			if (_name != string.Empty && _description == string.Empty && _nameCanBeUsed == true && _nameEndOfStringNoSpace.IsMatch(_name) == true)
-			{
+			if (_name != string.Empty && _description == string.Empty && _nameCanBeUsed == true && _nameEndOfStringNoSpace.IsMatch(_name) == true) {
 				_applyEditingButtonEnabled = false;
 				EditorGUILayout.HelpBox("Info \nThe name is illegal. \nEnd of name string can't be space. \nThe description is empty.", MessageType.Info);
 			}
@@ -298,18 +296,15 @@ namespace MissionGrammarSystem {
 				_applyEditingButtonEnabled = false;
 				EditorGUILayout.HelpBox("Info \nThe name has been used before.", MessageType.Info);
 			}
-			if (_name != string.Empty && _description != string.Empty && _nameCanBeUsed == true && _nameStringNoDoubleSpace.IsMatch(_name) == true && _nameEndOfStringNoSpace.IsMatch(_name) == true)
-			{
+			if (_name != string.Empty && _description != string.Empty && _nameCanBeUsed == true && _nameStringNoDoubleSpace.IsMatch(_name) == true && _nameEndOfStringNoSpace.IsMatch(_name) == true) {
 				_applyEditingButtonEnabled = false;
 				EditorGUILayout.HelpBox("Info \nThe name is illegal. \nCan't use more than one space continuously. \nEnd of name string can't be space.", MessageType.Info);
 			}
-			if (_name != string.Empty && _description != string.Empty && _nameCanBeUsed == true && _nameStringNoDoubleSpace.IsMatch(_name) == true)
-			{
+			if (_name != string.Empty && _description != string.Empty && _nameCanBeUsed == true && _nameStringNoDoubleSpace.IsMatch(_name) == true) {
 				_applyEditingButtonEnabled = false;
 				EditorGUILayout.HelpBox("Info \nThe name is illegal. \nCan't use more than one space continuously.", MessageType.Info);
 			}
-			if (_name != string.Empty && _description != string.Empty && _nameCanBeUsed == true && _nameEndOfStringNoSpace.IsMatch(_name) == true)
-			{
+			if (_name != string.Empty && _description != string.Empty && _nameCanBeUsed == true && _nameEndOfStringNoSpace.IsMatch(_name) == true) {
 				_applyEditingButtonEnabled = false;
 				EditorGUILayout.HelpBox("Info \nThe name is illegal. \nEnd of name string can't be space.", MessageType.Info);
 			}
