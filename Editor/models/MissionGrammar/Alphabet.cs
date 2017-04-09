@@ -3,6 +3,7 @@ using UnityEditor;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using Guid = System.Guid;
 
 using EditorCanvas = EditorExtend.NodeCanvas;
 using EditorStyle  = EditorExtend.Style;
@@ -23,11 +24,15 @@ namespace MissionGrammarSystem {
 				new GraphGrammarConnection("Inhibition",         "System default.", ConnectionType.Inhibition,        ConnectionArrowType.WithCircle),
 			};
 		// Default settings.
+		private static GraphGrammarNode _anyNode      = _nodes[0];
 		private static GraphGrammarNode _startingNode = _nodes[1];
 		private static GraphGrammarNode _defaultNode  = _nodes[1];
 		private static ConnectionType   _defaultConnectionType;
-		private static GraphGrammarNode _anyNode = _nodes[0];
-
+		// Default "Any" node.
+		public static GraphGrammarNode AnyNode {
+			get { return _anyNode; }
+			set { _anyNode = value; }
+		}
 		// Starting node in alphabet.
 		public static GraphGrammarNode StartingNode {
 			get { return _startingNode; }
@@ -42,11 +47,6 @@ namespace MissionGrammarSystem {
 		public static ConnectionType DefaultConnectionType {
 			get { return _defaultConnectionType; }
 			set { _defaultConnectionType = value; }
-		}
-		// Default "Any" node.
-		public static GraphGrammarNode AnyNode {
-			get { return _anyNode; }
-			set { _anyNode = value; }
 		}
 		// Node list in alphabet.
 		public static List<GraphGrammarNode> Nodes {
@@ -65,6 +65,26 @@ namespace MissionGrammarSystem {
 		// Return the first selected node.
 		public static GraphGrammarConnection SelectedConnection {
 			get { return _connections.Where(c => c.Selected == true).FirstOrDefault(); }
+		}
+		// Get Node table that refer to Guid.
+		public static Dictionary<System.Guid,GraphGrammarNode> ReferenceNodeTable {
+			get {
+				Dictionary<System.Guid, GraphGrammarNode> table = new Dictionary<System.Guid, GraphGrammarNode>();
+				foreach (GraphGrammarNode node in _nodes) {
+					table[node.AlphabetID] = node;
+				}
+				return table;
+			}
+		}
+		// Get Connection table that refer to Guid.
+		public static Dictionary<System.Guid, GraphGrammarConnection> ReferenceConnectionTable {
+			get {
+				Dictionary<System.Guid, GraphGrammarConnection> table = new Dictionary<System.Guid, GraphGrammarConnection>();
+				foreach (GraphGrammarConnection connection in _connections) {
+					table[connection.AlphabetID] = connection;
+				}
+				return table;
+			}
 		}
 		// Add a new node.
 		public static void AddNode(GraphGrammarNode node) {
@@ -97,6 +117,10 @@ namespace MissionGrammarSystem {
 				where node.Abbreviation == currentNode.Abbreviation && node != Alphabet.SelectedNode
 				select node)
 				.Any();
+		}
+		// Return a boolean about pass the node is "Any Node".
+		public static bool IsAnyNode(Guid alphabetID) {
+			return (_anyNode.AlphabetID == alphabetID);
 		}
 		// Return a boolean when it's name never be used in alphabet.
 		public static bool IsConnectionNameUsed(GraphGrammarConnection currentConnection) {
@@ -137,26 +161,6 @@ namespace MissionGrammarSystem {
 			EditorCanvas.DrawQuad(new Rect(5, connection.StartPositionY - 23, Screen.width - 8, 46), connection.Selected ? new Color(0.75f, 0.75f, 1, 0.75f) : Color.clear);
 			// Draw this connection.
 			connection.Draw();
-		}
-		// Get Node table that refer to Guid.
-		public static Dictionary<System.Guid,GraphGrammarNode> ReferenceNodeTable {
-			get {
-				Dictionary<System.Guid, GraphGrammarNode> table = new Dictionary<System.Guid, GraphGrammarNode>();
-				foreach (GraphGrammarNode node in _nodes) {
-					table[node.AlphabetID] = node;
-				}
-				return table;
-			}
-		}
-		// Get Connection table that refer to Guid.
-		public static Dictionary<System.Guid, GraphGrammarConnection> ReferenceConnectionTable {
-			get {
-				Dictionary<System.Guid, GraphGrammarConnection> table = new Dictionary<System.Guid, GraphGrammarConnection>();
-				foreach (GraphGrammarConnection connection in _connections) {
-					table[connection.AlphabetID] = connection;
-				}
-				return table;
-			}
 		}
 	}
 }

@@ -16,15 +16,16 @@ namespace MissionGrammarSystem {
 		// When click the initial button of generate graph page.
 		public static void Initial() {
 			// Initial the current graph.
-			_root             = new Node(Alphabet.StartingNode);
-			_relatedNodes     = new List<Node>();
-			_rules            = new List<Rule>();
+			_root         = new Node(Alphabet.StartingNode);
+			_relatedNodes = new List<Node>();
+			_rules        = new List<Rule>();
 			// According to current rules of mission grammar, transform them to tree structure.
 			TransformRules();
 		}
 		// When click the iterate button of generate graph page.
 		public static void Iterate() {
 			RemoveIndexes();
+			// Clear the node table.
 			_relatedNodes.Clear();
 			// Start interating.
 			ProgressIteration(_root);
@@ -118,8 +119,9 @@ namespace MissionGrammarSystem {
 					Debug.Log("Current node: '" + node.Name + "'.");
 				}
 			}
+			// Recursive.
 			foreach (Node ChildNode in node.Children) {
-				if(! ChildNode.Explored) {
+				if (! ChildNode.Explored) {
 					ProgressIteration(ChildNode);
 				}
 			}
@@ -179,17 +181,17 @@ namespace MissionGrammarSystem {
 		}
 
 		private static bool[] _usedIndexTable;
-		private static List<Node> exploredNodes = new List<Node>();
+		private static List<Node> _exploredNodes = new List<Node>();
 		private static Rule FindMatchs(Node node) {
 			// [TEST] random rule
 			Rule[] randomRules = _rules.OrderBy(x => Random.value).ToArray();
 			foreach (var rule in randomRules) {
 				// Compare the root node of rule.
-				if (rule.SourceRoot.AlphabetID == Alphabet.AnyNode.AlphabetID || rule.SourceRoot.AlphabetID == node.AlphabetID) {
+				if (Alphabet.IsAnyNode(rule.SourceRoot.AlphabetID) || rule.SourceRoot.AlphabetID == node.AlphabetID) {
 					// Clear index of all nodes.
 					RemoveIndexes();
 					_relatedNodes.Clear();
-					exploredNodes.Clear();
+					_exploredNodes.Clear();
 					_usedIndexTable = new bool[rule.SourceNodeCount + 1];
 					node.Index = rule.SourceRoot.Index;
 					_relatedNodes.Add(node);
@@ -204,7 +206,7 @@ namespace MissionGrammarSystem {
 		}
 		// Confirm the children are match
 		private static bool RecursionMatch(Node node, Node matchNode) {
-			exploredNodes.Add(node);
+			_exploredNodes.Add(node);
 			foreach (Node childMatchNode in matchNode.Children) {
 				bool _isMatch = false;
 				foreach (Node childNode in node.Children) {
@@ -212,13 +214,13 @@ namespace MissionGrammarSystem {
 					if (childNode.Index == 0 &&
 						! _usedIndexTable[childMatchNode.Index] &&
 						(childNode.AlphabetID == childMatchNode.AlphabetID ||
-						childMatchNode.AlphabetID == Alphabet.AnyNode.AlphabetID )) {
+						Alphabet.IsAnyNode(childMatchNode.AlphabetID))) {
 						// Record used node.
 						_usedIndexTable[childMatchNode.Index] = true;
 						childNode.Index = childMatchNode.Index;
 						_relatedNodes.Add(childNode);
 						// If the children are also match.
-						if (exploredNodes.Exists(x => ReferenceEquals(x, childNode)) ||
+						if (_exploredNodes.Exists(x => ReferenceEquals(x, childNode)) ||
 							RecursionMatch(childNode, childMatchNode)) {
 							_isMatch = true;
 							break;
@@ -229,7 +231,7 @@ namespace MissionGrammarSystem {
 						break;
 					}
 				}
-				
+
 				// If no child is match.
 				if (! _isMatch) {
 					return false;
@@ -257,7 +259,7 @@ namespace MissionGrammarSystem {
 			foreach (Node node in _relatedNodes) {
 				Node replaceNode = matchedRule.FindReplacementByIndex(node.Index);
 				// If any node then keep origin node.
-				if(replaceNode.AlphabetID == Alphabet.AnyNode.AlphabetID) {
+				if (replaceNode.AlphabetID == Alphabet.AnyNode.AlphabetID) {
 					continue;
 				}
 				node.Update(replaceNode);
