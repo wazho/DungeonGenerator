@@ -66,6 +66,22 @@ namespace MissionGrammarSystem {
 		public static GraphGrammarConnection SelectedConnection {
 			get { return _connections.Where(c => c.Selected == true).FirstOrDefault(); }
 		}
+		// Initialization.
+		public static void Initial() {
+			_nodes = new List<GraphGrammarNode>() {
+				new GraphGrammarNode("any",      "?",    "System default.", NodeTerminalType.Terminal),
+				new GraphGrammarNode("none",     "none", "System default.", NodeTerminalType.Terminal),
+				new GraphGrammarNode("entrance", "en",   "System default.", NodeTerminalType.Terminal),
+				new GraphGrammarNode("goal",     "go",   "System default.", NodeTerminalType.Terminal),
+			};
+			_connections = new List<GraphGrammarConnection>() {
+				new GraphGrammarConnection("Weak requirement",   "System default.", ConnectionType.WeakRequirement,   ConnectionArrowType.Normal),
+				new GraphGrammarConnection("Strong requirement", "System default.", ConnectionType.StrongRequirement, ConnectionArrowType.Double),
+				new GraphGrammarConnection("Inhibition",         "System default.", ConnectionType.Inhibition,        ConnectionArrowType.WithCircle),
+			};
+			_startingNode = _nodes[0];
+			_defaultNode  = _nodes[0];
+		}
 		// Get Node table that refer to Guid.
 		public static Dictionary<System.Guid,GraphGrammarNode> ReferenceNodeTable {
 			get {

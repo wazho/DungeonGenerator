@@ -14,7 +14,7 @@ namespace DungeonLevel {
 		void Awake() {
 			
 		}
-
+		
 		void OnGUI() {
 			GUILayout.BeginArea(EditorStyle.IndexWindowCanvasArea);
 			EditorGUI.DrawRect(EditorStyle.IndexWindowCanvas, Color.white);
@@ -23,7 +23,17 @@ namespace DungeonLevel {
 			GUILayout.Space(EditorStyle.PaddingAfterBlock);
 			GUILayout.BeginHorizontal();
 			if (GUILayout.Button("Create Level", EditorStyles.miniButtonLeft, Style.TabButtonHeight)) {
-				// Create Level.
+				// Safety.
+				if (EditorUtility.DisplayDialog("Create new level.",
+					"Are you sure want to create a new level, this will overwrite the origin level?",
+					"Yes", "No")) {
+					// Initialization.
+					LevelSettingsWindow.Initial();
+					MissionGrammarSystem.Alphabet.Initial();
+					MissionGrammarSystem.MissionGrammar.Initial();
+					MissionGrammarSystem.RewriteSystem.Initial();
+					GraphGeneration.MissionGraphWindow.Initial();
+				}
 			}
 			if (GUILayout.Button("Import Level", EditorStyles.miniButtonMid, Style.TabButtonHeight)) {
 				// Import Level.
