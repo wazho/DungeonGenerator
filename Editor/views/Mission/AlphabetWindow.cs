@@ -246,7 +246,7 @@ namespace MissionGrammarSystem {
 			}
 			switch (_currentTab) {
 			case AlphabetWindowTab.Nodes:
-				EditorGUI.BeginDisabledGroup(Alphabet.SelectedNode == null);
+				EditorGUI.BeginDisabledGroup(Alphabet.SelectedNode == null || Alphabet.IsAnyNode(Alphabet.SelectedNode.AlphabetID));
 				break;
 			case AlphabetWindowTab.Connections:
 				EditorGUI.BeginDisabledGroup(Alphabet.SelectedConnection == null);

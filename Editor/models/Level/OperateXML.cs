@@ -28,7 +28,7 @@ namespace DungeonLevel {
 			private static XElement SerializeGrammarSetting() {
 				XElement elementGrammarSetting = new XElement("GrammarSetting");
 				elementGrammarSetting.Add(new XElement("StartingNode", Mission.Alphabet.StartingNode.AlphabetID));
-
+				elementGrammarSetting.Add(new XElement("AnyNode", Mission.Alphabet.AnyNode.AlphabetID));
 				return elementGrammarSetting;
 			}
 			// Serialize MissionAlphabet
@@ -164,6 +164,9 @@ namespace DungeonLevel {
 				Guid guid = new Guid(elementGrammarSetting.Element("StartingNode").Value);
 				int index = Mission.Alphabet.Nodes.FindIndex(x => x.AlphabetID == guid);
 				Mission.Alphabet.StartingNode = Mission.Alphabet.Nodes[index];
+				guid = new Guid(elementGrammarSetting.Element("AnyNode").Value);
+				index = Mission.Alphabet.Nodes.FindIndex(x => x.AlphabetID == guid);
+				Mission.Alphabet.AnyNode = Mission.Alphabet.Nodes[index];
 			}
 			// Unserialize MissionAlphabet
 			private static void UnserializeMissionAlphabet(XElement elementMissionGrammar) {
