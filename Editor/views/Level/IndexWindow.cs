@@ -29,11 +29,7 @@ namespace DungeonLevel {
 			GUILayout.Space(SampleStyle.PaddingArea);
 			GUILayout.BeginVertical("Box");
 			GUILayout.BeginHorizontal();
-<<<<<<< HEAD
 			if (GUILayout.Button("Create Level", SampleStyle.ButtonLeft, SampleStyle.MainButtonHeight)) {
-				// Create Level.
-=======
-			if (GUILayout.Button("Create Level", EditorStyles.miniButtonLeft, Style.TabButtonHeight)) {
 				// Safety.
 				if (EditorUtility.DisplayDialog("Create new level.",
 					"Are you sure want to create a new level, this will overwrite the origin level?",
@@ -45,7 +41,6 @@ namespace DungeonLevel {
 					MissionGrammarSystem.RewriteSystem.Initial();
 					GraphGeneration.MissionGraphWindow.Initial();
 				}
->>>>>>> master
 			}
 			if (GUILayout.Button("Import Level", SampleStyle.ButtonMid, SampleStyle.MainButtonHeight)) {
 				// Import Level.
