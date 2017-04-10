@@ -79,8 +79,9 @@ namespace MissionGrammarSystem {
 				new GraphGrammarConnection("Strong requirement", "System default.", ConnectionType.StrongRequirement, ConnectionArrowType.Double),
 				new GraphGrammarConnection("Inhibition",         "System default.", ConnectionType.Inhibition,        ConnectionArrowType.WithCircle),
 			};
-			_startingNode = _nodes[0];
-			_defaultNode  = _nodes[0];
+			_anyNode      = _nodes[0];
+			_startingNode = _nodes[1];
+			_defaultNode  = _nodes[1];
 		}
 		// Get Node table that refer to Guid.
 		public static Dictionary<System.Guid,GraphGrammarNode> ReferenceNodeTable {
