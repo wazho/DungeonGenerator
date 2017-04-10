@@ -2,10 +2,10 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections;
 using System.Linq;
-
-using EditorAdvance = EditorExtend.Advance;
-using EditorStyle   = EditorExtend.Style;
-
+// Stylesheet.
+using Style     = EditorExtend.CommonStyle;
+using Container = EditorExtend.GenerationWindow;
+// Models.
 using Mission = MissionGrammarSystem;
 
 namespace GraphGeneration {
@@ -68,21 +68,21 @@ namespace GraphGeneration {
 		// Buttons for switching mission graph and space graph.
 		private void LayoutStateButtons() {
 			GUILayout.BeginHorizontal();
-			if (GUILayout.Button("Mission Graph",EditorStyles.miniButtonLeft, EditorStyle.TabButtonHeight)) {
+			if (GUILayout.Button("Mission Graph",EditorStyles.miniButtonLeft, Style.TabButtonHeight)) {
 				_graphState = GraphState.Mission;
 			}
-			if (GUILayout.Button("Space Graph", EditorStyles.miniButtonRight, EditorStyle.TabButtonHeight)) {
+			if (GUILayout.Button("Space Graph", EditorStyles.miniButtonRight, Style.TabButtonHeight)) {
 				_graphState = GraphState.Space;
 			}
 			GUILayout.EndHorizontal();
 		}
 		// Canvas to draw current mission graph.
 		private void LayoutMissionGraphCanvas() {
-			GUILayout.BeginArea(EditorStyle.MissionGraphCanvasArea);
+			GUILayout.BeginArea(Container.MissionGraphArea);
 			_canvasScrollPosition = GUILayout.BeginScrollView(_canvasScrollPosition, GUILayout.Width(Screen.width), GUILayout.Height(300));
-			EditorStyle.ResizeMissionGraphCanvas(_missionGraphCanvasSizeWidth, _missionGraphCanvasSizeHeight);
-			EditorGUI.DrawRect(EditorStyle.MissionGraphCanvas, Color.gray);
-			GUILayout.Label(string.Empty, EditorStyle.MissionGraphCanvasContent);
+			Container.ResizeMissionGraphCanvas(_missionGraphCanvasSizeWidth, _missionGraphCanvasSizeHeight);
+			EditorGUI.DrawRect(Container.MissionGraphCanvas, Color.gray);
+			GUILayout.Label(string.Empty, Container.MissionGraphCanvasContent);
 			// Connection 
 			foreach (Mission.GraphGrammarConnection connection in _currentGraph.Connections) {
 				connection.Draw();
@@ -102,8 +102,8 @@ namespace GraphGeneration {
 				node.Draw();
 			}
 			// Compare with screen size.
-			_missionGraphCanvasSizeWidth  = Mathf.Max((int) EditorStyle.MissionGraphCanvasArea.width, (int) positionRightBotton.x + 25);
-			_missionGraphCanvasSizeHeight = Mathf.Max((int) EditorStyle.MissionGraphCanvasArea.height, (int) positionRightBotton.y + 25);
+			_missionGraphCanvasSizeWidth  = Mathf.Max((int) Container.MissionGraphArea.width, (int) positionRightBotton.x + 25);
+			_missionGraphCanvasSizeHeight = Mathf.Max((int) Container.MissionGraphArea.height, (int) positionRightBotton.y + 25);
 			GUILayout.EndScrollView();
 			GUILayout.EndArea();
 		}
@@ -132,24 +132,24 @@ namespace GraphGeneration {
 			EditorGUI.BeginDisabledGroup(_errorType != ErrorType.None);
 			// Mission and Space Graph button.
 			GUILayout.BeginHorizontal();
-			if (GUILayout.Button("Initial",EditorStyles.miniButtonLeft, EditorStyle.ButtonHeight)) {
+			if (GUILayout.Button("Initial",EditorStyles.miniButtonLeft, Style.ButtonHeight)) {
 				// Rewrite system initialization.
 				Mission.RewriteSystem.Initial();
 				// Update the current graph.
 				_currentGraph = Mission.RewriteSystem.TransformFromGraph();
 			}
-			if (GUILayout.Button("Iterate", EditorStyles.miniButtonMid, EditorStyle.ButtonHeight)) {
+			if (GUILayout.Button("Iterate", EditorStyles.miniButtonMid, Style.ButtonHeight)) {
 				// Rewrite system iteration.
 				Mission.RewriteSystem.Iterate();
 				// Update the current graph.
 				_currentGraph = Mission.RewriteSystem.TransformFromGraph();
 			}
-			if (GUILayout.Button("Complete", EditorStyles.miniButtonRight, EditorStyle.ButtonHeight)) {
+			if (GUILayout.Button("Complete", EditorStyles.miniButtonRight, Style.ButtonHeight)) {
 
 			}
 			GUILayout.EndHorizontal();
 			// Apply button and popup
-			if (GUILayout.Button("Save", EditorStyles.miniButton, EditorStyle.SubmitButtonHeight)) {
+			if (GUILayout.Button("Save", EditorStyles.miniButton, Style.SubmitButtonHeight)) {
 				if (EditorUtility.DisplayDialog("Save",
 					"Are you sure?",
 					"Yes", "No")) {

@@ -2,8 +2,9 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections;
 
-using EditorAdvance = EditorExtend.Advance;
-using EditorStyle   = EditorExtend.Style;
+// will remove.
+using EditorStyle = EditorExtend.Style;
+using Style = EditorExtend.CommonStyle;
 
 namespace DungeonLevel {
 	// Error type. 
@@ -32,18 +33,18 @@ namespace DungeonLevel {
 
 		void OnGUI() {
 			// Level information.
-			_name         = EditorGUILayout.TextField("Level Name", _name, EditorStyle.TextFieldHeight);
-			_abbreviation = EditorGUILayout.TextField("Level Abbreviation", _abbreviation, EditorStyle.TextFieldHeight);
+			_name         = EditorGUILayout.TextField("Level Name", _name, Style.TextFieldHeight);
+			_abbreviation = EditorGUILayout.TextField("Level Abbreviation", _abbreviation, Style.TextFieldHeight);
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("Description");
-			_description  = EditorGUILayout.TextArea(_description, EditorStyle.TextAreaHeight);
+			_description  = EditorGUILayout.TextArea(_description, Style.TextAreaHeight);
 			EditorGUILayout.EndHorizontal();
 			_tag          = EditorGUILayout.TextField("Tag", _tag);
 			EditorGUILayout.HelpBox(FormValidation(), MessageType.Info, true);
 			// If error occur, disable apply button.
 			EditorGUI.BeginDisabledGroup(_errorType != ErrorType.NoError);
 			// Apply button and popup
-			if (GUILayout.Button("Apply", EditorStyles.miniButton, EditorStyle.SubmitButtonHeight)) {
+			if (GUILayout.Button("Apply", EditorStyles.miniButton, Style.SubmitButtonHeight)) {
 				if (EditorUtility.DisplayDialog("Apply on level settings",
 					"Are you sure want to save these level settings?",
 					"Yes", "No")) {

@@ -2,38 +2,47 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections;
 
-using EditorStyle = EditorExtend.Style;
+// will remove.
+using EditorStyle = EditorExtend.CommonStyle;
+using SampleStyle = EditorExtend.SampleStyle;
+using Container = EditorExtend.IndexWindow;
 
 namespace DungeonLevel {
 	public class IndexWindow : EditorWindow {
 
-		private static string _description = "This is description";
+		private static string _description = 
+			"Dungeon Generation is a tool for procedurally generate a Game Level specifically for Dungeon. " +
+			"This tool concerns about the player progression by using Mission & Space framework originally established by Joris Dormans. " +
+			"Developed by NTUST GameLab, Taiwan, advised by Prof. Wen-Kai Tai. \nCopyright \u00A9 2017.";
 
 		void Awake() {
 			
 		}
 
 		void OnGUI() {
-			GUILayout.BeginArea(EditorStyle.IndexWindowCanvasArea);
-			EditorGUI.DrawRect(EditorStyle.IndexWindowCanvas, Color.white);
+			//SampleStyle.DebugRect(SampleStyle.IndexWindowSplashCanvasArea, Color.blue);
+			GUILayout.BeginArea(Container.IndexWindowSplashCanvasArea);
+			EditorGUI.DrawPreviewTexture(Container.IndexWindowSplashCanvasArea, SampleStyle.SplashImage); 
 			GUILayout.EndArea();
-			GUILayout.BeginArea(EditorStyle.AfterIndexWindowCanvasArea);
-			GUILayout.Space(EditorStyle.PaddingAfterBlock);
+			//SampleStyle.DebugRect(SampleStyle.IndexWindowButtonsCanvasArea, Color.red);
+			GUILayout.BeginArea(Container.IndexWindowButtonsCanvasArea);
+			GUILayout.Space(SampleStyle.PaddingArea);
+			GUILayout.BeginVertical("Box");
 			GUILayout.BeginHorizontal();
-			if (GUILayout.Button("Create Level", EditorStyles.miniButtonLeft, EditorStyle.TabButtonHeight)) {
+			if (GUILayout.Button("Create Level", SampleStyle.ButtonLeft, SampleStyle.MainButtonHeight)) {
 				// Create Level.
 			}
-			if (GUILayout.Button("Import Level", EditorStyles.miniButtonMid, EditorStyle.TabButtonHeight)) {
+			if (GUILayout.Button("Import Level", SampleStyle.ButtonMid, SampleStyle.MainButtonHeight)) {
 				// Import Level.
 			}
-			if (GUILayout.Button("Import Rewrite", EditorStyles.miniButtonMid, EditorStyle.TabButtonHeight)) {
+			if (GUILayout.Button("Import Rewrite", SampleStyle.ButtonMid, SampleStyle.MainButtonHeight)) {
 				// Import Rewrite.
 				string path = EditorUtility.OpenFilePanel("Import xml", "", "xml");
 				if(path.Length > 0) {
 					DungeonLevel.OperateXML.Unserialize.UnserializeFromXml(path);
 				}
 			}
-			if (GUILayout.Button("Export Level", EditorStyles.miniButtonRight, EditorStyle.TabButtonHeight)) {
+			if (GUILayout.Button("Export Level", SampleStyle.ButtonRight, SampleStyle.MainButtonHeight)) {
 				// Export Level.
 				string path = EditorUtility.SaveFilePanel("Export xml", "", "Level.xml", "xml");
 				if (path.Length > 0) {
@@ -41,10 +50,14 @@ namespace DungeonLevel {
 				}
 			}
 			GUILayout.EndHorizontal();
-			GUILayout.Space(EditorStyle.PaddingAfterBlock);
+			GUILayout.Space(SampleStyle.PaddingBlock);
 			// Show description.
-			EditorGUILayout.SelectableLabel(_description, EditorStyles.textField, EditorStyle.TextAreaHeight);
+			GUILayout.Label(_description, EditorStyles.wordWrappedLabel);
+			GUILayout.EndVertical();
 			GUILayout.EndArea();
+		}
+		void OnInspectorUpdate(){
+			Repaint();	
 		}
 	}
 }
