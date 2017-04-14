@@ -5,6 +5,7 @@ using System.Collections;
 // will remove.
 using EditorStyle = EditorExtend.Style;
 using Style = EditorExtend.CommonStyle;
+using SampleStyle = EditorExtend.SampleStyle;
 
 namespace DungeonLevel {
 	// Error type. 
@@ -50,19 +51,18 @@ namespace DungeonLevel {
 		}
 
 		void OnGUI() {
-			// Level information.
-			_name         = EditorGUILayout.TextField("Level Name", _name, Style.TextFieldHeight);
-			_abbreviation = EditorGUILayout.TextField("Level Abbreviation", _abbreviation, Style.TextFieldHeight);
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.PrefixLabel("Description");
-			_description  = EditorGUILayout.TextArea(_description, Style.TextAreaHeight);
-			EditorGUILayout.EndHorizontal();
-			_tag          = EditorGUILayout.TextField("Tag", _tag);
+			SampleStyle.DrawWindowBackground(SampleStyle.ColorGrey);
+			GUILayout.BeginVertical(SampleStyle.Frame(SampleStyle.ColorLightestGrey));
+			_name         = SampleStyle.TextFieldLabeled("Level Name", _name, SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
+			_abbreviation = SampleStyle.TextFieldLabeled("Level Abbreviation", _abbreviation , SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
+			_description  = SampleStyle.TextAreaLabeled("Description", _description, SampleStyle.TextAreaLabel, SampleStyle.TextArea, SampleStyle.TextAreaHeight);
+			_tag          = SampleStyle.TextFieldLabeled("Tag", _tag, SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
+
 			EditorGUILayout.HelpBox(FormValidation(), MessageType.Info, true);
 			// If error occur, disable apply button.
 			EditorGUI.BeginDisabledGroup(_errorType != ErrorType.NoError);
 			// Apply button and popup
-			if (GUILayout.Button("Apply", EditorStyles.miniButton, Style.SubmitButtonHeight)) {
+			if (GUILayout.Button("Apply", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Regular, SampleStyle.ButtonColor.Green), SampleStyle.SubmitButtonHeight)) {
 				if (EditorUtility.DisplayDialog("Apply on level settings",
 					"Are you sure want to save these level settings?",
 					"Yes", "No")) {
@@ -74,6 +74,7 @@ namespace DungeonLevel {
 				}
 			}
 			EditorGUI.EndDisabledGroup();
+			GUILayout.EndVertical();
 		}
 		// Form validation can determine the error type.
 		string FormValidation() {
@@ -98,6 +99,10 @@ namespace DungeonLevel {
 				break;
 			}
 			return message;
+		}
+
+		void OnInpectorUpdate(){
+			Repaint();
 		}
 	}
 }

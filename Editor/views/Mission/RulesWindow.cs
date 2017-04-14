@@ -11,6 +11,7 @@ using Style       = EditorExtend.CommonStyle;
 using Container   = EditorExtend.MissionRuleWindow;
 using GraphCanvas = EditorExtend.GraphCanvas;
 using SymbolList  = EditorExtend.SymbolList;
+using SampleStyle = EditorExtend.SampleStyle;
 
 namespace MissionGrammarSystem {
 	public class RulesWindow : EditorWindow {
@@ -745,6 +746,7 @@ namespace MissionGrammarSystem {
 			GraphCanvas.ResizeSourceCanvas(_sourceCanvasWidth, _sourceCanvasHeight);
 			// If  this is current selected canvas, backgound will be white. Else gray.
 			EditorGUI.DrawRect(GraphCanvas.SourceCanvas, _missionRule.SourceRule.Equals(_currentSelectedGraphGrammar) ? Color.white : Color.gray);
+			SampleStyle.DrawGrid(GraphCanvas.SourceCanvas, 20, 100, SampleStyle.ColorBlue, SampleStyle.ColorDarkestBlue);
 			GUILayout.Label(string.Empty, GraphCanvas.SourceCanvasContent);
 			// Draw Nodes and Connections.
 			GraphGrammarConnection _currentSelectedConnection = null;

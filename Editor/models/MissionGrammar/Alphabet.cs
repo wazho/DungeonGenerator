@@ -7,6 +7,7 @@ using Guid = System.Guid;
 
 using EditorCanvas = EditorExtend.NodeCanvas;
 using EditorStyle  = EditorExtend.Style;
+using SampleStyle  = EditorExtend.SampleStyle;
 
 namespace MissionGrammarSystem {
 	public static class Alphabet {
@@ -165,7 +166,9 @@ namespace MissionGrammarSystem {
 			node.PositionX = 30;
 			node.PositionY = 25 + 50 * _nodes.FindIndex(n => n == node);
 			// Background color of selectable area.
-			EditorCanvas.DrawQuad(new Rect(5, node.PositionY - 23, Screen.width - 8, 46), node.Selected ? new Color(0.75f, 0.75f, 1, 0.75f) : Color.clear);
+			Color rectColor = SampleStyle.ColorBlue;
+			rectColor.a = 0.75f;
+			EditorCanvas.DrawQuad(new Rect(5, node.PositionY - 23, Screen.width - 8, 46), node.Selected ? rectColor : Color.clear);
 			// Draw this node.
 			node.Draw();
 		}
@@ -175,7 +178,9 @@ namespace MissionGrammarSystem {
 			connection.EndPositionX   = 60;
 			connection.StartPositionY = connection.EndPositionY = 25 + 50 * _connections.FindIndex(c => c == connection);
 			// Background color of selectable area.
-			EditorCanvas.DrawQuad(new Rect(5, connection.StartPositionY - 23, Screen.width - 8, 46), connection.Selected ? new Color(0.75f, 0.75f, 1, 0.75f) : Color.clear);
+			Color rectColor = SampleStyle.ColorBlue;
+			rectColor.a = 0.75f;
+			EditorCanvas.DrawQuad(new Rect(5, connection.StartPositionY - 23, Screen.width - 8, 46), connection.Selected ? rectColor : Color.clear);
 			// Draw this connection.
 			connection.Draw();
 		}

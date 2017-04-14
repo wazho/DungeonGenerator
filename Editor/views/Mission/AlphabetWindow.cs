@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using Style      = EditorExtend.CommonStyle;
 using Container  = EditorExtend.MissionAlphabetWindow;
 using SymbolList = EditorExtend.SymbolList;
+using SampleStyle = EditorExtend.SampleStyle;
 
 namespace MissionGrammarSystem {
 	// The mission alphabet window.
@@ -50,6 +51,10 @@ namespace MissionGrammarSystem {
 		private Rect    _symbolListCanvas;
 		private Rect    _symbolListCanvasInWindow;
 		private Vector2 _centerPosition;
+		// Tab buttons.
+		private GUIStyle NodeTabButtonStyle;
+		private GUIStyle ConnectionTabButtonStyle;
+		private bool _isInitTabButton;
 
 		// Native function for Editor Window. Trigger via opening the window.
 		void Awake() {
@@ -57,6 +62,7 @@ namespace MissionGrammarSystem {
 			InitFields();
 			// Set the first values.
 			_currentTab               = AlphabetWindowTab.Nodes;
+			_isInitTabButton 		  = true;
 			_editingMode              = EditingMode.None;
 			_scrollPosition           = Vector2.zero;
 			_messageHint              = string.Empty;
@@ -85,15 +91,21 @@ namespace MissionGrammarSystem {
 		}
 		// Native function for Editor Window.
 		void OnGUI() {
+			if (_isInitTabButton) {
+				NodeTabButtonStyle        = new GUIStyle(SampleStyle.GetToggleStyle(SampleStyle.ButtonType.Left, SampleStyle.ButtonColor.Blue));
+				ConnectionTabButtonStyle  = new GUIStyle(SampleStyle.GetToggleStyle(SampleStyle.ButtonType.Right, SampleStyle.ButtonColor.Blue));
+				_isInitTabButton          = false;
+			}
+			SampleStyle.DrawWindowBackground(SampleStyle.ColorGrey);
 			// Buttons - Nodes or Connections.
-			GUILayout.BeginVertical("Helpbox");
+			GUILayout.BeginVertical(SampleStyle.Frame(SampleStyle.ColorLightestGrey));
 			EditorGUILayout.BeginHorizontal();
-			if (GUILayout.Button("Nodes", EditorStyles.miniButtonLeft, Style.TabButtonHeight)) {
-				_editingMode = EditingMode.None;
+			if (GUILayout.Toggle(_currentTab == AlphabetWindowTab.Nodes, "Nodes", NodeTabButtonStyle, SampleStyle.TabButtonHeight)) {
+				_editingMode = (_currentTab != AlphabetWindowTab.Nodes) ? EditingMode.None : _editingMode;
 				_currentTab  = AlphabetWindowTab.Nodes;
 			}
-			if (GUILayout.Button("Connections", EditorStyles.miniButtonRight, Style.TabButtonHeight)) {
-				_editingMode = EditingMode.None;
+			if (GUILayout.Toggle(_currentTab == AlphabetWindowTab.Connections, "Connections", ConnectionTabButtonStyle, SampleStyle.TabButtonHeight)) {
+				_editingMode = (_currentTab != AlphabetWindowTab.Connections) ? EditingMode.None : _editingMode;
 				_currentTab  = AlphabetWindowTab.Connections;
 			}
 			EditorGUILayout.EndHorizontal();
@@ -101,13 +113,13 @@ namespace MissionGrammarSystem {
 			switch (_currentTab) {
 			case AlphabetWindowTab.Nodes:
 				// Header.
-				GUILayout.Label("List of Nodes", Style.HeaderOne, Style.HeaderOneHeightLayout);
+				GUILayout.Label("List of Nodes", SampleStyle.HeaderOne, SampleStyle.HeaderOneHeightLayout);
 				// Content of nodes.
 				LayoutNodesInterface();
 				break;
 			case AlphabetWindowTab.Connections:
 				// Header.
-				GUILayout.Label("List of Connections", Style.HeaderOne, Style.HeaderOneHeightLayout);
+				GUILayout.Label("List of Connections", SampleStyle.HeaderOne, SampleStyle.HeaderOneHeightLayout);
 				// Content of connections.
 				LayoutConnectionsInterface();
 				break;
@@ -125,7 +137,7 @@ namespace MissionGrammarSystem {
 			LayoutEditingModeButtonGroup();
 			// Canvas for preview symbol.
 			GUILayout.BeginArea(Container.SymbolPreviewArea);
-			EditorGUI.DrawRect(Container.SymbolPreviewCanvas, Color.gray);
+			EditorGUI.DrawRect(Container.SymbolPreviewCanvas, SampleStyle.ColorDarkestGrey);
 			_centerPosition.x = Screen.width / 2;
 			_node.Position    = _centerPosition;
 			_node.Draw();
@@ -136,26 +148,26 @@ namespace MissionGrammarSystem {
 			case EditingMode.Modify:
 				// Content of property.
 				GUILayout.BeginArea(Container.SymbolPropertiesArea);
-				EditorGUILayout.BeginVertical();
-				GUILayout.Space(Style.PaddingSpace);
+				GUILayout.Space(SampleStyle.PaddingBlock);
+				EditorGUILayout.BeginVertical(SampleStyle.Frame(SampleStyle.ColorLightestGrey));
 				// Information of node.
-				_symbolTerminal     = (NodeTerminalType) EditorGUILayout.EnumPopup("Symbol Type", _symbolTerminal);
-				_symbolName         = EditorGUILayout.TextField("Name", _symbolName);
-				_symbolAbbreviation = EditorGUILayout.TextField("Abbreviation", _symbolAbbreviation);
-				_symbolDescription  = EditorGUILayout.TextField("Description", _symbolDescription);
-				_symbolOutlineColor = EditorGUILayout.ColorField("Outline Color", _symbolOutlineColor);
-				_symbolFilledColor  = EditorGUILayout.ColorField("Filled Color", _symbolFilledColor);
-				_symbolTextColor    = EditorGUILayout.ColorField("Text Color", _symbolTextColor);
+				_symbolTerminal = (NodeTerminalType)SampleStyle.EnumPopupLabeled("Symbol Type", _symbolTerminal, SampleStyle.EnumPopUpLabel, SampleStyle.EnumPopUp, SampleStyle.EnumPopUpHeight);
+				_symbolName = SampleStyle.TextFieldLabeled("Name", _symbolName, SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
+				_symbolAbbreviation = SampleStyle.TextFieldLabeled("Abbreviation", _symbolAbbreviation, SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
+				_symbolDescription = SampleStyle.TextAreaLabeled("Description", _symbolDescription, SampleStyle.TextAreaLabel, SampleStyle.TextArea, SampleStyle.TextAreaHeight);
+				_symbolOutlineColor = SampleStyle.ColorFieldLabeled("Outline Color", _symbolOutlineColor, SampleStyle.ColorFieldLabel, SampleStyle.ColorField);
+				_symbolFilledColor = SampleStyle.ColorFieldLabeled("Filled Color", _symbolFilledColor, SampleStyle.ColorFieldLabel, SampleStyle.ColorField);
+				_symbolTextColor = SampleStyle.ColorFieldLabeled("Text Color", _symbolTextColor, SampleStyle.ColorFieldLabel, SampleStyle.ColorField);
 				// Update the node.
 				UpdateNode(_node);
-				EditorGUILayout.EndVertical();
-				GUILayout.Space(Style.PaddingSpace);
 				// Show content of submition.
 				LayoutSubmitionHint();
 				LayoutSubmitionButton();
+				EditorGUILayout.EndVertical();
 				GUILayout.EndArea();
 				break;
 			}
+
 		}
 		// Content of connections.
 		void LayoutConnectionsInterface() {
@@ -165,7 +177,7 @@ namespace MissionGrammarSystem {
 			LayoutEditingModeButtonGroup();
 			// Canvas for preview symbol.
 			GUILayout.BeginArea(Container.SymbolPreviewArea);
-			EditorGUI.DrawRect(Container.SymbolPreviewCanvas, Color.gray);
+			EditorGUI.DrawRect(Container.SymbolPreviewCanvas, SampleStyle.ColorDarkestGrey);
 			// [TODO] This part (value assign) is temporary.
 			_centerPosition.x         = Screen.width / 2 - 25;
 			_connection.StartPosition = _centerPosition;
@@ -179,21 +191,20 @@ namespace MissionGrammarSystem {
 			case EditingMode.Modify:
 				// Content of property.
 				GUILayout.BeginArea(Container.SymbolPropertiesArea);
-				EditorGUILayout.BeginVertical();
-				GUILayout.Space(Style.PaddingSpace);
+				GUILayout.Space(SampleStyle.PaddingBlock);
+				EditorGUILayout.BeginVertical(SampleStyle.Frame(SampleStyle.ColorLightestGrey));
 				// Information of connection.
-				_symbolName          = EditorGUILayout.TextField("Name", _symbolName);
-				_symbolDescription   = EditorGUILayout.TextField("Description", _symbolDescription);
-				_symbolOutlineColor  = EditorGUILayout.ColorField("Outline Color", _symbolOutlineColor);
-				_connectionType      = (ConnectionType) EditorGUILayout.EnumPopup("Connection Type", _connectionType);
-				_connectionArrowType = (ConnectionArrowType) EditorGUILayout.EnumPopup("Arrow Type", _connectionArrowType);
+				_symbolName = SampleStyle.TextFieldLabeled("Name", _symbolName, SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
+				_symbolDescription = SampleStyle.TextAreaLabeled("Description", _symbolDescription, SampleStyle.TextAreaLabel, SampleStyle.TextArea, SampleStyle.TextAreaHeight);
+				_symbolOutlineColor = SampleStyle.ColorFieldLabeled("Outline Color", _symbolOutlineColor, SampleStyle.ColorFieldLabel, SampleStyle.ColorField);
+				_connectionType      = (ConnectionType)SampleStyle.EnumPopupLabeled("Connection Type", _connectionType, SampleStyle.EnumPopUpLabel, SampleStyle.EnumPopUp, SampleStyle.EnumPopUpHeight);
+				_connectionArrowType = (ConnectionArrowType)SampleStyle.EnumPopupLabeled("Arrow Type", _connectionArrowType, SampleStyle.EnumPopUpLabel, SampleStyle.EnumPopUp, SampleStyle.EnumPopUpHeight);
 				// Update the conntection.
 				UpdateConnection(_connection);
-				EditorGUILayout.EndVertical();
-				GUILayout.Space(Style.PaddingSpace);
 				// Show content of submition.
 				LayoutSubmitionHint();
 				LayoutSubmitionButton();
+				EditorGUILayout.EndVertical();
 				GUILayout.EndArea();
 				break;
 			}
@@ -205,7 +216,8 @@ namespace MissionGrammarSystem {
 			// Content of scroll area.
 			GUILayout.BeginArea(Container.SymbolListArea);
 			_symbolListCanvas = Container.SymbolListCanvas;
-			EditorGUI.DrawRect(_symbolListCanvas, Color.gray);
+			//EditorGUI.DrawRect(_symbolListCanvas, Color.gray);
+			SampleStyle.DrawGrid(_symbolListCanvas, SampleStyle.MinorGridSize, SampleStyle.MajorGridSize, SampleStyle.GridBackgroundColor, SampleStyle.GridColor); 
 			GUILayout.EndArea();
 			// Layout each symbols in list.
 			switch (_currentTab) {
@@ -233,7 +245,7 @@ namespace MissionGrammarSystem {
 		// Buttons about adding new symbol, modifying and deleting.
 		void LayoutEditingModeButtonGroup() {
 			EditorGUILayout.BeginHorizontal();
-			if (GUILayout.Button("Add New", EditorStyles.miniButtonLeft, Style.ButtonHeight)) {
+			if (GUILayout.Button("Add New", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Left, SampleStyle.ButtonColor.Green), SampleStyle.ButtonHeight)) {
 				// Switch the mode.
 				_editingMode = EditingMode.Create;
 				// Initial the preview node and connection.
@@ -252,11 +264,11 @@ namespace MissionGrammarSystem {
 				EditorGUI.BeginDisabledGroup(Alphabet.SelectedConnection == null);
 				break;
 			}
-			if (GUILayout.Button("Modify", EditorStyles.miniButtonMid, Style.ButtonHeight)) {
+			if (GUILayout.Button("Modify", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Mid, SampleStyle.ButtonColor.Green), SampleStyle.ButtonHeight)) {
 				// Switch the mode.
 				_editingMode = EditingMode.Modify;
 			}
-			if (GUILayout.Button("Delete", EditorStyles.miniButtonRight, Style.ButtonHeight)) {
+			if (GUILayout.Button("Delete", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Right, SampleStyle.ButtonColor.Green), SampleStyle.ButtonHeight)) {
 				// Switch the mode.
 				_editingMode = EditingMode.Delete;
 				// Remove the node or connection from alphabet and repaint.
@@ -273,6 +285,7 @@ namespace MissionGrammarSystem {
 			EditorGUI.EndDisabledGroup();
 			EditorGUILayout.EndHorizontal();
 		}
+
 		// Refresh the fields when select any symbol.
 		void UpdateFields(GraphGrammarNode node) {
 			_symbolTerminal     = node.Terminal;
@@ -327,32 +340,32 @@ namespace MissionGrammarSystem {
 			if (_symbolName == string.Empty ||
 				_symbolAbbreviation == string.Empty ||
 				_symbolDescription == string.Empty) {
-				_messageHint = "Please fill every column.";
+				_messageHint = "Please fill every column!";
 				_messageType = MessageType.Warning;
 			} else if (_symbolTerminal == NodeTerminalType.Terminal &&
 				! _ruleOfTerminalSymbolName.IsMatch(_symbolName)) {
-				_messageHint = "Name field Error! \nPlease use only letters (a-z,A-Z) under 20 characters and the first letter is lowercase.";
+				_messageHint = "Name field Error! \nPlease use only letters (a-z,A-Z) under 20 characters and lowercase for the first letter!";
 				_messageType = MessageType.Error;
 			} else if (_symbolTerminal == NodeTerminalType.Terminal &&
 				! _ruleOfTerminalSymbolAbbreviation.IsMatch(_symbolAbbreviation)) {
-				_messageHint = "Abbreviation field error! \nPlease use only lowercase letters (a-z) and 4 characters or less.";
+				_messageHint = "Abbreviation field error! \nPlease use only lowercase letters (a-z) and 4 characters or less!";
 				_messageType = MessageType.Error;
 			} else if (_symbolTerminal == NodeTerminalType.NonTerminal &&
 				! _ruleOfNonTerminalSymbolName.IsMatch(_symbolName)) {
-				_messageHint = "Name field Error! \nPlease use only letters (a-z,A-Z) under 20 characters and the first letter is uppercase.";
+				_messageHint = "Name field Error! \nPlease use only letters (a-z,A-Z) under 20 characters and lowercase for the first letter!";
 				_messageType = MessageType.Error;
 			} else if (_symbolTerminal == NodeTerminalType.NonTerminal &&
 				! _ruleOfNonTerminalSymbolAbbreviation.IsMatch(_symbolAbbreviation)) {
-				_messageHint = "Abbreviation field error! \nPlease use only uppercase letters (A-Z) and 4 characters or less.";
+				_messageHint = "Abbreviation field error! \nPlease use only uppercase letters (A-Z) and 4 characters or less!";
 				_messageType = MessageType.Error;
 			} else if (Alphabet.IsNodeNameUsed(_node)) {
-				_messageHint = "Node name has been used!\nPlease try another one.";
+				_messageHint = "Node name has been used.\nPlease try another one!";
 				_messageType = MessageType.Error;
 			} else if (Alphabet.IsNodeAbbreviationUsed(_node)) {
-				_messageHint = "Node abbreviation has been used!\nPlease try another one.";
+				_messageHint = "Node abbreviation has been used!\nPlease try another one!";
 				_messageType = MessageType.Error;
 			} else {
-				_messageHint = "The data has changed, but still not save it.";
+				_messageHint = "The data has been changed, but still not saved.";
 				_messageType = MessageType.Info;
 			}
 		}
@@ -362,16 +375,16 @@ namespace MissionGrammarSystem {
 		void ConnectionFieldValidation() {
 			if (_symbolName == string.Empty ||
 				_symbolDescription == string.Empty) {
-				_messageHint = "Please fill every column.";
+				_messageHint = "Please fill every column!";
 				_messageType = MessageType.Warning;
 			} else if (! _ruleOfConnectionName.IsMatch(_symbolName)) {
-				_messageHint = "Name field Error! \nPlease use only letters (a-z,A-Z) under 20 characters and the first letter is lowercase.";
+				_messageHint = "Name field Error! \nPlease use only letters (a-z,A-Z) under 20 characters and lowercase for the first letter!";
 				_messageType = MessageType.Error;
 			} else if (Alphabet.IsConnectionNameUsed(_connection)) {
-				_messageHint = "Node name has been used!\nPlease try another one.";
+				_messageHint = "Node's name has been used.\nPlease try another one!";
 				_messageType = MessageType.Error;
 			} else {
-				_messageHint = "The data has changed, but still not save it.";
+				_messageHint = "The data has been changed, but still not saved.";
 				_messageType = MessageType.Info;
 			}
 		}
@@ -423,7 +436,7 @@ namespace MissionGrammarSystem {
 			switch (_editingMode) {
 			case EditingMode.Create:
 				GUI.enabled = (_messageType != MessageType.Error && _messageType != MessageType.Warning);
-				if (! GUILayout.Button("Add this symbol into alphabet", EditorStyles.miniButton, Style.ButtonHeight)) { break; }
+				if (! GUILayout.Button("Add this symbol into alphabet", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Regular, SampleStyle.ButtonColor.Green), SampleStyle.SubmitButtonHeight)) { break; }
 				// When click the button, revoke all selected symbols and add the symbon in list.
 				switch (_currentTab) {
 				case AlphabetWindowTab.Nodes:
@@ -446,7 +459,7 @@ namespace MissionGrammarSystem {
 				break;
 			case EditingMode.Modify:
 				GUI.enabled = (_messageType != MessageType.Error && _messageType != MessageType.Warning);
-				if (! GUILayout.Button("Update the changed", EditorStyles.miniButton, Style.ButtonHeight)) { break; }
+				if (! GUILayout.Button("Update the changes", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Regular, SampleStyle.ButtonColor.Green), SampleStyle.SubmitButtonHeight)) { break; }
 				// When click the button, update the symbol informations.
 				switch (_currentTab) {
 				case AlphabetWindowTab.Nodes:

@@ -118,10 +118,10 @@ namespace EditorExtend {
 				return _symbolListCanvas;
 			}
 		}
-		private static Rect _symbolPreviewArea = new Rect(0, 250, Screen.width, 150);
+		private static Rect _symbolPreviewArea = new Rect(5, 250, Screen.width - 10, 150);
 		public static Rect SymbolPreviewArea {
 			get {
-				_symbolPreviewArea.width = Screen.width;
+				_symbolPreviewArea.width = Screen.width - 10;
 				return _symbolPreviewArea;
 			}
 		}
@@ -132,10 +132,10 @@ namespace EditorExtend {
 				return _symbolPreviewCanvas;
 			}
 		}
-		private static Rect _symbolPropertiesArea = new Rect(0, 400, Screen.width, Screen.height);
+		private static Rect _symbolPropertiesArea = new Rect(5, 400, Screen.width - 10, Screen.height);
 		public static Rect SymbolPropertiesArea {
 			get {
-				_symbolPropertiesArea.width  = Screen.width;
+				_symbolPropertiesArea.width  = Screen.width - 10;
 				_symbolPropertiesArea.height = Screen.height;
 				return _symbolPropertiesArea;
 			}

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
@@ -35,74 +36,74 @@ namespace EditorExtend {
 			{ ButtonColor.Blue,   ButtonType.Regular, ButtonState.Normal, Resources.Load<Texture2D>("Images/UI/Blue/regular_normal_blue")     as Texture2D },
 			{ ButtonColor.Green,  ButtonType.Regular, ButtonState.Normal, Resources.Load<Texture2D>("Images/UI/Green/regular_normal_green")   as Texture2D },
 			{ ButtonColor.Grey,   ButtonType.Regular, ButtonState.Normal, Resources.Load<Texture2D>("Images/UI/Grey/regular_normal_grey")     as Texture2D },
-			{ ButtonColor.Yellow, ButtonType.Regular, ButtonState.Normal, Resources.Load<Texture2D>("Images/UI/Orange/regular_normal_orange") as Texture2D },
-			{ ButtonColor.Orange, ButtonType.Regular, ButtonState.Normal, Resources.Load<Texture2D>("Images/UI/Yellow/regular_normal_yellow") as Texture2D },
+			{ ButtonColor.Orange, ButtonType.Regular, ButtonState.Normal, Resources.Load<Texture2D>("Images/UI/Orange/regular_normal_orange") as Texture2D },
+			{ ButtonColor.Yellow, ButtonType.Regular, ButtonState.Normal, Resources.Load<Texture2D>("Images/UI/Yellow/regular_normal_yellow") as Texture2D },
 			// Regular Hover.
 			{ ButtonColor.Blue,   ButtonType.Regular, ButtonState.Hover,  Resources.Load<Texture2D>("Images/UI/Blue/regular_hover_blue")      as Texture2D },
 			{ ButtonColor.Green,  ButtonType.Regular, ButtonState.Hover,  Resources.Load<Texture2D>("Images/UI/Green/regular_hover_green")    as Texture2D },
 			{ ButtonColor.Grey,   ButtonType.Regular, ButtonState.Hover,  Resources.Load<Texture2D>("Images/UI/Grey/regular_hover_grey")      as Texture2D },
-			{ ButtonColor.Yellow, ButtonType.Regular, ButtonState.Hover,  Resources.Load<Texture2D>("Images/UI/Orange/regular_hover_orange")  as Texture2D },
-			{ ButtonColor.Orange, ButtonType.Regular, ButtonState.Hover,  Resources.Load<Texture2D>("Images/UI/Yellow/regular_hover_yellow")  as Texture2D },
+			{ ButtonColor.Orange, ButtonType.Regular, ButtonState.Hover,  Resources.Load<Texture2D>("Images/UI/Orange/regular_hover_orange")  as Texture2D },
+			{ ButtonColor.Yellow, ButtonType.Regular, ButtonState.Hover,  Resources.Load<Texture2D>("Images/UI/Yellow/regular_hover_yellow")  as Texture2D },
 			// Regular Active.
 			{ ButtonColor.Blue,   ButtonType.Regular, ButtonState.Active, Resources.Load<Texture2D>("Images/UI/Blue/regular_active_blue")     as Texture2D },
 			{ ButtonColor.Green,  ButtonType.Regular, ButtonState.Active, Resources.Load<Texture2D>("Images/UI/Green/regular_active_green")   as Texture2D },
 			{ ButtonColor.Grey,   ButtonType.Regular, ButtonState.Active, Resources.Load<Texture2D>("Images/UI/Grey/regular_active_grey")     as Texture2D },
-			{ ButtonColor.Yellow, ButtonType.Regular, ButtonState.Active, Resources.Load<Texture2D>("Images/UI/Orange/regular_active_orange") as Texture2D },
-			{ ButtonColor.Orange, ButtonType.Regular, ButtonState.Active, Resources.Load<Texture2D>("Images/UI/Yellow/regular_active_yellow") as Texture2D },
+			{ ButtonColor.Orange, ButtonType.Regular, ButtonState.Active, Resources.Load<Texture2D>("Images/UI/Orange/regular_active_orange") as Texture2D },
+			{ ButtonColor.Yellow, ButtonType.Regular, ButtonState.Active, Resources.Load<Texture2D>("Images/UI/Yellow/regular_active_yellow") as Texture2D },
 			// Mid Normal.
 			{ ButtonColor.Blue,   ButtonType.Mid,     ButtonState.Normal, Resources.Load<Texture2D>("Images/UI/Blue/mid_normal_blue")         as Texture2D },
 			{ ButtonColor.Green,  ButtonType.Mid,     ButtonState.Normal, Resources.Load<Texture2D>("Images/UI/Green/mid_normal_green")       as Texture2D },
 			{ ButtonColor.Grey,   ButtonType.Mid,     ButtonState.Normal, Resources.Load<Texture2D>("Images/UI/Grey/mid_normal_grey")         as Texture2D },
-			{ ButtonColor.Yellow, ButtonType.Mid,     ButtonState.Normal, Resources.Load<Texture2D>("Images/UI/Orange/mid_normal_orange")     as Texture2D },
-			{ ButtonColor.Orange, ButtonType.Mid,     ButtonState.Normal, Resources.Load<Texture2D>("Images/UI/Yellow/mid_normal_yellow")     as Texture2D },
+			{ ButtonColor.Orange, ButtonType.Mid,     ButtonState.Normal, Resources.Load<Texture2D>("Images/UI/Orange/mid_normal_orange")     as Texture2D },
+			{ ButtonColor.Yellow, ButtonType.Mid,     ButtonState.Normal, Resources.Load<Texture2D>("Images/UI/Yellow/mid_normal_yellow")     as Texture2D },
 			// Mid Hover.
 			{ ButtonColor.Blue,   ButtonType.Mid,     ButtonState.Hover,  Resources.Load<Texture2D>("Images/UI/Blue/mid_hover_blue")          as Texture2D },
 			{ ButtonColor.Green,  ButtonType.Mid,     ButtonState.Hover,  Resources.Load<Texture2D>("Images/UI/Green/mid_hover_green")        as Texture2D },
 			{ ButtonColor.Grey,   ButtonType.Mid,     ButtonState.Hover,  Resources.Load<Texture2D>("Images/UI/Grey/mid_hover_grey")          as Texture2D },
-			{ ButtonColor.Yellow, ButtonType.Mid,     ButtonState.Hover,  Resources.Load<Texture2D>("Images/UI/Orange/mid_hover_orange")      as Texture2D },
-			{ ButtonColor.Orange, ButtonType.Mid,     ButtonState.Hover,  Resources.Load<Texture2D>("Images/UI/Yellow/mid_hover_yellow")      as Texture2D },
+			{ ButtonColor.Orange, ButtonType.Mid,     ButtonState.Hover,  Resources.Load<Texture2D>("Images/UI/Orange/mid_hover_orange")      as Texture2D },
+			{ ButtonColor.Yellow, ButtonType.Mid,     ButtonState.Hover,  Resources.Load<Texture2D>("Images/UI/Yellow/mid_hover_yellow")      as Texture2D },
 			// Mid Active.
 			{ ButtonColor.Blue,   ButtonType.Mid,     ButtonState.Active, Resources.Load<Texture2D>("Images/UI/Blue/mid_active_blue")         as Texture2D },
 			{ ButtonColor.Green,  ButtonType.Mid,     ButtonState.Active, Resources.Load<Texture2D>("Images/UI/Green/mid_active_green")       as Texture2D },
 			{ ButtonColor.Grey,   ButtonType.Mid,     ButtonState.Active, Resources.Load<Texture2D>("Images/UI/Grey/mid_active_grey")         as Texture2D },
-			{ ButtonColor.Yellow, ButtonType.Mid,     ButtonState.Active, Resources.Load<Texture2D>("Images/UI/Orange/mid_active_orange")     as Texture2D },
-			{ ButtonColor.Orange, ButtonType.Mid,     ButtonState.Active, Resources.Load<Texture2D>("Images/UI/Yellow/mid_active_yellow")     as Texture2D },
+			{ ButtonColor.Orange, ButtonType.Mid,     ButtonState.Active, Resources.Load<Texture2D>("Images/UI/Orange/mid_active_orange")     as Texture2D },
+			{ ButtonColor.Yellow, ButtonType.Mid,     ButtonState.Active, Resources.Load<Texture2D>("Images/UI/Yellow/mid_active_yellow")     as Texture2D },
 			// Left Normal.
 			{ ButtonColor.Blue,   ButtonType.Left,    ButtonState.Normal, Resources.Load<Texture2D>("Images/UI/Blue/left_normal_blue")        as Texture2D },
 			{ ButtonColor.Green,  ButtonType.Left,    ButtonState.Normal, Resources.Load<Texture2D>("Images/UI/Green/left_normal_green")      as Texture2D },
 			{ ButtonColor.Grey,   ButtonType.Left,    ButtonState.Normal, Resources.Load<Texture2D>("Images/UI/Grey/left_normal_grey")        as Texture2D },
-			{ ButtonColor.Yellow, ButtonType.Left,    ButtonState.Normal, Resources.Load<Texture2D>("Images/UI/Orange/left_normal_orange")    as Texture2D },
-			{ ButtonColor.Orange, ButtonType.Left,    ButtonState.Normal, Resources.Load<Texture2D>("Images/UI/Yellow/left_normal_yellow")    as Texture2D },
+			{ ButtonColor.Orange, ButtonType.Left,    ButtonState.Normal, Resources.Load<Texture2D>("Images/UI/Orange/left_normal_orange")    as Texture2D },
+			{ ButtonColor.Yellow, ButtonType.Left,    ButtonState.Normal, Resources.Load<Texture2D>("Images/UI/Yellow/left_normal_yellow")    as Texture2D },
 			// Left Hover.
 			{ ButtonColor.Blue,   ButtonType.Left,    ButtonState.Hover,  Resources.Load<Texture2D>("Images/UI/Blue/left_hover_blue")         as Texture2D },
 			{ ButtonColor.Green,  ButtonType.Left,    ButtonState.Hover,  Resources.Load<Texture2D>("Images/UI/Green/left_hover_green")       as Texture2D },
 			{ ButtonColor.Grey,   ButtonType.Left,    ButtonState.Hover,  Resources.Load<Texture2D>("Images/UI/Grey/left_hover_grey")         as Texture2D },
-			{ ButtonColor.Yellow, ButtonType.Left,    ButtonState.Hover,  Resources.Load<Texture2D>("Images/UI/Orange/left_hover_orange")     as Texture2D },
-			{ ButtonColor.Orange, ButtonType.Left,    ButtonState.Hover,  Resources.Load<Texture2D>("Images/UI/Yellow/left_hover_yellow")     as Texture2D },
+			{ ButtonColor.Orange, ButtonType.Left,    ButtonState.Hover,  Resources.Load<Texture2D>("Images/UI/Orange/left_hover_orange")     as Texture2D },
+			{ ButtonColor.Yellow, ButtonType.Left,    ButtonState.Hover,  Resources.Load<Texture2D>("Images/UI/Yellow/left_hover_yellow")     as Texture2D },
 			// Left Active.
 			{ ButtonColor.Blue,   ButtonType.Left,    ButtonState.Active, Resources.Load<Texture2D>("Images/UI/Blue/left_active_blue")        as Texture2D },
 			{ ButtonColor.Green,  ButtonType.Left,    ButtonState.Active, Resources.Load<Texture2D>("Images/UI/Green/left_active_green")      as Texture2D },
 			{ ButtonColor.Grey,   ButtonType.Left,    ButtonState.Active, Resources.Load<Texture2D>("Images/UI/Grey/left_active_grey")        as Texture2D },
-			{ ButtonColor.Yellow, ButtonType.Left,    ButtonState.Active, Resources.Load<Texture2D>("Images/UI/Orange/left_active_orange")    as Texture2D },
-			{ ButtonColor.Orange, ButtonType.Left,    ButtonState.Active, Resources.Load<Texture2D>("Images/UI/Yellow/left_active_yellow")    as Texture2D },
+			{ ButtonColor.Orange, ButtonType.Left,    ButtonState.Active, Resources.Load<Texture2D>("Images/UI/Orange/left_active_orange")    as Texture2D },
+			{ ButtonColor.Yellow, ButtonType.Left,    ButtonState.Active, Resources.Load<Texture2D>("Images/UI/Yellow/left_active_yellow")    as Texture2D },
 			// Right Normal.
 			{ ButtonColor.Blue,   ButtonType.Right,   ButtonState.Normal, Resources.Load<Texture2D>("Images/UI/Blue/right_normal_blue")        as Texture2D },
 			{ ButtonColor.Green,  ButtonType.Right,   ButtonState.Normal, Resources.Load<Texture2D>("Images/UI/Green/right_normal_green")      as Texture2D },
 			{ ButtonColor.Grey,   ButtonType.Right,   ButtonState.Normal, Resources.Load<Texture2D>("Images/UI/Grey/right_normal_grey")        as Texture2D },
-			{ ButtonColor.Yellow, ButtonType.Right,   ButtonState.Normal, Resources.Load<Texture2D>("Images/UI/Orange/right_normal_orange")    as Texture2D },
-			{ ButtonColor.Orange, ButtonType.Right,   ButtonState.Normal, Resources.Load<Texture2D>("Images/UI/Yellow/right_normal_yellow")    as Texture2D },
+			{ ButtonColor.Orange, ButtonType.Right,   ButtonState.Normal, Resources.Load<Texture2D>("Images/UI/Orange/right_normal_orange")    as Texture2D },
+			{ ButtonColor.Yellow, ButtonType.Right,   ButtonState.Normal, Resources.Load<Texture2D>("Images/UI/Yellow/right_normal_yellow")    as Texture2D },
 			// Right Hover.
 			{ ButtonColor.Blue,   ButtonType.Right,   ButtonState.Hover,  Resources.Load<Texture2D>("Images/UI/Blue/right_hover_blue")         as Texture2D },
 			{ ButtonColor.Green,  ButtonType.Right,   ButtonState.Hover,  Resources.Load<Texture2D>("Images/UI/Green/right_hover_green")       as Texture2D },
 			{ ButtonColor.Grey,   ButtonType.Right,   ButtonState.Hover,  Resources.Load<Texture2D>("Images/UI/Grey/right_hover_grey")         as Texture2D },
-			{ ButtonColor.Yellow, ButtonType.Right,   ButtonState.Hover,  Resources.Load<Texture2D>("Images/UI/Orange/right_hover_orange")     as Texture2D },
-			{ ButtonColor.Orange, ButtonType.Right,   ButtonState.Hover,  Resources.Load<Texture2D>("Images/UI/Yellow/right_hover_yellow")     as Texture2D },
+			{ ButtonColor.Orange, ButtonType.Right,   ButtonState.Hover,  Resources.Load<Texture2D>("Images/UI/Orange/right_hover_orange")     as Texture2D },
+			{ ButtonColor.Yellow, ButtonType.Right,   ButtonState.Hover,  Resources.Load<Texture2D>("Images/UI/Yellow/right_hover_yellow")     as Texture2D },
 			// Right Active.
 			{ ButtonColor.Blue,   ButtonType.Right,   ButtonState.Active, Resources.Load<Texture2D>("Images/UI/Blue/right_active_blue")        as Texture2D },
 			{ ButtonColor.Green,  ButtonType.Right,   ButtonState.Active, Resources.Load<Texture2D>("Images/UI/Green/right_active_green")      as Texture2D },
 			{ ButtonColor.Grey,   ButtonType.Right,   ButtonState.Active, Resources.Load<Texture2D>("Images/UI/Grey/right_active_grey")        as Texture2D },
-			{ ButtonColor.Yellow, ButtonType.Right,   ButtonState.Active, Resources.Load<Texture2D>("Images/UI/Orange/right_active_orange")    as Texture2D },
-			{ ButtonColor.Orange, ButtonType.Right,   ButtonState.Active, Resources.Load<Texture2D>("Images/UI/Yellow/right_active_yellow")    as Texture2D },
+			{ ButtonColor.Orange, ButtonType.Right,   ButtonState.Active, Resources.Load<Texture2D>("Images/UI/Orange/right_active_orange")    as Texture2D },
+			{ ButtonColor.Yellow, ButtonType.Right,   ButtonState.Active, Resources.Load<Texture2D>("Images/UI/Yellow/right_active_yellow")    as Texture2D },
 		};
 
 
@@ -240,6 +241,10 @@ namespace EditorExtend {
 		public static GUILayoutOption TextAreaHeight {
 			get { return GUILayout.Height(_textAreaHeight); }
 		}
+		private const int _enumPopUpHeight = 15;
+		public static GUILayoutOption EnumPopUpHeight {
+			get { return GUILayout.Height(_enumPopUpHeight); }
+		}
 
 		// GUIStyles
 		// Header & Content styles ; Generally same with the things in CommonStyle class. The default alignment is center. 
@@ -282,6 +287,7 @@ namespace EditorExtend {
 		private static GUIStyle _button = new GUIStyle(EditorStyles.miniButton);
 		public static GUIStyle Button {
 			get {
+				_button.fontSize            = _contentFontSize;
 				_button.normal.background   = ButtonStyleDict[ButtonColor.Blue, ButtonType.Regular, ButtonState.Normal];
 				_button.onNormal.background = ButtonStyleDict[ButtonColor.Blue, ButtonType.Regular, ButtonState.Active];
 				_button.hover.background    = ButtonStyleDict[ButtonColor.Blue, ButtonType.Regular, ButtonState.Hover];
@@ -295,6 +301,7 @@ namespace EditorExtend {
 		private static GUIStyle _buttonLeft = new GUIStyle(EditorStyles.miniButtonLeft);
 		public static GUIStyle ButtonLeft {
 			get {
+				_buttonLeft.fontSize            = _contentFontSize;
 				_buttonLeft.normal.background   = ButtonStyleDict[ButtonColor.Blue, ButtonType.Left, ButtonState.Normal];
 				_buttonLeft.onNormal.background = ButtonStyleDict[ButtonColor.Blue, ButtonType.Left, ButtonState.Active];
 				_buttonLeft.hover.background    = ButtonStyleDict[ButtonColor.Blue, ButtonType.Left, ButtonState.Hover];
@@ -309,6 +316,7 @@ namespace EditorExtend {
 		private static GUIStyle _buttonMid = new GUIStyle(EditorStyles.miniButtonMid);
 		public static GUIStyle ButtonMid {
 			get {
+				_buttonMid.fontSize            = _contentFontSize;
 				_buttonMid.normal.background   = ButtonStyleDict[ButtonColor.Blue, ButtonType.Mid, ButtonState.Normal];
 				_buttonMid.onNormal.background = ButtonStyleDict[ButtonColor.Blue, ButtonType.Mid, ButtonState.Active];
 				_buttonMid.hover.background    = ButtonStyleDict[ButtonColor.Blue, ButtonType.Mid, ButtonState.Hover];
@@ -322,6 +330,7 @@ namespace EditorExtend {
 		private static GUIStyle _buttonRight = new GUIStyle(EditorStyles.miniButtonRight);
 		public static GUIStyle ButtonRight {
 			get { 
+				_buttonRight.fontSize            = _contentFontSize;
 				_buttonRight.normal.background   = ButtonStyleDict[ButtonColor.Blue, ButtonType.Right, ButtonState.Normal];
 				_buttonRight.onNormal.background = ButtonStyleDict[ButtonColor.Blue, ButtonType.Right, ButtonState.Active];
 				_buttonRight.hover.background    = ButtonStyleDict[ButtonColor.Blue, ButtonType.Right, ButtonState.Hover];
@@ -352,6 +361,24 @@ namespace EditorExtend {
 			return buttonStyle;
 		}
 
+		public static GUIStyle GetToggleStyle(ButtonType buttonType, ButtonColor buttonColor) {
+			GUIStyle toggleStyle = new GUIStyle(GUI.skin.toggle);
+
+			if (buttonType == ButtonType.Mid) {
+				toggleStyle = new GUIStyle(ButtonMid);
+			} else if (buttonType == ButtonType.Left) {
+				toggleStyle = new GUIStyle(ButtonLeft);
+			} else if (buttonType == ButtonType.Right) {
+				toggleStyle = new GUIStyle(ButtonRight);
+			}
+
+			toggleStyle.normal.background   = ButtonStyleDict[buttonColor, buttonType, ButtonState.Normal];
+			toggleStyle.onNormal.background = ButtonStyleDict[buttonColor, buttonType, ButtonState.Active];
+			toggleStyle.hover.background    = ButtonStyleDict[buttonColor, buttonType, ButtonState.Hover];
+			toggleStyle.active.background   = ButtonStyleDict[buttonColor, buttonType, ButtonState.Active];
+
+			return toggleStyle;
+		}
 		// Boxes
 		private static GUIStyle _box = new GUIStyle(GUI.skin.box);
 		public static GUIStyle Box {
@@ -399,6 +426,25 @@ namespace EditorExtend {
 				return _textField;
 			}
 		}
+		private static GUIStyle _colorField = new GUIStyle(EditorStyles.colorField);
+		public static GUIStyle ColorField {
+			get { 
+				return _colorField;
+			}
+		}
+		private static GUIStyle _enumPopUp = new GUIStyle(EditorStyles.popup);
+		public static GUIStyle EnumPopUp {
+			get { 
+				_enumPopUp.hover.background = GetTextureFromColor(ColorLightBlue);
+				_enumPopUp.active.background = GetTextureFromColor(ColorLightBlue);
+				_enumPopUp.focused.background = GetTextureFromColor(ColorLightBlue);
+
+				_enumPopUp.normal.textColor = Color.black;
+				_enumPopUp.focused.textColor = Color.white;
+				_enumPopUp.hover.textColor = Color	.white;
+				return _enumPopUp;
+			}
+		}
 
 		private static GUIStyle _textFieldLabel = new GUIStyle(EditorStyles.label);
 		public static GUIStyle TextFieldLabel {
@@ -414,7 +460,48 @@ namespace EditorExtend {
 				return _textAreaLabel;
 			}
 		}
-
+		private static GUIStyle _colorFieldLabel = new GUIStyle(EditorStyles.label);
+		public static GUIStyle ColorFieldLabel {
+			get {
+				_colorFieldLabel.focused.textColor = ColorDarkestBlue;
+				return _textAreaLabel;
+			}
+		}
+		private static GUIStyle _enumPopUpLabel = new GUIStyle(EditorStyles.label);
+		public static GUIStyle EnumPopUpLabel {
+			get { 
+				_enumPopUpLabel.focused.textColor = ColorDarkestBlue;
+				return _enumPopUpLabel;
+			}
+		}
+		public static string TextFieldLabeled(string label, string text, GUIStyle labelStyle, GUIStyle textFieldStyle, params GUILayoutOption[] options){
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.PrefixLabel(label, TextField, labelStyle);
+			text = EditorGUILayout.TextField(text, textFieldStyle, options);
+			EditorGUILayout.EndHorizontal();	
+			return text;
+		}
+		public static string TextAreaLabeled(string label, string text, GUIStyle labelStyle, GUIStyle textAreaStyle, params GUILayoutOption[] options){
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.PrefixLabel(label, TextArea, labelStyle);
+			text = EditorGUILayout.TextArea(text, textAreaStyle, options);
+			EditorGUILayout.EndHorizontal();	
+			return text;
+		}
+		public static Color ColorFieldLabeled(string label, Color color, GUIStyle labelStyle, GUIStyle colorFieldStyle, params GUILayoutOption[] options){
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.PrefixLabel(label, ColorField, labelStyle);
+			color = EditorGUILayout.ColorField(color, options); 
+			EditorGUILayout.EndHorizontal();	
+			return color;
+		}
+		public static Enum EnumPopupLabeled(string label, Enum enumPopUp, GUIStyle labelStyle, GUIStyle enumPopUpStyle, params GUILayoutOption[] options){
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.PrefixLabel(label, EnumPopUp, EnumPopUpLabel);
+			enumPopUp = EditorGUILayout.EnumPopup(enumPopUp, enumPopUpStyle, options);
+			EditorGUILayout.EndHorizontal(); 	
+			return enumPopUp;
+		}
 		public static Texture2D GetTextureFromColor(Color color){
 			Texture2D texture = new Texture2D(1, 1);
 			texture.SetPixel(0, 0, color);
