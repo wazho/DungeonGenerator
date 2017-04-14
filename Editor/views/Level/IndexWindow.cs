@@ -20,14 +20,14 @@ namespace DungeonLevel {
 		}
 		
 		void OnGUI() {
-			//SampleStyle.DebugRect(SampleStyle.IndexWindowSplashCanvasArea, Color.blue);
+			SampleStyle.DrawWindowBackground(SampleStyle.ColorGrey);
 			GUILayout.BeginArea(Container.IndexWindowSplashCanvasArea);
 			EditorGUI.DrawPreviewTexture(Container.IndexWindowSplashCanvasArea, SampleStyle.SplashImage); 
 			GUILayout.EndArea();
-			//SampleStyle.DebugRect(SampleStyle.IndexWindowButtonsCanvasArea, Color.red);
-			GUILayout.BeginArea(Container.IndexWindowButtonsCanvasArea);
-			GUILayout.Space(SampleStyle.PaddingArea);
-			GUILayout.BeginVertical("Box");
+
+			GUILayout.BeginArea(Container.IndexWindowButtonsCanvasArea, SampleStyle.Box);
+			GUILayout.BeginVertical(SampleStyle.Frame(SampleStyle.ColorLightestGrey));
+			GUILayout.Label(_description, EditorStyles.wordWrappedLabel);
 			GUILayout.BeginHorizontal();
 			if (GUILayout.Button("Create Level", SampleStyle.ButtonLeft, SampleStyle.MainButtonHeight)) {
 				// Safety.
@@ -60,9 +60,6 @@ namespace DungeonLevel {
 				}
 			}
 			GUILayout.EndHorizontal();
-			GUILayout.Space(SampleStyle.PaddingBlock);
-			// Show description.
-			GUILayout.Label(_description, EditorStyles.wordWrappedLabel);
 			GUILayout.EndVertical();
 			GUILayout.EndArea();
 		}
