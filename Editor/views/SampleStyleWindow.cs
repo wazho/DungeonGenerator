@@ -17,6 +17,7 @@ public class SampleStyleWindow : EditorWindow {
 	public int toolbarInt = 0;
 	public string[] toolbarStrings = new string[] {"Toolbar1", "Toolbar2", "Toolbar3"};
 	Vector2 ScrollPosition;
+	bool IsInitButton;
 
 	public enum SampleTab {
 		Left,
@@ -26,21 +27,25 @@ public class SampleStyleWindow : EditorWindow {
 	private SampleTab _sampleTab;
 
 	void Awake(){
+		IsInitButton = true;
 		ScrollPosition = Vector2.zero;
 		_isInitButtonTexture = true;
 		_sampleTab = SampleTab.Left;
-		LeftButtonStyle = new GUIStyle(SampleStyle.ButtonLeft);
-		MidButtonStyle = new GUIStyle(SampleStyle.ButtonMid);
-		RightButtonStyle = new GUIStyle(SampleStyle.ButtonRight);
-		LeftButtonStyle.font = SampleStyle.TabFont;
-		RightButtonStyle.font = SampleStyle.TabFont;
-		Debug.Log("Texture Size WH " + LeftButtonStyle.normal.background.width + "" + LeftButtonStyle.normal.background.height);
-		Debug.Log("LFS: " + LeftButtonStyle.lineHeight + "," + LeftButtonStyle.fixedHeight+ "," + LeftButtonStyle.stretchHeight);
-		Debug.Log("Border Size LRTB: " + LeftButtonStyle.border.left + "," + LeftButtonStyle.border.right + "," + LeftButtonStyle.border.top + "," + LeftButtonStyle.border.bottom);
-		Debug.Log("Padding Size LRTB: " + LeftButtonStyle.padding.left + "," + LeftButtonStyle.padding.right + "," + LeftButtonStyle.padding.top + "," + LeftButtonStyle.padding.bottom);
 	}
 
 	void OnGUI(){
+		if (IsInitButton) {
+			LeftButtonStyle = new GUIStyle(SampleStyle.ButtonLeft);
+			MidButtonStyle = new GUIStyle(SampleStyle.ButtonMid);
+			RightButtonStyle = new GUIStyle(SampleStyle.ButtonRight);
+			LeftButtonStyle.font = SampleStyle.TabFont;
+			RightButtonStyle.font = SampleStyle.TabFont;
+			IsInitButton = false;
+			Debug.Log("Texture Size WH " + LeftButtonStyle.normal.background.width + "" + LeftButtonStyle.normal.background.height);
+			Debug.Log("LFS: " + LeftButtonStyle.lineHeight + "," + LeftButtonStyle.fixedHeight+ "," + LeftButtonStyle.stretchHeight);
+			Debug.Log("Border Size LRTB: " + LeftButtonStyle.border.left + "," + LeftButtonStyle.border.right + "," + LeftButtonStyle.border.top + "," + LeftButtonStyle.border.bottom);
+			Debug.Log("Padding Size LRTB: " + LeftButtonStyle.padding.left + "," + LeftButtonStyle.padding.right + "," + LeftButtonStyle.padding.top + "," + LeftButtonStyle.padding.bottom);
+		}
 		SampleStyle.DrawWindowBackground(SampleStyle.ColorLightestGrey);
 		ScrollPosition = GUILayout.BeginScrollView(ScrollPosition, GUILayout.Height(500));
 		SampleStyle.DrawGrid(SampleStyle.GetRectOfWindow(), SampleStyle.MinorGridSize, SampleStyle.MajorGridSize, new Color(166f/255f, 226f/255f, 255f/255f), new Color(118f / 255f, 208f / 255f, 255f / 255f));
