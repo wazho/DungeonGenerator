@@ -54,6 +54,20 @@ public class SampleStyleWindow : EditorWindow {
 
 		// Change this later
 		EditorGUILayout.BeginHorizontal();
+		if (GUILayout.Toggle(_sampleTab == SampleTab.Left, "new Left", LeftButtonStyle, GUILayout.Height(25))) {
+			_sampleTab = SampleTab.Left;
+		}
+		if (GUILayout.Toggle(_sampleTab == SampleTab.Mid, "new Mid", MidButtonStyle, GUILayout.Height(25))) {
+			_sampleTab = SampleTab.Mid;
+		}
+		if (GUILayout.Toggle(_sampleTab == SampleTab.Right, "new Right", RightButtonStyle, GUILayout.Height(25))) {
+			_sampleTab = SampleTab.Right;
+		}
+		EditorGUILayout.EndHorizontal();
+
+
+		/*
+		EditorGUILayout.BeginHorizontal();
 		if (GUILayout.Button("Left", LeftButtonStyle, GUILayout.Height(25))) {
 			_sampleTab = SampleTab.Left;
 		} else if (GUILayout.Button("Mid", MidButtonStyle, GUILayout.Height(25))) {
@@ -63,18 +77,18 @@ public class SampleStyleWindow : EditorWindow {
 		}
 		EditorGUILayout.EndHorizontal();
 
-		switch(_sampleTab){
+		switch (_sampleTab) {
 		case SampleTab.Left:
 			// or just simply use this? SampleStyle.MiniButtonLeftStyle.normal.background; 
-			LeftButtonStyle.normal.background = SampleStyle.LeftActiveBlue;
-			MidButtonStyle.normal.background = SampleStyle.MidNormalBlue;
-			RightButtonStyle.normal.background = SampleStyle.RightNormalBlue;
+			LeftButtonStyle  = SampleStyle.GetButtonStyle(ButtonType.Left,  ButtonColor.Blue);
+			MidButtonStyle   = SampleStyle.GetButtonStyle(ButtonType.Mid,   ButtonColor.Blue);
+			RightButtonStyle = SampleStyle.GetButtonStyle(ButtonType.Right, ButtonColor.Blue);
 			EditorStyle.HeaderOne.font = SampleStyle.TabFont;
 			GUILayout.Label("Left", EditorStyle.HeaderOne);
 			break;
 		case SampleTab.Mid:
-			LeftButtonStyle.normal.background = SampleStyle.LeftNormalBlue;
-			MidButtonStyle.normal.background = SampleStyle.MidActiveBlue;
+			LeftButtonStyle.normal.background  = SampleStyle.LeftNormalBlue;
+			MidButtonStyle.normal.background   = SampleStyle.MidActiveBlue;
 			RightButtonStyle.normal.background = SampleStyle.RightNormalBlue;
 			GUILayout.Label("Middle", EditorStyle.HeaderTwo);
 			break;
@@ -85,6 +99,8 @@ public class SampleStyleWindow : EditorWindow {
 			GUILayout.Label("Right", EditorStyle.HeaderOne);
 			break;
 		}
+		*/
+
 		GUILayout.Label("This is a content");
 		Rect r = new Rect(10, 10, 100, 100);
 		/*
