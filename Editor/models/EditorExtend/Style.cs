@@ -143,13 +143,34 @@ namespace EditorExtend {
 	}
 
 	public class MissionRuleWindow {
-		private static Rect _rulesArea = new Rect(0, 150, Screen.width, 300);
+		private static Rect _propertiesArea = new Rect(5, 5, Screen.width - 10, 175);
+		public static Rect PropertiesArea {
+			get {
+				_propertiesArea.width = Screen.width - 10;
+				return _propertiesArea;
+			}
+			set { }
+		}
+		public static Rect MiniPropertiesArea {
+			get {
+				_propertiesArea.width = Screen.width - 10;
+				_propertiesArea.height = 100;
+				return _propertiesArea;
+			}
+			set { }
+		}
+
+		// Change to this later Rect(5, 150, Screen.width, 300);
+		private static Rect _rulesArea = new Rect(0, 150, Screen.width, 225);
 		public static Rect RulesArea {
 			get {
-				_rulesArea.width = Screen.width;
+				// change to this later: PropertiesArea.width;
+				_rulesArea.width = Screen.width; 
+				_rulesArea.y = _propertiesArea.height;
 				return _rulesArea;
 			}
 		}
+
 		private static Rect _sourceRuleArea = new Rect(0, 25, Screen.width / 2, 200);
 		public static Rect SourceRuleArea {
 			get {
@@ -172,22 +193,24 @@ namespace EditorExtend {
 				return _ruleGraphGrammarCanvas;
 			}
 		}
-		private static Rect _orderingSliderArea = new Rect(0, 390, Screen.width, 30);
+		private static Rect _orderingSliderArea = new Rect(5, 405, Screen.width, 24);
 		public static Rect OrderingSliderArea {
 			get {
-				_orderingSliderArea.width  = Screen.width;
+				_orderingSliderArea.width  = Screen.width - 10;
+				_orderingSliderArea.y = 405;
 				return _orderingSliderArea;
 			}
 		}
-		private static Rect _editorArea = new Rect(0, 420, Screen.width, Screen.height);
+		private static Rect _editorArea = new Rect(5, 430, Screen.width, Screen.height);
 		public static Rect EditorArea {
 			get {
-				_editorArea.width  = Screen.width;
+				_editorArea.width  = Screen.width - 10;
 				_editorArea.height = Screen.height;
+				_editorArea.y = OrderingSliderArea.y + OrderingSliderArea.height + SampleStyle.PaddingBlock;
 				return _editorArea;
 			}
 		}
-		private static Rect _symbolListArea = new Rect(0, 0, Screen.width, 1000);
+		private static Rect _symbolListArea = new Rect(0, 0, Screen.width - 10, 1000);
 		public static Rect SymbolListArea {
 			get {
 				_symbolListArea.width = Screen.width;

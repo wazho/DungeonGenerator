@@ -113,13 +113,13 @@ namespace MissionGrammarSystem {
 			switch (_currentTab) {
 			case AlphabetWindowTab.Nodes:
 				// Header.
-				GUILayout.Label("List of Nodes", SampleStyle.HeaderOne, SampleStyle.HeaderOneHeightLayout);
+				GUILayout.Label("List of Nodes", SampleStyle.HeaderTwo, SampleStyle.HeaderTwoHeightLayout);
 				// Content of nodes.
 				LayoutNodesInterface();
 				break;
 			case AlphabetWindowTab.Connections:
 				// Header.
-				GUILayout.Label("List of Connections", SampleStyle.HeaderOne, SampleStyle.HeaderOneHeightLayout);
+				GUILayout.Label("List of Connections", SampleStyle.HeaderTwo, SampleStyle.HeaderTwoHeightLayout);
 				// Content of connections.
 				LayoutConnectionsInterface();
 				break;

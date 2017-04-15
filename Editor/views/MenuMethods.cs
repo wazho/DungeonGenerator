@@ -29,14 +29,14 @@ public class DungeonWindow : EditorWindow {
 	[MenuItem("Dungeon/Mission/Alphabet %#&ma", false, 11)]
 	public static void ShowMissionAlphabetWindow() {
 		_window = EditorWindow.GetWindow<Mission.AlphabetWindow>("Mission alphabet", true);
-		_window.position = new Rect(35, 60, 500, 680);
+		_window.position = new Rect(35, 60, 500, 670);
 	}
 
 	// Add the 'Mission > Rules' in 'Dungeon' menu.
 	[MenuItem("Dungeon/Mission/Rules %#&mr", false, 12)]
 	public static void ShowMissionRulesWindow() {
 		_window = EditorWindow.GetWindow<Mission.RulesWindow>("Mission rules", true);
-		_window.position = new Rect(35, 60, 750, 680);
+		_window.position = new Rect(35, 60, 750, 760);
 	}
 
 /*

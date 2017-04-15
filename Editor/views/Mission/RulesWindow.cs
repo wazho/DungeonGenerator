@@ -77,7 +77,7 @@ namespace MissionGrammarSystem {
 		private StateRecorder _sourceRuleState = new StateRecorder();
 		private StateRecorder _replaceRuleState = new StateRecorder();
 		// [Will move to Style.cs]
-		private static Rect _redoUndoArea = new Rect(Screen.width / 2 - 120, 0, 100, 25);
+		private static Rect _redoUndoArea = new Rect(Screen.width / 2 - 120, 5, 100, 25);
 		public static Rect RedoUndoArea {
 			get {
 				_redoUndoArea.x = Screen.width / 2 - 120;
@@ -124,7 +124,10 @@ namespace MissionGrammarSystem {
 		}
 
 		void OnGUI() {
+			SampleStyle.DrawWindowBackground(SampleStyle.ColorGrey);
 			// Layout the combobox and editor of mission group.
+			GUILayout.BeginArea(Container.PropertiesArea);
+			GUILayout.BeginVertical(SampleStyle.Frame(SampleStyle.ColorLightestGrey));
 			LayoutMissionGroupOptions();
 			// Layout the combobox and editor of mission rule.
 			LayoutMissionRuleOptions();
@@ -137,7 +140,10 @@ namespace MissionGrammarSystem {
 				LayoutBasicInfoEditor();
 				break;
 			}
+			GUILayout.EndVertical();
+			GUILayout.EndArea();
 			// Layout the canvas areas of two graph grammars.
+
 			LayoutRulesCanvasArea();
 			// Show the area of after-rule-preview.
 			LayoutRuleCanvasEditor();
@@ -149,8 +155,8 @@ namespace MissionGrammarSystem {
 			// Current group.
 			EditorGUILayout.BeginHorizontal();
 			// Dropdown list of current group type.
-			_indexOfGroupsOptions = EditorGUILayout.Popup("Current Group", _indexOfGroupsOptions, _groupsOptions);
-			if (_tempIndexOfGroupsOptions != _indexOfGroupsOptions) {
+			_indexOfGroupsOptions = SampleStyle.PopupLabeled("Current Group", _indexOfGroupsOptions, _groupsOptions, SampleStyle.PopUpLabel, SampleStyle.PopUp, Screen.width/2, SampleStyle.PopUpHeight);
+				if (_tempIndexOfGroupsOptions != _indexOfGroupsOptions) {
 				// Switch mode.
 				_editingMode = EditingMode.None;
 				_tempIndexOfGroupsOptions = _indexOfGroupsOptions;
@@ -169,7 +175,7 @@ namespace MissionGrammarSystem {
 				ResizeResponsiveCanvas(_missionRule.ReplacementRule);
 			}
 			// Sub-button of editor, edit the group.
-			if (GUILayout.Button(_editIcon, EditorStyles.miniButtonLeft, Style.ButtonHeight)) {
+			if (GUILayout.Button(_editIcon, SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Left, SampleStyle.ButtonColor.Green), SampleStyle.ButtonHeight)) {
 				// Switch mode.
 				_editingMode = EditingMode.EditGroup;
 				// Update info.
@@ -177,7 +183,7 @@ namespace MissionGrammarSystem {
 				_description = MissionGrammar.Groups[_indexOfGroupsOptions].Description;
 			}
 			// Sub-button of editor, delete the group.
-			if (GUILayout.Button(_deleteIcon, EditorStyles.miniButtonMid, Style.ButtonHeight)) {
+			if (GUILayout.Button(_deleteIcon, SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Mid, SampleStyle.ButtonColor.Green), SampleStyle.ButtonHeight)) {
 				// Switch mode.
 				_editingMode = EditingMode.DeleteGroup;
 				MissionGrammar.RemoveGroup(MissionGrammar.Groups[_indexOfGroupsOptions]);
@@ -188,7 +194,7 @@ namespace MissionGrammarSystem {
 				_editingMode = EditingMode.None;
 			}
 			// Sub-button of editor, create new group.
-			if (GUILayout.Button("Add New", EditorStyles.miniButtonRight, Style.ButtonHeight)) {
+			if (GUILayout.Button("Add New", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Right, SampleStyle.ButtonColor.Green), SampleStyle.ButtonHeight)) {
 				// Switch mode.
 				_editingMode = EditingMode.CreateGroup;
 				// Update info.
@@ -204,7 +210,7 @@ namespace MissionGrammarSystem {
 			// Current rule.
 			EditorGUILayout.BeginHorizontal();
 			// Dropdown list of Currect Rule Type.
-			_indexOfRulesOptions = EditorGUILayout.Popup("Current Rule", _indexOfRulesOptions, _rulesOptions);
+			_indexOfRulesOptions = SampleStyle.PopupLabeled("Current Rules", _indexOfRulesOptions, _rulesOptions, SampleStyle.PopUpLabel, SampleStyle.PopUp, Screen.width/2, SampleStyle.PopUpHeight);
 			if (_tempIndexOfRulesOptions != _indexOfRulesOptions) {
 				// Switch mode.
 				_editingMode             = EditingMode.None;
@@ -221,7 +227,7 @@ namespace MissionGrammarSystem {
 				ResizeResponsiveCanvas(_missionRule.ReplacementRule);
 			}
 			// Sub-button of editor, edit the rule.
-			if (GUILayout.Button(_editIcon, EditorStyles.miniButtonLeft, Style.ButtonHeight)) {
+			if (GUILayout.Button(_editIcon, SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Left, SampleStyle.ButtonColor.Green), SampleStyle.ButtonHeight)) {
 				// Switch mode.
 				_editingMode = EditingMode.EditRule;
 				// Update info.
@@ -229,7 +235,7 @@ namespace MissionGrammarSystem {
 				_description = MissionGrammar.Groups[_indexOfGroupsOptions].Rules[_indexOfRulesOptions].Description;
 			}
 			// Sub-button of editor, delete the rule.
-			if (GUILayout.Button(_deleteIcon, EditorStyles.miniButtonMid, Style.ButtonHeight)) {
+			if (GUILayout.Button(_deleteIcon, SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Mid, SampleStyle.ButtonColor.Green), SampleStyle.ButtonHeight)) {
 				// Switch mode.
 				_editingMode = EditingMode.DeleteRule;
 				// Remove the rule from current group.
@@ -241,7 +247,7 @@ namespace MissionGrammarSystem {
 				_editingMode = EditingMode.None;
 			}
 			// Sub-button of editor, create new rule.
-			if (GUILayout.Button("Add New", EditorStyles.miniButtonRight, Style.ButtonHeight)) {
+			if (GUILayout.Button("Add New", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Right, SampleStyle.ButtonColor.Green), SampleStyle.ButtonHeight)) {
 				// Switch mode.
 				_editingMode = EditingMode.CreateRule;
 				// Update info.
@@ -253,6 +259,7 @@ namespace MissionGrammarSystem {
 				_rulesOptions = MissionGrammar.Groups[_indexOfGroupsOptions].Rules.Select(r => r.Name).ToArray();
 			}
 			EditorGUILayout.EndHorizontal();
+			GUILayout.Space(SampleStyle.PaddingBlock);
 		}
 		// Validate that the GroupName or RuleName is legal.
 		private static Regex _nameStringNoDoubleSpace = new Regex(@"\s\s\w");
@@ -263,29 +270,29 @@ namespace MissionGrammarSystem {
 			switch (_editingMode) {
 			case EditingMode.EditGroup:
 				// Text fields.
-				_name        = EditorGUILayout.TextField("Group Name", _name);
-				_description = EditorGUILayout.TextField("Group Description", _description);
+				_name = SampleStyle.TextFieldLabeled("Group Name", _name, SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
+				_description = SampleStyle.TextFieldLabeled("Group Description", _description , SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
 				// Check the name has never used before.
 				_nameCanBeUsed = ! MissionGrammar.IsGroupNameUsed(_name);
 				break;
 			case EditingMode.CreateGroup:
 				// Text fields.
-				_name        = EditorGUILayout.TextField("New Group Name", _name);
-				_description = EditorGUILayout.TextField("Group Description", _description);
+				_name        = SampleStyle.TextFieldLabeled("New Group Name", _name, SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
+				_description = SampleStyle.TextFieldLabeled("New Group Description", _description, SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
 				// Check the name has never used before.
 				_nameCanBeUsed = ! MissionGrammar.IsGroupNameUsed(_name);
 				break;
 			case EditingMode.EditRule:
 				// Text fields.
-				_name        = EditorGUILayout.TextField("Rule Name", _name);
-				_description = EditorGUILayout.TextField("Rule Description", _description);
+				_name        = SampleStyle.TextFieldLabeled("Rule Name", _name, SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
+				_description = SampleStyle.TextFieldLabeled("Rule Description", _description, SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
 				// Check the name has never used before.
 				_nameCanBeUsed = ! MissionGrammar.IsRuleNameUsed(_name, _indexOfGroupsOptions);
 				break;
 			case EditingMode.CreateRule:
 				// Text fields.
-				_name        = EditorGUILayout.TextField("New Rule Name", _name);
-				_description = EditorGUILayout.TextField("Rule Description", _description);
+				_name        = SampleStyle.TextFieldLabeled("New Rule Name", _name, SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
+				_description = SampleStyle.TextFieldLabeled("New Rule Description", _description, SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
 				// Check the name has never used before.
 				_nameCanBeUsed = ! MissionGrammar.IsRuleNameUsed(_name, _indexOfGroupsOptions);
 				break;
@@ -293,52 +300,52 @@ namespace MissionGrammarSystem {
 			// [TODO] Data validation. Move this part.
 			// Remind user [need Modify]
 			if (_name == string.Empty && _description == string.Empty) {
-				EditorGUILayout.HelpBox("Info \nThe name is empty. \nThe description is empty.", MessageType.Info);
+				EditorGUILayout.HelpBox("Info \nThe name field is empty. \nThe description field is empty.", MessageType.Warning);
 				_applyEditingButtonEnabled = false;
 			}
 			if (_name == string.Empty && _description != string.Empty) {
 				_applyEditingButtonEnabled = false;
-				EditorGUILayout.HelpBox("Info \nThe name is empty.", MessageType.Info);
+				EditorGUILayout.HelpBox("Info \nThe name field is empty.", MessageType.Warning);
 			}
 			if (_name != string.Empty && _description == string.Empty && _nameCanBeUsed == false) {
 				_applyEditingButtonEnabled = false;
-				EditorGUILayout.HelpBox("Info  \nThe name has been used before. \nThe description is empty.", MessageType.Info);
+				EditorGUILayout.HelpBox("Info  \nThe name has been used before. \nThe description field is empty.", MessageType.Error);
 			}
 			if (_name != string.Empty && _description == string.Empty && _nameCanBeUsed == true && _nameStringNoDoubleSpace.IsMatch(_name) == true && _nameEndOfStringNoSpace.IsMatch(_name) == true) {
 				_applyEditingButtonEnabled = false;
-				EditorGUILayout.HelpBox("Info \nThe name is illegal. \nCan't use more than one space continuously. \nEnd of name string can't be space. \nThe description is empty.", MessageType.Info);
+				EditorGUILayout.HelpBox("Info \nThe name is illegal. \nCan't use more than one space continuously. \nEnd of name string can't be a space. \nThe description field is empty.", MessageType.Error);
 			}
 			if (_name != string.Empty && _description == string.Empty && _nameCanBeUsed == true && _nameStringNoDoubleSpace.IsMatch(_name) == true) {
 				_applyEditingButtonEnabled = false;
-				EditorGUILayout.HelpBox("Info \nThe name is illegal. \nCan't use more than one space continuously. \nThe description is empty.", MessageType.Info);
+				EditorGUILayout.HelpBox("Info \nThe name is illegal. \nCan't use more than one space continuously. \nThe description field is empty.", MessageType.Error);
 			}
 			if (_name != string.Empty && _description == string.Empty && _nameCanBeUsed == true && _nameEndOfStringNoSpace.IsMatch(_name) == true) {
 				_applyEditingButtonEnabled = false;
-				EditorGUILayout.HelpBox("Info \nThe name is illegal. \nEnd of name string can't be space. \nThe description is empty.", MessageType.Info);
+				EditorGUILayout.HelpBox("Info \nThe name is illegal. \nEnd of name string can't be a space. \nThe description field is empty.", MessageType.Error);
 			}
 			if (_name != string.Empty && _description != string.Empty && _nameCanBeUsed == false) {
 				_applyEditingButtonEnabled = false;
-				EditorGUILayout.HelpBox("Info \nThe name has been used before.", MessageType.Info);
+				EditorGUILayout.HelpBox("Info \nThe name has been used before.", MessageType.Error);
 			}
 			if (_name != string.Empty && _description != string.Empty && _nameCanBeUsed == true && _nameStringNoDoubleSpace.IsMatch(_name) == true && _nameEndOfStringNoSpace.IsMatch(_name) == true) {
 				_applyEditingButtonEnabled = false;
-				EditorGUILayout.HelpBox("Info \nThe name is illegal. \nCan't use more than one space continuously. \nEnd of name string can't be space.", MessageType.Info);
+				EditorGUILayout.HelpBox("Info \nThe name is illegal. \nCan't use more than one space continuously. \nEnd of name string can't be a space.", MessageType.Info);
 			}
 			if (_name != string.Empty && _description != string.Empty && _nameCanBeUsed == true && _nameStringNoDoubleSpace.IsMatch(_name) == true) {
 				_applyEditingButtonEnabled = false;
-				EditorGUILayout.HelpBox("Info \nThe name is illegal. \nCan't use more than one space continuously.", MessageType.Info);
+				EditorGUILayout.HelpBox("Info \nThe name is illegal. \nCan't use more than one space continuously.", MessageType.Error);
 			}
 			if (_name != string.Empty && _description != string.Empty && _nameCanBeUsed == true && _nameEndOfStringNoSpace.IsMatch(_name) == true) {
 				_applyEditingButtonEnabled = false;
-				EditorGUILayout.HelpBox("Info \nThe name is illegal. \nEnd of name string can't be space.", MessageType.Info);
+				EditorGUILayout.HelpBox("Info \nThe name is illegal. \nEnd of name string can't be a space.", MessageType.Error);
 			}
 			if (_name != string.Empty && _description != string.Empty && _nameCanBeUsed == true && _nameStringNoDoubleSpace.IsMatch(_name) == false && _nameEndOfStringNoSpace.IsMatch(_name) == false) {
 				_applyEditingButtonEnabled = true;
-				EditorGUILayout.HelpBox("Info \nNothing.", MessageType.Info);
+				EditorGUILayout.HelpBox("Info \nPlease fill the name and description fields!", MessageType.Info);
 			}
 			// Submit button.
 			GUI.enabled = _applyEditingButtonEnabled;
-			if (GUILayout.Button("Apply", EditorStyles.miniButton, Style.ButtonHeight)) {
+			if (GUILayout.Button("Apply", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Regular, SampleStyle.ButtonColor.Green), SampleStyle.SubmitButtonHeight)) {
 				if (EditorUtility.DisplayDialog("Saving", 
 					"Are you sure to save?",
 					"Yes", "No")) {
@@ -372,11 +379,11 @@ namespace MissionGrammarSystem {
 		}
 		// Layout the canvas areas of two graph grammars.
 		void LayoutRulesCanvasArea() {
-			GUILayout.BeginArea(Container.RulesArea);
+			GUILayout.BeginArea(Container.RulesArea, SampleStyle.Frame(SampleStyle.ColorLightestGrey));
 			// Information of Source and Replacement.
 			EditorGUILayout.BeginHorizontal();
-			GUILayout.Label("Source", Style.HeaderTwo, GUILayout.Width(Screen.width / 2));
-			GUILayout.Label("Replacement", Style.HeaderTwo, GUILayout.Width(Screen.width / 2));
+			GUILayout.Label("Source", SampleStyle.HeaderTwo, GUILayout.Width(Screen.width / 2));
+			GUILayout.Label("Replacement", SampleStyle.HeaderTwo, GUILayout.Width(Screen.width / 2));
 			EditorGUILayout.EndHorizontal();
 
 			// SourceCanvas
@@ -399,8 +406,8 @@ namespace MissionGrammarSystem {
 		}
 		// Layout the canvas editor of current selected rules.
 		void LayoutRuleCanvasEditor() {
-			// Show ordering slider
-			GUILayout.BeginArea(Container.OrderingSliderArea);
+			// Show ordering slider 
+			GUILayout.BeginArea(Container.OrderingSliderArea, SampleStyle.Frame(SampleStyle.ColorLightestGrey));
 			if (_currentSelectedGraphGrammar != null && _currentSelectedGraphGrammar.SelectedSymbol is GraphGrammarNode) {
 				int sliderOrdering = EditorGUILayout.IntSlider("Ordering", _currentSelectedGraphGrammar.SelectedSymbol.Ordering, 1, _currentSelectedGraphGrammar.Nodes.Count);
 				if (sliderOrdering != _currentSelectedGraphGrammar.SelectedSymbol.Ordering) {
@@ -411,31 +418,32 @@ namespace MissionGrammarSystem {
 					_currentSelectedGraphGrammar.SelectedSymbol.Ordering = sliderOrdering;
 					RecordState();
 				}
-
 			}
 			GUILayout.EndArea();
 
 			GUILayout.BeginArea(Container.EditorArea);
 			// Buttons - Add Node & Add Connection & Copy & Delete.
-			EditorGUILayout.BeginHorizontal();
-			if (GUILayout.Button("Add Node", EditorStyles.miniButtonLeft, Style.ButtonHeight)) {
+			EditorGUILayout.BeginHorizontal(SampleStyle.Frame(SampleStyle.ColorLightestGrey));
+			if (GUILayout.Button("Add Node", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Left, SampleStyle.ButtonColor.Blue), SampleStyle.ButtonHeight)) {
 				// Add Alphabet's Node 
 				_applySymbolEditingButtonEnabled = true;
 				_currentTab = SymbolEditingMode.AddNode;
 			}
-			if (GUILayout.Button("Add Connection", EditorStyles.miniButtonMid, Style.ButtonHeight)) {
+			if (GUILayout.Button("Add Connection", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Mid, SampleStyle.ButtonColor.Blue), SampleStyle.ButtonHeight)) {
 				_applySymbolEditingButtonEnabled = true;
 				_currentTab = SymbolEditingMode.AddConnection;
 			}
-			if (GUILayout.Button("Copy", EditorStyles.miniButtonMid, Style.ButtonHeight)) {
+			if (GUILayout.Button("Copy", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Mid, SampleStyle.ButtonColor.Blue), SampleStyle.ButtonHeight)) {
 				_applySymbolEditingButtonEnabled = true;
 				_currentTab = SymbolEditingMode.Copy;
 			}
-			if (GUILayout.Button("Delete", EditorStyles.miniButtonRight, Style.ButtonHeight)) {
+			if (GUILayout.Button("Delete", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Right, SampleStyle.ButtonColor.Blue), SampleStyle.ButtonHeight)) {
 				_applySymbolEditingButtonEnabled = true;
 				_currentTab = SymbolEditingMode.Delete;
 			}
 			EditorGUILayout.EndHorizontal();
+
+			GUILayout.BeginVertical(SampleStyle.Frame(SampleStyle.ColorLightestGrey));
 			// Show the list.
 			switch (_currentTab) {
 			case SymbolEditingMode.AddNode:
@@ -456,10 +464,10 @@ namespace MissionGrammarSystem {
 				break;
 			}
 			// Remind user [need Modify]
-			EditorGUILayout.HelpBox("Info \nThe Node's name has been used.", MessageType.Info);
+			EditorGUILayout.HelpBox("Info \nThe name has been used.", MessageType.Info);
 			// Buttons - Apply.
 			GUI.enabled = _applySymbolEditingButtonEnabled;
-			if (GUILayout.Button("Apply", EditorStyles.miniButton, Style.ButtonHeight)) {
+			if (GUILayout.Button("Apply", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Regular, SampleStyle.ButtonColor.Green), SampleStyle.SubmitButtonHeight)) {
 				if (EditorUtility.DisplayDialog("Saving", 
 					"Are you sure to save?",
 						"Yes", "No")) {
@@ -468,6 +476,7 @@ namespace MissionGrammarSystem {
 				}
 			}
 			GUI.enabled = true;
+			GUILayout.EndVertical();
 			GUILayout.EndArea();
 		}
 		// Control whole events.
@@ -630,6 +639,7 @@ namespace MissionGrammarSystem {
 		}
 
 		void LayoutNodeList() {
+			GUILayout.Label("List of Nodes", SampleStyle.HeaderTwo, SampleStyle.HeaderTwoHeightLayout);
 			// Content of Node-List.
 			_listScrollPosition = GUILayout.BeginScrollView(_listScrollPosition, SymbolList.HeightLayout);
 			// Content of scroll area.
@@ -637,8 +647,9 @@ namespace MissionGrammarSystem {
 			// Set the scroll position.
 			_symbolListCanvasInWindow.position = GUIUtility.GUIToScreenPoint(Container.SymbolListCanvas.position) - this.position.position;
 			_symbolListCanvasInWindow.size     = _symbolListCanvasInWindow.size = Container.SymbolListCanvas.size;
-			EditorGUI.DrawRect(Container.SymbolListCanvas, Color.gray);
+			SampleStyle.DrawGrid(Container.SymbolListCanvas, SampleStyle.MinorGridSize, SampleStyle.MajorGridSize, SampleStyle.GridBackgroundColor, SampleStyle.GridColor);
 			GUILayout.EndArea();
+
 			// Layout each symbols in list.
 			foreach (var node in Alphabet.Nodes) {
 				Alphabet.DrawNodeInList(node);
@@ -649,6 +660,7 @@ namespace MissionGrammarSystem {
 		}
 
 		void LayoutConnectionList() {
+			GUILayout.Label("List Connections", SampleStyle.HeaderTwo, SampleStyle.HeaderTwoHeightLayout);
 			// Content of Connection-List.
 			// Set the ScrollPosition.
 			_listScrollPosition = GUILayout.BeginScrollView(_listScrollPosition, SymbolList.HeightLayout);
@@ -657,9 +669,10 @@ namespace MissionGrammarSystem {
 			// Set the scroll position.
 			_symbolListCanvasInWindow.position = GUIUtility.GUIToScreenPoint(Container.SymbolListCanvas.position) - this.position.position;
 			_symbolListCanvasInWindow.size     = _symbolListCanvasInWindow.size = Container.SymbolListCanvas.size;
-			EditorGUI.DrawRect(Container.SymbolListCanvas, Color.gray);
+			SampleStyle.DrawGrid(Container.SymbolListCanvas, SampleStyle.MinorGridSize, SampleStyle.MajorGridSize, SampleStyle.GridBackgroundColor, SampleStyle.GridColor);
 			GUILayout.EndArea();
 			// Layout each symbols in list.:
+
 			foreach (var connection in Alphabet.Connections) {
 				Alphabet.DrawConnectionInList(connection);
 				// Custom style to modify padding and margin for label.
@@ -679,7 +692,7 @@ namespace MissionGrammarSystem {
 				GUI.enabled = (_currentSelectedGraphGrammar != null && Alphabet.SelectedConnection != null );
 				break;
 			}
-			if (GUILayout.Button("Add New", EditorStyles.miniButtonLeft, Style.ButtonHeight)) {
+			if (GUILayout.Button("Add New", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Left, SampleStyle.ButtonColor.Green), SampleStyle.ButtonHeight)) {
 				// Add symbol.
 				switch (_currentTab) {
 				case SymbolEditingMode.AddNode:
@@ -725,7 +738,7 @@ namespace MissionGrammarSystem {
 				GUI.enabled = (GUI.enabled && _currentSelectedGraphGrammar.SelectedSymbol is GraphGrammarConnection);
 				break;
 			}
-			if (GUILayout.Button("Modify", EditorStyles.miniButtonMid, Style.ButtonHeight)) {
+			if (GUILayout.Button("Modify", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Right, SampleStyle.ButtonColor.Green), SampleStyle.ButtonHeight)) {
 				switch (_currentTab) {
 				case SymbolEditingMode.AddNode:
 					_currentSelectedGraphGrammar.UpdateSymbol(_currentSelectedGraphGrammar.SelectedSymbol, Alphabet.SelectedNode);
@@ -744,9 +757,12 @@ namespace MissionGrammarSystem {
 			_sourceCanvasScrollPosition = GUILayout.BeginScrollView(_sourceCanvasScrollPosition, GUILayout.Width(Screen.width / 2), GraphCanvas.RuleScrollViewHeightLayout);
 			// Content of canvas area.
 			GraphCanvas.ResizeSourceCanvas(_sourceCanvasWidth, _sourceCanvasHeight);
-			// If  this is current selected canvas, backgound will be white. Else gray.
-			EditorGUI.DrawRect(GraphCanvas.SourceCanvas, _missionRule.SourceRule.Equals(_currentSelectedGraphGrammar) ? Color.white : Color.gray);
-			SampleStyle.DrawGrid(GraphCanvas.SourceCanvas, 20, 100, SampleStyle.ColorBlue, SampleStyle.ColorDarkestBlue);
+			// Draw grid on selected canvas, otherwise it will only paint blue color. 
+			if (_missionRule.SourceRule.Equals(_currentSelectedGraphGrammar)) {
+				SampleStyle.DrawGrid(GraphCanvas.SourceCanvas, SampleStyle.MinorGridSize, SampleStyle.MajorGridSize, SampleStyle.ColorLightBlue, SampleStyle.ColorBlue);
+			} else {
+				SampleStyle.DrawGrid(GraphCanvas.SourceCanvas, SampleStyle.MinorGridSize, SampleStyle.MajorGridSize, SampleStyle.GridBackgroundColor, SampleStyle.GridColor);	
+			}
 			GUILayout.Label(string.Empty, GraphCanvas.SourceCanvasContent);
 			// Draw Nodes and Connections.
 			GraphGrammarConnection _currentSelectedConnection = null;
@@ -770,7 +786,7 @@ namespace MissionGrammarSystem {
 			GUILayout.BeginHorizontal();
 			// Set the button disabled when it have no undo state.
 			EditorGUI.BeginDisabledGroup(!_sourceRuleState.hasUndoState);
-			if (GUILayout.Button(_undoTexture, EditorStyles.miniButtonRight, Style.ButtonHeight)) {
+			if (GUILayout.Button(_undoTexture, SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Left, SampleStyle.ButtonColor.Grey), SampleStyle.ButtonHeight)) {
 				// Undo.
 				_currentSelectedGraphGrammar = _missionRule.SourceRule;
 				UndoState();
@@ -779,7 +795,7 @@ namespace MissionGrammarSystem {
 			}
 			// Set the button disabled when it have no redo state.
 			EditorGUI.BeginDisabledGroup(!_sourceRuleState.hasRedoState);
-			if (GUILayout.Button(_redoTexture, EditorStyles.miniButtonLeft, Style.ButtonHeight)) {
+			if (GUILayout.Button(_redoTexture, SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Right, SampleStyle.ButtonColor.Grey), SampleStyle.ButtonHeight)) {
 				// Redo.
 				_currentSelectedGraphGrammar = _missionRule.SourceRule;
 				RedoState();
@@ -797,7 +813,12 @@ namespace MissionGrammarSystem {
 			_replacementCanvasScrollPosition = GUILayout.BeginScrollView(_replacementCanvasScrollPosition, GUILayout.Width(Screen.width / 2), GraphCanvas.RuleScrollViewHeightLayout);
 			// Content of canvas area.
 			GraphCanvas.ResizeReplacementCanvas(_replacementCanvasWidth, _replacementCanvasHeight);
-			EditorGUI.DrawRect(GraphCanvas.ReplacementCanvas, _missionRule.ReplacementRule.Equals(_currentSelectedGraphGrammar) ? Color.white : Color.gray);
+			if (_missionRule.ReplacementRule.Equals(_currentSelectedGraphGrammar)) {
+				SampleStyle.DrawGrid(GraphCanvas.SourceCanvas, SampleStyle.MinorGridSize, SampleStyle.MajorGridSize, SampleStyle.ColorLightBlue, SampleStyle.ColorBlue);	
+			} else {
+				SampleStyle.DrawGrid(GraphCanvas.SourceCanvas, SampleStyle.MinorGridSize, SampleStyle.MajorGridSize, SampleStyle.GridBackgroundColor, SampleStyle.GridColor);
+				//EditorGUI.DrawRect(GraphCanvas.SourceCanvas, SampleStyle.ColorDarkestGrey);
+			}
 			GUILayout.Label(string.Empty, GraphCanvas.ReplacementCanvasContent);
 			// Draw Nodes and Connections.
 			GraphGrammarConnection _currentSelectedConnection = null;
@@ -821,7 +842,7 @@ namespace MissionGrammarSystem {
 			GUILayout.BeginHorizontal();
 			// Set the button disabled when it have no undo state.
 			EditorGUI.BeginDisabledGroup(!_replaceRuleState.hasUndoState);
-			if (GUILayout.Button(_undoTexture, EditorStyles.miniButtonRight, Style.ButtonHeight)) {
+			if (GUILayout.Button(_undoTexture, SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Left, SampleStyle.ButtonColor.Grey), SampleStyle.ButtonHeight)) {
 				// Undo.
 				_currentSelectedGraphGrammar = _missionRule.ReplacementRule;
 				UndoState();
@@ -830,7 +851,7 @@ namespace MissionGrammarSystem {
 			}
 			// Set the button disabled when it have no redo state.
 			EditorGUI.BeginDisabledGroup(!_replaceRuleState.hasRedoState);
-			if (GUILayout.Button(_redoTexture, EditorStyles.miniButtonLeft, Style.ButtonHeight)) {
+			if (GUILayout.Button(_redoTexture, SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Right, SampleStyle.ButtonColor.Grey), SampleStyle.ButtonHeight)) {
 				// Redo.
 				_currentSelectedGraphGrammar = _missionRule.ReplacementRule;
 				RedoState();
@@ -947,6 +968,11 @@ namespace MissionGrammarSystem {
 				_replaceRuleState.Redo(ref _currentSelectedGraphGrammar);
 			}
 		}
+
+		void OnInspectorUpdate(){
+			Repaint();
+		}
+
 		// The class used to record the state and execute redo/undo.
 		class StateRecorder {
 			// Default constructor.

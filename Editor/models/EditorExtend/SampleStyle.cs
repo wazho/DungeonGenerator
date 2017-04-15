@@ -215,6 +215,10 @@ namespace EditorExtend {
 		}
 
 		// Button heights ; Generally, same with in CommonStyle
+		private const int _miniButtonHeight = 16;
+		public static GUILayoutOption MiniButtonHeight {
+			get { return GUILayout.Height(_miniButtonHeight); }
+		}
 		private const int _buttonHeight = 20;
 		public static GUILayoutOption ButtonHeight {
 			get { return GUILayout.Height(_buttonHeight); }
@@ -245,6 +249,10 @@ namespace EditorExtend {
 		public static GUILayoutOption EnumPopUpHeight {
 			get { return GUILayout.Height(_enumPopUpHeight); }
 		}
+		private const int _popUpHeight = 15;
+		public static GUILayoutOption PopUpHeight {
+			get { return GUILayout.Height(_popUpHeight); }
+		}
 
 		// GUIStyles
 		// Header & Content styles ; Generally same with the things in CommonStyle class. The default alignment is center. 
@@ -261,6 +269,7 @@ namespace EditorExtend {
 		public static GUIStyle HeaderTwo {
 			get {
 				_headerTwo.fontSize  = 18;
+				_headerTwo.font = TabFont;
 				_headerTwo.alignment = TextAnchor.MiddleCenter;
 				return _headerTwo;
 			}
@@ -435,14 +444,27 @@ namespace EditorExtend {
 		private static GUIStyle _enumPopUp = new GUIStyle(EditorStyles.popup);
 		public static GUIStyle EnumPopUp {
 			get { 
-				_enumPopUp.hover.background = GetTextureFromColor(ColorLightBlue);
-				_enumPopUp.active.background = GetTextureFromColor(ColorLightBlue);
-				_enumPopUp.focused.background = GetTextureFromColor(ColorLightBlue);
+				//_enumPopUp.hover.background = GetTextureFromColor(ColorLightBlue);
+				//_enumPopUp.active.background = GetTextureFromColor(ColorLightBlue);
+				//_enumPopUp.focused.background = GetTextureFromColor(ColorLightBlue);
 
 				_enumPopUp.normal.textColor = Color.black;
-				_enumPopUp.focused.textColor = Color.white;
-				_enumPopUp.hover.textColor = Color	.white;
+				_enumPopUp.focused.textColor = SampleStyle.ColorDarkestBlue;
+				_enumPopUp.hover.textColor = SampleStyle.ColorDarkestBlue;
 				return _enumPopUp;
+			}
+		}private static GUIStyle _popUp = new GUIStyle(EditorStyles.popup);
+		public static GUIStyle PopUp {
+			get { 
+				//_popUp.hover.background = GetTextureFromColor(ColorLightBlue);
+				//_popUp.active.background = GetTextureFromColor(ColorLightBlue);
+				//_popUp.focused.background = GetTextureFromColor(ColorLightBlue);
+				_popUp.padding = new RectOffset(6, 6, 2, 2);
+
+				_popUp.normal.textColor = Color.black;
+				_popUp.focused.textColor = SampleStyle.ColorDarkestBlue;
+				_popUp.hover.textColor = SampleStyle.ColorDarkestBlue;
+				return _popUp;
 			}
 		}
 
@@ -474,6 +496,13 @@ namespace EditorExtend {
 				return _enumPopUpLabel;
 			}
 		}
+		private static GUIStyle _popUpLabel = new GUIStyle(EditorStyles.label);
+		public static GUIStyle PopUpLabel {
+			get { 
+				_popUpLabel.focused.textColor = ColorDarkestBlue;
+				return _popUpLabel;
+			}
+		}
 		public static string TextFieldLabeled(string label, string text, GUIStyle labelStyle, GUIStyle textFieldStyle, params GUILayoutOption[] options){
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel(label, TextField, labelStyle);
@@ -502,6 +531,14 @@ namespace EditorExtend {
 			EditorGUILayout.EndHorizontal(); 	
 			return enumPopUp;
 		}
+		public static int PopupLabeled(string label, int selectedIndex, string[] displayedOptions, GUIStyle labelStyle, GUIStyle PopUpStyle, int width, params GUILayoutOption[] options){
+			EditorGUILayout.BeginHorizontal(GUILayout.Width(width));
+			EditorGUILayout.PrefixLabel(label, PopUp, PopUpLabel);
+			selectedIndex = EditorGUILayout.Popup(selectedIndex, displayedOptions, PopUpStyle, options);
+			EditorGUILayout.EndHorizontal(); 	
+			return selectedIndex;
+		}
+
 		public static Texture2D GetTextureFromColor(Color color){
 			Texture2D texture = new Texture2D(1, 1);
 			texture.SetPixel(0, 0, color);
