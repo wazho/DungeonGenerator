@@ -365,8 +365,28 @@ namespace EditorExtend {
 			buttonStyle.normal.background   = ButtonStyleDict[buttonColor, buttonType, ButtonState.Normal];
 			buttonStyle.onNormal.background = ButtonStyleDict[buttonColor, buttonType, ButtonState.Active];
 			buttonStyle.hover.background    = ButtonStyleDict[buttonColor, buttonType, ButtonState.Hover];
+			buttonStyle.onHover.background  = ButtonStyleDict[buttonColor, buttonType, ButtonState.Hover];
 			buttonStyle.active.background   = ButtonStyleDict[buttonColor, buttonType, ButtonState.Active];
+			buttonStyle.onActive.background = ButtonStyleDict[buttonColor, buttonType, ButtonState.Active];
 
+			if (buttonColor == ButtonColor.Blue) {
+				buttonStyle.normal.textColor = Color.white;		
+			} else if (buttonColor == ButtonColor.Green) {
+				buttonStyle.normal.textColor = ColorDarkestGreen;		
+			} else if (buttonColor == ButtonColor.Grey) {
+				buttonStyle.normal.textColor = ColorDarkestBlue;		
+			} else if (buttonColor == ButtonColor.Orange) {
+				buttonStyle.normal.textColor = Color.white;		
+			} else {
+				buttonStyle.normal.textColor = ColorDarkestOrange;
+			}
+
+			return buttonStyle;
+		}
+
+		public static GUIStyle GetButtonStyle(ButtonType buttonType, ButtonColor buttonColor, Color textColor){
+			GUIStyle buttonStyle = new GUIStyle(GetButtonStyle(buttonType, buttonColor));
+			buttonStyle.normal.textColor = textColor;
 			return buttonStyle;
 		}
 
@@ -478,6 +498,17 @@ namespace EditorExtend {
 				return _popUpLabel;
 			}
 		}
+		private static GUIStyle _foldoutLabel = new GUIStyle(EditorStyles.foldout);
+		public static GUIStyle FoldoutLabel {
+			get { 
+				_foldoutLabel.focused.textColor = ColorDarkestBlue;
+				_foldoutLabel.onActive.textColor = SampleStyle.ColorDarkestBlue;
+				_foldoutLabel.active.textColor = SampleStyle.ColorDarkestBlue;
+				_foldoutLabel.onFocused.textColor = SampleStyle.ColorDarkestBlue;
+				_foldoutLabel.focused.textColor = SampleStyle.ColorDarkestBlue;
+				return _foldoutLabel;
+			}
+		}
 		public static string TextFieldLabeled(string label, string text, GUIStyle labelStyle, GUIStyle textFieldStyle, params GUILayoutOption[] options){
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel(label, TextField, labelStyle);
@@ -524,7 +555,6 @@ namespace EditorExtend {
 		public static void DebugRect(Rect rect, Color color){
 			color.a = 0.5f;
 			EditorGUI.DrawRect(rect, color); 
-			// Debug.Log("Rect "+color.ToString()+" = (X : " + rect.x + ", Y: " + rect.y + "). (W: " + rect.width + ", H: " + rect.height + "). (Cnt X: " + rect.center.x + ", Cnt Y: " + rect.center.y + ")");
 		}
 
 		public static Rect GetRectOfWindow(){

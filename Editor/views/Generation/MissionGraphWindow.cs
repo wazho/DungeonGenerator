@@ -3,8 +3,9 @@ using UnityEditor;
 using System.Collections;
 using System.Linq;
 // Stylesheet.
-using Style     = EditorExtend.CommonStyle;
-using Container = EditorExtend.GenerationWindow;
+using Style       = EditorExtend.CommonStyle;
+using Container   = EditorExtend.GenerationWindow;
+using SampleStyle = EditorExtend.SampleStyle;
 // Models.
 using Mission = MissionGrammarSystem;
 
@@ -39,28 +40,42 @@ namespace GraphGeneration {
 		private int _missionGraphCanvasSizeWidth;
 		private int _missionGraphCanvasSizeHeight;
 		private static Mission.GraphGrammar _currentGraph = new Mission.GraphGrammar();
+		// Buttons 
+		private GUIStyle MissionTabButtonStyle;
+		private GUIStyle SpaceTabButtonStyle;
+		private bool _isInitTabButton;
 
 		void Awake() {
-			_scrollView   = new Vector2(0, 50);
-			_errorType    = ErrorType.None;
-			_graphState   = GraphState.Mission;
-			_currentGraph = new Mission.GraphGrammar();
+			_scrollView        = new Vector2(0, 60);
+			_errorType         = ErrorType.None;
+			_graphState        = GraphState.Mission;
+			_currentGraph      = new Mission.GraphGrammar();
 			_startingNodeIndex = Mission.Alphabet.Nodes.FindIndex(x => x == Mission.Alphabet.StartingNode);
-			_nodeNames = Mission.Alphabet.Nodes.Select(n => n.ExpressName).ToArray();
+			_nodeNames 		   = Mission.Alphabet.Nodes.Select(n => n.ExpressName).ToArray();
+			_isInitTabButton   = true;
 		}
 		// If Alphabet updated then update too.
 		void OnFocus() {
 			_startingNodeIndex = Mission.Alphabet.Nodes.FindIndex(x => x == Mission.Alphabet.StartingNode);
-			_nodeNames = Mission.Alphabet.Nodes.Select(n => n.ExpressName).ToArray();
+			_nodeNames         = Mission.Alphabet.Nodes.Select(n => n.ExpressName).ToArray();
 		}
 		void OnGUI() {
+			if (_isInitTabButton) {
+				MissionTabButtonStyle = new GUIStyle(SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Left, SampleStyle.ButtonColor.Blue));
+				SpaceTabButtonStyle   = new GUIStyle(SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Right, SampleStyle.ButtonColor.Blue));
+				_isInitTabButton      = false;
+			}
+			SampleStyle.DrawWindowBackground(SampleStyle.ColorGrey);
 			// Buttons for switching mission graph and space graph.
+			GUILayout.BeginVertical(SampleStyle.Frame(SampleStyle.ColorLightestGrey));
 			LayoutStateButtons();
-			_startingNodeIndex = EditorGUILayout.Popup("Starting Node", _startingNodeIndex, _nodeNames);
+			_startingNodeIndex = SampleStyle.PopupLabeled("Starting Node", _startingNodeIndex, _nodeNames, SampleStyle.PopUpLabel, SampleStyle.PopUp, Screen.width - 15);
 			if(_startingNodeIndex != _tempStartingNodeIndex) {
 				_tempStartingNodeIndex = _startingNodeIndex;
 				Mission.Alphabet.StartingNode = Mission.Alphabet.Nodes[_startingNodeIndex];
 			}
+			GUILayout.EndVertical();
+
 			// Canvas to draw current mission graph.
 			LayoutMissionGraphCanvas();
 			// Layout the list of mission group.
@@ -72,10 +87,10 @@ namespace GraphGeneration {
 		// Buttons for switching mission graph and space graph.
 		private void LayoutStateButtons() {
 			GUILayout.BeginHorizontal();
-			if (GUILayout.Button("Mission Graph",EditorStyles.miniButtonLeft, Style.TabButtonHeight)) {
+			if (GUILayout.Toggle(_graphState == GraphState.Mission, "Mission Graph", MissionTabButtonStyle, SampleStyle.TabButtonHeight)) {
 				_graphState = GraphState.Mission;
 			}
-			if (GUILayout.Button("Space Graph", EditorStyles.miniButtonRight, Style.TabButtonHeight)) {
+			if (GUILayout.Toggle(_graphState == GraphState.Space, "Space Graph", SpaceTabButtonStyle, SampleStyle.TabButtonHeight)) {
 				_graphState = GraphState.Space;
 			}
 			GUILayout.EndHorizontal();
@@ -83,9 +98,10 @@ namespace GraphGeneration {
 		// Canvas to draw current mission graph.
 		private void LayoutMissionGraphCanvas() {
 			GUILayout.BeginArea(Container.MissionGraphArea);
-			_canvasScrollPosition = GUILayout.BeginScrollView(_canvasScrollPosition, GUILayout.Width(Screen.width), GUILayout.Height(300));
+			GUILayout.BeginVertical(SampleStyle.Frame(SampleStyle.ColorLightestGrey));
+			_canvasScrollPosition = GUILayout.BeginScrollView(_canvasScrollPosition, GUILayout.Width(Screen.width-15), GUILayout.Height(300 - 5));
 			Container.ResizeMissionGraphCanvas(_missionGraphCanvasSizeWidth, _missionGraphCanvasSizeHeight);
-			EditorGUI.DrawRect(Container.MissionGraphCanvas, Color.gray);
+			SampleStyle.DrawGrid(Container.MissionGraphCanvas, SampleStyle.MinorGridSize, SampleStyle.MajorGridSize, SampleStyle.GridBackgroundColor, SampleStyle.GridColor);
 			GUILayout.Label(string.Empty, Container.MissionGraphCanvasContent);
 			// Connection 
 			foreach (Mission.GraphGrammarConnection connection in _currentGraph.Connections) {
@@ -109,62 +125,71 @@ namespace GraphGeneration {
 			_missionGraphCanvasSizeWidth  = Mathf.Max((int) Container.MissionGraphArea.width, (int) positionRightBotton.x + 25);
 			_missionGraphCanvasSizeHeight = Mathf.Max((int) Container.MissionGraphArea.height, (int) positionRightBotton.y + 25);
 			GUILayout.EndScrollView();
+			GUILayout.EndVertical();
 			GUILayout.EndArea();
 		}
 		// Layout the list of mission group.
 		private void LayoutMissionGroupList() {
-			GUILayout.BeginArea(new Rect(0, 360, Screen.width, Screen.height));
+			GUILayout.BeginArea(Container.MissionGroupListArea);
+			GUILayout.BeginVertical(SampleStyle.Frame(SampleStyle.ColorLightestGrey));
 			// HelpBox
 			EditorGUILayout.HelpBox(FormValidation(), MessageType.Info, true);
 			// Check boxies.
 			_scrollView = EditorGUILayout.BeginScrollView(_scrollView,GUILayout.Height(150));
+			int indentLevel = EditorGUI.indentLevel;
 			foreach (Mission.MissionGroup missionGroup in Mission.MissionGrammar.Groups) {
-				missionGroup.Selected = EditorGUILayout.Foldout(missionGroup.Selected, missionGroup.Name);
+				EditorGUI.indentLevel = 0;
+				missionGroup.Selected = EditorGUILayout.Foldout(missionGroup.Selected, missionGroup.Name, SampleStyle.FoldoutLabel);
 				if (missionGroup.Selected) { 
 					foreach (Mission.MissionRule missionRule in missionGroup.Rules) {
+						EditorGUI.indentLevel = 2;
 						missionRule.Enable = EditorGUILayout.Toggle(missionRule.Name,missionRule.Enable);
 					}
 				}
 			}
 			EditorGUILayout.EndScrollView();
+			GUILayout.EndVertical();
 			GUILayout.EndArea();
+
 		}
 		// Buttons for operating the graph.
 		private void LayoutFunctionButtons() {
-			GUILayout.BeginArea(new Rect(0, 560, Screen.width, Screen.height));
+			GUILayout.BeginArea(Container.FunctionButtonsArea);
+			GUILayout.BeginVertical(SampleStyle.Frame(SampleStyle.ColorLightestGrey));
 			// If error occur, disable apply button.
 			EditorGUI.BeginDisabledGroup(_errorType != ErrorType.None);
 			// Mission and Space Graph button.
 			GUILayout.BeginHorizontal();
-			if (GUILayout.Button("Initial",EditorStyles.miniButtonLeft, Style.ButtonHeight)) {
+			if (GUILayout.Button("Initial", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Left, SampleStyle.ButtonColor.Blue), SampleStyle.ButtonHeight)) {
 				// Rewrite system initialization.
 				Mission.RewriteSystem.Initial();
 				// Update the current graph.
 				_currentGraph = Mission.RewriteSystem.TransformFromGraph();
 			}
-			if (GUILayout.Button("Iterate", EditorStyles.miniButtonMid, Style.ButtonHeight)) {
+			if (GUILayout.Button("Iterate", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Mid, SampleStyle.ButtonColor.Blue), SampleStyle.ButtonHeight)) {
 				// Rewrite system iteration.
 				Mission.RewriteSystem.Iterate();
 				// Update the current graph.
 				_currentGraph = Mission.RewriteSystem.TransformFromGraph();
 			}
-			if (GUILayout.Button("Complete", EditorStyles.miniButtonRight, Style.ButtonHeight)) {
+			if (GUILayout.Button("Complete", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Right, SampleStyle.ButtonColor.Blue), SampleStyle.ButtonHeight)) {
 
 			}
 			GUILayout.EndHorizontal();
 			// Apply button and popup
-			if (GUILayout.Button("Save", EditorStyles.miniButton, Style.SubmitButtonHeight)) {
+			if (GUILayout.Button("Save", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Regular, SampleStyle.ButtonColor.Green), SampleStyle.SubmitButtonHeight)) {
 				if (EditorUtility.DisplayDialog("Save",
 					"Are you sure?",
 					"Yes", "No")) {
 					// Commit changes
-					Debug.Log("Settings is changed :}");
+					Debug.Log("Settings are changed :}");
 				} else {
 					// Cancel changes;
-					Debug.Log("Settings isn't changed");
+					Debug.Log("Settings aren't changed");
 				}
 			}
 			EditorGUI.EndDisabledGroup();
+			GUILayout.EndVertical();
 			GUILayout.EndArea();
 		}
 		// Form validation can determine the error type.
@@ -187,6 +212,10 @@ namespace GraphGeneration {
 				break;
 			}
 			return message;
+		}
+
+		void OnInspectorUpdate(){
+			Repaint();
 		}
 	}
 }

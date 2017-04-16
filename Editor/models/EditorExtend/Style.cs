@@ -227,10 +227,10 @@ namespace EditorExtend {
 	}
 
 	public class GenerationWindow {
-		private static Rect _missionGraphCanvasArea = new Rect(0, 50, Screen.width, 300);
+		private static Rect _missionGraphCanvasArea = new Rect(5, 60, Screen.width-10, 300);
 		public static Rect MissionGraphArea {
 			get {
-				_missionGraphCanvasArea.width = Screen.width;
+				_missionGraphCanvasArea.width = Screen.width-10;
 				return _missionGraphCanvasArea;
 			}
 		}
@@ -246,8 +246,8 @@ namespace EditorExtend {
 			}
 		}
 		public static void ResizeMissionGraphCanvas(int width, int height) {
-			_missionGraphCanvasWidth  = width;
-			_missionGraphCanvasHeight = height;
+			_missionGraphCanvasWidth  = width - 5;
+			_missionGraphCanvasHeight = height - 5;
 		}
 		private static GUIStyle _missionGraphCanvasContent = new GUIStyle(GUI.skin.label);
 		public static GUIStyle MissionGraphCanvasContent {
@@ -256,6 +256,22 @@ namespace EditorExtend {
 				_missionGraphCanvasContent.padding.right  = _missionGraphCanvasWidth - 10;
 				_missionGraphCanvasContent.padding.bottom = _missionGraphCanvasHeight - 20;
 				return _missionGraphCanvasContent;
+			}
+		}
+		private static Rect _missionGroupListArea = new Rect(5, 365, Screen.width, Screen.height);
+		public static Rect MissionGroupListArea {
+			get {
+				_missionGroupListArea.width = Screen.width - 10;
+				_missionGroupListArea.height = Screen.height;
+				return _missionGroupListArea;
+			}
+		}
+		private static Rect _functionButtonsArea = new Rect(5, 570, Screen.width, Screen.height);
+		public static Rect FunctionButtonsArea {
+			get {
+				_functionButtonsArea.width = Screen.width - 10;
+				_functionButtonsArea.height = Screen.height;
+				return _functionButtonsArea;
 			}
 		}
 	}

@@ -151,13 +151,13 @@ namespace MissionGrammarSystem {
 				GUILayout.Space(SampleStyle.PaddingBlock);
 				EditorGUILayout.BeginVertical(SampleStyle.Frame(SampleStyle.ColorLightestGrey));
 				// Information of node.
-				_symbolTerminal = (NodeTerminalType)SampleStyle.EnumPopupLabeled("Symbol Type", _symbolTerminal, SampleStyle.EnumPopUpLabel, SampleStyle.EnumPopUp, SampleStyle.EnumPopUpHeight);
-				_symbolName = SampleStyle.TextFieldLabeled("Name", _symbolName, SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
+				_symbolTerminal     = (NodeTerminalType)SampleStyle.EnumPopupLabeled("Symbol Type", _symbolTerminal, SampleStyle.EnumPopUpLabel, SampleStyle.EnumPopUp, SampleStyle.EnumPopUpHeight);
+				_symbolName         = SampleStyle.TextFieldLabeled("Name", _symbolName, SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
 				_symbolAbbreviation = SampleStyle.TextFieldLabeled("Abbreviation", _symbolAbbreviation, SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
-				_symbolDescription = SampleStyle.TextAreaLabeled("Description", _symbolDescription, SampleStyle.TextAreaLabel, SampleStyle.TextArea, SampleStyle.TextAreaHeight);
+				_symbolDescription  = SampleStyle.TextAreaLabeled("Description", _symbolDescription, SampleStyle.TextAreaLabel, SampleStyle.TextArea, SampleStyle.TextAreaHeight);
 				_symbolOutlineColor = SampleStyle.ColorFieldLabeled("Outline Color", _symbolOutlineColor, SampleStyle.ColorFieldLabel, SampleStyle.ColorField);
-				_symbolFilledColor = SampleStyle.ColorFieldLabeled("Filled Color", _symbolFilledColor, SampleStyle.ColorFieldLabel, SampleStyle.ColorField);
-				_symbolTextColor = SampleStyle.ColorFieldLabeled("Text Color", _symbolTextColor, SampleStyle.ColorFieldLabel, SampleStyle.ColorField);
+				_symbolFilledColor  = SampleStyle.ColorFieldLabeled("Filled Color", _symbolFilledColor, SampleStyle.ColorFieldLabel, SampleStyle.ColorField);
+				_symbolTextColor    = SampleStyle.ColorFieldLabeled("Text Color", _symbolTextColor, SampleStyle.ColorFieldLabel, SampleStyle.ColorField);
 				// Update the node.
 				UpdateNode(_node);
 				// Show content of submition.
@@ -194,9 +194,9 @@ namespace MissionGrammarSystem {
 				GUILayout.Space(SampleStyle.PaddingBlock);
 				EditorGUILayout.BeginVertical(SampleStyle.Frame(SampleStyle.ColorLightestGrey));
 				// Information of connection.
-				_symbolName = SampleStyle.TextFieldLabeled("Name", _symbolName, SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
-				_symbolDescription = SampleStyle.TextAreaLabeled("Description", _symbolDescription, SampleStyle.TextAreaLabel, SampleStyle.TextArea, SampleStyle.TextAreaHeight);
-				_symbolOutlineColor = SampleStyle.ColorFieldLabeled("Outline Color", _symbolOutlineColor, SampleStyle.ColorFieldLabel, SampleStyle.ColorField);
+				_symbolName          = SampleStyle.TextFieldLabeled("Name", _symbolName, SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
+				_symbolDescription   = SampleStyle.TextAreaLabeled("Description", _symbolDescription, SampleStyle.TextAreaLabel, SampleStyle.TextArea, SampleStyle.TextAreaHeight);
+				_symbolOutlineColor  = SampleStyle.ColorFieldLabeled("Outline Color", _symbolOutlineColor, SampleStyle.ColorFieldLabel, SampleStyle.ColorField);
 				_connectionType      = (ConnectionType)SampleStyle.EnumPopupLabeled("Connection Type", _connectionType, SampleStyle.EnumPopUpLabel, SampleStyle.EnumPopUp, SampleStyle.EnumPopUpHeight);
 				_connectionArrowType = (ConnectionArrowType)SampleStyle.EnumPopupLabeled("Arrow Type", _connectionArrowType, SampleStyle.EnumPopUpLabel, SampleStyle.EnumPopUp, SampleStyle.EnumPopUpHeight);
 				// Update the conntection.
