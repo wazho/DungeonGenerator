@@ -370,24 +370,6 @@ namespace EditorExtend {
 			return buttonStyle;
 		}
 
-		public static GUIStyle GetToggleStyle(ButtonType buttonType, ButtonColor buttonColor) {
-			GUIStyle toggleStyle = new GUIStyle(GUI.skin.toggle);
-
-			if (buttonType == ButtonType.Mid) {
-				toggleStyle = new GUIStyle(ButtonMid);
-			} else if (buttonType == ButtonType.Left) {
-				toggleStyle = new GUIStyle(ButtonLeft);
-			} else if (buttonType == ButtonType.Right) {
-				toggleStyle = new GUIStyle(ButtonRight);
-			}
-
-			toggleStyle.normal.background   = ButtonStyleDict[buttonColor, buttonType, ButtonState.Normal];
-			toggleStyle.onNormal.background = ButtonStyleDict[buttonColor, buttonType, ButtonState.Active];
-			toggleStyle.hover.background    = ButtonStyleDict[buttonColor, buttonType, ButtonState.Hover];
-			toggleStyle.active.background   = ButtonStyleDict[buttonColor, buttonType, ButtonState.Active];
-
-			return toggleStyle;
-		}
 		// Boxes
 		private static GUIStyle _box = new GUIStyle(GUI.skin.box);
 		public static GUIStyle Box {
@@ -401,7 +383,7 @@ namespace EditorExtend {
 		// Frames
 		private static GUIStyle _frameLightestBlue = new GUIStyle(GUI.skin.box);
 		public static GUIStyle FrameLightestBlue {
-			get { 
+			get {
 				Texture2D t = new Texture2D(1, 1);
 				t.SetPixel(0, 0, ColorLightestBlue);
 				t.Apply();
@@ -419,7 +401,7 @@ namespace EditorExtend {
 		// TextArea and Textfield styles, label etc
 		private static GUIStyle _textArea = new GUIStyle(EditorStyles.textArea);
 		public static GUIStyle TextArea {
-			get { 
+			get {
 				_textArea.focused.background = GetTextureFromColor(ColorLightBlue);
 				_textArea.normal.textColor = Color.black;
 				_textArea.focused.textColor = Color.white;
@@ -428,7 +410,7 @@ namespace EditorExtend {
 		}
 		private static GUIStyle _textField = new GUIStyle(EditorStyles.textField);
 		public static GUIStyle TextField {
-			get { 
+			get {
 				_textField.focused.background = GetTextureFromColor(ColorLightBlue);
 				_textField.normal.textColor = Color.black;
 				_textField.focused.textColor = Color.white;
@@ -437,33 +419,26 @@ namespace EditorExtend {
 		}
 		private static GUIStyle _colorField = new GUIStyle(EditorStyles.colorField);
 		public static GUIStyle ColorField {
-			get { 
+			get {
 				return _colorField;
 			}
 		}
 		private static GUIStyle _enumPopUp = new GUIStyle(EditorStyles.popup);
 		public static GUIStyle EnumPopUp {
-			get { 
-				//_enumPopUp.hover.background = GetTextureFromColor(ColorLightBlue);
-				//_enumPopUp.active.background = GetTextureFromColor(ColorLightBlue);
-				//_enumPopUp.focused.background = GetTextureFromColor(ColorLightBlue);
-
-				_enumPopUp.normal.textColor = Color.black;
+			get {
+				_enumPopUp.normal.textColor  = Color.black;
 				_enumPopUp.focused.textColor = SampleStyle.ColorDarkestBlue;
-				_enumPopUp.hover.textColor = SampleStyle.ColorDarkestBlue;
+				_enumPopUp.hover.textColor   = SampleStyle.ColorDarkestBlue;
 				return _enumPopUp;
 			}
 		}private static GUIStyle _popUp = new GUIStyle(EditorStyles.popup);
 		public static GUIStyle PopUp {
-			get { 
-				//_popUp.hover.background = GetTextureFromColor(ColorLightBlue);
-				//_popUp.active.background = GetTextureFromColor(ColorLightBlue);
-				//_popUp.focused.background = GetTextureFromColor(ColorLightBlue);
+			get {
 				_popUp.padding = new RectOffset(6, 6, 2, 2);
 
-				_popUp.normal.textColor = Color.black;
+				_popUp.normal.textColor  = Color.black;
 				_popUp.focused.textColor = SampleStyle.ColorDarkestBlue;
-				_popUp.hover.textColor = SampleStyle.ColorDarkestBlue;
+				_popUp.hover.textColor   = SampleStyle.ColorDarkestBlue;
 				return _popUp;
 			}
 		}
@@ -561,28 +536,25 @@ namespace EditorExtend {
 		}
 		// Suggestion : default color for background is light grey/ light blue, default color for grid is white or light blue.
 		public static void DrawGrid(Rect rect, int minor, int major, Color rectColor, Color gridColor){
-			//Color RectColor = rectColor ?? new Color(166f / 255f, 226f / 255f, 255f / 255f);
-			//Color GridColor = gridColor ?? new Color(118f / 255f, 208f / 255f, 255f / 255f);
 			// Draw Background
 			EditorGUI.DrawRect(rect, rectColor); 
 
 			// Vertical lines
-			int i,j;
 			Vector3[] majorLines; 
-			for (i = 0, j = 0; i<= rect.width; i += minor, j += major) {
+			for (int i = 0, j = 0; i <= rect.width; i += minor, j += major) {
 				Handles.BeginGUI();
 				Handles.color = gridColor;
 				Handles.DrawLine(new Vector2(rect.x + i, rect.y), new Vector2(rect.x + i, rect.height));
-				majorLines = new [] {new Vector3(rect.x + j, rect.y), new Vector3(rect.x + j, rect.height)};
+				majorLines = new [] { new Vector3(rect.x + j, rect.y), new Vector3(rect.x + j, rect.height) };
 				Handles.DrawAAPolyLine(3f, majorLines);
 				Handles.EndGUI();
 			}
 			// Horizontal lines
-			for (i = 0, j = 0; i<= rect.height; i += minor, j += major) {
+			for (int i = 0, j = 0; i <= rect.height; i += minor, j += major) {
 				Handles.BeginGUI();
 				Handles.color = gridColor;
 				Handles.DrawLine(new Vector2(rect.x, rect.y + i), new Vector2(rect.width, rect.y + i));
-				majorLines = new [] {new Vector3(rect.x, rect.y + j), new Vector3(rect.width, rect.y + j)};
+				majorLines = new [] { new Vector3(rect.x, rect.y + j), new Vector3(rect.width, rect.y + j) };
 				Handles.DrawAAPolyLine(3f, majorLines);
 				Handles.EndGUI();
 			}

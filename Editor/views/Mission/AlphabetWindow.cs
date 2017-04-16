@@ -92,8 +92,8 @@ namespace MissionGrammarSystem {
 		// Native function for Editor Window.
 		void OnGUI() {
 			if (_isInitTabButton) {
-				NodeTabButtonStyle        = new GUIStyle(SampleStyle.GetToggleStyle(SampleStyle.ButtonType.Left, SampleStyle.ButtonColor.Blue));
-				ConnectionTabButtonStyle  = new GUIStyle(SampleStyle.GetToggleStyle(SampleStyle.ButtonType.Right, SampleStyle.ButtonColor.Blue));
+				NodeTabButtonStyle        = new GUIStyle(SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Left, SampleStyle.ButtonColor.Blue));
+				ConnectionTabButtonStyle  = new GUIStyle(SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Right, SampleStyle.ButtonColor.Blue));
 				_isInitTabButton          = false;
 			}
 			SampleStyle.DrawWindowBackground(SampleStyle.ColorGrey);
