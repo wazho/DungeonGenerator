@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System;
 using Math = System.Math;
 // Stylesheet.
-using Style       = EditorExtend.CommonStyle;
 using Container   = EditorExtend.MissionRuleWindow;
 using GraphCanvas = EditorExtend.GraphCanvas;
 using SymbolList  = EditorExtend.SymbolList;

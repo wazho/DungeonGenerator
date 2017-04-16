@@ -4,9 +4,8 @@ using System.Linq;
 using System.Collections;
 using System.Text.RegularExpressions;
 // Stylesheet.
-using Style      = EditorExtend.CommonStyle;
-using Container  = EditorExtend.MissionAlphabetWindow;
-using SymbolList = EditorExtend.SymbolList;
+using Container   = EditorExtend.MissionAlphabetWindow;
+using SymbolList  = EditorExtend.SymbolList;
 using SampleStyle = EditorExtend.SampleStyle;
 
 namespace MissionGrammarSystem {
@@ -245,7 +244,7 @@ namespace MissionGrammarSystem {
 		// Buttons about adding new symbol, modifying and deleting.
 		void LayoutEditingModeButtonGroup() {
 			EditorGUILayout.BeginHorizontal();
-			if (GUILayout.Button("Add New", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Left, SampleStyle.ButtonColor.Green), SampleStyle.ButtonHeight)) {
+			if (GUILayout.Button("Add New", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Left, SampleStyle.ButtonColor.Blue), SampleStyle.ButtonHeight)) {
 				// Switch the mode.
 				_editingMode = EditingMode.Create;
 				// Initial the preview node and connection.
@@ -264,11 +263,11 @@ namespace MissionGrammarSystem {
 				EditorGUI.BeginDisabledGroup(Alphabet.SelectedConnection == null);
 				break;
 			}
-			if (GUILayout.Button("Modify", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Mid, SampleStyle.ButtonColor.Green), SampleStyle.ButtonHeight)) {
+			if (GUILayout.Button("Modify", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Mid, SampleStyle.ButtonColor.Blue), SampleStyle.ButtonHeight)) {
 				// Switch the mode.
 				_editingMode = EditingMode.Modify;
 			}
-			if (GUILayout.Button("Delete", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Right, SampleStyle.ButtonColor.Green), SampleStyle.ButtonHeight)) {
+			if (GUILayout.Button("Delete", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Right, SampleStyle.ButtonColor.Blue), SampleStyle.ButtonHeight)) {
 				// Switch the mode.
 				_editingMode = EditingMode.Delete;
 				// Remove the node or connection from alphabet and repaint.

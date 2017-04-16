@@ -3,7 +3,6 @@ using UnityEditor;
 using System.Collections;
 using System.Linq;
 // Stylesheet.
-using Style       = EditorExtend.CommonStyle;
 using Container   = EditorExtend.GenerationWindow;
 using SampleStyle = EditorExtend.SampleStyle;
 // Models.
@@ -176,6 +175,7 @@ namespace GraphGeneration {
 
 			}
 			GUILayout.EndHorizontal();
+			GUILayout.Space(SampleStyle.PaddingBlock);
 			// Apply button and popup
 			if (GUILayout.Button("Save", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Regular, SampleStyle.ButtonColor.Green), SampleStyle.SubmitButtonHeight)) {
 				if (EditorUtility.DisplayDialog("Save",
