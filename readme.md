@@ -1,3 +1,9 @@
+如果需要下載最新穩定版本: [Released](https://github.com/grass0916/DungeonGenerator/releases)
+
+如果需要查看使用說明文件: [Wiki](https://github.com/grass0916/DungeonGenerator/wiki/%E4%BD%BF%E7%94%A8%E8%AA%AA%E6%98%8E-Guideline)
+
+---
+
 ## Getting Started
 
 Clone or download in your Unity project folder **Assets**. Then extension will appear on the top of menu, it's called **Dungeon**.
@@ -5,7 +11,7 @@ Clone or download in your Unity project folder **Assets**. Then extension will a
 You can see some examples in the menu.
 
 ```
-> cd <your unity project, 'Editor' folder>
+> cd <your unity project, 'Assets' folder>
 > git clone https://github.com/grass0916/DungeonGenerator.git
 ```
 
@@ -21,7 +27,7 @@ Here is all layouts of editor window. `MenuMethods.cs` is the config for each wi
 
 ### models
 
-*Rewrite system* will be implement here. And the *node editor system* will be implement here too.
+*Mission grammars* and *rewrite system* will be implement here. And the *node editor system* will be implement here too.
 
 ---
 
