@@ -44,6 +44,8 @@ namespace GraphGeneration {
 		private GUIStyle SpaceTabButtonStyle;
 		private bool _isInitTabButton;
 
+		private bool _isRuleChanged;
+
 		void Awake() {
 			_scrollView        = new Vector2(0, 60);
 			_errorType         = ErrorType.None;
@@ -52,6 +54,7 @@ namespace GraphGeneration {
 			_startingNodeIndex = Mission.Alphabet.Nodes.FindIndex(x => x == Mission.Alphabet.StartingNode);
 			_nodeNames 		   = Mission.Alphabet.Nodes.Select(n => n.ExpressName).ToArray();
 			_isInitTabButton   = true;
+			_isRuleChanged     = false;
 		}
 		// If Alphabet updated then update too.
 		void OnFocus() {
@@ -128,6 +131,7 @@ namespace GraphGeneration {
 			GUILayout.EndArea();
 		}
 		// Layout the list of mission group.
+		private bool tempRuleEnable;
 		private void LayoutMissionGroupList() {
 			GUILayout.BeginArea(Container.MissionGroupListArea);
 			GUILayout.BeginVertical(SampleStyle.Frame(SampleStyle.ColorLightestGrey));
@@ -142,7 +146,11 @@ namespace GraphGeneration {
 				if (missionGroup.Selected) { 
 					foreach (Mission.MissionRule missionRule in missionGroup.Rules) {
 						EditorGUI.indentLevel = 2;
+						tempRuleEnable = missionRule.Enable;
 						missionRule.Enable = EditorGUILayout.Toggle(missionRule.Name,missionRule.Enable);
+						if(tempRuleEnable != missionRule.Enable) {
+							_isRuleChanged = true;
+						}
 					}
 				}
 			}
@@ -162,9 +170,12 @@ namespace GraphGeneration {
 			if (GUILayout.Button("Initial", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Left, SampleStyle.ButtonColor.Blue), SampleStyle.ButtonHeight)) {
 				// Rewrite system initialization.
 				Mission.RewriteSystem.Initial();
+				_isRuleChanged = false;
 				// Update the current graph.
 				_currentGraph = Mission.RewriteSystem.TransformFromGraph();
 			}
+
+			EditorGUI.BeginDisabledGroup(_isRuleChanged);
 			if (GUILayout.Button("Iterate", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Mid, SampleStyle.ButtonColor.Blue), SampleStyle.ButtonHeight)) {
 				// Rewrite system iteration.
 				Mission.RewriteSystem.Iterate();
@@ -174,6 +185,7 @@ namespace GraphGeneration {
 			if (GUILayout.Button("Complete", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Right, SampleStyle.ButtonColor.Blue), SampleStyle.ButtonHeight)) {
 
 			}
+			EditorGUI.EndDisabledGroup();
 			GUILayout.EndHorizontal();
 			GUILayout.Space(SampleStyle.PaddingBlock);
 			// Apply button and popup
