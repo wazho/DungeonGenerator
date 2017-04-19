@@ -148,7 +148,7 @@ namespace GraphGeneration {
 						EditorGUI.indentLevel = 2;
 						tempRuleEnable = missionRule.Enable;
 						missionRule.Enable = EditorGUILayout.Toggle(missionRule.Name,missionRule.Enable);
-						if(tempRuleEnable != missionRule.Enable) {
+						if (tempRuleEnable != missionRule.Enable) {
 							_isRuleChanged = true;
 						}
 					}
