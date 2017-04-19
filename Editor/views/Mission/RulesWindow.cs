@@ -85,43 +85,41 @@ namespace MissionGrammarSystem {
 		} 
 
 		void Awake() {
-			_editingMode          = EditingMode.None;
-			_currentTab           = SymbolEditingMode.None;
+			Initialize();
+		}
+		public void Initialize() {
+			_editingMode = EditingMode.None;
+			_currentTab = SymbolEditingMode.None;
 			// Get the first rule of first group.
-			_missionRule          = MissionGrammar.Groups[0].Rules[0];
-			_groupsOptions        = MissionGrammar.Groups.Select(s => s.Name).ToArray();
-			_rulesOptions         = MissionGrammar.Groups[0].Rules.Select(r => r.Name).ToArray();
+			_missionRule = MissionGrammar.Groups[0].Rules[0];
+			_groupsOptions = MissionGrammar.Groups.Select(s => s.Name).ToArray();
+			_rulesOptions = MissionGrammar.Groups[0].Rules.Select(r => r.Name).ToArray();
 			_indexOfGroupsOptions = 0;
-			_indexOfRulesOptions  = 0;
+			_indexOfRulesOptions = 0;
 			_tempIndexOfGroupsOptions = 0;
-			_tempIndexOfRulesOptions  = 0;
-			_name                 = string.Empty;
-			_description          = string.Empty;
+			_tempIndexOfRulesOptions = 0;
+			_name = string.Empty;
+			_description = string.Empty;
 			_nameCanBeUsed = false;
 			_applyEditingButtonEnabled = false;
 			_applySymbolEditingButtonEnabled = false;
-			_editIcon    = Resources.Load<Texture2D>("Icons/edit");
-			_deleteIcon  = Resources.Load<Texture2D>("Icons/delete");
+			_editIcon = Resources.Load<Texture2D>("Icons/edit");
+			_deleteIcon = Resources.Load<Texture2D>("Icons/delete");
 			_redoTexture = Resources.Load<Texture2D>("Icons/redo");
 			_undoTexture = Resources.Load<Texture2D>("Icons/undo");
-			_sourceCanvasScrollPosition      = Vector2.zero;
+			_sourceCanvasScrollPosition = Vector2.zero;
 			_replacementCanvasScrollPosition = Vector2.zero;
-			_listScrollPosition      = Vector2.zero;
-			_sourceCanvasWidth       = Screen.width;
-			_sourceCanvasHeight      = 200;
-			_replacementCanvasWidth  = Screen.width;
+			_listScrollPosition = Vector2.zero;
+			_sourceCanvasWidth = Screen.width;
+			_sourceCanvasHeight = 200;
+			_replacementCanvasWidth = Screen.width;
 			_replacementCanvasHeight = 200;
 			_currentSelectedGraphGrammar = _missionRule.SourceRule;
 			_sourceRuleState = new StateRecorder(_missionRule.SourceRule);
 			_replaceRuleState = new StateRecorder(_missionRule.ReplacementRule);
-			
+
 			Alphabet.RevokeAllSelected();
 		}
-		void OnFocus() {
-			_tempIndexOfGroupsOptions = -1;
-			_tempIndexOfRulesOptions = -1;
-		}
-
 		void OnGUI() {
 			SampleStyle.DrawWindowBackground(SampleStyle.ColorGrey);
 			// Layout the combobox and editor of mission group.

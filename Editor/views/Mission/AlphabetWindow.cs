@@ -57,22 +57,25 @@ namespace MissionGrammarSystem {
 
 		// Native function for Editor Window. Trigger via opening the window.
 		void Awake() {
+			Initialize();
+		}
+		public void Initialize() {
 			// Initial whole fields in window.
 			InitFields();
 			// Set the first values.
-			_currentTab               = AlphabetWindowTab.Nodes;
-			_isInitTabButton 		  = true;
-			_editingMode              = EditingMode.None;
-			_scrollPosition           = Vector2.zero;
-			_messageHint              = string.Empty;
-			_messageType              = MessageType.Info;
-			_node                     = new GraphGrammarNode(NodeTerminalType.Terminal);
-			_connection               = new GraphGrammarConnection();
-			_symbolListCanvas         = new Rect(0, 0, Screen.width, Screen.height);
+			_currentTab = AlphabetWindowTab.Nodes;
+			_isInitTabButton = true;
+			_editingMode = EditingMode.None;
+			_scrollPosition = Vector2.zero;
+			_messageHint = string.Empty;
+			_messageType = MessageType.Info;
+			_node = new GraphGrammarNode(NodeTerminalType.Terminal);
+			_connection = new GraphGrammarConnection();
+			_symbolListCanvas = new Rect(0, 0, Screen.width, Screen.height);
 			_symbolListCanvasInWindow = _symbolListCanvas;
-			_centerPosition           = new Vector2(Screen.width / 2, 75);
-			_connectionType           = ConnectionType.WeakRequirement;
-			_connectionArrowType      = ConnectionArrowType.Normal;
+			_centerPosition = new Vector2(Screen.width / 2, 75);
+			_connectionType = ConnectionType.WeakRequirement;
+			_connectionArrowType = ConnectionArrowType.Normal;
 			// Revoke all.
 			Alphabet.RevokeAllSelected();
 		}

@@ -50,6 +50,12 @@ namespace DungeonLevel {
 				string path = EditorUtility.OpenFilePanel("Import xml", "", "xml");
 				if(path.Length > 0) {
 					DungeonLevel.OperateXML.Unserialize.UnserializeFromXml(path);
+					MissionGrammarSystem.AlphabetWindow alphabetWindow = GetWindow<MissionGrammarSystem.AlphabetWindow>("Mission alphabet", false);
+					alphabetWindow.Initialize();
+					MissionGrammarSystem.RulesWindow rulesWindow = GetWindow<MissionGrammarSystem.RulesWindow>("Mission rules", false);
+					rulesWindow.Initialize();
+					GraphGeneration.MissionGraphWindow missionGraphWindow = GetWindow<GraphGeneration.MissionGraphWindow>("Generate mission graph", false);
+					missionGraphWindow.Initialize();
 				}
 			}
 			if (GUILayout.Button("Export Level", SampleStyle.ButtonRight, SampleStyle.MainButtonHeight)) {

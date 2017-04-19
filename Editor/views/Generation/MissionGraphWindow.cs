@@ -45,18 +45,16 @@ namespace GraphGeneration {
 		private bool _isInitTabButton;
 
 		void Awake() {
-			_scrollView        = new Vector2(0, 60);
-			_errorType         = ErrorType.None;
-			_graphState        = GraphState.Mission;
-			_currentGraph      = new Mission.GraphGrammar();
-			_startingNodeIndex = Mission.Alphabet.Nodes.FindIndex(x => x == Mission.Alphabet.StartingNode);
-			_nodeNames 		   = Mission.Alphabet.Nodes.Select(n => n.ExpressName).ToArray();
-			_isInitTabButton   = true;
+			Initialize();
 		}
-		// If Alphabet updated then update too.
-		void OnFocus() {
+		public void Initialize() {
+			_scrollView = new Vector2(0, 60);
+			_errorType = ErrorType.None;
+			_graphState = GraphState.Mission;
+			_currentGraph = new Mission.GraphGrammar();
 			_startingNodeIndex = Mission.Alphabet.Nodes.FindIndex(x => x == Mission.Alphabet.StartingNode);
-			_nodeNames         = Mission.Alphabet.Nodes.Select(n => n.ExpressName).ToArray();
+			_nodeNames = Mission.Alphabet.Nodes.Select(n => n.ExpressName).ToArray();
+			_isInitTabButton = true;
 		}
 		void OnGUI() {
 			if (_isInitTabButton) {
