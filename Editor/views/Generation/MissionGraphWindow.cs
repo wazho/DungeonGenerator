@@ -154,6 +154,11 @@ namespace GraphGeneration {
 					}
 				}
 				missionGroup.AllEnable = true;
+				foreach (Mission.MissionRule missionRule in missionGroup.Rules) {
+					if (missionGroup.AllEnable && !missionRule.Enable) {
+						missionGroup.AllEnable = false;
+					}
+				}
 				GUILayout.EndHorizontal();
 				if (missionGroup.Selected) { 
 					foreach (Mission.MissionRule missionRule in missionGroup.Rules) {
