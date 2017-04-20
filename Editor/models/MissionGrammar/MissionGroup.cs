@@ -16,6 +16,8 @@ namespace MissionGrammarSystem {
 		private string            _description;
 		private List<MissionRule> _rules;
 		private bool              _isSelected;
+		// [NEW FIELD] if all button enable
+		private bool              _allEnable;
 		// Constructor - Default.
 		public MissionGroup() {
 			this._name        = "New group";
@@ -23,6 +25,7 @@ namespace MissionGrammarSystem {
 			// Default mission rule.
 			this._rules       = new List<MissionRule>() { new MissionRule() };
 			this._isSelected  = false;
+			this._allEnable   = false;
 		}
 		// Constructor - Pass name and description.
 		// Constructor - Pass name and description.
@@ -78,6 +81,11 @@ namespace MissionGrammarSystem {
 		public bool Selected {
 			get { return _isSelected; }
 			set { _isSelected = value; }
+		}
+		// All Enable getter & setter.
+		public bool AllEnable {
+			get { return _allEnable; }
+			set { _allEnable = value; }
 		}
 	}
 }

@@ -131,6 +131,7 @@ namespace GraphGeneration {
 			GUILayout.EndArea();
 		}
 		// Layout the list of mission group.
+		private bool tempGroupEnable;
 		private bool tempRuleEnable;
 		private void LayoutMissionGroupList() {
 			GUILayout.BeginArea(Container.MissionGroupListArea);
@@ -142,14 +143,29 @@ namespace GraphGeneration {
 			int indentLevel = EditorGUI.indentLevel;
 			foreach (Mission.MissionGroup missionGroup in Mission.MissionGrammar.Groups) {
 				EditorGUI.indentLevel = 0;
+				GUILayout.BeginHorizontal();
 				missionGroup.Selected = EditorGUILayout.Foldout(missionGroup.Selected, missionGroup.Name, SampleStyle.FoldoutLabel);
+				tempGroupEnable = missionGroup.AllEnable;
+				missionGroup.AllEnable = EditorGUILayout.Toggle("", missionGroup.AllEnable);
+				if (tempGroupEnable != missionGroup.AllEnable) {
+					_isRuleChanged = true;
+					foreach (Mission.MissionRule missionRule in missionGroup.Rules) {
+						missionRule.Enable = missionGroup.AllEnable;
+					}
+				}
+				missionGroup.AllEnable = true;
+				GUILayout.EndHorizontal();
 				if (missionGroup.Selected) { 
 					foreach (Mission.MissionRule missionRule in missionGroup.Rules) {
 						EditorGUI.indentLevel = 2;
 						tempRuleEnable = missionRule.Enable;
-						missionRule.Enable = EditorGUILayout.Toggle(missionRule.Name,missionRule.Enable);
+						missionRule.Enable = EditorGUILayout.Toggle(missionRule.Name, missionRule.Enable);
 						if (tempRuleEnable != missionRule.Enable) {
 							_isRuleChanged = true;
+						}
+
+						if (missionGroup.AllEnable && !missionRule.Enable) {
+							missionGroup.AllEnable = false;
 						}
 					}
 				}
