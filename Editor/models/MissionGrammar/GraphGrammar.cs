@@ -8,14 +8,17 @@ using EditorCanvas = EditorExtend.NodeCanvas;
 
 namespace MissionGrammarSystem {
 	public class GraphGrammar {
+		// Members.
 		private List<GraphGrammarNode>       _nodes;
 		private List<GraphGrammarConnection> _connections;
 		private GraphGrammarSymbol           _selectedSymbol;
+		private List<ValidationLabel>        _error;
 
 		public GraphGrammar() {
 			this._nodes          = new List<GraphGrammarNode>();
 			this._connections    = new List<GraphGrammarConnection>();
 			this._selectedSymbol = null;
+			this._error          = new List<ValidationLabel>();
 		}
 
 		// Nodes, getter and setter.
@@ -33,6 +36,10 @@ namespace MissionGrammarSystem {
 		public GraphGrammarSymbol SelectedSymbol {
 			get { return _selectedSymbol; }
 			set { _selectedSymbol = value; }
+		}
+		// Error, getter.
+		public List<ValidationLabel> Error {
+			get { return _error; }
 		}
 
 		// Pass the mouse position.
@@ -87,6 +94,7 @@ namespace MissionGrammarSystem {
 			// If anything has been found or not.
 			RevokeAllSelected();
 			_selectedSymbol = null;
+			return;
 		}
 
 		// Points of connection is sticky to the node.
@@ -101,9 +109,13 @@ namespace MissionGrammarSystem {
 						connection.EndPosition = node.Position;
 					}
 					node.AddStickiedConnection(connection, location);
+					// Validation of rule.
+					ValidationSystem.Validate(this);
 					return true;
 				} else {
 					node.RemoveStickiedConnection(connection, location);
+					// Validation of rule.
+					ValidationSystem.Validate(this);
 				}
 			}
 			return false;
@@ -120,6 +132,9 @@ namespace MissionGrammarSystem {
 			_nodes.Add(node);
 			// Update the current node.
 			_selectedSymbol = node;
+			// Validation of rule.
+			ValidationSystem.Validate(this);
+			return;
 		}
 		// Add a new node from another exist node.
 		public GraphGrammarNode AddNode(GraphGrammarNode nodeClone) {
@@ -129,7 +144,10 @@ namespace MissionGrammarSystem {
 			node.Ordering = _nodes.Count + 1;
 			node.Selected = true;
 			_nodes.Add(node);
+			// Update the current node.
 			_selectedSymbol = node;
+			// Validation of rule.
+			ValidationSystem.Validate(this);
 			return node;
 		}
 		// Update symbol appearance.
@@ -158,6 +176,7 @@ namespace MissionGrammarSystem {
 				_connections[symbolIndex].Requirement  = connection.Requirement;
 				_connections[symbolIndex].Arrow        = connection.Arrow;
 			}
+			return;
 		}
 		// Add a new connection.
 		public void AddConnection() {
@@ -169,6 +188,9 @@ namespace MissionGrammarSystem {
 			_connections.Add(connection);
 			// Update the current connection.
 			_selectedSymbol = connection;
+			// Validation of rule.
+			ValidationSystem.Validate(this);
+			return;
 		}
 		// Add a new connection from another exist connection.
 		public GraphGrammarConnection AddConnection(GraphGrammarConnection connectionClone) {
@@ -177,7 +199,10 @@ namespace MissionGrammarSystem {
 			GraphGrammarConnection connection = new GraphGrammarConnection(connectionClone);
 			connection.Selected = true;
 			_connections.Add(connection);
+			// Update the current connection.
 			_selectedSymbol = connection;
+			// Validation of rule.
+			ValidationSystem.Validate(this);
 			return connection;
 		}
 		// Set all 'seleted' of symbols to false.

@@ -3,7 +3,6 @@ using UnityEditor;
 using System.Collections;
 
 using Mission    = MissionGrammarSystem;
-using Space      = SpaceGrammarSystem;
 using Generation = GraphGeneration;
 using Dungeon    = DungeonLevel;
 
