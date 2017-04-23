@@ -105,7 +105,53 @@ namespace MissionGrammarSystem {
 		}
 		// No 8. CyclicLink.
 		private static bool ValidateCyclicLink(GraphGrammar graphGrammar) {
-
+			// Store the parents and children to avoid the repeat call method.
+			Dictionary<GraphGrammarNode, List<GraphGrammarNode>> parentsTable = new Dictionary<GraphGrammarNode, List<GraphGrammarNode>>();
+			Dictionary<GraphGrammarNode, List<GraphGrammarNode>> childrenTable = new Dictionary<GraphGrammarNode, List<GraphGrammarNode>>();
+			foreach (var node in graphGrammar.Nodes) {
+				parentsTable[node] = node.Parents;
+				childrenTable[node] = node.Children;
+			}
+			// Kahn's Algorithm
+			// Array that record the removed edges.
+			bool[,] _usedEdge = new bool[graphGrammar.Nodes.Count, graphGrammar.Nodes.Count];
+			// Non-indegree queue.
+			Queue<GraphGrammarNode> nonIndegree = new Queue<GraphGrammarNode>();
+			// Push non-indegree node to queue.
+			foreach (var node in graphGrammar.Nodes.FindAll(x => parentsTable[x].Count == 0)) {
+				nonIndegree.Enqueue(node);
+			}
+			// Bfs.
+			while (nonIndegree.Count > 0) {
+				// Pop.
+				GraphGrammarNode popNode = nonIndegree.Dequeue();
+				// Remove the edge between this node and children node.
+				foreach (var childNode in childrenTable[popNode]) {
+					// Remove edge.
+					_usedEdge[popNode.Ordering - 1, childNode.Ordering - 1] = true;
+					// Check this child if it is non-indegree or not.
+					bool hasInput = false;
+					foreach (var parentNode in parentsTable[childNode]) {
+						if(! _usedEdge[parentNode.Ordering - 1, childNode.Ordering - 1]) {
+							hasInput = true;
+							break;
+						}
+					}
+					// If it is non-indegree then push it.
+					if(!hasInput) {
+						nonIndegree.Enqueue(childNode);
+					}
+				}
+			}
+			// Return false when any edge exist. It represents that this is a cyclic link.
+			foreach (var node in graphGrammar.Nodes) {
+				foreach (var childNode in childrenTable[node]) {
+					if (! _usedEdge[node.Ordering - 1, childNode.Ordering - 1]) {
+						return false;
+					}
+				}
+			}
+			// Otherwise, this is not cyclic link.
 			return true;
 		}
 	}
