@@ -208,7 +208,9 @@ namespace MissionGrammarSystem {
 				List<GraphGrammarNode> parents = new List<GraphGrammarNode>();
 				foreach (StickiedConnection stickiedConnection in _stickiedConnections) {
 					if (stickiedConnection.location.Equals("end")) {
-						parents.Add(stickiedConnection.connection.StartpointStickyOn);
+						if(stickiedConnection.connection.StartpointStickyOn != null) {
+							parents.Add(stickiedConnection.connection.StartpointStickyOn);
+						}
 					}
 				}
 				return parents;
@@ -220,7 +222,9 @@ namespace MissionGrammarSystem {
 				List<GraphGrammarNode> children = new List<GraphGrammarNode>();
 				foreach (StickiedConnection stickiedConnection in _stickiedConnections) {
 					if (stickiedConnection.location.Equals("start")) {
-						children.Add(stickiedConnection.connection.EndpointStickyOn);
+						if(stickiedConnection.connection.EndpointStickyOn != null) {
+							children.Add(stickiedConnection.connection.EndpointStickyOn);
+						}
 					}
 				}
 				return children;

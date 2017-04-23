@@ -99,6 +99,7 @@ namespace MissionGrammarSystem {
 
 		// Points of connection is sticky to the node.
 		public bool StickyNode(GraphGrammarConnection connection, Vector2 pos, string location) {
+			bool sticked = false;
 			foreach (GraphGrammarNode node in _nodes.AsEnumerable().Reverse()) {
 				if (node.IsInScope(pos)) {
 					if (string.Equals(location, "start")) {
@@ -109,16 +110,22 @@ namespace MissionGrammarSystem {
 						connection.EndPosition = node.Position;
 					}
 					node.AddStickiedConnection(connection, location);
-					// Validation of rule.
-					ValidationSystem.Validate(this);
-					return true;
+					sticked = true;
 				} else {
 					node.RemoveStickiedConnection(connection, location);
-					// Validation of rule.
-					ValidationSystem.Validate(this);
 				}
 			}
-			return false;
+			// If no stick anything then set null.
+			if (!sticked) {
+				if (string.Equals(location, "start")) {
+					connection.StartpointStickyOn = null;
+				} else {
+					connection.EndpointStickyOn = null;
+				}
+			}
+			// Validation of rule.
+			ValidationSystem.Validate(this);
+			return sticked;
 		}
 
 		// Add a new node.
