@@ -17,6 +17,7 @@ namespace MissionGrammarSystem {
 		ExactlyDuplicated,
 		MultipleRelations,
 		CyclicLink,
+		OrphanNode
 	}
 
 	public class ValidationSystem {
