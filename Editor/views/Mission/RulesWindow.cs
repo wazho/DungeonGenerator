@@ -76,8 +76,8 @@ namespace MissionGrammarSystem {
 		// Recorder for undo/redo.
 		private StateRecorder _sourceRuleState = new StateRecorder();
 		private StateRecorder _replaceRuleState = new StateRecorder();
-		// Quantity limit
-		private int _quantityLimit;
+		// Quantity limit value.
+		private int _tempQuantityLimit;
 		// [Will move to Style.cs]
 		private static Rect _redoUndoArea = new Rect(Screen.width / 2 - 120, 5, 100, 25);
 		public static Rect RedoUndoArea {
@@ -86,10 +86,11 @@ namespace MissionGrammarSystem {
 				return _redoUndoArea;
 			}
 		}
-		private static Rect _quantityLimitAera = new Rect(0, 550, Screen.width, 20);
+		private static Rect _quantityLimitAera = new Rect(0, Screen.height - 50, Screen.width, 50);
 		public static Rect QuantityLimitAera {
 			get {
 				_quantityLimitAera.width = Screen.width;
+				_quantityLimitAera.y = Screen.height - 50;
 				return _quantityLimitAera;
 			}
 		}
@@ -129,6 +130,7 @@ namespace MissionGrammarSystem {
 			_currentSelectedGraphGrammar     = _missionRule.SourceRule;
 			_sourceRuleState                 = new StateRecorder(_missionRule.SourceRule);
 			_replaceRuleState                = new StateRecorder(_missionRule.ReplacementRule);
+			_tempQuantityLimit               = _missionRule.QuantityLimit;
 
 			Alphabet.RevokeAllSelected();
 		}
@@ -156,10 +158,16 @@ namespace MissionGrammarSystem {
 			LayoutRulesCanvasArea();
 			// Show the area of after-rule-preview.
 			LayoutRuleCanvasEditor();
-
+			// Show quantity limit.
 			GUILayout.BeginArea(QuantityLimitAera, SampleStyle.Frame(SampleStyle.ColorLightestGrey));
-			_quantityLimit = EditorGUILayout.IntField("Quantity limit", _quantityLimit);
+			_missionRule.QuantityLimit = EditorGUILayout.IntField("Quantity limit", _missionRule.QuantityLimit);
+			// Fool-proofing
+			if (_missionRule.QuantityLimit < 0) {
+				// Zero means infinity.
+				_missionRule.QuantityLimit = 0;
+			}
 			GUILayout.EndArea();
+
 			// Control whole events.
 			EventController();
 		}

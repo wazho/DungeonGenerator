@@ -13,6 +13,7 @@ namespace MissionGrammarSystem {
 		private static List<Node> _relatedNodes;
 		// The rules that are transformed to the tree structure.
 		private static List<Rule> _rules;
+
 		// When click the initial button of generate graph page.
 		public static void Initial() {
 			// Initial the current graph.
@@ -151,6 +152,13 @@ namespace MissionGrammarSystem {
 					rule.ReplacementNodeTable = TransformGraph(originRule.ReplacementRule, out nodeCount);
 					rule.ReplacementRoot      = rule.ReplacementNodeTable.FirstOrDefault();
 					rule.ReplacementNodeCount = nodeCount;
+					// If finite.
+					if(originRule.QuantityLimit > 0) {
+						rule.QuantityLimit    = originRule.QuantityLimit;
+					} else {
+						// -1 means infinite.
+						rule.QuantityLimit = -1;
+					}
 					// Insert into the '_rules'.
 					_rules.Add(rule);
 				}
@@ -186,6 +194,11 @@ namespace MissionGrammarSystem {
 			// [TEST] random rule
 			Rule[] randomRules = _rules.OrderBy(x => Random.value).ToArray();
 			foreach (var rule in randomRules) {
+				// If the quantity of rule less than limit.
+				// [Notice] Only ZERO will continue. It means the negative value is equivalent to infinite.
+				if (rule.QuantityLimit == 0) {
+					continue;
+				}
 				// Compare the root node of rule.
 				if (Alphabet.IsAnyNode(rule.SourceRoot.AlphabetID) || rule.SourceRoot.AlphabetID == node.AlphabetID) {
 					// Clear index of all nodes.
@@ -197,6 +210,10 @@ namespace MissionGrammarSystem {
 					_relatedNodes.Add(node);
 					_usedIndexTable[node.Index] = true;
 					if (RecursionMatch(node, rule.SourceRoot)) {
+						// Quantity limit decrease.
+						if(rule.QuantityLimit > 0) {
+							rule.QuantityLimit -= 1;
+						}
 						return rule;
 					}
 				}
@@ -388,6 +405,7 @@ namespace MissionGrammarSystem {
 			private int        _replacementNodeCount;
 			private List<Node> _sourceNodeTable;
 			private List<Node> _replacementNodeTable;
+			private int        _quantityLimit;
 			// Constructor.
 			public Rule() {
 				this._sourceRoot           = new Node();
@@ -424,6 +442,11 @@ namespace MissionGrammarSystem {
 			public List<Node> ReplacementNodeTable {
 				get { return _replacementNodeTable; }
 				set { _replacementNodeTable = value; }
+			}
+			// Quantity limit, getter and setter.
+			public int QuantityLimit {
+				get { return _quantityLimit; }
+				set { _quantityLimit = value; }
 			}
 			// Find the node from source rule by index.
 			public Node FindSourceByIndex(int index) {
