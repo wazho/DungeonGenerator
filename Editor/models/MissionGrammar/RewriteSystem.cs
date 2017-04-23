@@ -326,16 +326,6 @@ namespace MissionGrammarSystem {
 			}
 			return _sameRules[0];
 		}
-		private static bool CompareRule(Rule a, Rule b) {
-			if (a.SourceRoot.AlphabetID != b.SourceRoot.AlphabetID) {
-				return false;
-			}
-			foreach(Node node in a.SourceRoot.Children) {
-
-			}
-			return true;
-		}
-
 
 		// This is the minimum unit of exporting mission graph.
 		private class Node {
