@@ -294,6 +294,7 @@ namespace MissionGrammarSystem {
 				node.Index = 0;
 			}
 		}
+		
 		private static List<Rule> _sameRules = new List<Rule>();
 		// Check multi replacements.
 		private static Rule SelectFromMatchs(Rule matchRule) {
@@ -302,20 +303,24 @@ namespace MissionGrammarSystem {
 				return matchRule;
 			}
 			int weightSum = matchRule.Weight;
-
+			// Comparing rules with matched rule.
 			foreach (Rule rule in _rules) {
 				if (rule == matchRule) {
 					_sameRules.Add(rule);
 					continue;
-				} else if(Alphabet.IsAnyNode(rule.SourceRoot.AlphabetID) || rule.SourceRoot.AlphabetID == matchRule.SourceRoot.AlphabetID) {
+				} else if( rule.SourceNodeCount == matchRule.SourceNodeCount &&
+					(Alphabet.IsAnyNode(rule.SourceRoot.AlphabetID) || rule.SourceRoot.AlphabetID == matchRule.SourceRoot.AlphabetID)) {
 					_exploredNodes.Clear();
-					if (RecursionMatch(rule.SourceRoot, matchRule.SourceRoot)) {
+					if (RecursionMatch(matchRule.SourceRoot,rule.SourceRoot)) {
+						// if rule has same source.
 						_sameRules.Add(rule);
 						weightSum += rule.Weight;
 					}
 				}
 			}
+			// Rearrange rules in weight descending.
 			Rule[] _orderRules = _sameRules.OrderBy(r=>r.Weight).ToArray();
+
 			foreach (Rule rule in _orderRules) {
 				int randomValue = Random.Range(0, weightSum + 1);
 				if (rule.Weight >= randomValue) {
@@ -324,9 +329,8 @@ namespace MissionGrammarSystem {
 					weightSum -= rule.Weight;
 				}
 			}
-			return _sameRules[0];
+			return matchRule;
 		}
-
 		// This is the minimum unit of exporting mission graph.
 		private class Node {
 			// GUID for this symbol in alphabet.
