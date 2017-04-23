@@ -76,8 +76,6 @@ namespace MissionGrammarSystem {
 		// Recorder for undo/redo.
 		private StateRecorder _sourceRuleState = new StateRecorder();
 		private StateRecorder _replaceRuleState = new StateRecorder();
-		// Quantity limit value.
-		private int _tempQuantityLimit;
 		// [Will move to Style.cs]
 		private static Rect _redoUndoArea = new Rect(Screen.width / 2 - 120, 5, 100, 25);
 		public static Rect RedoUndoArea {
@@ -130,7 +128,6 @@ namespace MissionGrammarSystem {
 			_currentSelectedGraphGrammar     = _missionRule.SourceRule;
 			_sourceRuleState                 = new StateRecorder(_missionRule.SourceRule);
 			_replaceRuleState                = new StateRecorder(_missionRule.ReplacementRule);
-			_tempQuantityLimit               = _missionRule.QuantityLimit;
 
 			Alphabet.RevokeAllSelected();
 		}
