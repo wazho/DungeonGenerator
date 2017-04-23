@@ -17,6 +17,7 @@ namespace MissionGrammarSystem {
 		private GraphGrammar _sourceRule;
 		private GraphGrammar _replacementRule;
 		private bool         _isEnabled;
+		private int          _quantityLimit;
 		// Constructor - Default.
 		public MissionRule() {
 			this._name            = "New rule";
@@ -24,6 +25,7 @@ namespace MissionGrammarSystem {
 			this._sourceRule      = new GraphGrammar();
 			this._replacementRule = new GraphGrammar();
 			this._isEnabled       = true;
+			this._quantityLimit   = 0; 
 		}
 		// Constructor - Pass name and description.
 		public MissionRule(string name, string description) : this() {
@@ -54,6 +56,11 @@ namespace MissionGrammarSystem {
 		public bool Enable {
 			get { return _isEnabled; }
 			set { _isEnabled = value; }
+		}
+		// Quantity Limit, getter and setter.
+		public int QuantityLimit {
+			get { return _quantityLimit; }
+			set { _quantityLimit = value; }
 		}
 	}
 }
