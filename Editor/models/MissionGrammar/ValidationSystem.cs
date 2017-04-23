@@ -31,6 +31,7 @@ namespace MissionGrammarSystem {
 			{ ValidationLabel.ExactlyDuplicated,  (GraphGrammar graphGrammar) => ValidateExactlyDuplicated(graphGrammar) },
 			{ ValidationLabel.MultipleRelations,  (GraphGrammar graphGrammar) => ValidateMultipleRelations(graphGrammar) },
 			{ ValidationLabel.CyclicLink,         (GraphGrammar graphGrammar) => ValidateCyclicLink(graphGrammar) },
+			{ ValidationLabel.OrphanNode,         (GraphGrammar graphGrammar) => ValidateOrphanNode(graphGrammar) },
 		};
 
 		// Validate the graph grammar (one of pair of rule).
@@ -152,6 +153,11 @@ namespace MissionGrammarSystem {
 				}
 			}
 			// Otherwise, this is not cyclic link.
+			return true;
+		}
+		// No 9. OrphanNode.
+		private static bool ValidateOrphanNode(GraphGrammar graphGrammar) {
+			
 			return true;
 		}
 	}
