@@ -73,8 +73,11 @@ namespace MissionGrammarSystem {
 		private Vector2 _listScrollPosition;
 		private Vector2 _positionInCanvas;
 		private GraphGrammar _currentSelectedGraphGrammar;
+		// Recorder for undo/redo.
 		private StateRecorder _sourceRuleState = new StateRecorder();
 		private StateRecorder _replaceRuleState = new StateRecorder();
+		// Quantity limit
+		private int _quantityLimit;
 		// [Will move to Style.cs]
 		private static Rect _redoUndoArea = new Rect(Screen.width / 2 - 120, 5, 100, 25);
 		public static Rect RedoUndoArea {
@@ -82,7 +85,14 @@ namespace MissionGrammarSystem {
 				_redoUndoArea.x = Screen.width / 2 - 120;
 				return _redoUndoArea;
 			}
-		} 
+		}
+		private static Rect _quantityLimitAera = new Rect(0, 550, Screen.width, 20);
+		public static Rect QuantityLimitAera {
+			get {
+				_quantityLimitAera.width = Screen.width;
+				return _quantityLimitAera;
+			}
+		}
 
 		void Awake() {
 			Initialize();
@@ -146,6 +156,10 @@ namespace MissionGrammarSystem {
 			LayoutRulesCanvasArea();
 			// Show the area of after-rule-preview.
 			LayoutRuleCanvasEditor();
+
+			GUILayout.BeginArea(QuantityLimitAera, SampleStyle.Frame(SampleStyle.ColorLightestGrey));
+			_quantityLimit = EditorGUILayout.IntField("Quantity limit", _quantityLimit);
+			GUILayout.EndArea();
 			// Control whole events.
 			EventController();
 		}
