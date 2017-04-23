@@ -67,8 +67,16 @@ namespace MissionGrammarSystem {
 		}
 		// No 4. IsolatedNode.
 		private static bool ValidateIsolatedNode(GraphGrammar graphGrammar) {
-
-			return true;
+			// true => error occur/ false => no occur.
+			if (graphGrammar.Nodes.Count > 1) {
+				foreach (GraphGrammarNode node in graphGrammar.Nodes) {
+					// Connection.StickOn will remain the last node it sticked on, so use position to inforce validation.
+					if (!(graphGrammar.Connections.Where(e => (e.StartPosition == node.Position || e.EndPosition == node.Position))).Any()) {
+						return true;
+					}
+				}
+			}
+			return false;
 		}
 		// No 5. IsolatedConnection.
 		private static bool ValidateIsolatedConnection(GraphGrammar graphGrammar) {
@@ -82,8 +90,17 @@ namespace MissionGrammarSystem {
 		}
 		// No 7. MultipleRelations.
 		private static bool ValidateMultipleRelations(GraphGrammar graphGrammar) {
-
-			return true;
+			// true => error occur/ false => no occur.
+			if (graphGrammar.Connections.Count > 1) {
+				foreach (GraphGrammarConnection connection in graphGrammar.Connections) {
+					if ((graphGrammar.Connections.Where(e => (e != connection &&
+					(e.StartpointStickyOn == connection.StartpointStickyOn && e.EndpointStickyOn == connection.EndpointStickyOn) ||
+					(e.StartpointStickyOn == connection.EndpointStickyOn && e.EndpointStickyOn == connection.StartpointStickyOn)))).Any()) {
+						return true;
+					}
+				}
+			}
+			return false;
 		}
 		// No 8. CyclicLink.
 		private static bool ValidateCyclicLink(GraphGrammar graphGrammar) {
