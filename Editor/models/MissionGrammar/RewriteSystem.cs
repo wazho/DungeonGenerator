@@ -299,7 +299,7 @@ namespace MissionGrammarSystem {
 		// Check multi replacements.
 		private static Rule SelectFromMatchs(Rule matchRule) {
 			_sameRules.Clear();
-			if(matchRule == null) {
+			if (matchRule == null) {
 				return matchRule;
 			}
 			int weightSum = matchRule.Weight;
@@ -308,7 +308,7 @@ namespace MissionGrammarSystem {
 				if (rule == matchRule) {
 					_sameRules.Add(rule);
 					continue;
-				} else if( rule.SourceNodeCount == matchRule.SourceNodeCount &&
+				} else if (rule.SourceNodeCount == matchRule.SourceNodeCount &&
 					(Alphabet.IsAnyNode(rule.SourceRoot.AlphabetID) || rule.SourceRoot.AlphabetID == matchRule.SourceRoot.AlphabetID)) {
 					_exploredNodes.Clear();
 					if (RecursionMatch(matchRule.SourceRoot,rule.SourceRoot)) {
@@ -325,7 +325,7 @@ namespace MissionGrammarSystem {
 				int randomValue = Random.Range(1, weightSum + 1);
 				if (rule.Weight >= randomValue) {
 					return rule;
-				}else {
+				} else {
 					weightSum -= rule.Weight;
 				}
 			}
