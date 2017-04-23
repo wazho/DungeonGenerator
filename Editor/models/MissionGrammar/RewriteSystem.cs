@@ -153,7 +153,7 @@ namespace MissionGrammarSystem {
 					rule.ReplacementRoot      = rule.ReplacementNodeTable.FirstOrDefault();
 					rule.ReplacementNodeCount = nodeCount;
 					// If finite.
-					if(originRule.QuantityLimit > 0) {
+					if (originRule.QuantityLimit > 0) {
 						rule.QuantityLimit    = originRule.QuantityLimit;
 					} else {
 						// -1 means infinite.
@@ -211,7 +211,7 @@ namespace MissionGrammarSystem {
 					_usedIndexTable[node.Index] = true;
 					if (RecursionMatch(node, rule.SourceRoot)) {
 						// Quantity limit decrease.
-						if(rule.QuantityLimit > 0) {
+						if (rule.QuantityLimit > 0) {
 							rule.QuantityLimit -= 1;
 						}
 						return rule;
