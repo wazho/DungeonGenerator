@@ -102,6 +102,7 @@ namespace MissionGrammarSystem {
 			if (! _relatedNodes.Exists(x => ReferenceEquals(x, node))) {
 				// Step 1: Find matchs and set indexes.
 				Rule matchedRule = FindMatchs(node);
+				matchedRule      = SelectFromMatchs(matchedRule);
 
 				if (matchedRule != null) {
 					Debug.Log("Current node: '" + node.Name + "' is match the rule : " + matchedRule.Name + "  " + node.Index);
@@ -151,6 +152,7 @@ namespace MissionGrammarSystem {
 					rule.ReplacementNodeTable = TransformGraph(originRule.ReplacementRule, out nodeCount);
 					rule.ReplacementRoot      = rule.ReplacementNodeTable.FirstOrDefault();
 					rule.ReplacementNodeCount = nodeCount;
+					rule.Weight               = originRule.Weight;
 					// Insert into the '_rules'.
 					_rules.Add(rule);
 				}
@@ -292,6 +294,48 @@ namespace MissionGrammarSystem {
 				node.Index = 0;
 			}
 		}
+		private static List<Rule> _sameRules = new List<Rule>();
+		// Check multi replacements.
+		private static Rule SelectFromMatchs(Rule matchRule) {
+			_sameRules.Clear();
+			if(matchRule == null) {
+				return matchRule;
+			}
+			int weightSum = matchRule.Weight;
+
+			foreach (Rule rule in _rules) {
+				if (rule == matchRule) {
+					_sameRules.Add(rule);
+					continue;
+				} else if(rule.SourceRoot.AlphabetID == matchRule.SourceRoot.AlphabetID) {
+					_exploredNodes.Clear();
+					if (RecursionMatch(rule.SourceRoot, matchRule.SourceRoot)) {
+						_sameRules.Add(rule);
+						weightSum += rule.Weight;
+					}
+				}
+			}
+
+			foreach (Rule rule in _sameRules) {
+				int randomValue = Random.Range(0, weightSum + 1);
+				if (rule.Weight >= randomValue) {
+					return rule;
+				}else {
+					weightSum -= rule.Weight;
+				}
+			}
+			return _sameRules[0];
+		}
+		private static bool CompareRule(Rule a, Rule b) {
+			if (a.SourceRoot.AlphabetID != b.SourceRoot.AlphabetID) {
+				return false;
+			}
+			foreach(Node node in a.SourceRoot.Children) {
+
+			}
+			return true;
+		}
+
 
 		// This is the minimum unit of exporting mission graph.
 		private class Node {
@@ -388,6 +432,7 @@ namespace MissionGrammarSystem {
 			private int        _replacementNodeCount;
 			private List<Node> _sourceNodeTable;
 			private List<Node> _replacementNodeTable;
+			private int        _weight;
 			// Constructor.
 			public Rule() {
 				this._sourceRoot           = new Node();
@@ -424,6 +469,11 @@ namespace MissionGrammarSystem {
 			public List<Node> ReplacementNodeTable {
 				get { return _replacementNodeTable; }
 				set { _replacementNodeTable = value; }
+			}
+			// Weight, getter.
+			public int Weight {
+				get { return _weight; }
+				set { _weight = value; }
 			}
 			// Find the node from source rule by index.
 			public Node FindSourceByIndex(int index) {

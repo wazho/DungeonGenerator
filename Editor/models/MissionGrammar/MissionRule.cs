@@ -17,6 +17,7 @@ namespace MissionGrammarSystem {
 		private GraphGrammar _sourceRule;
 		private GraphGrammar _replacementRule;
 		private bool         _isEnabled;
+		private int          _weight;
 		// Constructor - Default.
 		public MissionRule() {
 			this._name            = "New rule";
@@ -24,6 +25,7 @@ namespace MissionGrammarSystem {
 			this._sourceRule      = new GraphGrammar();
 			this._replacementRule = new GraphGrammar();
 			this._isEnabled       = true;
+			this._weight          = 100;
 		}
 		// Constructor - Pass name and description.
 		public MissionRule(string name, string description) : this() {
@@ -54,6 +56,16 @@ namespace MissionGrammarSystem {
 		public bool Enable {
 			get { return _isEnabled; }
 			set { _isEnabled = value; }
+		}
+		// Weight, getter and setter.
+		public int Weight {
+			get { return _weight; }
+			set {
+				_weight = value;
+				if (_weight < 0) {
+					_weight = 0;
+				}
+			}
 		}
 	}
 }

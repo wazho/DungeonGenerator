@@ -475,6 +475,8 @@ namespace MissionGrammarSystem {
 				}
 			}
 			GUI.enabled = true;
+			// [Addition] Weight field.
+			_missionRule.Weight = EditorGUILayout.IntField("Weight", _missionRule.Weight);
 			GUILayout.EndVertical();
 			GUILayout.EndArea();
 		}
