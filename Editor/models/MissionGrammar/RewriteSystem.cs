@@ -322,7 +322,7 @@ namespace MissionGrammarSystem {
 			Rule[] _orderRules = _sameRules.OrderBy(r=>r.Weight).ToArray();
 
 			foreach (Rule rule in _orderRules) {
-				int randomValue = Random.Range(0, weightSum + 1);
+				int randomValue = Random.Range(1, weightSum + 1);
 				if (rule.Weight >= randomValue) {
 					return rule;
 				}else {
