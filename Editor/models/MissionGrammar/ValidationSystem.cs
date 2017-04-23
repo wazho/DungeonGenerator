@@ -158,8 +158,8 @@ namespace MissionGrammarSystem {
 		}
 		// No 9. OrphanNode.
 		private static bool ValidateOrphanNode(GraphGrammar graphGrammar) {
-			
-			return true;
+			// If node has no parent, it is an orphan. (Exclude ordering 1)
+			return !(graphGrammar.Nodes.Where(n => (n.Ordering != 1 && n.Parents.Count == 0)).Any());
 		}
 	}
 }
