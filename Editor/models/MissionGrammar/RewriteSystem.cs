@@ -307,7 +307,7 @@ namespace MissionGrammarSystem {
 				if (rule == matchRule) {
 					_sameRules.Add(rule);
 					continue;
-				} else if(rule.SourceRoot.AlphabetID == matchRule.SourceRoot.AlphabetID) {
+				} else if(Alphabet.IsAnyNode(rule.SourceRoot.AlphabetID) ||rule.SourceRoot.AlphabetID == matchRule.SourceRoot.AlphabetID) {
 					_exploredNodes.Clear();
 					if (RecursionMatch(rule.SourceRoot, matchRule.SourceRoot)) {
 						_sameRules.Add(rule);
