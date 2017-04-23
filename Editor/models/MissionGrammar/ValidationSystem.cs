@@ -68,6 +68,9 @@ namespace MissionGrammarSystem {
 		// No 4. IsolatedNode.
 		private static bool ValidateIsolatedNode(GraphGrammar graphGrammar) {
 			if (graphGrammar.Nodes.Count > 1) {
+				if(graphGrammar.Connections.Count < graphGrammar.Nodes.Count-1) {
+					return false;
+				}
 				foreach (GraphGrammarNode node in graphGrammar.Nodes) {
 					// Connection.StickOn will remain the last node it sticked on, so use position to inforce validation.
 					if (!(graphGrammar.Connections.Where(e => (e.StartPosition == node.Position || e.EndPosition == node.Position))).Any()) {
