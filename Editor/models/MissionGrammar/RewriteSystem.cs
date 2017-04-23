@@ -307,7 +307,7 @@ namespace MissionGrammarSystem {
 				if (rule == matchRule) {
 					_sameRules.Add(rule);
 					continue;
-				} else if(Alphabet.IsAnyNode(rule.SourceRoot.AlphabetID) ||rule.SourceRoot.AlphabetID == matchRule.SourceRoot.AlphabetID) {
+				} else if(Alphabet.IsAnyNode(rule.SourceRoot.AlphabetID) || rule.SourceRoot.AlphabetID == matchRule.SourceRoot.AlphabetID) {
 					_exploredNodes.Clear();
 					if (RecursionMatch(rule.SourceRoot, matchRule.SourceRoot)) {
 						_sameRules.Add(rule);
@@ -315,8 +315,8 @@ namespace MissionGrammarSystem {
 					}
 				}
 			}
-
-			foreach (Rule rule in _sameRules) {
+			Rule[] _orderRules = _sameRules.OrderBy(r=>r.Weight).ToArray();
+			foreach (Rule rule in _orderRules) {
 				int randomValue = Random.Range(0, weightSum + 1);
 				if (rule.Weight >= randomValue) {
 					return rule;
