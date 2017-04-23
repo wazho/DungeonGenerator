@@ -116,7 +116,7 @@ namespace MissionGrammarSystem {
 				}
 			}
 			// If no stick anything then set null.
-			if (!sticked) {
+			if (! sticked) {
 				if (string.Equals(location, "start")) {
 					connection.StartpointStickyOn = null;
 				} else {

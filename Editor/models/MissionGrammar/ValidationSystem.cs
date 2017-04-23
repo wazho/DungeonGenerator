@@ -104,7 +104,7 @@ namespace MissionGrammarSystem {
 				nonIndegree.Enqueue(node);
 			}
 			// Bfs.
-			while(nonIndegree.Count > 0) {
+			while (nonIndegree.Count > 0) {
 				// Pop.
 				GraphGrammarNode popNode = nonIndegree.Dequeue();
 				// Remove the edge between this node and children node.
@@ -128,7 +128,7 @@ namespace MissionGrammarSystem {
 			// Return false when any edge exist. It represents that this is a cyclic link.
 			foreach (var node in graphGrammar.Nodes) {
 				foreach (var childNode in childrenTable[node]) {
-					if(! _usedEdge[node.Ordering - 1, childNode.Ordering - 1]) {
+					if (! _usedEdge[node.Ordering - 1, childNode.Ordering - 1]) {
 						return false;
 					}
 				}
