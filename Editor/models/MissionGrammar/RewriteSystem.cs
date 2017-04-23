@@ -103,6 +103,7 @@ namespace MissionGrammarSystem {
 			if (! _relatedNodes.Exists(x => ReferenceEquals(x, node))) {
 				// Step 1: Find matchs and set indexes.
 				Rule matchedRule = FindMatchs(node);
+				matchedRule      = SelectFromMatchs(matchedRule);
 
 				if (matchedRule != null) {
 					Debug.Log("Current node: '" + node.Name + "' is match the rule : " + matchedRule.Name + "  " + node.Index);
@@ -152,13 +153,9 @@ namespace MissionGrammarSystem {
 					rule.ReplacementNodeTable = TransformGraph(originRule.ReplacementRule, out nodeCount);
 					rule.ReplacementRoot      = rule.ReplacementNodeTable.FirstOrDefault();
 					rule.ReplacementNodeCount = nodeCount;
-					// If finite.
-					if (originRule.QuantityLimit > 0) {
-						rule.QuantityLimit    = originRule.QuantityLimit;
-					} else {
-						// -1 means infinite.
-						rule.QuantityLimit = -1;
-					}
+					rule.Weight               = originRule.Weight;
+					// If finite. -1 means infinite.
+					rule.QuantityLimit = (originRule.QuantityLimit > 0) ? originRule.QuantityLimit : -1;
 					// Insert into the '_rules'.
 					_rules.Add(rule);
 				}
@@ -309,7 +306,51 @@ namespace MissionGrammarSystem {
 				node.Index = 0;
 			}
 		}
+		
+		private static List<Rule> _sameRules = new List<Rule>();
+		// Check multi replacements.
+		private static Rule SelectFromMatchs(Rule matchRule) {
+			_sameRules.Clear();
+			if (matchRule == null) {
+				return matchRule;
+			}
+			int weightSum = matchRule.Weight;
+			// Comparing rules with matched rule.
+			foreach (Rule rule in _rules) {
+				// If the quantity of rule less than limit.
+				if (rule.QuantityLimit == 0) {
+					continue;
+				}
+				if (rule == matchRule) {
+					_sameRules.Add(rule);
+					continue;
+				} else if (rule.SourceNodeCount == matchRule.SourceNodeCount &&
+					(Alphabet.IsAnyNode(rule.SourceRoot.AlphabetID) || rule.SourceRoot.AlphabetID == matchRule.SourceRoot.AlphabetID)) {
+					_exploredNodes.Clear();
+					if (RecursionMatch(matchRule.SourceRoot, rule.SourceRoot)) {
+						// Quantity limit decrease.
+						if (rule.QuantityLimit > 0) {
+							rule.QuantityLimit -= 1;
+						}
+						// if rule has same source.
+						_sameRules.Add(rule);
+						weightSum += rule.Weight;
+					}
+				}
+			}
+			// Rearrange rules in weight descending.
+			Rule[] _orderRules = _sameRules.OrderBy(r=>r.Weight).ToArray();
 
+			foreach (Rule rule in _orderRules) {
+				int randomValue = Random.Range(1, weightSum + 1);
+				if (rule.Weight >= randomValue) {
+					return rule;
+				} else {
+					weightSum -= rule.Weight;
+				}
+			}
+			return matchRule;
+		}
 		// This is the minimum unit of exporting mission graph.
 		private class Node {
 			// GUID for this symbol in alphabet.
@@ -405,6 +446,7 @@ namespace MissionGrammarSystem {
 			private int        _replacementNodeCount;
 			private List<Node> _sourceNodeTable;
 			private List<Node> _replacementNodeTable;
+			private int        _weight;
 			private int        _quantityLimit;
 			// Constructor.
 			public Rule() {
@@ -442,6 +484,11 @@ namespace MissionGrammarSystem {
 			public List<Node> ReplacementNodeTable {
 				get { return _replacementNodeTable; }
 				set { _replacementNodeTable = value; }
+			}
+			// Weight, getter.
+			public int Weight {
+				get { return _weight; }
+				set { _weight = value; }
 			}
 			// Quantity limit, getter and setter.
 			public int QuantityLimit {
