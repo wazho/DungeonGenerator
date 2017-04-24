@@ -123,8 +123,6 @@ namespace MissionGrammarSystem {
 					connection.EndpointStickyOn = null;
 				}
 			}
-			// Validation of rule.
-			ValidationSystem.Validate(this);
 			return sticked;
 		}
 
@@ -139,8 +137,6 @@ namespace MissionGrammarSystem {
 			_nodes.Add(node);
 			// Update the current node.
 			_selectedSymbol = node;
-			// Validation of rule.
-			ValidationSystem.Validate(this);
 			return;
 		}
 		// Add a new node from another exist node.
@@ -153,8 +149,6 @@ namespace MissionGrammarSystem {
 			_nodes.Add(node);
 			// Update the current node.
 			_selectedSymbol = node;
-			// Validation of rule.
-			ValidationSystem.Validate(this);
 			return node;
 		}
 		// Update symbol appearance.
@@ -195,8 +189,6 @@ namespace MissionGrammarSystem {
 			_connections.Add(connection);
 			// Update the current connection.
 			_selectedSymbol = connection;
-			// Validation of rule.
-			ValidationSystem.Validate(this);
 			return;
 		}
 		// Add a new connection from another exist connection.
@@ -208,8 +200,6 @@ namespace MissionGrammarSystem {
 			_connections.Add(connection);
 			// Update the current connection.
 			_selectedSymbol = connection;
-			// Validation of rule.
-			ValidationSystem.Validate(this);
 			return connection;
 		}
 		// Set all 'seleted' of symbols to false.

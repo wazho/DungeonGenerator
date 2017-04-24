@@ -434,6 +434,7 @@ namespace MissionGrammarSystem {
 						node.Ordering = _currentSelectedGraphGrammar.SelectedSymbol.Ordering;
 					}
 					_currentSelectedGraphGrammar.SelectedSymbol.Ordering = sliderOrdering;
+					// Record state.
 					RecordState();
 				}
 			}
@@ -722,6 +723,7 @@ namespace MissionGrammarSystem {
 					} else if (_currentSelectedGraphGrammar == _missionRule.ReplacementRule) {
 						newNode.Position = _replacementCanvasScrollPosition + new Vector2(30, 30);
 					}
+					// Record state.
 					RecordState();
 					break;
 				case SymbolEditingMode.AddConnection:
@@ -744,6 +746,7 @@ namespace MissionGrammarSystem {
 							newConnection.EndPosition   = _replacementCanvasScrollPosition + new Vector2(60, 20);
 						}
 					}
+					// Record state.
 					RecordState();
 					break;
 				}
@@ -963,6 +966,8 @@ namespace MissionGrammarSystem {
 			} else if (_currentSelectedGraphGrammar == _missionRule.ReplacementRule) {
 				_replaceRuleState.AddState(_currentSelectedGraphGrammar);
 			}
+			// Validation of rule.
+			ValidationSystem.Validate(_missionRule, _currentSelectedGraphGrammar);
 		}
 		// Record State via GraphGrammar parameter.
 		void RecordState(GraphGrammar graph) {
@@ -971,6 +976,8 @@ namespace MissionGrammarSystem {
 			} else if (graph == _missionRule.ReplacementRule) {
 				_replaceRuleState.AddState(graph);
 			}
+			// Validation of rule.
+			ValidationSystem.Validate(_missionRule, _currentSelectedGraphGrammar);
 		}
 		// Undo via _currentSelectedGraphGrammar.
 		void UndoState() {

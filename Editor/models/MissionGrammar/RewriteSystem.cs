@@ -265,7 +265,7 @@ namespace MissionGrammarSystem {
 			// If rule node have no child, or said this rule is match.
 			return true;
 		}
-				// Step 2: Remove connections.
+		// Step 2: Remove connections.
 		private static void RemoveConnections(Rule matchedRule) {
 			foreach (Node node in _relatedNodes) {
 				for (int i = 0; i < node.Children.Count; i++) {
