@@ -216,8 +216,7 @@ namespace MissionGrammarSystem {
 			return orderRules;
 		}
 		private static Rule FindMatchs(Node node) {
-			//_sameRules.Clear();
-			// Filtering the rules that are legal.
+			// Find the rule that is legal.
 			foreach (var rule in RandomOrderByWeight()) {
 				// If the quantity of rule less than limit.
 				// [Notice] Only ZERO will continue. It means the negative value is equivalent to infinite.
@@ -233,32 +232,12 @@ namespace MissionGrammarSystem {
 					_relatedNodes.Add(node);
 					_usedIndexTable[node.Index] = true;
 					if (RecursionMatch(node, rule.SourceRoot)) {
-						//_sameRules.Add(rule);
 						// Quantity limit decrease.
 						rule.QuantityLimit -= 1;
 						return rule;
 					}
 				}
 			}
-			/*// Select one rule from the filtering result by weight.
-			int minBounding = 0;
-			int randomNum = Random.Range(1, _sameRules.Sum(r => r.Weight) + 1);
-			Rule resultRule = null;
-			// There are matched rules.
-			if (_sameRules.Count > 0) {
-				foreach (Rule rule in _sameRules) {
-					if (randomNum >= minBounding && randomNum <= minBounding + rule.Weight) {
-						// Quantity limit decrease.
-						rule.QuantityLimit -= 1;
-						// Found it then break.
-						resultRule = rule;
-						break;
-					} else {
-						minBounding += rule.Weight;
-					}
-				}
-			}
-			return resultRule;*/
 			return null;
 		}
 		// Confirm the children are match
