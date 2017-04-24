@@ -54,36 +54,18 @@ namespace MissionGrammarSystem {
 		}
 		// No 1. LeftMoreThanRight.
 		private static bool ValidateLeftMoreThanRight(MissionRule rule, GraphGrammar graphGrammar) {
-			if(rule.SourceRule.Nodes.Count > rule.ReplacementRule.Nodes.Count) {
-				// Nodes of sourceRule are more than nodes of replacementRule.
-				return false;
-			}
-			// Nodes of sourceRule are not more than nodes of replacementRule.
-			return true;
+			// Are Nodes of sourceRule more than nodes of replacementRule?
+			return rule.SourceRule.Nodes.Count <= rule.ReplacementRule.Nodes.Count ? true : false;
 		}
 		// No 2. EmptyLeft.
 		private static bool ValidateEmptyLeft(MissionRule rule, GraphGrammar graphGrammar) {
-			if (rule.SourceRule.Nodes.Count == 0) {
-				// There is no node in sourceRule.
-				return false;
-			}
-			// There is at least one node in sourceRule.
-			return true;
+			// Is there no node in sourceRule?
+			return rule.SourceRule.Nodes.Count != 0 ? true : false;
 		}
 		// No 3. HeadHasParent.
 		private static bool ValidateHeadHasParent(MissionRule rule, GraphGrammar graphGrammar) {
-			if (graphGrammar.Nodes.Count > 1) {
-				foreach (GraphGrammarNode node in graphGrammar.Nodes) {
-					if (node.Ordering == 1) {
-						if (node.Parents.Count > 0) {
-							// Head has parent.
-							return false;
-						}
-					}
-				}
-			}
-			// Head doesn't has parent.
-			return true;
+			// If head doesn't has parent, it return true.
+			return (graphGrammar.Nodes.Where(n => (n.Ordering == 1 && n.Parents.Count == 0)).Any());
 		}
 		// No 4. IsolatedNode.
 		private static bool ValidateIsolatedNode(MissionRule rule, GraphGrammar graphGrammar) {
