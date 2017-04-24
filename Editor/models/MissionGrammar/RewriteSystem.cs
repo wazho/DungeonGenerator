@@ -116,8 +116,6 @@ namespace MissionGrammarSystem {
 					ReAddConnection(matchedRule);
 					// Step 6: Remove indexes.
 					RemoveIndexes();
-				} else {
-					//Debug.Log("Current node: '" + node.Name + "'.");
 				}
 			}
 			// Recursive.
@@ -194,7 +192,7 @@ namespace MissionGrammarSystem {
 			// Sum of rule's weight.
 			int sum = cloneRules.Sum(r => r.Weight);
 			// When cloneRules is empty. The sort finish.
-			while(cloneRules.Count > 0) {
+			while (cloneRules.Count > 0) {
 				// Select one rule from the filtering result by weight.
 				int minBounding = 0;
 				int randomNum = Random.Range(1, sum + 1);
@@ -215,6 +213,7 @@ namespace MissionGrammarSystem {
 			}
 			return orderRules;
 		}
+
 		private static Rule FindMatchs(Node node) {
 			// Find the rule that is legal.
 			foreach (var rule in RandomOrderByWeight()) {
@@ -256,11 +255,16 @@ namespace MissionGrammarSystem {
 						childNode.Index = childMatchNode.Index;
 						_relatedNodes.Add(childNode);
 						// If the children are also match.
-						if (_exploredNodes.Exists(x => ReferenceEquals(x, childNode)) ||
-							RecursionMatch(childNode, childMatchNode)) {
+						if(_exploredNodes.Exists(x => ReferenceEquals(x, childNode)) ||
+						 RecursionMatch(childNode, childMatchNode)) {
 							_isMatch = true;
 							break;
+						} else {
+							childNode.Index = 0;
+							_usedIndexTable[childMatchNode.Index] = false;
+							_relatedNodes.Remove(childNode);
 						}
+						
 					} else if (childNode.Index == childMatchNode.Index &&
 						_usedIndexTable[childMatchNode.Index]) {
 						_isMatch = true;
@@ -276,6 +280,7 @@ namespace MissionGrammarSystem {
 			// If rule node have no child, or said this rule is match.
 			return true;
 		}
+
 		// Step 2: Remove connections.
 		private static void RemoveConnections(Rule matchedRule) {
 			foreach (Node node in _relatedNodes) {
