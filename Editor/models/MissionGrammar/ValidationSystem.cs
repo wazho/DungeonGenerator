@@ -54,17 +54,35 @@ namespace MissionGrammarSystem {
 		}
 		// No 1. LeftMoreThanRight.
 		private static bool ValidateLeftMoreThanRight(MissionRule rule, GraphGrammar graphGrammar) {
-
-			return false;
+			if(rule.SourceRule.Nodes.Count > rule.ReplacementRule.Nodes.Count) {
+				// Nodes of sourceRule are more than nodes of replacementRule.
+				return false;
+			}
+			// Nodes of sourceRule are not more than nodes of replacementRule.
+			return true;
 		}
 		// No 2. EmptyLeft.
 		private static bool ValidateEmptyLeft(MissionRule rule, GraphGrammar graphGrammar) {
-
-			return false;
+			if (rule.SourceRule.Nodes.Count == 0) {
+				// There is no node in sourceRule.
+				return false;
+			}
+			// There is at least one node in sourceRule.
+			return true;
 		}
 		// No 3. HeadHasParent.
 		private static bool ValidateHeadHasParent(MissionRule rule, GraphGrammar graphGrammar) {
-
+			if (graphGrammar.Nodes.Count > 1) {
+				foreach (GraphGrammarNode node in graphGrammar.Nodes) {
+					if (node.Ordering == 1) {
+						if (node.Parents.Count > 0) {
+							// Head has parent.
+							return false;
+						}
+					}
+				}
+			}
+			// Head doesn't has parent.
 			return true;
 		}
 		// No 4. IsolatedNode.
