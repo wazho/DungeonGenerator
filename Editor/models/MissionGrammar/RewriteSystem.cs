@@ -117,7 +117,7 @@ namespace MissionGrammarSystem {
 					// Step 6: Remove indexes.
 					RemoveIndexes();
 				} else {
-					Debug.Log("Current node: '" + node.Name + "'.");
+					//Debug.Log("Current node: '" + node.Name + "'.");
 				}
 			}
 			// Recursive.
@@ -186,11 +186,39 @@ namespace MissionGrammarSystem {
 
 		private static bool[] _usedIndexTable;
 		private static List<Node> _exploredNodes = new List<Node>();
-		private static List<Rule> _sameRules     = new List<Rule>();
+		private static List<Rule> RandomOrderByWeight() {
+			// Declare list to store rules by order.
+			List<Rule> orderRules = new List<Rule>();
+			// Declare the clone list that avoid to modify original list.
+			List<Rule> cloneRules = new List<Rule>(_rules);
+			// Sum of rule's weight.
+			int sum = cloneRules.Sum(r => r.Weight);
+			// When cloneRules is empty. The sort finish.
+			while(cloneRules.Count > 0) {
+				// Select one rule from the filtering result by weight.
+				int minBounding = 0;
+				int randomNum = Random.Range(1, sum + 1);
+				foreach (Rule rule in cloneRules) {
+					if (randomNum >= minBounding && randomNum <= minBounding + rule.Weight) {
+						// Add rule to list.
+						orderRules.Add(rule);
+						// Remove rule in original list.
+						cloneRules.Remove(rule);
+						// Sum also need to decrease.
+						sum -= rule.Weight;
+						// Found it then break.
+						break;
+					} else {
+						minBounding += rule.Weight;
+					}
+				}
+			}
+			return orderRules;
+		}
 		private static Rule FindMatchs(Node node) {
-			_sameRules.Clear();
+			//_sameRules.Clear();
 			// Filtering the rules that are legal.
-			foreach (var rule in _rules) {
+			foreach (var rule in RandomOrderByWeight()) {
 				// If the quantity of rule less than limit.
 				// [Notice] Only ZERO will continue. It means the negative value is equivalent to infinite.
 				if (rule.QuantityLimit == 0) { continue; }
@@ -205,11 +233,14 @@ namespace MissionGrammarSystem {
 					_relatedNodes.Add(node);
 					_usedIndexTable[node.Index] = true;
 					if (RecursionMatch(node, rule.SourceRoot)) {
-						_sameRules.Add(rule);
+						//_sameRules.Add(rule);
+						// Quantity limit decrease.
+						rule.QuantityLimit -= 1;
+						return rule;
 					}
 				}
 			}
-			// Select one rule from the filtering result by weight.
+			/*// Select one rule from the filtering result by weight.
 			int minBounding = 0;
 			int randomNum = Random.Range(1, _sameRules.Sum(r => r.Weight) + 1);
 			Rule resultRule = null;
@@ -227,7 +258,8 @@ namespace MissionGrammarSystem {
 					}
 				}
 			}
-			return resultRule;
+			return resultRule;*/
+			return null;
 		}
 		// Confirm the children are match
 		private static bool RecursionMatch(Node node, Node matchNode) {
@@ -284,7 +316,7 @@ namespace MissionGrammarSystem {
 			foreach (Node node in _relatedNodes) {
 				Node replaceNode = matchedRule.FindReplacementByIndex(node.Index);
 				// If any node then keep origin node.
-				if (replaceNode.AlphabetID == Alphabet.AnyNode.AlphabetID) {
+				if (Alphabet.IsAnyNode(replaceNode.AlphabetID)) {
 					continue;
 				}
 				node.Update(replaceNode);
