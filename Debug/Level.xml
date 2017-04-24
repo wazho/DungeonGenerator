@@ -916,6 +916,8 @@
           </MissionGraph>
         </ReplacementRule>
         <Enable>True</Enable>
+        <Weight>10</Weight>
+        <QuantityLimit>0</QuantityLimit>
       </Rule>
       <Rule>
         <Name>More Paths</Name>
@@ -1202,6 +1204,8 @@
           </MissionGraph>
         </ReplacementRule>
         <Enable>True</Enable>
+        <Weight>10</Weight>
+        <QuantityLimit>0</QuantityLimit>
       </Rule>
       <Rule>
         <Name>Fight boss</Name>
@@ -1618,6 +1622,8 @@
           </MissionGraph>
         </ReplacementRule>
         <Enable>True</Enable>
+        <Weight>10</Weight>
+        <QuantityLimit>0</QuantityLimit>
       </Rule>
       <Rule>
         <Name>Fork</Name>
@@ -1932,6 +1938,8 @@
           </MissionGraph>
         </ReplacementRule>
         <Enable>True</Enable>
+        <Weight>10</Weight>
+        <QuantityLimit>0</QuantityLimit>
       </Rule>
       <Rule>
         <Name>Gate</Name>
@@ -2216,6 +2224,8 @@
           </MissionGraph>
         </ReplacementRule>
         <Enable>True</Enable>
+        <Weight>10</Weight>
+        <QuantityLimit>0</QuantityLimit>
       </Rule>
     </RuleGroup>
   </MissionRules>
