@@ -214,6 +214,8 @@ namespace GraphGeneration {
 				if (EditorUtility.DisplayDialog("Save",
 					"Are you sure?",
 					"Yes", "No")) {
+					// Setting root node for CreVoxAttach.
+					Mission.CreVoxAttach.SetCreVoxNodeRoot(_currentGraph.Nodes[0]);
 					// Commit changes
 					Debug.Log("Settings are changed :}");
 				} else {
