@@ -67,7 +67,7 @@ namespace MissionGrammarSystem {
 		// Weight, getter and setter.
 		public int Weight {
 			get { return _weight; }
-			set { _weight = (_weight < 0) ? 0 : value; }
+			set { _weight = (_weight <= 0) ? 1 : value; }
 		}
 	}
 }

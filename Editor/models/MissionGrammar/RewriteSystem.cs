@@ -103,7 +103,6 @@ namespace MissionGrammarSystem {
 			if (! _relatedNodes.Exists(x => ReferenceEquals(x, node))) {
 				// Step 1: Find matchs and set indexes.
 				Rule matchedRule = FindMatchs(node);
-				matchedRule      = SelectFromMatchs(matchedRule);
 
 				if (matchedRule != null) {
 					Debug.Log("Current node: '" + node.Name + "' is match the rule : " + matchedRule.Name + "  " + node.Index);
@@ -154,7 +153,7 @@ namespace MissionGrammarSystem {
 					rule.ReplacementRoot      = rule.ReplacementNodeTable.FirstOrDefault();
 					rule.ReplacementNodeCount = nodeCount;
 					rule.Weight               = originRule.Weight;
-					// If finite. -1 means infinite.
+					// -1 means infinite.
 					rule.QuantityLimit = (originRule.QuantityLimit > 0) ? originRule.QuantityLimit : -1;
 					// Insert into the '_rules'.
 					_rules.Add(rule);
@@ -187,15 +186,14 @@ namespace MissionGrammarSystem {
 
 		private static bool[] _usedIndexTable;
 		private static List<Node> _exploredNodes = new List<Node>();
+		private static List<Rule> _sameRules     = new List<Rule>();
 		private static Rule FindMatchs(Node node) {
-			// [TEST] random rule
-			Rule[] randomRules = _rules.OrderBy(x => Random.value).ToArray();
-			foreach (var rule in randomRules) {
+			_sameRules.Clear();
+			// Filtering the rules that are legal.
+			foreach (var rule in _rules) {
 				// If the quantity of rule less than limit.
 				// [Notice] Only ZERO will continue. It means the negative value is equivalent to infinite.
-				if (rule.QuantityLimit == 0) {
-					continue;
-				}
+				if (rule.QuantityLimit == 0) { continue; }
 				// Compare the root node of rule.
 				if (Alphabet.IsAnyNode(rule.SourceRoot.AlphabetID) || rule.SourceRoot.AlphabetID == node.AlphabetID) {
 					// Clear index of all nodes.
@@ -207,16 +205,29 @@ namespace MissionGrammarSystem {
 					_relatedNodes.Add(node);
 					_usedIndexTable[node.Index] = true;
 					if (RecursionMatch(node, rule.SourceRoot)) {
-						// Quantity limit decrease.
-						if (rule.QuantityLimit > 0) {
-							rule.QuantityLimit -= 1;
-						}
-						return rule;
+						_sameRules.Add(rule);
 					}
 				}
 			}
-			// Not found.
-			return null;
+			// Select one rule from the filtering result by weight.
+			int minBounding = 0;
+			int randomNum = Random.Range(1, _sameRules.Sum(r => r.Weight) + 1);
+			Rule resultRule = null;
+			// There are matched rules.
+			if (_sameRules.Count > 0) {
+				foreach (Rule rule in _sameRules) {
+					if (randomNum >= minBounding && randomNum <= minBounding + rule.Weight) {
+						// Quantity limit decrease.
+						rule.QuantityLimit -= 1;
+						// Found it then break.
+						resultRule = rule;
+						break;
+					} else {
+						minBounding += rule.Weight;
+					}
+				}
+			}
+			return resultRule;
 		}
 		// Confirm the children are match
 		private static bool RecursionMatch(Node node, Node matchNode) {
@@ -254,7 +265,7 @@ namespace MissionGrammarSystem {
 			// If rule node have no child, or said this rule is match.
 			return true;
 		}
-		// Step 2: Remove connections.
+				// Step 2: Remove connections.
 		private static void RemoveConnections(Rule matchedRule) {
 			foreach (Node node in _relatedNodes) {
 				for (int i = 0; i < node.Children.Count; i++) {
@@ -305,51 +316,6 @@ namespace MissionGrammarSystem {
 			foreach (var node in _relatedNodes) {
 				node.Index = 0;
 			}
-		}
-		
-		private static List<Rule> _sameRules = new List<Rule>();
-		// Check multi replacements.
-		private static Rule SelectFromMatchs(Rule matchRule) {
-			_sameRules.Clear();
-			if (matchRule == null) {
-				return matchRule;
-			}
-			int weightSum = matchRule.Weight;
-			// Comparing rules with matched rule.
-			foreach (Rule rule in _rules) {
-				// If the quantity of rule less than limit.
-				if (rule.QuantityLimit == 0) {
-					continue;
-				}
-				if (rule == matchRule) {
-					_sameRules.Add(rule);
-					continue;
-				} else if (rule.SourceNodeCount == matchRule.SourceNodeCount &&
-					(Alphabet.IsAnyNode(rule.SourceRoot.AlphabetID) || rule.SourceRoot.AlphabetID == matchRule.SourceRoot.AlphabetID)) {
-					_exploredNodes.Clear();
-					if (RecursionMatch(matchRule.SourceRoot, rule.SourceRoot)) {
-						// Quantity limit decrease.
-						if (rule.QuantityLimit > 0) {
-							rule.QuantityLimit -= 1;
-						}
-						// if rule has same source.
-						_sameRules.Add(rule);
-						weightSum += rule.Weight;
-					}
-				}
-			}
-			// Rearrange rules in weight descending.
-			Rule[] _orderRules = _sameRules.OrderBy(r=>r.Weight).ToArray();
-
-			foreach (Rule rule in _orderRules) {
-				int randomValue = Random.Range(1, weightSum + 1);
-				if (rule.Weight >= randomValue) {
-					return rule;
-				} else {
-					weightSum -= rule.Weight;
-				}
-			}
-			return matchRule;
 		}
 		// This is the minimum unit of exporting mission graph.
 		private class Node {
