@@ -134,13 +134,13 @@ namespace MissionGrammarSystem {
 					// Check this child if it is non-indegree or not.
 					bool hasInput = false;
 					foreach (var parentNode in parentsTable[childNode]) {
-						if(! _usedEdge[parentNode.Ordering - 1, childNode.Ordering - 1]) {
+						if (! _usedEdge[parentNode.Ordering - 1, childNode.Ordering - 1]) {
 							hasInput = true;
 							break;
 						}
 					}
 					// If it is non-indegree then push it.
-					if(!hasInput) {
+					if (! hasInput) {
 						nonIndegree.Enqueue(childNode);
 					}
 				}
@@ -159,7 +159,7 @@ namespace MissionGrammarSystem {
 		// No 9. OrphanNode.
 		private static bool ValidateOrphanNode(GraphGrammar graphGrammar) {
 			// If node has no parent, it is an orphan. (Exclude ordering 1)
-			return !(graphGrammar.Nodes.Where(n => (n.Ordering != 1 && n.Parents.Count == 0)).Any());
+			return (! graphGrammar.Nodes.Where(n => (n.Ordering != 1 && n.Parents.Count == 0)).Any());
 		}
 	}
 }
