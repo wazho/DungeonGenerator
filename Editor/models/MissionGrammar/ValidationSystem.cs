@@ -84,13 +84,53 @@ namespace MissionGrammarSystem {
 		}
 		// No 5. IsolatedConnection.
 		private static bool ValidateIsolatedConnection(MissionRule rule, GraphGrammar graphGrammar) {
-
-			return true;
+			return !(graphGrammar.Connections.Where(c => c.StartpointStickyOn == null || c.EndpointStickyOn == null).Any());
 		}
 		// No 6. ExactlyDuplicated.
 		private static bool ValidateExactlyDuplicated(MissionRule rule, GraphGrammar graphGrammar) {
-
-			return true;
+			bool validate = false;
+			// Check the number of connections & nodes first
+			if (rule.SourceRule.Nodes.Count == rule.ReplacementRule.Nodes.Count &&
+			    rule.SourceRule.Connections.Count == rule.ReplacementRule.Connections.Count) {
+				// Check the Connections; alphabetID, connection type, connection start and end
+				for (int i = 0; i < rule.SourceRule.Connections.Count; i++) {
+					if (!(rule.SourceRule.Connections[i].AlphabetID == rule.ReplacementRule.Connections[i].AlphabetID &&
+					    rule.SourceRule.Connections[i].Type == rule.ReplacementRule.Connections[i].Type &&
+					    rule.SourceRule.Connections[i].StartpointStickyOn.AlphabetID == rule.ReplacementRule.Connections[i].StartpointStickyOn.AlphabetID &&
+					    rule.SourceRule.Connections[i].EndpointStickyOn.AlphabetID == rule.ReplacementRule.Connections[i].EndpointStickyOn.AlphabetID)) {
+						validate = true;
+					} 
+				}
+				// Check the Nodes; alphabetID, ordering, and number of children, number of parents, number of sticked connections (type ?)
+				for (int i = 0; i < rule.SourceRule.Nodes.Count; i++) {
+					if (rule.SourceRule.Nodes[i].AlphabetID == rule.ReplacementRule.Nodes[i].AlphabetID &&
+					    rule.SourceRule.Nodes[i].Ordering == rule.ReplacementRule.Nodes[i].Ordering &&
+					    rule.SourceRule.Nodes[i].Children.Count == rule.ReplacementRule.Nodes[i].Children.Count &&
+					    rule.SourceRule.Nodes[i].Parents.Count == rule.ReplacementRule.Nodes[i].Parents.Count &&
+					    rule.SourceRule.Nodes[i].StickiedConnectionsGuid.Count() == rule.ReplacementRule.Nodes[i].StickiedConnectionsGuid.Count()) {
+						// Check the parents; if not equal then it's validated
+						for (int j = 0; j < rule.SourceRule.Nodes[i].Parents.Count; j++) {
+							if (rule.SourceRule.Nodes[i].Parents[j].AlphabetID != rule.ReplacementRule.Nodes[i].Parents[j].AlphabetID ||
+							    rule.SourceRule.Nodes[i].Parents[j].Ordering != rule.ReplacementRule.Nodes[i].Parents[j].Ordering) {
+								validate = true;
+							}
+						}
+						// Check the childrens; if not equal then it's validated
+						for (int j = 0; j < rule.SourceRule.Nodes[i].Children.Count; j++) {
+							if (rule.SourceRule.Nodes[i].Children[j].AlphabetID != rule.ReplacementRule.Nodes[i].Children[j].AlphabetID ||
+							    rule.SourceRule.Nodes[i].Children[j].Ordering != rule.ReplacementRule.Nodes[i].Children[j].Ordering) {
+								validate = true;
+							}
+						}
+					} else {
+						validate = true;
+					}
+				}
+			} else {
+				validate = true;
+			}
+			// Debug.Log("Is Validated? " + validate + ". Duplicated ? " + !validate);
+			return validate;
 		}
 		// No 7. MultipleRelations.
 		private static bool ValidateMultipleRelations(MissionRule rule, GraphGrammar graphGrammar) {

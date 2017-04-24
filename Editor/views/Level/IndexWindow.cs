@@ -69,8 +69,5 @@ namespace DungeonLevel {
 			GUILayout.EndVertical();
 			GUILayout.EndArea();
 		}
-		void OnInspectorUpdate(){
-			Repaint();	
-		}
 	}
 }
