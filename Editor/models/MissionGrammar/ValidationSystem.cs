@@ -17,11 +17,12 @@ namespace MissionGrammarSystem {
 		ExactlyDuplicated,
 		MultipleRelations,
 		CyclicLink,
-		OrphanNode
+		OrphanNode,
+		NoError
 	}
 
 	public class ValidationSystem {
-		private static List<ValidationLabel> _error = new List<ValidationLabel>();
+		private static ValidationLabel _error = new ValidationLabel();
 		// Validate the rule is legal or not.
 		private static Dictionary<ValidationLabel, Func<MissionRule, GraphGrammar, bool>> _validationMethods = new Dictionary<ValidationLabel, Func<MissionRule, GraphGrammar, bool>>() {
 			{ ValidationLabel.LeftMoreThanRight,  (MissionRule rule, GraphGrammar graphGrammar) => ValidateLeftMoreThanRight(rule, graphGrammar) },
@@ -37,20 +38,17 @@ namespace MissionGrammarSystem {
 
 		// Validate the graph grammar (one of pair of rule).
 		public static string Validate(MissionRule rule, GraphGrammar graphGrammar) {
-			// Initial the error list.
-			_error.Clear();
+			// Initial the error to none.
+			_error = ValidationLabel.NoError;
 			// Execute each method.
 			foreach (var method in _validationMethods) {
 				if (! method.Value.Invoke(rule, graphGrammar)) {
-					if (! _error.Contains(method.Key)) {
-						_error.Add(method.Key);
-					}
-				} else {
-					_error.Remove(method.Key);
+					_error = (method.Key);
+					break;
 				}
 			}
 			// Return Error Message.
-			return SelectErrorType(_error.Cast<ValidationLabel>().FirstOrDefault());
+			return SelectErrorType(_error);
 		}
 		// No 1. LeftMoreThanRight.
 		private static bool ValidateLeftMoreThanRight(MissionRule rule, GraphGrammar graphGrammar) {
