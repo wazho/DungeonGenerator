@@ -236,7 +236,11 @@ namespace EditorExtend {
 			get { return GUILayout.Height(_mainButtonHeight); }
 		}
 
-		// Textfield and textarea heights
+		// Field heights
+		private const int _intFieldHeight = 15;
+		public static GUILayoutOption IntFieldHeight {
+			get { return GUILayout.Height(_intFieldHeight); }
+		}
 		private const int _textFieldHeight = 15;
 		public static GUILayoutOption TextFieldHeight {
 			get { return GUILayout.Height(_textFieldHeight); }
@@ -419,6 +423,15 @@ namespace EditorExtend {
 		}
 
 		// TextArea and Textfield styles, label etc
+		private static GUIStyle _intField = new GUIStyle(EditorStyles.numberField);
+		public static GUIStyle IntField {
+			get {
+				_intField.focused.background = GetTextureFromColor(ColorLightBlue);
+				_intField.normal.textColor = Color.black;
+				_intField.focused.textColor = Color.white;
+				return _intField;
+			}
+		}
 		private static GUIStyle _textArea = new GUIStyle(EditorStyles.textArea);
 		public static GUIStyle TextArea {
 			get {
@@ -463,6 +476,13 @@ namespace EditorExtend {
 			}
 		}
 
+		private static GUIStyle _intFieldLabel = new GUIStyle(EditorStyles.label);
+		public static GUIStyle IntFieldLabel {
+			get { 
+				_intFieldLabel.focused.textColor = ColorDarkestBlue;
+				return _intFieldLabel;
+			}
+		}
 		private static GUIStyle _textFieldLabel = new GUIStyle(EditorStyles.label);
 		public static GUIStyle TextFieldLabel {
 			get { 
@@ -508,6 +528,13 @@ namespace EditorExtend {
 				_foldoutLabel.focused.textColor = SampleStyle.ColorDarkestBlue;
 				return _foldoutLabel;
 			}
+		}
+		public static int IntFieldLabeled(string label, int value, GUIStyle labelStyle, GUIStyle intFieldStyle, params GUILayoutOption[] options){
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.PrefixLabel(label, IntField, labelStyle);
+			value = EditorGUILayout.IntField(value, intFieldStyle, options);
+			EditorGUILayout.EndHorizontal();
+			return value;
 		}
 		public static string TextFieldLabeled(string label, string text, GUIStyle labelStyle, GUIStyle textFieldStyle, params GUILayoutOption[] options){
 			EditorGUILayout.BeginHorizontal();

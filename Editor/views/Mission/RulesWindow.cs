@@ -84,14 +84,6 @@ namespace MissionGrammarSystem {
 				return _redoUndoArea;
 			}
 		}
-		private static Rect _quantityLimitAera = new Rect(0, Screen.height - 50, Screen.width, 50);
-		public static Rect QuantityLimitAera {
-			get {
-				_quantityLimitAera.width = Screen.width;
-				_quantityLimitAera.y = Screen.height - 50;
-				return _quantityLimitAera;
-			}
-		}
 
 		void Awake() {
 			Initialize();
@@ -155,16 +147,6 @@ namespace MissionGrammarSystem {
 			LayoutRulesCanvasArea();
 			// Show the area of after-rule-preview.
 			LayoutRuleCanvasEditor();
-			// Show quantity limit.
-			GUILayout.BeginArea(QuantityLimitAera, SampleStyle.Frame(SampleStyle.ColorLightestGrey));
-			_missionRule.QuantityLimit = EditorGUILayout.IntField("Quantity limit", _missionRule.QuantityLimit);
-			// Fool-proofing
-			if (_missionRule.QuantityLimit < 0) {
-				// Zero means infinity.
-				_missionRule.QuantityLimit = 0;
-			}
-			GUILayout.EndArea();
-
 			// Control whole events.
 			EventController();
 		}
@@ -495,8 +477,14 @@ namespace MissionGrammarSystem {
 				}
 			}
 			GUI.enabled = true;
-			// [Addition] Weight field.
-			_missionRule.Weight = EditorGUILayout.IntField("Weight", _missionRule.Weight);
+			GUILayout.Space(SampleStyle.PaddingBlock);
+			GUILayout.BeginHorizontal();
+			// Weight field.
+			_missionRule.Weight = SampleStyle.IntFieldLabeled("Weight", _missionRule.Weight, SampleStyle.IntFieldLabel, SampleStyle.IntField, SampleStyle.IntFieldHeight); 
+			// Quantity field. Fool proofing. 
+			_missionRule.QuantityLimit = SampleStyle.IntFieldLabeled("Quantity limit", _missionRule.QuantityLimit < 0 ? 0 : _missionRule.QuantityLimit, SampleStyle.IntFieldLabel, SampleStyle.IntField, SampleStyle.IntFieldHeight);
+			GUILayout.EndHorizontal();
+			GUILayout.Space(SampleStyle.PaddingBlock);
 			GUILayout.EndVertical();
 			GUILayout.EndArea();
 		}
