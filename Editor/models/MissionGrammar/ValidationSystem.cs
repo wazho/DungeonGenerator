@@ -37,7 +37,7 @@ namespace MissionGrammarSystem {
 		};
 
 		// Validate the graph grammar (one of pair of rule).
-		public static string Validate(MissionRule rule, GraphGrammar graphGrammar) {
+		public static KeyValuePair<ValidationLabel, string> Validate(MissionRule rule, GraphGrammar graphGrammar) {
 			// Initial the error to none.
 			_error = ValidationLabel.NoError;
 			// Execute each method.
@@ -48,7 +48,7 @@ namespace MissionGrammarSystem {
 				}
 			}
 			// Return Error Message.
-			return SelectErrorType(_error);
+			return new KeyValuePair<ValidationLabel, string>(_error, SelectErrorType(_error));
 		}
 		// No 1. LeftMoreThanRight.
 		private static bool ValidateLeftMoreThanRight(MissionRule rule, GraphGrammar graphGrammar) {
@@ -190,34 +190,34 @@ namespace MissionGrammarSystem {
 		}
 		// Return Error message.
 		public static string SelectErrorType(ValidationLabel errorLabel) {
-			string result = "None Error";
+			string result = "規則設定成功，該規則已自動生效。";
 			switch (errorLabel) {
 			case ValidationLabel.LeftMoreThanRight:
-				result = "Str1";
+				result = "左側 source 節點數量不可多於右側 replacement。";
 				break;
 			case ValidationLabel.EmptyLeft:
-				result = "Str2";
+				result = "左側 source 節點數量不可少於一。";
 				break;
 			case ValidationLabel.HeadHasParent:
-				result = "Str3";
+				result = "排序 ordering 為一的節點，不能夠含有其它的父節點。";
 				break;
 			case ValidationLabel.IsolatedNode:
-				result = "Str4";
+				result = "不能夠有孤立的節點，請確認所有節點都已使用連接線相連。";
 				break;
 			case ValidationLabel.IsolatedConnection:
-				result = "Str5";
+				result = "不能夠有孤立的連接線，請確認所有連接線的首尾都已與其它節點相連。";
 				break;
 			case ValidationLabel.ExactlyDuplicated:
-				result = "Str6";
+				result = "左側 source 與右側 replacement 完全同構，請至少更動一處。";
 				break;
 			case ValidationLabel.MultipleRelations:
-				result = "Str7";
+				result = "不允許在兩個節點之間，以多道連接線相連。";
 				break;
 			case ValidationLabel.CyclicLink:
-				result = "Str8";
+				result = "目前的任務圖已形成無窮迴圈，請避免構成週期性循環的結構。";
 				break;
 			case ValidationLabel.OrphanNode:
-				result = "Str9";
+				result = "除了任務圖之首 (ordering 為一) 能夠不具有父節點，其餘的節點都必須有父節點所相連。";
 				break;
 			}
 			return result;
