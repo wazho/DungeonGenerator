@@ -927,10 +927,9 @@ namespace MissionGrammarSystem {
 			if (_currentSelectedGraphGrammar != null && _currentSelectedGraphGrammar == _missionRule.SourceRule) {
 				// Copy nodes.
 				_missionRule.ReplacementRule.Nodes.Clear();
-				foreach (GraphGrammarNode node in _missionRule.SourceRule.Nodes) {
+				// Preset nodes' order by its ordering because AddNode function will automatically fill ordering by the order you sent.
+				foreach (GraphGrammarNode node in _missionRule.SourceRule.Nodes.OrderBy(r=>r.Ordering).ToArray()) {
 					_missionRule.ReplacementRule.AddNode(node);
-					// Addition Replace origin ordering to the clone one. 
-					_missionRule.ReplacementRule.Nodes.Last().Ordering = node.Ordering;
 				}
 				// Copy Connections.
 				_missionRule.ReplacementRule.Connections.Clear();
@@ -945,11 +944,8 @@ namespace MissionGrammarSystem {
 			} else if (_currentSelectedGraphGrammar != null && _currentSelectedGraphGrammar == _missionRule.ReplacementRule) {
 				// Copy nodes.
 				_missionRule.SourceRule.Nodes.Clear();
-				foreach (GraphGrammarNode node in _missionRule.ReplacementRule.Nodes) {
+				foreach (GraphGrammarNode node in _missionRule.ReplacementRule.Nodes.OrderBy(r => r.Ordering).ToArray()) {
 					_missionRule.SourceRule.AddNode(node);
-					// Addition Replace origin ordering to the clone one.
-					// Because AddNode() will automatically fill ordering by counting nodes amount. This maight cause ordering not equal to other rule. 
-					_missionRule.ReplacementRule.Nodes.Last().Ordering = node.Ordering;
 				}
 				// Copy connections.
 				_missionRule.SourceRule.Connections.Clear();
