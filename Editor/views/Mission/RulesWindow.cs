@@ -76,6 +76,8 @@ namespace MissionGrammarSystem {
 		// Recorder for undo/redo.
 		private StateRecorder _sourceRuleState = new StateRecorder();
 		private StateRecorder _replaceRuleState = new StateRecorder();
+		// Error message of rule graph.
+		private string _graphErrorMsg;
 		// [Will move to Style.cs]
 		private static Rect _redoUndoArea = new Rect(Screen.width / 2 - 120, 5, 100, 25);
 		public static Rect RedoUndoArea {
@@ -128,6 +130,8 @@ namespace MissionGrammarSystem {
 			_currentSelectedGraphGrammar     = _missionRule.SourceRule;
 			_sourceRuleState                 = new StateRecorder(_missionRule.SourceRule);
 			_replaceRuleState                = new StateRecorder(_missionRule.ReplacementRule);
+			// Error message.
+			_graphErrorMsg = "None";
 
 			Alphabet.RevokeAllSelected();
 		}
@@ -483,7 +487,7 @@ namespace MissionGrammarSystem {
 				break;
 			}
 			// Remind user [need Modify]
-			EditorGUILayout.HelpBox("Info \nThe name has been used.", MessageType.Info);
+			EditorGUILayout.HelpBox(_graphErrorMsg, MessageType.Info);
 			// Buttons - Apply.
 			GUI.enabled = _applySymbolEditingButtonEnabled;
 			if (GUILayout.Button("Apply", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Regular, SampleStyle.ButtonColor.Green), SampleStyle.SubmitButtonHeight)) {
@@ -967,7 +971,7 @@ namespace MissionGrammarSystem {
 				_replaceRuleState.AddState(_currentSelectedGraphGrammar);
 			}
 			// Validation of rule.
-			ValidationSystem.Validate(_missionRule, _currentSelectedGraphGrammar);
+			_graphErrorMsg = ValidationSystem.Validate(_missionRule, _currentSelectedGraphGrammar);
 		}
 		// Record State via GraphGrammar parameter.
 		void RecordState(GraphGrammar graph) {
@@ -977,7 +981,7 @@ namespace MissionGrammarSystem {
 				_replaceRuleState.AddState(graph);
 			}
 			// Validation of rule.
-			ValidationSystem.Validate(_missionRule, _currentSelectedGraphGrammar);
+			_graphErrorMsg = ValidationSystem.Validate(_missionRule, _currentSelectedGraphGrammar);
 		}
 		// Undo via _currentSelectedGraphGrammar.
 		void UndoState() {

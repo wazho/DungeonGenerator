@@ -36,7 +36,7 @@ namespace MissionGrammarSystem {
 		};
 
 		// Validate the graph grammar (one of pair of rule).
-		public static void Validate(MissionRule rule, GraphGrammar graphGrammar) {
+		public static string Validate(MissionRule rule, GraphGrammar graphGrammar) {
 			// Initial the error list.
 			_error.Clear();
 			// Execute each method.
@@ -49,8 +49,8 @@ namespace MissionGrammarSystem {
 					_error.Remove(method.Key);
 				}
 			}
-			// Debug.
-			Debug.Log(string.Join(", ", _error.Cast<ValidationLabel>().Select(v => v.ToString()).ToArray()));
+			// Return Error Message.
+			return SelectErrorType(_error.Cast<ValidationLabel>().FirstOrDefault());
 		}
 		// No 1. LeftMoreThanRight.
 		private static bool ValidateLeftMoreThanRight(MissionRule rule, GraphGrammar graphGrammar) {
@@ -146,9 +146,12 @@ namespace MissionGrammarSystem {
 			// Non-indegree queue.
 			Queue<GraphGrammarNode> nonIndegree = new Queue<GraphGrammarNode>();
 			// Push non-indegree node to queue.
-			foreach (var node in graphGrammar.Nodes.FindAll(x => parentsTable[x].Count == 0)) {
+			foreach (var node in graphGrammar.Nodes.FindAll(x => parentsTable[x].Count == 0 &&
+			// children can not be node itself. 
+			(!childrenTable[x].Exists(p => p.Ordering == x.Ordering)))) {
 				nonIndegree.Enqueue(node);
 			}
+			
 			// Bfs.
 			while (nonIndegree.Count > 0) {
 				// Pop.
@@ -186,6 +189,40 @@ namespace MissionGrammarSystem {
 		private static bool ValidateOrphanNode(MissionRule rule, GraphGrammar graphGrammar) {
 			// If node has no parent, it is an orphan. (Exclude ordering 1)
 			return (! graphGrammar.Nodes.Where(n => (n.Ordering != 1 && n.Parents.Count == 0)).Any());
+		}
+		// Return Error message.
+		public static string SelectErrorType(ValidationLabel errorLabel) {
+			string result = "None Error";
+			switch (errorLabel) {
+			case ValidationLabel.LeftMoreThanRight:
+				result = "Str1";
+				break;
+			case ValidationLabel.EmptyLeft:
+				result = "Str2";
+				break;
+			case ValidationLabel.HeadHasParent:
+				result = "Str3";
+				break;
+			case ValidationLabel.IsolatedNode:
+				result = "Str4";
+				break;
+			case ValidationLabel.IsolatedConnection:
+				result = "Str5";
+				break;
+			case ValidationLabel.ExactlyDuplicated:
+				result = "Str6";
+				break;
+			case ValidationLabel.MultipleRelations:
+				result = "Str7";
+				break;
+			case ValidationLabel.CyclicLink:
+				result = "Str8";
+				break;
+			case ValidationLabel.OrphanNode:
+				result = "Str9";
+				break;
+			}
+			return result;
 		}
 	}
 }
