@@ -996,10 +996,6 @@ namespace MissionGrammarSystem {
 			}
 		}
 
-		void OnInspectorUpdate(){
-			Repaint();
-		}
-
 		// The class used to record the state and execute redo/undo.
 		class StateRecorder {
 			// Default constructor.

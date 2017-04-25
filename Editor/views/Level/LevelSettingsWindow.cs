@@ -100,9 +100,5 @@ namespace DungeonLevel {
 			}
 			return message;
 		}
-
-		void OnInpectorUpdate(){
-			Repaint();
-		}
 	}
 }

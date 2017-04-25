@@ -248,9 +248,5 @@ namespace GraphGeneration {
 			}
 			return message;
 		}
-
-		void OnInspectorUpdate(){
-			Repaint();
-		}
 	}
 }

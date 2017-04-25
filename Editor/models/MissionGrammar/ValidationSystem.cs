@@ -84,13 +84,40 @@ namespace MissionGrammarSystem {
 		}
 		// No 5. IsolatedConnection.
 		private static bool ValidateIsolatedConnection(MissionRule rule, GraphGrammar graphGrammar) {
-
-			return true;
+			return !(graphGrammar.Connections.Where(c => c.StartpointStickyOn == null || c.EndpointStickyOn == null).Any());
 		}
 		// No 6. ExactlyDuplicated.
 		private static bool ValidateExactlyDuplicated(MissionRule rule, GraphGrammar graphGrammar) {
-
-			return true;
+			// Check the number of connections & nodes first.
+			if (rule.SourceRule.Nodes.Count       != rule.ReplacementRule.Nodes.Count ||
+			    rule.SourceRule.Connections.Count != rule.ReplacementRule.Connections.Count) {
+				return true;
+			}
+			// If find any difference in connections, then defined they are not isomorphic.
+			foreach (var connectionA in rule.SourceRule.Connections) {
+				if (! rule.ReplacementRule.Connections.Exists(connectionB => 
+					connectionB.AlphabetID == connectionA.AlphabetID &&
+					connectionB.Type       == connectionA.Type &&
+					// Check the ordering they sticky on. If null, expresses zero.
+					(connectionB.StartpointStickyOn == null ? 0 : connectionB.StartpointStickyOn.Ordering) == (connectionA.StartpointStickyOn == null ? 0 : connectionA.StartpointStickyOn.Ordering) &&
+					(connectionB.EndpointStickyOn   == null ? 0 : connectionB.EndpointStickyOn.Ordering)   == (connectionA.EndpointStickyOn   == null ? 0 : connectionA.EndpointStickyOn.Ordering)
+				)) {
+					return true;
+				}
+			}
+			// If find any difference in nodes, then defined they are not isomorphic.
+			foreach (var nodeA in rule.SourceRule.Nodes) {
+				if (! rule.ReplacementRule.Nodes.Exists(nodeB =>
+					nodeB.AlphabetID     == nodeA.AlphabetID &&
+					nodeB.Ordering       == nodeA.Ordering &&
+					nodeB.Children.Count == nodeA.Children.Count &&
+					nodeB.Parents.Count  == nodeA.Parents.Count
+				)) {
+					return true;
+				}
+			}
+			// It's illegal and isomorphic.
+			return false;
 		}
 		// No 7. MultipleRelations.
 		private static bool ValidateMultipleRelations(MissionRule rule, GraphGrammar graphGrammar) {
