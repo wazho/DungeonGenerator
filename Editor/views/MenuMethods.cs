@@ -35,7 +35,7 @@ public class DungeonWindow : EditorWindow {
 	[MenuItem("Dungeon/Mission/Rules %#&mr", false, 12)]
 	public static void ShowMissionRulesWindow() {
 		_window = EditorWindow.GetWindow<Mission.RulesWindow>("Mission rules", true);
-		_window.position = new Rect(35, 60, 750, 785);
+		_window.position = new Rect(35, 60, 750, 745);
 	}
 
 	// Add the 'Generation > Mission' in 'Dungeon' menu.
