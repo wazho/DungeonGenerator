@@ -97,7 +97,6 @@ namespace MissionGrammarSystem {
 			foreach (var connectionA in rule.SourceRule.Connections) {
 				if (! rule.ReplacementRule.Connections.Exists(connectionB => 
 					connectionB.AlphabetID == connectionA.AlphabetID &&
-					connectionB.Type       == connectionA.Type &&
 					// Check the ordering they sticky on. If null, expresses zero.
 					(connectionB.StartpointStickyOn == null ? 0 : connectionB.StartpointStickyOn.Ordering) == (connectionA.StartpointStickyOn == null ? 0 : connectionA.StartpointStickyOn.Ordering) &&
 					(connectionB.EndpointStickyOn   == null ? 0 : connectionB.EndpointStickyOn.Ordering)   == (connectionA.EndpointStickyOn   == null ? 0 : connectionA.EndpointStickyOn.Ordering)
