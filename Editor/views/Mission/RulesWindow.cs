@@ -929,6 +929,8 @@ namespace MissionGrammarSystem {
 				_missionRule.ReplacementRule.Nodes.Clear();
 				foreach (GraphGrammarNode node in _missionRule.SourceRule.Nodes) {
 					_missionRule.ReplacementRule.AddNode(node);
+					// Addition Replace origin ordering to the clone one. 
+					_missionRule.ReplacementRule.Nodes.Last().Ordering = node.Ordering;
 				}
 				// Copy Connections.
 				_missionRule.ReplacementRule.Connections.Clear();
@@ -945,6 +947,9 @@ namespace MissionGrammarSystem {
 				_missionRule.SourceRule.Nodes.Clear();
 				foreach (GraphGrammarNode node in _missionRule.ReplacementRule.Nodes) {
 					_missionRule.SourceRule.AddNode(node);
+					// Addition Replace origin ordering to the clone one.
+					// Because AddNode() will automatically fill ordering by counting nodes amount. This maight cause ordering not equal to other rule. 
+					_missionRule.ReplacementRule.Nodes.Last().Ordering = node.Ordering;
 				}
 				// Copy connections.
 				_missionRule.SourceRule.Connections.Clear();
