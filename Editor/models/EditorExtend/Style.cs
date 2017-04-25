@@ -193,7 +193,7 @@ namespace EditorExtend {
 				return _ruleGraphGrammarCanvas;
 			}
 		}
-		private static Rect _orderingSliderArea = new Rect(5, 405, Screen.width, 24);
+		private static Rect _orderingSliderArea = new Rect(5, 405, Screen.width, 50);
 		public static Rect OrderingSliderArea {
 			get {
 				_orderingSliderArea.width  = Screen.width - 10;

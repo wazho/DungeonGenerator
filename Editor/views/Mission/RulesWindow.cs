@@ -51,7 +51,6 @@ namespace MissionGrammarSystem {
 		private bool   _nameCanBeUsed;
 		// Enabled Button-Apply
 		private bool _applyEditingButtonEnabled;
-		private bool _applySymbolEditingButtonEnabled;
 		// The texture of icons.
 		private Texture2D _editIcon;
 		private Texture2D _deleteIcon;
@@ -86,14 +85,6 @@ namespace MissionGrammarSystem {
 				return _redoUndoArea;
 			}
 		}
-		private static Rect _quantityLimitAera = new Rect(0, Screen.height - 50, Screen.width, 50);
-		public static Rect QuantityLimitAera {
-			get {
-				_quantityLimitAera.width = Screen.width;
-				_quantityLimitAera.y = Screen.height - 50;
-				return _quantityLimitAera;
-			}
-		}
 
 		void Awake() {
 			Initialize();
@@ -115,7 +106,6 @@ namespace MissionGrammarSystem {
 			_description                     = string.Empty;
 			_nameCanBeUsed                   = false;
 			_applyEditingButtonEnabled       = false;
-			_applySymbolEditingButtonEnabled = false;
 			_editIcon                        = Resources.Load<Texture2D>("Icons/edit");
 			_deleteIcon                      = Resources.Load<Texture2D>("Icons/delete");
 			_redoTexture                     = Resources.Load<Texture2D>("Icons/redo");
@@ -159,16 +149,6 @@ namespace MissionGrammarSystem {
 			LayoutRulesCanvasArea();
 			// Show the area of after-rule-preview.
 			LayoutRuleCanvasEditor();
-			// Show quantity limit.
-			GUILayout.BeginArea(QuantityLimitAera, SampleStyle.Frame(SampleStyle.ColorLightestGrey));
-			_missionRule.QuantityLimit = EditorGUILayout.IntField("Quantity limit", _missionRule.QuantityLimit);
-			// Fool-proofing
-			if (_missionRule.QuantityLimit < 0) {
-				// Zero means infinity.
-				_missionRule.QuantityLimit = 0;
-			}
-			GUILayout.EndArea();
-
 			// Control whole events.
 			EventController();
 		}
@@ -428,9 +408,12 @@ namespace MissionGrammarSystem {
 		}
 		// Layout the canvas editor of current selected rules.
 		void LayoutRuleCanvasEditor() {
-			// Show ordering slider 
+			// Show ordering slider and setting of rule.
 			GUILayout.BeginArea(Container.OrderingSliderArea, SampleStyle.Frame(SampleStyle.ColorLightestGrey));
+			// If don't select any node, disable this field.
 			if (_currentSelectedGraphGrammar != null && _currentSelectedGraphGrammar.SelectedSymbol is GraphGrammarNode) {
+				GUILayout.BeginHorizontal();
+				// Ordering of the node.
 				int sliderOrdering = EditorGUILayout.IntSlider("Ordering", _currentSelectedGraphGrammar.SelectedSymbol.Ordering, 1, _currentSelectedGraphGrammar.Nodes.Count);
 				if (sliderOrdering != _currentSelectedGraphGrammar.SelectedSymbol.Ordering) {
 					GraphGrammarNode node = _currentSelectedGraphGrammar.Nodes.Find(x => x.Ordering == sliderOrdering);
@@ -441,29 +424,45 @@ namespace MissionGrammarSystem {
 					// Record state.
 					RecordState();
 				}
+				GUILayout.EndVertical();
+			} else {
+				EditorGUI.BeginDisabledGroup(true);
+				EditorGUILayout.IntSlider("Ordering", 0, 0, 0);
+				EditorGUI.EndDisabledGroup();
 			}
+			GUILayout.Space(SampleStyle.PaddingBlock);
+			GUILayout.BeginHorizontal();
+			// Weight field.
+			_missionRule.Weight = SampleStyle.IntFieldLabeled("Weight", _missionRule.Weight, SampleStyle.IntFieldLabel, SampleStyle.IntField, SampleStyle.IntFieldHeight); 
+			// Quantity field. Fool proofing. 
+			_missionRule.QuantityLimit = SampleStyle.IntFieldLabeled("Quantity limit", _missionRule.QuantityLimit < 0 ? 0 : _missionRule.QuantityLimit, SampleStyle.IntFieldLabel, SampleStyle.IntField, SampleStyle.IntFieldHeight);
+			GUILayout.EndHorizontal();
+			GUILayout.EndVertical();
 			GUILayout.EndArea();
 
 			GUILayout.BeginArea(Container.EditorArea);
 			// Buttons - Add Node & Add Connection & Copy & Delete.
 			EditorGUILayout.BeginHorizontal(SampleStyle.Frame(SampleStyle.ColorLightestGrey));
 			if (GUILayout.Button("Add Node", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Left, SampleStyle.ButtonColor.Blue), SampleStyle.ButtonHeight)) {
-				// Add Alphabet's Node 
-				_applySymbolEditingButtonEnabled = true;
+				// Add Alphabet's Node.
 				_currentTab = SymbolEditingMode.AddNode;
 			}
 			if (GUILayout.Button("Add Connection", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Mid, SampleStyle.ButtonColor.Blue), SampleStyle.ButtonHeight)) {
-				_applySymbolEditingButtonEnabled = true;
+				// Add Alphabet's Connection.
 				_currentTab = SymbolEditingMode.AddConnection;
 			}
+			// If don't select any canvas, disable the button.
+			EditorGUI.BeginDisabledGroup(_currentSelectedGraphGrammar == null);
 			if (GUILayout.Button("Copy", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Mid, SampleStyle.ButtonColor.Blue), SampleStyle.ButtonHeight)) {
-				_applySymbolEditingButtonEnabled = true;
 				_currentTab = SymbolEditingMode.Copy;
 			}
+			EditorGUI.EndDisabledGroup();
+			// If don't select any node or connection, disable the button.
+			EditorGUI.BeginDisabledGroup(_currentSelectedGraphGrammar == null || _currentSelectedGraphGrammar.SelectedSymbol == null);
 			if (GUILayout.Button("Delete", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Right, SampleStyle.ButtonColor.Blue), SampleStyle.ButtonHeight)) {
-				_applySymbolEditingButtonEnabled = true;
 				_currentTab = SymbolEditingMode.Delete;
 			}
+			EditorGUI.EndDisabledGroup();
 			EditorGUILayout.EndHorizontal();
 
 			GUILayout.BeginVertical(SampleStyle.Frame(SampleStyle.ColorLightestGrey));
@@ -486,22 +485,8 @@ namespace MissionGrammarSystem {
 				DeleteSelectedNode();
 				break;
 			}
-			// Remind user [need Modify]
+			// Remind user.
 			EditorGUILayout.HelpBox(_graphError.Value, _graphError.Key == ValidationLabel.NoError ? MessageType.Info : MessageType.Error);
-			// Buttons - Apply.
-			GUI.enabled = _applySymbolEditingButtonEnabled;
-			if (GUILayout.Button("Apply", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Regular, SampleStyle.ButtonColor.Green), SampleStyle.SubmitButtonHeight)) {
-				if (EditorUtility.DisplayDialog("Saving", 
-					"Are you sure to save?",
-						"Yes", "No")) {
-				} else {
-
-				}
-			}
-			GUI.enabled = true;
-			// [Addition] Weight field.
-			_missionRule.Weight = EditorGUILayout.IntField("Weight", _missionRule.Weight);
-			GUILayout.EndVertical();
 			GUILayout.EndArea();
 		}
 		// Control whole events.
