@@ -885,6 +885,8 @@ namespace MissionGrammarSystem {
 				foreach (var connection in _currentSelectedGraphGrammar.Connections) {
 					node.RemoveStickiedConnection(connection, "start");
 					node.RemoveStickiedConnection(connection, "end");
+					if (connection.StartpointStickyOn == node) { connection.StartpointStickyOn = null; }
+					if (connection.EndpointStickyOn == node) { connection.EndpointStickyOn = null; }
 				}
 				GraphGrammarNode[] nodesOrdering = _currentSelectedGraphGrammar.Nodes.OrderBy(x => x.Ordering).ToArray();
 				// Following ordering -1
