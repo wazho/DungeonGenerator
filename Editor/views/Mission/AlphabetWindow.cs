@@ -438,25 +438,26 @@ namespace MissionGrammarSystem {
 			switch (_editingMode) {
 			case EditingMode.Create:
 				GUI.enabled = (_messageType != MessageType.Error && _messageType != MessageType.Warning);
-				if (! GUILayout.Button("Add this symbol into alphabet", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Regular, SampleStyle.ButtonColor.Green), SampleStyle.SubmitButtonHeight)) { break; }
-				// When click the button, revoke all selected symbols and add the symbon in list.
-				switch (_currentTab) {
-				case AlphabetWindowTab.Nodes:
-					Alphabet.RevokeAllSelected();
-					Alphabet.AddNode(new GraphGrammarNode(_node));
-					Alphabet.Nodes.Last().Selected = true;
-					break;
-				case AlphabetWindowTab.Connections:
-					Alphabet.RevokeAllSelected();
-					Alphabet.AddConnection(new GraphGrammarConnection(_connection));
-					Alphabet.Connections.Last().Selected = true;
-					break;
+				if (GUILayout.Button("Add this symbol into alphabet", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Regular, SampleStyle.ButtonColor.Green), SampleStyle.SubmitButtonHeight)) {
+					// When click the button, revoke all selected symbols and add the symbon in list.
+					switch (_currentTab) {
+					case AlphabetWindowTab.Nodes:
+						Alphabet.RevokeAllSelected();
+						Alphabet.AddNode(new GraphGrammarNode(_node));
+						Alphabet.Nodes.Last().Selected = true;
+						break;
+					case AlphabetWindowTab.Connections:
+						Alphabet.RevokeAllSelected();
+						Alphabet.AddConnection(new GraphGrammarConnection(_connection));
+						Alphabet.Connections.Last().Selected = true;
+						break;
+					}
+					// Make the scroll position in list to bottom, and switch to modify mode.
+					_scrollPosition.y = Mathf.Infinity;
+					_editingMode      = EditingMode.Modify;
+					// Unfocus from the field.
+					GUI.FocusControl("FocusToNothing");
 				}
-				// Make the scroll position in list to bottom, and switch to modify mode.
-				_scrollPosition.y = Mathf.Infinity;
-				_editingMode      = EditingMode.Modify;
-				// Unfocus from the field.
-				GUI.FocusControl("FocusToNothing");
 				GUI.enabled = true;
 				break;
 			case EditingMode.Modify:
