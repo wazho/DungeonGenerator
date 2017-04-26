@@ -72,6 +72,8 @@ namespace MissionGrammarSystem {
 		private Vector2 _listScrollPosition;
 		private Vector2 _positionInCanvas;
 		private GraphGrammar _currentSelectedGraphGrammar;
+		// The last sticked node (for the last connection).
+		private GraphGrammarNode _lastStickedNode;
 		// Recorder for undo/redo.
 		private StateRecorder _sourceRuleState  = new StateRecorder();
 		private StateRecorder _replaceRuleState = new StateRecorder();
@@ -118,6 +120,7 @@ namespace MissionGrammarSystem {
 			_replacementCanvasWidth          = Screen.width;
 			_replacementCanvasHeight         = 200;
 			_currentSelectedGraphGrammar     = _missionRule.SourceRule;
+			_lastStickedNode                 = null;
 			_sourceRuleState                 = new StateRecorder(_missionRule.SourceRule);
 			_replaceRuleState                = new StateRecorder(_missionRule.ReplacementRule);
 			// Error message.
@@ -489,7 +492,6 @@ namespace MissionGrammarSystem {
 			EditorGUILayout.HelpBox(_graphError.Value, _graphError.Key == ValidationLabel.NoError ? MessageType.Info : MessageType.Error);
 			GUILayout.EndArea();
 		}
-		GraphGrammarNode _lastStickedNode;
 		// Control whole events.
 		void EventController() {
 			if (Event.current.type == EventType.MouseDown) {
@@ -509,8 +511,8 @@ namespace MissionGrammarSystem {
 				_currentSelectedGraphGrammar = _missionRule.SourceRule;
 				_missionRule.ReplacementRule.RevokeAllSelected();
 				_missionRule.SourceRule.TouchedSymbol(Event.current.mousePosition - _sourceCanvas.position + _sourceCanvasScrollPosition);
-				if(_missionRule.SourceRule.SelectedSymbol is GraphGrammarConnection) {
-					if(( (GraphGrammarConnection) _missionRule.SourceRule.SelectedSymbol ).StartSelected) {
+				if (_missionRule.SourceRule.SelectedSymbol is GraphGrammarConnection) {
+					if (( (GraphGrammarConnection) _missionRule.SourceRule.SelectedSymbol ).StartSelected) {
 						_lastStickedNode = ( (GraphGrammarConnection) _missionRule.SourceRule.SelectedSymbol ).StartpointStickyOn;
 					} else if (( (GraphGrammarConnection) _missionRule.SourceRule.SelectedSymbol ).EndSelected) {
 						_lastStickedNode = ( (GraphGrammarConnection) _missionRule.SourceRule.SelectedSymbol ).EndpointStickyOn;
@@ -625,9 +627,7 @@ namespace MissionGrammarSystem {
 		void OnMouseUpInCanvas() {
 			OnDraggedAndDroppedInCanvas();
 			// When mouse up and selected conecction stick successfully then record state.
-			if (_stickedChange) {
-				RecordState();
-			}
+			if (_stickedChange) { RecordState(); }
 		}
 
 		// When drag and drop the nodes, auto-resize the canvas size.
