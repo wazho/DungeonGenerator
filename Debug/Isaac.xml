@@ -1313,7 +1313,7 @@
         <QuantityLimit>1</QuantityLimit>
       </Rule>
       <Rule>
-        <Name>Set Serect</Name>
+        <Name>Set Secret</Name>
         <Description>Get the key.</Description>
         <SourceRule>
           <MissionGraph>
@@ -2601,8 +2601,8 @@
                   <Text>#FFFFFF</Text>
                 </SymbolColor>
                 <StickiedConnections>
-                  <ConnectionID>d8935b1f-dc05-4729-8a61-95145f191040</ConnectionID>
                   <ConnectionID>c6219fcd-9da2-4c57-81d5-c2acd35ae026</ConnectionID>
+                  <ConnectionID>d8935b1f-dc05-4729-8a61-95145f191040</ConnectionID>
                 </StickiedConnections>
               </Node>
             </Nodes>
