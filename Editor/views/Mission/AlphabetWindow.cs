@@ -462,22 +462,23 @@ namespace MissionGrammarSystem {
 				break;
 			case EditingMode.Modify:
 				GUI.enabled = (_messageType != MessageType.Error && _messageType != MessageType.Warning);
-				if (! GUILayout.Button("Update the changes", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Regular, SampleStyle.ButtonColor.Green), SampleStyle.SubmitButtonHeight)) { break; }
-				// When click the button, update the symbol informations.
-				switch (_currentTab) {
-				case AlphabetWindowTab.Nodes:
-					// Update in alphabet and mission grammar.
-					UpdateNode(Alphabet.SelectedNode);
-					MissionGrammar.OnAlphabetUpdated(Alphabet.SelectedNode);
-					break;
-				case AlphabetWindowTab.Connections:
-					// Update in alphabet and mission grammar.
-					UpdateConnection(Alphabet.SelectedConnection);
-					MissionGrammar.OnAlphabetUpdated(Alphabet.SelectedConnection);
-					break;
+				if (GUILayout.Button("Update the changes", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Regular, SampleStyle.ButtonColor.Green), SampleStyle.SubmitButtonHeight)) {
+					// When click the button, update the symbol informations.
+					switch (_currentTab) {
+					case AlphabetWindowTab.Nodes:
+						// Update in alphabet and mission grammar.
+						UpdateNode(Alphabet.SelectedNode);
+						MissionGrammar.OnAlphabetUpdated(Alphabet.SelectedNode);
+						break;
+					case AlphabetWindowTab.Connections:
+						// Update in alphabet and mission grammar.
+						UpdateConnection(Alphabet.SelectedConnection);
+						MissionGrammar.OnAlphabetUpdated(Alphabet.SelectedConnection);
+						break;
+					}
+					// Unfocus from the field.
+					GUI.FocusControl("FocusToNothing");
 				}
-				// Unfocus from the field.
-				GUI.FocusControl("FocusToNothing");
 				GUI.enabled = true;
 				break;
 			}
