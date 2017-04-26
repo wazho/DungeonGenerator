@@ -159,6 +159,8 @@ namespace MissionGrammarSystem {
 		void LayoutMissionGroupOptions() {
 			// Current group.
 			EditorGUILayout.BeginHorizontal();
+			// Update the content of dropdown.
+			_groupsOptions = MissionGrammar.Groups.Select(s => s.Name).ToArray();
 			// Dropdown list of current group type.
 			_indexOfGroupsOptions = SampleStyle.PopupLabeled("Current Group", _indexOfGroupsOptions, _groupsOptions, SampleStyle.PopUpLabel, SampleStyle.PopUp, Screen.width/2, SampleStyle.PopUpHeight);
 				if (_tempIndexOfGroupsOptions != _indexOfGroupsOptions) {
@@ -206,14 +208,16 @@ namespace MissionGrammarSystem {
 				_name        = MissionGrammar.GetDefaultGroupName(_groupsOptions);
 				_description = "Description here.";
 			}
-			// Update the content of dropdown.
-			_groupsOptions = MissionGrammar.Groups.Select(s => s.Name).ToArray();
 			EditorGUILayout.EndHorizontal();
 		}
 		// Layout the combobox and editor of mission rule, mission rule is sub-member in current mission group.
 		void LayoutMissionRuleOptions() {
 			// Current rule.
 			EditorGUILayout.BeginHorizontal();
+			// Update the content of dropdown.
+			if (_indexOfGroupsOptions < MissionGrammar.Groups.Count) {
+				_rulesOptions = MissionGrammar.Groups[_indexOfGroupsOptions].Rules.Select(r => r.Name).ToArray();
+			}
 			// Dropdown list of Currect Rule Type.
 			_indexOfRulesOptions = SampleStyle.PopupLabeled("Current Rules", _indexOfRulesOptions, _rulesOptions, SampleStyle.PopUpLabel, SampleStyle.PopUp, Screen.width/2, SampleStyle.PopUpHeight);
 			if (_tempIndexOfRulesOptions != _indexOfRulesOptions) {
@@ -258,10 +262,6 @@ namespace MissionGrammarSystem {
 				// Update info.
 				_name        = MissionGrammar.GetDefaultRuleName(_rulesOptions, _indexOfGroupsOptions);
 				_description = "Description here.";
-			}
-			// Update the content of dropdown.
-			if (_indexOfGroupsOptions< MissionGrammar.Groups.Count) {
-				_rulesOptions = MissionGrammar.Groups[_indexOfGroupsOptions].Rules.Select(r => r.Name).ToArray();
 			}
 			EditorGUILayout.EndHorizontal();
 			GUILayout.Space(SampleStyle.PaddingBlock);
