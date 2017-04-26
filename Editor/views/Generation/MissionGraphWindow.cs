@@ -150,12 +150,12 @@ namespace GraphGeneration {
 				if (tempGroupEnable != missionGroup.AllEnable) {
 					_isRuleChanged = true;
 					foreach (Mission.MissionRule missionRule in missionGroup.Rules) {
-						missionRule.Enable = missionGroup.AllEnable;
+						missionRule.Enable = missionGroup.AllEnable & missionRule.Valid;
 					}
 				}
 				missionGroup.AllEnable = true;
 				foreach (Mission.MissionRule missionRule in missionGroup.Rules) {
-					if (missionGroup.AllEnable && !missionRule.Enable) {
+					if (missionRule.Valid && missionGroup.AllEnable && !missionRule.Enable) {
 						missionGroup.AllEnable = false;
 					}
 				}
@@ -164,12 +164,21 @@ namespace GraphGeneration {
 					foreach (Mission.MissionRule missionRule in missionGroup.Rules) {
 						EditorGUI.indentLevel = 2;
 						tempRuleEnable = missionRule.Enable;
+						GUILayout.BeginHorizontal();
+						// If not legal disable button.
+						EditorGUI.BeginDisabledGroup(!missionRule.Valid);
 						missionRule.Enable = EditorGUILayout.Toggle(missionRule.Name, missionRule.Enable);
+						EditorGUI.EndDisabledGroup();
+						// Hint user this rule is disable because it's illegal.
+						if (!missionRule.Valid) {
+							EditorGUILayout.LabelField("Illegal Rule!");
+						}
+						GUILayout.EndHorizontal();
 						if (tempRuleEnable != missionRule.Enable) {
 							_isRuleChanged = true;
 						}
 
-						if (missionGroup.AllEnable && !missionRule.Enable) {
+						if (missionRule.Valid && missionGroup.AllEnable && !missionRule.Enable) {
 							missionGroup.AllEnable = false;
 						}
 					}

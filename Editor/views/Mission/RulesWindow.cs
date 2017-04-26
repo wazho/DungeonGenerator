@@ -754,9 +754,13 @@ namespace MissionGrammarSystem {
 				switch (_currentTab) {
 				case SymbolEditingMode.AddNode:
 					_currentSelectedGraphGrammar.UpdateSymbol(_currentSelectedGraphGrammar.SelectedSymbol, Alphabet.SelectedNode);
+					// Record state.
+					RecordState();
 					break;
 				case SymbolEditingMode.AddConnection:
 					_currentSelectedGraphGrammar.UpdateSymbol(_currentSelectedGraphGrammar.SelectedSymbol, Alphabet.SelectedConnection);
+					// Record state.
+					RecordState();
 					break;
 				}
 				Repaint();
@@ -960,6 +964,8 @@ namespace MissionGrammarSystem {
 			}
 			// Validation of rule.
 			_graphError = ValidationSystem.Validate(_missionRule, _currentSelectedGraphGrammar);
+			// Error than set rule valid and enable to false.
+			_missionRule.Valid = _missionRule.Enable = (_graphError.Key == ValidationLabel.NoError ? true : false);
 		}
 		// Record State via GraphGrammar parameter.
 		void RecordState(GraphGrammar graph) {
@@ -970,6 +976,8 @@ namespace MissionGrammarSystem {
 			}
 			// Validation of rule.
 			_graphError = ValidationSystem.Validate(_missionRule, _currentSelectedGraphGrammar);
+			// Error than set rule valid and enable to false.
+			_missionRule.Valid = _missionRule.Enable = (_graphError.Key == ValidationLabel.NoError ? true : false);
 		}
 		// Undo via _currentSelectedGraphGrammar.
 		void UndoState() {
