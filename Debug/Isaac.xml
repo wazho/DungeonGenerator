@@ -482,12 +482,12 @@
         </SymbolColor>
         <StickiedConnections />
       </Node>
-      <Node id="9b6c5ef9-c795-443f-9ea1-281827cac766">
-        <AlphabetID>4fe7d1e8-7114-4ffd-a344-ef559f94694f</AlphabetID>
+      <Node id="1ef89184-e355-48ff-a674-d079f4b99bf4">
+        <AlphabetID>436d71c4-dc1a-46ee-b6bc-bb1f0cad2e51</AlphabetID>
         <Ordering>0</Ordering>
-        <Name>fight</Name>
-        <Abbreviation>ft</Abbreviation>
-        <Description>fight room.</Description>
+        <Name>normal</Name>
+        <Abbreviation>nm</Abbreviation>
+        <Description>normal</Description>
         <Terminal>Terminal</Terminal>
         <Scope>
           <Outline>
@@ -511,41 +511,7 @@
         </Scope>
         <SymbolColor>
           <Outline>#000000</Outline>
-          <Filled>#FD8989</Filled>
-          <Text>#000000</Text>
-        </SymbolColor>
-        <StickiedConnections />
-      </Node>
-      <Node id="1ef89184-e355-48ff-a674-d079f4b99bf4">
-        <AlphabetID>436d71c4-dc1a-46ee-b6bc-bb1f0cad2e51</AlphabetID>
-        <Ordering>0</Ordering>
-        <Name>explore</Name>
-        <Abbreviation>x</Abbreviation>
-        <Description>explore</Description>
-        <Terminal>Terminal</Terminal>
-        <Scope>
-          <Outline>
-            <X>10.5</X>
-            <Y>755.5</Y>
-            <Width>39</Width>
-            <Height>39</Height>
-          </Outline>
-          <Filled>
-            <X>12.5</X>
-            <Y>757.5</Y>
-            <Width>35</Width>
-            <Height>35</Height>
-          </Filled>
-          <Text>
-            <X>7.5</X>
-            <Y>758</Y>
-            <Width>45</Width>
-            <Height>34</Height>
-          </Text>
-        </Scope>
-        <SymbolColor>
-          <Outline>#000000</Outline>
-          <Filled>#BDBDBD</Filled>
+          <Filled>#8CAEFF</Filled>
           <Text>#000000</Text>
         </SymbolColor>
         <StickiedConnections />
@@ -1130,36 +1096,36 @@
           <MissionGraph>
             <Nodes>
               <Node id="64d359c2-07ec-4b9b-8377-5f043618e0df">
-                <AlphabetID>d60a98a8-29d6-4974-bb1e-90dc072b44b7</AlphabetID>
+                <AlphabetID>c1ab6061-b5d6-49ad-94e1-a328815a84f6</AlphabetID>
                 <Ordering>1</Ordering>
-                <Name>Speical</Name>
-                <Abbreviation>SP</Abbreviation>
-                <Description>Special room set.</Description>
+                <Name>Normal</Name>
+                <Abbreviation>NM</Abbreviation>
+                <Description>Normal</Description>
                 <Terminal>NonTerminal</Terminal>
                 <Scope>
                   <Outline>
-                    <X>82.5</X>
-                    <Y>92.5</Y>
+                    <X>84.5</X>
+                    <Y>90.5</Y>
                     <Width>39</Width>
                     <Height>39</Height>
                   </Outline>
                   <Filled>
-                    <X>84.5</X>
-                    <Y>94.5</Y>
+                    <X>86.5</X>
+                    <Y>92.5</Y>
                     <Width>35</Width>
                     <Height>35</Height>
                   </Filled>
                   <Text>
-                    <X>79.5</X>
-                    <Y>95</Y>
+                    <X>81.5</X>
+                    <Y>93</Y>
                     <Width>45</Width>
                     <Height>34</Height>
                   </Text>
                 </Scope>
                 <SymbolColor>
                   <Outline>#000000</Outline>
-                  <Filled>#FF3D3D</Filled>
-                  <Text>#FFFFFF</Text>
+                  <Filled>#88C4FF</Filled>
+                  <Text>#000000</Text>
                 </SymbolColor>
                 <StickiedConnections>
                   <ConnectionID>e4ad7446-2873-45f4-abc4-0443106141c2</ConnectionID>
@@ -1211,8 +1177,8 @@
                 <ArrowType>Normal</ArrowType>
                 <Scope>
                   <Startpoint>
-                    <X>96.5</X>
-                    <Y>106.5</Y>
+                    <X>98.5</X>
+                    <Y>104.5</Y>
                     <Width>11</Width>
                     <Height>11</Height>
                   </Startpoint>
@@ -1343,7 +1309,7 @@
           </MissionGraph>
         </ReplacementRule>
         <Enable>True</Enable>
-        <Weight>10</Weight>
+        <Weight>150</Weight>
         <QuantityLimit>1</QuantityLimit>
       </Rule>
       <Rule>
@@ -1860,95 +1826,6 @@
         <QuantityLimit>1</QuantityLimit>
       </Rule>
       <Rule>
-        <Name>Fight room</Name>
-        <Description>Add fight room.</Description>
-        <SourceRule>
-          <MissionGraph>
-            <Nodes>
-              <Node id="5cb6aa54-b5ac-4ace-bdb7-e3e195d3cd4b">
-                <AlphabetID>c1ab6061-b5d6-49ad-94e1-a328815a84f6</AlphabetID>
-                <Ordering>1</Ordering>
-                <Name>Normal</Name>
-                <Abbreviation>NM</Abbreviation>
-                <Description>Normal</Description>
-                <Terminal>NonTerminal</Terminal>
-                <Scope>
-                  <Outline>
-                    <X>146.5</X>
-                    <Y>77.5</Y>
-                    <Width>39</Width>
-                    <Height>39</Height>
-                  </Outline>
-                  <Filled>
-                    <X>148.5</X>
-                    <Y>79.5</Y>
-                    <Width>35</Width>
-                    <Height>35</Height>
-                  </Filled>
-                  <Text>
-                    <X>143.5</X>
-                    <Y>80</Y>
-                    <Width>45</Width>
-                    <Height>34</Height>
-                  </Text>
-                </Scope>
-                <SymbolColor>
-                  <Outline>#000000</Outline>
-                  <Filled>#88C4FF</Filled>
-                  <Text>#000000</Text>
-                </SymbolColor>
-                <StickiedConnections />
-              </Node>
-            </Nodes>
-            <Connections />
-          </MissionGraph>
-        </SourceRule>
-        <ReplacementRule>
-          <MissionGraph>
-            <Nodes>
-              <Node id="52b8e5ef-cdd6-46ad-bc35-1c5a024c6195">
-                <AlphabetID>4fe7d1e8-7114-4ffd-a344-ef559f94694f</AlphabetID>
-                <Ordering>1</Ordering>
-                <Name>fight</Name>
-                <Abbreviation>ft</Abbreviation>
-                <Description>fight room.</Description>
-                <Terminal>Terminal</Terminal>
-                <Scope>
-                  <Outline>
-                    <X>160.5</X>
-                    <Y>80.5</Y>
-                    <Width>39</Width>
-                    <Height>39</Height>
-                  </Outline>
-                  <Filled>
-                    <X>162.5</X>
-                    <Y>82.5</Y>
-                    <Width>35</Width>
-                    <Height>35</Height>
-                  </Filled>
-                  <Text>
-                    <X>157.5</X>
-                    <Y>83</Y>
-                    <Width>45</Width>
-                    <Height>34</Height>
-                  </Text>
-                </Scope>
-                <SymbolColor>
-                  <Outline>#000000</Outline>
-                  <Filled>#FD8989</Filled>
-                  <Text>#000000</Text>
-                </SymbolColor>
-                <StickiedConnections />
-              </Node>
-            </Nodes>
-            <Connections />
-          </MissionGraph>
-        </ReplacementRule>
-        <Enable>True</Enable>
-        <Weight>10</Weight>
-        <QuantityLimit>0</QuantityLimit>
-      </Rule>
-      <Rule>
         <Name>Exporation</Name>
         <Description>Exporation room.</Description>
         <SourceRule>
@@ -1998,9 +1875,9 @@
               <Node id="b1ecd13c-531a-4ff1-9a0e-dd7b46eb29fc">
                 <AlphabetID>436d71c4-dc1a-46ee-b6bc-bb1f0cad2e51</AlphabetID>
                 <Ordering>1</Ordering>
-                <Name>explore</Name>
-                <Abbreviation>x</Abbreviation>
-                <Description>explore</Description>
+                <Name>normal</Name>
+                <Abbreviation>nm</Abbreviation>
+                <Description>normal</Description>
                 <Terminal>Terminal</Terminal>
                 <Scope>
                   <Outline>
@@ -2024,7 +1901,7 @@
                 </Scope>
                 <SymbolColor>
                   <Outline>#000000</Outline>
-                  <Filled>#BDBDBD</Filled>
+                  <Filled>#8CAEFF</Filled>
                   <Text>#000000</Text>
                 </SymbolColor>
                 <StickiedConnections />
@@ -2520,20 +2397,20 @@
                 <Terminal>NonTerminal</Terminal>
                 <Scope>
                   <Outline>
-                    <X>96.5</X>
-                    <Y>85.5</Y>
+                    <X>85.5</X>
+                    <Y>60.5</Y>
                     <Width>39</Width>
                     <Height>39</Height>
                   </Outline>
                   <Filled>
-                    <X>98.5</X>
-                    <Y>87.5</Y>
+                    <X>87.5</X>
+                    <Y>62.5</Y>
                     <Width>35</Width>
                     <Height>35</Height>
                   </Filled>
                   <Text>
-                    <X>93.5</X>
-                    <Y>88</Y>
+                    <X>82.5</X>
+                    <Y>63</Y>
                     <Width>45</Width>
                     <Height>34</Height>
                   </Text>
@@ -2556,20 +2433,20 @@
                 <Terminal>Terminal</Terminal>
                 <Scope>
                   <Outline>
-                    <X>183.5</X>
-                    <Y>40.5</Y>
+                    <X>169.5</X>
+                    <Y>111.5</Y>
                     <Width>39</Width>
                     <Height>39</Height>
                   </Outline>
                   <Filled>
-                    <X>185.5</X>
-                    <Y>42.5</Y>
+                    <X>171.5</X>
+                    <Y>113.5</Y>
                     <Width>35</Width>
                     <Height>35</Height>
                   </Filled>
                   <Text>
-                    <X>180.5</X>
-                    <Y>43</Y>
+                    <X>166.5</X>
+                    <Y>114</Y>
                     <Width>45</Width>
                     <Height>34</Height>
                   </Text>
@@ -2593,14 +2470,14 @@
                 <ArrowType>Normal</ArrowType>
                 <Scope>
                   <Startpoint>
-                    <X>110.5</X>
-                    <Y>99.5</Y>
+                    <X>99.5</X>
+                    <Y>74.5</Y>
                     <Width>11</Width>
                     <Height>11</Height>
                   </Startpoint>
                   <Endpoint>
-                    <X>197.5</X>
-                    <Y>54.5</Y>
+                    <X>183.5</X>
+                    <Y>125.5</Y>
                     <Width>11</Width>
                     <Height>11</Height>
                   </Endpoint>
@@ -2628,20 +2505,20 @@
                 <Terminal>NonTerminal</Terminal>
                 <Scope>
                   <Outline>
-                    <X>72.5</X>
-                    <Y>89.5</Y>
+                    <X>69.5</X>
+                    <Y>34.5</Y>
                     <Width>39</Width>
                     <Height>39</Height>
                   </Outline>
                   <Filled>
-                    <X>74.5</X>
-                    <Y>91.5</Y>
+                    <X>71.5</X>
+                    <Y>36.5</Y>
                     <Width>35</Width>
                     <Height>35</Height>
                   </Filled>
                   <Text>
-                    <X>69.5</X>
-                    <Y>92</Y>
+                    <X>66.5</X>
+                    <Y>37</Y>
                     <Width>45</Width>
                     <Height>34</Height>
                   </Text>
@@ -2652,7 +2529,6 @@
                   <Text>#000000</Text>
                 </SymbolColor>
                 <StickiedConnections>
-                  <ConnectionID>c6219fcd-9da2-4c57-81d5-c2acd35ae026</ConnectionID>
                   <ConnectionID>d8935b1f-dc05-4729-8a61-95145f191040</ConnectionID>
                 </StickiedConnections>
               </Node>
@@ -2665,20 +2541,20 @@
                 <Terminal>Terminal</Terminal>
                 <Scope>
                   <Outline>
-                    <X>183.5</X>
-                    <Y>40.5</Y>
+                    <X>204.5</X>
+                    <Y>74.5</Y>
                     <Width>39</Width>
                     <Height>39</Height>
                   </Outline>
                   <Filled>
-                    <X>185.5</X>
-                    <Y>42.5</Y>
+                    <X>206.5</X>
+                    <Y>76.5</Y>
                     <Width>35</Width>
                     <Height>35</Height>
                   </Filled>
                   <Text>
-                    <X>180.5</X>
-                    <Y>43</Y>
+                    <X>201.5</X>
+                    <Y>77</Y>
                     <Width>45</Width>
                     <Height>34</Height>
                   </Text>
@@ -2701,20 +2577,20 @@
                 <Terminal>Terminal</Terminal>
                 <Scope>
                   <Outline>
-                    <X>178.5</X>
-                    <Y>122.5</Y>
+                    <X>119.5</X>
+                    <Y>110.5</Y>
                     <Width>39</Width>
                     <Height>39</Height>
                   </Outline>
                   <Filled>
-                    <X>180.5</X>
-                    <Y>124.5</Y>
+                    <X>121.5</X>
+                    <Y>112.5</Y>
                     <Width>35</Width>
                     <Height>35</Height>
                   </Filled>
                   <Text>
-                    <X>175.5</X>
-                    <Y>125</Y>
+                    <X>116.5</X>
+                    <Y>113</Y>
                     <Width>45</Width>
                     <Height>34</Height>
                   </Text>
@@ -2726,6 +2602,7 @@
                 </SymbolColor>
                 <StickiedConnections>
                   <ConnectionID>d8935b1f-dc05-4729-8a61-95145f191040</ConnectionID>
+                  <ConnectionID>c6219fcd-9da2-4c57-81d5-c2acd35ae026</ConnectionID>
                 </StickiedConnections>
               </Node>
             </Nodes>
@@ -2738,14 +2615,14 @@
                 <ArrowType>Normal</ArrowType>
                 <Scope>
                   <Startpoint>
-                    <X>86.5</X>
-                    <Y>103.5</Y>
+                    <X>133.5</X>
+                    <Y>124.5</Y>
                     <Width>11</Width>
                     <Height>11</Height>
                   </Startpoint>
                   <Endpoint>
-                    <X>197.5</X>
-                    <Y>54.5</Y>
+                    <X>218.5</X>
+                    <Y>88.5</Y>
                     <Width>11</Width>
                     <Height>11</Height>
                   </Endpoint>
@@ -2753,7 +2630,7 @@
                 <SymbolColor>
                   <Outline>#000000</Outline>
                 </SymbolColor>
-                <StartpointStickyOn>c957be9e-d7bc-4ad1-9eca-048a4d92dd59</StartpointStickyOn>
+                <StartpointStickyOn>c09dfb8e-1fdf-44ba-a637-f93c3f74df31</StartpointStickyOn>
                 <EndpointStickyOn>d6d70a9c-2c62-458c-8c53-0d4aad49e033</EndpointStickyOn>
                 <StartSelected>False</StartSelected>
                 <EndSelected>False</EndSelected>
@@ -2766,14 +2643,14 @@
                 <ArrowType>Normal</ArrowType>
                 <Scope>
                   <Startpoint>
-                    <X>86.5</X>
-                    <Y>103.5</Y>
+                    <X>83.5</X>
+                    <Y>48.5</Y>
                     <Width>11</Width>
                     <Height>11</Height>
                   </Startpoint>
                   <Endpoint>
-                    <X>192.5</X>
-                    <Y>136.5</Y>
+                    <X>133.5</X>
+                    <Y>124.5</Y>
                     <Width>11</Width>
                     <Height>11</Height>
                   </Endpoint>
