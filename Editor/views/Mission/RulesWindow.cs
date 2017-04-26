@@ -489,6 +489,7 @@ namespace MissionGrammarSystem {
 			EditorGUILayout.HelpBox(_graphError.Value, _graphError.Key == ValidationLabel.NoError ? MessageType.Info : MessageType.Error);
 			GUILayout.EndArea();
 		}
+		GraphGrammarNode _lastStickedNode;
 		// Control whole events.
 		void EventController() {
 			if (Event.current.type == EventType.MouseDown) {
@@ -508,11 +509,25 @@ namespace MissionGrammarSystem {
 				_currentSelectedGraphGrammar = _missionRule.SourceRule;
 				_missionRule.ReplacementRule.RevokeAllSelected();
 				_missionRule.SourceRule.TouchedSymbol(Event.current.mousePosition - _sourceCanvas.position + _sourceCanvasScrollPosition);
+				if(_missionRule.SourceRule.SelectedSymbol is GraphGrammarConnection) {
+					if(( (GraphGrammarConnection) _missionRule.SourceRule.SelectedSymbol ).StartSelected) {
+						_lastStickedNode = ( (GraphGrammarConnection) _missionRule.SourceRule.SelectedSymbol ).StartpointStickyOn;
+					} else if (( (GraphGrammarConnection) _missionRule.SourceRule.SelectedSymbol ).EndSelected) {
+						_lastStickedNode = ( (GraphGrammarConnection) _missionRule.SourceRule.SelectedSymbol ).EndpointStickyOn;
+					}
+				}
 				Repaint();
 			} else if (_replacementCanvas.Contains(Event.current.mousePosition)) {
 				_currentSelectedGraphGrammar = _missionRule.ReplacementRule;
 				_missionRule.SourceRule.RevokeAllSelected();
 				_missionRule.ReplacementRule.TouchedSymbol(Event.current.mousePosition - _replacementCanvas.position + _replacementCanvasScrollPosition);
+				if (_missionRule.ReplacementRule.SelectedSymbol is GraphGrammarConnection) {
+					if (( (GraphGrammarConnection) _missionRule.ReplacementRule.SelectedSymbol ).StartSelected) {
+						_lastStickedNode = ( (GraphGrammarConnection) _missionRule.ReplacementRule.SelectedSymbol ).StartpointStickyOn;
+					} else if (( (GraphGrammarConnection) _missionRule.ReplacementRule.SelectedSymbol ).EndSelected) {
+						_lastStickedNode = ( (GraphGrammarConnection) _missionRule.ReplacementRule.SelectedSymbol ).EndpointStickyOn;
+					}
+				}
 				Repaint();
 			} else if (_symbolListCanvasInWindow .Contains(Event.current.mousePosition)) {
 				_positionInCanvas = Event.current.mousePosition - _symbolListCanvasInWindow.position;
@@ -533,12 +548,13 @@ namespace MissionGrammarSystem {
 				Repaint();
 			}
 		}
-		// Drag and drop event
-		private static GraphGrammarNode       _tempNode;
+		// Variable of events.
+		private static GraphGrammarNode _tempNode;
 		private static GraphGrammarConnection _tempConnection;
-		private static bool _tempSticked;
+		private static bool _stickedChange;
+		// Drag and drop event
 		void OnDraggedAndDroppedInCanvas() {
-			_tempSticked = false;
+			_stickedChange = false;
 			// If mouse position is in the canvas of source rule. 
 			if (_sourceCanvas.Contains(Event.current.mousePosition)) {
 				// Revoke all of the selected in replacement canvas.
@@ -555,20 +571,14 @@ namespace MissionGrammarSystem {
 					// Start point.
 					if (_tempConnection.StartSelected) {
 						_tempConnection.StartPosition = _positionInCanvas;
-						if(_missionRule.SourceRule.StickyNode(_tempConnection, _positionInCanvas, "start")) {
-							_tempSticked = true;
-						} else {
-							_tempSticked = false;
-						}
+						_missionRule.SourceRule.StickyNode(_tempConnection, _positionInCanvas, "start");
+						_stickedChange = _tempConnection.StartpointStickyOn != _lastStickedNode;
 					}
 					// End point.
 					else if (_tempConnection.EndSelected) {
 						_tempConnection.EndPosition = _positionInCanvas;
-						if(_missionRule.SourceRule.StickyNode(_tempConnection, _positionInCanvas, "end")) {
-							_tempSticked = true;
-						} else {
-							_tempSticked = false;
-						}
+						_missionRule.SourceRule.StickyNode(_tempConnection, _positionInCanvas, "end");
+						_stickedChange = _tempConnection.EndpointStickyOn != _lastStickedNode;
 					}
 				}
 				// When drag and drop the nodes, auto-resize the canvas size.
@@ -592,20 +602,14 @@ namespace MissionGrammarSystem {
 					// Start point.
 					if (_tempConnection.StartSelected) {
 						_tempConnection.StartPosition = _positionInCanvas;
-						if(_missionRule.ReplacementRule.StickyNode(_tempConnection, _positionInCanvas, "start")) {
-							_tempSticked = true;
-						} else {
-							_tempSticked = false;
-						}
+						_missionRule.ReplacementRule.StickyNode(_tempConnection, _positionInCanvas, "start");
+						_stickedChange = _tempConnection.StartpointStickyOn != _lastStickedNode;
 					}
 					// End point.
 					else if (_tempConnection.EndSelected) {
 						_tempConnection.EndPosition = _positionInCanvas;
-						if (_missionRule.ReplacementRule.StickyNode(_tempConnection, _positionInCanvas, "end")) {
-							_tempSticked = true;
-						} else {
-							_tempSticked = false;
-						}
+						_missionRule.ReplacementRule.StickyNode(_tempConnection, _positionInCanvas, "end");
+						_stickedChange = _tempConnection.EndpointStickyOn != _lastStickedNode;
 					}
 				}
 				// When drag and drop the nodes, auto-resize the canvas size.
@@ -621,7 +625,7 @@ namespace MissionGrammarSystem {
 		void OnMouseUpInCanvas() {
 			OnDraggedAndDroppedInCanvas();
 			// When mouse up and selected conecction stick successfully then record state.
-			if (_tempSticked) {
+			if (_stickedChange) {
 				RecordState();
 			}
 		}
@@ -986,6 +990,10 @@ namespace MissionGrammarSystem {
 			} else if (_currentSelectedGraphGrammar == _missionRule.ReplacementRule) {
 				_replaceRuleState.Undo(ref _currentSelectedGraphGrammar);
 			}
+			// Validation of rule.
+			_graphError = ValidationSystem.Validate(_missionRule, _currentSelectedGraphGrammar);
+			// Error than set rule valid and enable to false.
+			_missionRule.Valid = _missionRule.Enable = ( _graphError.Key == ValidationLabel.NoError ? true : false );
 		}
 		// Redo via _currentSelectedGraphGrammar.
 		void RedoState() {
@@ -994,6 +1002,10 @@ namespace MissionGrammarSystem {
 			} else if (_currentSelectedGraphGrammar == _missionRule.ReplacementRule) {
 				_replaceRuleState.Redo(ref _currentSelectedGraphGrammar);
 			}
+			// Validation of rule.
+			_graphError = ValidationSystem.Validate(_missionRule, _currentSelectedGraphGrammar);
+			// Error than set rule valid and enable to false.
+			_missionRule.Valid = _missionRule.Enable = ( _graphError.Key == ValidationLabel.NoError ? true : false );
 		}
 
 		// The class used to record the state and execute redo/undo.
