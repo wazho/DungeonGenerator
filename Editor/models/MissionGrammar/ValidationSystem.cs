@@ -228,7 +228,7 @@ namespace MissionGrammarSystem {
 				result = "除了任務圖之首 (ordering 為一) 能夠不具有父節點，其餘的節點都必須有父節點所相連。";
 				break;
 			case ValidationLabel.OverflowedAnyNode:
-				result = "Str10";
+				result = "右側 replacement 的 any 節點 ordering 不可以高於右側 source 的數量上限。";
 				break;
 			}
 			return result;
