@@ -315,9 +315,9 @@
       <Node id="38a148b8-2bf4-43dd-a91e-244db08de769">
         <AlphabetID>ae315167-ec2f-48b8-b997-fcc90ef2cf79</AlphabetID>
         <Ordering>0</Ordering>
-        <Name>serect</Name>
+        <Name>secret</Name>
         <Abbreviation>srt</Abbreviation>
-        <Description>serect</Description>
+        <Description>secret</Description>
         <Terminal>Terminal</Terminal>
         <Scope>
           <Outline>
@@ -1313,7 +1313,7 @@
         <QuantityLimit>1</QuantityLimit>
       </Rule>
       <Rule>
-        <Name>Set Secret</Name>
+        <Name>Set Serect</Name>
         <Description>Get the key.</Description>
         <SourceRule>
           <MissionGraph>
@@ -1467,9 +1467,9 @@
               <Node id="7e8b1ec3-d74c-442a-8c3b-c8a1f3b6b020">
                 <AlphabetID>ae315167-ec2f-48b8-b997-fcc90ef2cf79</AlphabetID>
                 <Ordering>3</Ordering>
-                <Name>serect</Name>
+                <Name>secret</Name>
                 <Abbreviation>srt</Abbreviation>
-                <Description>serect</Description>
+                <Description>secret</Description>
                 <Terminal>Terminal</Terminal>
                 <Scope>
                   <Outline>
