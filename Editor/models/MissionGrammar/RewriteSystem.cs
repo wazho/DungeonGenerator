@@ -457,13 +457,13 @@ namespace MissionGrammarSystem {
 		// DFS Insert.
 		private static void InsertGraph(VFlibcs.Graph graph, Node node) {
 			// [TEMP] use name to present type.
-			foreach (Node chid in node.Children) {
-				if (!nodeDictionary.Keys.Any(k => (k == chid))) {
-					graph.InsertNode(chid.Name);
-					nodeDictionary.Add(chid, graph.NodeCount-1);
+			foreach (Node child in node.Children) {
+				if (!nodeDictionary.Keys.Any(k => (k == child))) {
+					graph.InsertNode(child.Name);
+					nodeDictionary.Add(child, graph.NodeCount-1);
 				}
-				graph.InsertEdge(nodeDictionary[node], nodeDictionary[chid]);
-				InsertGraph(graph, chid);
+				graph.InsertEdge(nodeDictionary[child], nodeDictionary[child]);
+				InsertGraph(graph, child);
 			}
 		}
 	}
