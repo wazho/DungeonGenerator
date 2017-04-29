@@ -40,7 +40,7 @@ namespace MissionGrammarSystem {
 		private static Vector2 LEFT_TOP_POSITION = new Vector2(20, 30);
 		private const int PADDING = 50;
 		private static List<int> CountInLayer = new List<int>();
-		private static Dictionary<Rule, VFlibcs.Graph> ruleVFgraphTable = new Dictionary<Rule, VFlibcs.Graph>();
+		private static Dictionary<Rule, VFlibcs.Graph> _ruleVFgraphTable = new Dictionary<Rule, VFlibcs.Graph>();
 		// Export the original structure from tree structure to canvas.
 		public static GraphGrammar TransformFromGraph() {
 			var graphGrammar = new GraphGrammar();
@@ -101,7 +101,7 @@ namespace MissionGrammarSystem {
 		// Depth-first search.
 		private static void ProgressIteration(Node root) {
 			// [Will Transform] Root transform.
-			VFlibcs.Graph currentGraph = new VFlibcs.Graph();
+			VFlibcs.Graph currentGraph = TransToVFGraph(root);
 			// Find a rule.
 			Rule matchedRule = FindMatchs(currentGraph);
 			if (matchedRule != null) {
@@ -148,6 +148,8 @@ namespace MissionGrammarSystem {
 					rule.QuantityLimit = (originRule.QuantityLimit > 0) ? originRule.QuantityLimit : -1;
 					// Insert into the '_rules'.
 					_rules.Add(rule);
+					// Store the dictionary of VF graph.
+					_ruleVFgraphTable.Add(rule, TransToVFGraph(rule.SourceRoot));
 				}
 			}
 		}
@@ -203,16 +205,17 @@ namespace MissionGrammarSystem {
 			}
 			return orderRules;
 		}
+		// Step 1: Find matchs.
 		private static Rule FindMatchs(VFlibcs.Graph graphVF) {
 			foreach (var rule in RandomOrderByWeight()) {
-				VFlibcs.VfState vfs = new VFlibcs.VfState(ruleVFgraphTable[rule], graphVF, false, true);
+				VFlibcs.VfState vfs = new VFlibcs.VfState(_ruleVFgraphTable[rule], graphVF, false, true);
 				if (vfs.FMatch()) {
 					int[] mapping = vfs.Mapping1To2;
 					_relatedNodes.Clear();
-					for(int i = 0; i < mapping.Length; i++) {
+					for (int i = 0; i < mapping.Length; i++) {
 						// Set Index.
-						Node node = graphVF.GetNodeAttr(mapping[i]) as Node;
-						node.Index = ( ruleVFgraphTable[rule].GetNodeAttr(i) as Node ).Index;
+						Node node  = graphVF.GetNodeAttr(mapping[i]) as Node;
+						node.Index = (_ruleVFgraphTable[rule].GetNodeAttr(i) as Node).Index;
 						_relatedNodes.Add(node);
 					}
 					return rule;
@@ -346,6 +349,28 @@ namespace MissionGrammarSystem {
 			// Find the node from replacement rule by index.
 			public Node FindReplacementByIndex(int index) {
 				return ReplacementNodeTable.First(n => n.Index == index);
+			}
+		}
+		private static Dictionary<Node,int> nodeDictionary = new Dictionary<Node, int>();
+		private static VFlibcs.Graph TransToVFGraph(Node node) {
+			nodeDictionary.Clear();
+			VFlibcs.Graph result = new VFlibcs.Graph();
+			result.InsertNode(node.Name);
+			nodeDictionary.Add(node,0);
+			InsertGraph(result, node);
+			return result;
+		}
+		// DFS Insert.
+		private static void InsertGraph(VFlibcs.Graph graph, Node node) {
+			// [TEMP] use name to present type.
+			foreach (Node chid in node.Children) {
+				if (!nodeDictionary.Keys.Any(k => (k == chid))) {
+					graph.InsertNode(chid.Name);
+				} else {
+					nodeDictionary.Add(chid, graph.NodeCount);
+				}
+				graph.InsertEdge(nodeDictionary[node], graph.NodeCount);
+				InsertGraph(graph, chid);
 			}
 		}
 	}
