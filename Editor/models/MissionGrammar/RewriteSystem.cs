@@ -99,7 +99,7 @@ namespace MissionGrammarSystem {
 		}
 		// Depth-first search.
 		private static void ProgressIteration(Node node) {
-			VFlibcs.Graph graph1 = new VFlibcs.Graph();
+			VFlibcs.Graph graph1 = TransToVFGraph(node);
 			graph1.InsertNode("Root");
 			graph1.InsertNode("en");
 			graph1.InsertNode("none");
@@ -443,6 +443,28 @@ namespace MissionGrammarSystem {
 			// Find the node from replacement rule by index.
 			public Node FindReplacementByIndex(int index) {
 				return ReplacementNodeTable.First(n => n.Index == index);
+			}
+		}
+		private static Dictionary<Guid,int> nodeDictionary = new Dictionary<Guid, int>();
+		private static VFlibcs.Graph TransToVFGraph(Node node) {
+			nodeDictionary.Clear();
+			VFlibcs.Graph result = new VFlibcs.Graph();
+			result.InsertNode(node.Name);
+			nodeDictionary.Add(node.AlphabetID,0);
+			InsertGraph(result, node);
+			return result;
+		}
+		// DFS Insert.
+		private static void InsertGraph(VFlibcs.Graph graph, Node node) {
+			// [TEMP] use name to present type.
+			foreach (Node chid in node.Children) {
+				if (!nodeDictionary.Keys.Any(k => (k == chid.AlphabetID))) {
+					graph.InsertNode(chid.Name);
+				} else {
+					nodeDictionary.Add(chid.AlphabetID, graph.NodeCount);
+				}
+				graph.InsertEdge(nodeDictionary[node.AlphabetID], graph.NodeCount);
+				InsertGraph(graph, chid);
 			}
 		}
 	}
