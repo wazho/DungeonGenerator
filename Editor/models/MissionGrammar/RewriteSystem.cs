@@ -458,7 +458,7 @@ namespace MissionGrammarSystem {
 		private static void InsertGraph(VFlibcs.Graph graph, Node node) {
 			// [TEMP] use name to present type.
 			foreach (Node child in node.Children) {
-				if (!nodeDictionary.Keys.Any(k => (k == child))) {
+				if (!nodeDictionary.ContainsKey(child)) {
 					graph.InsertNode(child.Name);
 					nodeDictionary.Add(child, graph.NodeCount-1);
 				}
