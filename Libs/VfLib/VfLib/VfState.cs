@@ -617,10 +617,10 @@ namespace vflibcs
 
 			if (_fContextCheck)
 			{
-				string icc1 = (string) _vfgr1.GetAttr(inod1);
-				string icc2 = (string) _vfgr2.GetAttr(inod2);
+				MissionGrammarSystem.RewriteSystem.Node icc1 =  _vfgr1.GetAttr(inod1) as MissionGrammarSystem.RewriteSystem.Node;
+				MissionGrammarSystem.RewriteSystem.Node icc2 =  _vfgr2.GetAttr(inod2) as MissionGrammarSystem.RewriteSystem.Node;
 
-				if (icc1 != icc2)
+				if (icc1.AlphabetID != icc2.AlphabetID)
 				{
 					return false;
 				}
