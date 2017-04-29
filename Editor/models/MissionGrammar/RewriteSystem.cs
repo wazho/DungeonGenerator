@@ -40,6 +40,7 @@ namespace MissionGrammarSystem {
 		private static Vector2 LEFT_TOP_POSITION = new Vector2(20, 30);
 		private const int PADDING = 50;
 		private static List<int> CountInLayer = new List<int>();
+		private static Dictionary<Rule, VFlibcs.Graph> _ruleVFgraphTable = new Dictionary<Rule, VFlibcs.Graph>();
 		// Export the original structure from tree structure to canvas.
 		public static GraphGrammar TransformFromGraph() {
 			var graphGrammar = new GraphGrammar();
@@ -98,65 +99,24 @@ namespace MissionGrammarSystem {
 			CountInLayer[layer] += index;
 		}
 		// Depth-first search.
-		private static void ProgressIteration(Node node) {
-			VFlibcs.Graph graph1 = new VFlibcs.Graph();
-			graph1.InsertNode("Root");
-			graph1.InsertNode("en");
-			graph1.InsertNode("none");
-			graph1.InsertNode("go");
-			graph1.InsertNode("none");
-
-			graph1.InsertEdge(0, 1);
-			graph1.InsertEdge(1, 2);
-			graph1.InsertEdge(1, 4);
-			graph1.InsertEdge(2, 3);
-			graph1.InsertEdge(4, 3);
-
-			VFlibcs.Graph graph2 = new VFlibcs.Graph();
-			graph2.InsertNode("en");
-			graph2.InsertNode("none");
-			graph2.InsertNode("none");
-			graph2.InsertNode("go");
-
-			graph2.InsertEdge(0, 1);
-			graph2.InsertEdge(0, 2);
-			graph2.InsertEdge(2, 3);
-			graph2.InsertEdge(1, 3);
-
-			VFlibcs.VfState vfs = new VFlibcs.VfState(graph1, graph2, false, true);
-			if (vfs.FMatch()) {
-				Debug.Log("1 to 2: " + string.Join(", ", new List<int>(vfs.Mapping1To2).ConvertAll(i => i.ToString()).ToArray()));
+		private static void ProgressIteration(Node root) {
+			// [Will Transform] Root transform.
+			VFlibcs.Graph currentGraph = TransToVFGraph(root);
+			// Find a rule.
+			Rule matchedRule = FindMatchs(currentGraph);
+			if (matchedRule != null) {
+				Debug.Log("Current match rule : " + matchedRule.Name);
+				// Step 2: Remove connections.
+				RemoveConnections(matchedRule);
+				// Step 3: Remove connections from replacement rule.
+				ReplaceNodes(matchedRule);
+				// Step 4: Append the new nodes from replacement rule.
+				AppendNodes(matchedRule);
+				// Step 5: Re-add the connections from replacement rule.
+				ReAddConnection(matchedRule);
+				// Step 6: Remove indexes.
+				RemoveIndexes();
 			}
-
-			Debug.Log ("Done.");
-
-/*
-			node.Explored = true;
-			if (! _relatedNodes.Exists(x => ReferenceEquals(x, node))) {
-				// Step 1: Find matchs and set indexes.
-				Rule matchedRule = FindMatchs(node);
-
-				if (matchedRule != null) {
-					Debug.Log("Current node: '" + node.Name + "' is match the rule : " + matchedRule.Name + "  " + node.Index);
-					// Step 2: Remove connections.
-					RemoveConnections(matchedRule);
-					// Step 3: Remove connections from replacement rule.
-					ReplaceNodes(matchedRule);
-					// Step 4: Append the new nodes from replacement rule.
-					AppendNodes(matchedRule);
-					// Step 5: Re-add the connections from replacement rule.
-					ReAddConnection(matchedRule);
-					// Step 6: Remove indexes.
-					RemoveIndexes();
-				}
-			}
-			// Recursive.
-			foreach (Node ChildNode in node.Children) {
-				if (! ChildNode.Explored) {
-					ProgressIteration(ChildNode);
-				}
-			}
-*/
 		}
 		private static void ClearExplored(Node node) {
 			node.Explored = false;
@@ -188,6 +148,8 @@ namespace MissionGrammarSystem {
 					rule.QuantityLimit = (originRule.QuantityLimit > 0) ? originRule.QuantityLimit : -1;
 					// Insert into the '_rules'.
 					_rules.Add(rule);
+					// Store the dictionary of VF graph.
+					_ruleVFgraphTable.Add(rule, TransToVFGraph(rule.SourceRoot));
 				}
 			}
 		}
@@ -214,9 +176,6 @@ namespace MissionGrammarSystem {
 			// Return the table.
 			return nodes.OrderBy(n => n.Index).ToList();
 		}
-
-		private static bool[] _usedIndexTable;
-		private static List<Node> _exploredNodes = new List<Node>();
 		private static List<Rule> RandomOrderByWeight() {
 			// Declare list to store rules by order.
 			var orderRules = new List<Rule>();
@@ -246,77 +205,26 @@ namespace MissionGrammarSystem {
 			}
 			return orderRules;
 		}
-
-		private static Rule FindMatchs(Node node) {
-			// Find the rule that is legal.
+		// Step 1: Find matchs.
+		private static Rule FindMatchs(VFlibcs.Graph graphVF) {
 			foreach (var rule in RandomOrderByWeight()) {
-				// If the quantity of rule less than limit.
-				// [Notice] Only ZERO will continue. It means the negative value is equivalent to infinite.
 				if (rule.QuantityLimit == 0) { continue; }
-				// Compare the root node of rule.
-				if (Alphabet.IsAnyNode(rule.SourceRoot.AlphabetID) || rule.SourceRoot.AlphabetID == node.AlphabetID) {
-					// Clear index of all nodes.
-					RemoveIndexes();
+				VFlibcs.VfState vfs = new VFlibcs.VfState(graphVF, _ruleVFgraphTable[rule], false, true);
+				if (vfs.FMatch()) {
+					if (rule.QuantityLimit > 0) { rule.QuantityLimit -= 1; }
+					int[] mapping = vfs.Mapping2To1;
 					_relatedNodes.Clear();
-					_exploredNodes.Clear();
-					_usedIndexTable = new bool[rule.SourceNodeCount + 1];
-					node.Index = rule.SourceRoot.Index;
-					_relatedNodes.Add(node);
-					_usedIndexTable[node.Index] = true;
-					if (RecursionMatch(node, rule.SourceRoot)) {
-						// Quantity limit decrease.
-						rule.QuantityLimit -= 1;
-						return rule;
+					for (int i = 0; i < mapping.Length; i++) {
+						// Set Index.
+						Node node  = graphVF.GetNodeAttr(mapping[i]) as Node;
+						node.Index = (_ruleVFgraphTable[rule].GetNodeAttr(i) as Node).Index;
+						_relatedNodes.Add(node);
 					}
+					return rule;
 				}
 			}
 			return null;
 		}
-		// Confirm the children are match
-		private static bool RecursionMatch(Node node, Node matchNode) {
-			_exploredNodes.Add(node);
-			foreach (Node childMatchNode in matchNode.Children) {
-				bool _isMatch = false;
-				foreach (Node childNode in node.Children) {
-					// If this node index and the rule index have not be used
-					if (childNode.Index == 0 &&
-						! _usedIndexTable[childMatchNode.Index] &&
-						(childNode.AlphabetID == childMatchNode.AlphabetID ||
-						Alphabet.IsAnyNode(childMatchNode.AlphabetID))) {
-						// Record used node.
-						_usedIndexTable[childMatchNode.Index] = true;
-						childNode.Index = childMatchNode.Index;
-						_relatedNodes.Add(childNode);
-						// If the children are also match.
-						if (_exploredNodes.Exists(x => ReferenceEquals(x, childNode)) ||
-							RecursionMatch(childNode, childMatchNode)) {
-							_isMatch = true;
-							Debug.Log(matchNode.Name + "   1 o:" + node.Children[0] == node.Children[1] + "  children:" + childNode.Children.Count);
-							break;
-						} else {
-							childNode.Index = 0;
-							_usedIndexTable[childMatchNode.Index] = false;
-							_relatedNodes.Remove(childNode);
-							Debug.Log(matchNode.Name + "   1 x:" + node.Children[0] == node.Children[1] + "  children:" + childNode.Children.Count);
-						}
-						
-					} else if (childNode.Index == childMatchNode.Index &&
-						_usedIndexTable[childMatchNode.Index]) {
-						Debug.Log(matchNode.Name + "   2 o:" + node.Children[0] == node.Children[1] + "  children:" + childNode.Children.Count);
-						_isMatch = true;
-						break;
-					}
-				}
-
-				// If no child is match.
-				if (! _isMatch) {
-					return false;
-				}
-			}
-			// If rule node have no child, or said this rule is match.
-			return true;
-		}
-
 		// Step 2: Remove connections.
 		private static void RemoveConnections(Rule matchedRule) {
 			foreach (Node node in _relatedNodes) {
@@ -370,7 +278,7 @@ namespace MissionGrammarSystem {
 			}
 		}
 		// This is the minimum unit of exporting mission graph.
-		private class Node {
+		public class Node {
 			public Guid             AlphabetID { get; private set; }
 			public string           Name       { get; set; }
 			public int              Index      { get; set; }
@@ -443,6 +351,28 @@ namespace MissionGrammarSystem {
 			// Find the node from replacement rule by index.
 			public Node FindReplacementByIndex(int index) {
 				return ReplacementNodeTable.First(n => n.Index == index);
+			}
+		}
+		private static Dictionary<Node, int> nodeDictionary = new Dictionary<Node, int>();
+		private static VFlibcs.Graph TransToVFGraph(Node node) {
+			nodeDictionary.Clear();
+			VFlibcs.Graph result = new VFlibcs.Graph();
+			result.InsertNode(node);
+			nodeDictionary.Add(node, 0);
+			InsertGraph(result, node);
+			return result;
+		}
+		// DFS Insert node.
+		private static void InsertGraph(VFlibcs.Graph graph, Node node) {
+			foreach (Node child in node.Children) {
+				if (child == null) { continue; }
+				// If the node have not set then set it.
+				if (! nodeDictionary.ContainsKey(child)) {
+					nodeDictionary.Add(child, graph.InsertNode(child));
+				}
+				// Set edge.
+				graph.InsertEdge(nodeDictionary[node], nodeDictionary[child]);
+				InsertGraph(graph, child);
 			}
 		}
 	}
