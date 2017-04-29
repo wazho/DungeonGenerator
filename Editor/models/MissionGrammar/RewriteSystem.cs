@@ -460,10 +460,9 @@ namespace MissionGrammarSystem {
 			foreach (Node chid in node.Children) {
 				if (!nodeDictionary.Keys.Any(k => (k == chid))) {
 					graph.InsertNode(chid.Name);
-				} else {
-					nodeDictionary.Add(chid, graph.NodeCount);
+					nodeDictionary.Add(chid, graph.NodeCount-1);
 				}
-				graph.InsertEdge(nodeDictionary[node.AlphabetID], graph.NodeCount);
+				graph.InsertEdge(nodeDictionary[node], nodeDictionary[chid]);
 				InsertGraph(graph, chid);
 			}
 		}
