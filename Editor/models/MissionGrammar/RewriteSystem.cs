@@ -97,64 +97,82 @@ namespace MissionGrammarSystem {
 			}
 			CountInLayer[layer] += index;
 		}
+		private static VFlibcs.Graph TransToVFGraph(Node node) {
+			VFlibcs.Graph result = new VFlibcs.Graph();
+			InsertGraphNode(result, node);
+			InsertGraphEdge(result, node);
+			return result;
+		}
+		// DFS Insert nodes.
+		private static void InsertGraphNode(VFlibcs.Graph graph,Node node) {
+			// [TEMP] use name to present type.
+			node.Index = graph.NodeCount;
+			graph.InsertNode(node.Name);
+			foreach(Node chid in node.Children) {
+				InsertGraphNode(graph, chid);
+			}
+		}
+		// DFS Insert edges.
+		private static void InsertGraphEdge(VFlibcs.Graph graph, Node node) {
+			foreach (Node chid in node.Children) {
+				graph.InsertEdge(node.Index,chid.Index);
+				InsertGraphEdge(graph, chid);
+			}
+		}
 		// Depth-first search.
 		private static void ProgressIteration(Node node) {
-			VFlibcs.Graph graph1 = new VFlibcs.Graph();
-			graph1.InsertNodes(4);
-			graph1.InsertEdge(0,1);
-			graph1.InsertEdge(1,2);
-			graph1.InsertEdge(2,3);
-			graph1.InsertEdge(3,0);
-
+			VFlibcs.Graph graph1 = TransToVFGraph(node);
 			VFlibcs.Graph graph2 = new VFlibcs.Graph();
-			graph2.InsertNodes(4);
-			graph2.InsertEdge(0,1);
-			graph2.InsertEdge(1,2);
-			graph2.InsertEdge(2,3);
-			graph2.InsertEdge(3,0);
+			graph2.InsertNode("en");
+			graph2.InsertNode("none");
+			graph2.InsertNode("none");
+			graph2.InsertNode("go");
 
-			VFlibcs.VfState vfs = new VFlibcs.VfState(graph1, graph2, false, false, true);
+			graph2.InsertEdge(0, 1);
+			graph2.InsertEdge(0, 2);
+			graph2.InsertEdge(2, 3);
+
+			VFlibcs.VfState vfs = new VFlibcs.VfState(graph1, graph2, false, true, true);
 			bool fIsomorphic = vfs.FMatch();
 			if (fIsomorphic) {
-				foreach(VFlibcs.FullMapping fm in vfs.Mappings) {
+				foreach (VFlibcs.FullMapping fm in vfs.Mappings) {
 					int[] mapping1to2 = fm.arinodMap1To2;
 					int[] mapping2to1 = fm.arinodMap2To1;
 
 					Debug.Log("1 to 2: " + string.Join(", ", new List<int>(mapping1to2).ConvertAll(i => i.ToString()).ToArray()));
-					Debug.Log("2 to 1: " + string.Join(", ", new List<int>(mapping1to2).ConvertAll(i => i.ToString()).ToArray()));
-					Debug.Log("\n");
+					Debug.Log("2 to 1: " + string.Join(", ", new List<int>(mapping2to1).ConvertAll(i => i.ToString()).ToArray()));
 				}
 			}
 
-			Debug.Log ("Done.");
+			Debug.Log("Done.");
 
-/*
-			node.Explored = true;
-			if (! _relatedNodes.Exists(x => ReferenceEquals(x, node))) {
-				// Step 1: Find matchs and set indexes.
-				Rule matchedRule = FindMatchs(node);
+			/*
+						node.Explored = true;
+						if (! _relatedNodes.Exists(x => ReferenceEquals(x, node))) {
+							// Step 1: Find matchs and set indexes.
+							Rule matchedRule = FindMatchs(node);
 
-				if (matchedRule != null) {
-					Debug.Log("Current node: '" + node.Name + "' is match the rule : " + matchedRule.Name + "  " + node.Index);
-					// Step 2: Remove connections.
-					RemoveConnections(matchedRule);
-					// Step 3: Remove connections from replacement rule.
-					ReplaceNodes(matchedRule);
-					// Step 4: Append the new nodes from replacement rule.
-					AppendNodes(matchedRule);
-					// Step 5: Re-add the connections from replacement rule.
-					ReAddConnection(matchedRule);
-					// Step 6: Remove indexes.
-					RemoveIndexes();
-				}
-			}
-			// Recursive.
-			foreach (Node ChildNode in node.Children) {
-				if (! ChildNode.Explored) {
-					ProgressIteration(ChildNode);
-				}
-			}
-*/
+							if (matchedRule != null) {
+								Debug.Log("Current node: '" + node.Name + "' is match the rule : " + matchedRule.Name + "  " + node.Index);
+								// Step 2: Remove connections.
+								RemoveConnections(matchedRule);
+								// Step 3: Remove connections from replacement rule.
+								ReplaceNodes(matchedRule);
+								// Step 4: Append the new nodes from replacement rule.
+								AppendNodes(matchedRule);
+								// Step 5: Re-add the connections from replacement rule.
+								ReAddConnection(matchedRule);
+								// Step 6: Remove indexes.
+								RemoveIndexes();
+							}
+						}
+						// Recursive.
+						foreach (Node ChildNode in node.Children) {
+							if (! ChildNode.Explored) {
+								ProgressIteration(ChildNode);
+							}
+						}
+			*/
 		}
 		private static void ClearExplored(Node node) {
 			node.Explored = false;
