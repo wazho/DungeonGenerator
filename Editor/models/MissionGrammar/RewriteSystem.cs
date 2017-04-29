@@ -100,30 +100,32 @@ namespace MissionGrammarSystem {
 		// Depth-first search.
 		private static void ProgressIteration(Node node) {
 			VFlibcs.Graph graph1 = new VFlibcs.Graph();
-			graph1.InsertNodes(4);
-			graph1.InsertEdge(0,1);
-			graph1.InsertEdge(1,2);
-			graph1.InsertEdge(2,3);
-			graph1.InsertEdge(3,0);
+			graph1.InsertNode("Root");
+			graph1.InsertNode("en");
+			graph1.InsertNode("none");
+			graph1.InsertNode("go");
+			graph1.InsertNode("none");
+
+			graph1.InsertEdge(0, 1);
+			graph1.InsertEdge(1, 2);
+			graph1.InsertEdge(1, 4);
+			graph1.InsertEdge(2, 3);
+			graph1.InsertEdge(4, 3);
 
 			VFlibcs.Graph graph2 = new VFlibcs.Graph();
-			graph2.InsertNodes(4);
-			graph2.InsertEdge(0,1);
-			graph2.InsertEdge(1,2);
-			graph2.InsertEdge(2,3);
-			graph2.InsertEdge(3,0);
+			graph2.InsertNode("en");
+			graph2.InsertNode("none");
+			graph2.InsertNode("none");
+			graph2.InsertNode("go");
 
-			VFlibcs.VfState vfs = new VFlibcs.VfState(graph1, graph2, false, false, true);
-			bool fIsomorphic = vfs.FMatch();
-			if (fIsomorphic) {
-				foreach(VFlibcs.FullMapping fm in vfs.Mappings) {
-					int[] mapping1to2 = fm.arinodMap1To2;
-					int[] mapping2to1 = fm.arinodMap2To1;
+			graph2.InsertEdge(0, 1);
+			graph2.InsertEdge(0, 2);
+			graph2.InsertEdge(2, 3);
+			graph2.InsertEdge(1, 3);
 
-					Debug.Log("1 to 2: " + string.Join(", ", new List<int>(mapping1to2).ConvertAll(i => i.ToString()).ToArray()));
-					Debug.Log("2 to 1: " + string.Join(", ", new List<int>(mapping1to2).ConvertAll(i => i.ToString()).ToArray()));
-					Debug.Log("\n");
-				}
+			VFlibcs.VfState vfs = new VFlibcs.VfState(graph1, graph2, false, true);
+			if (vfs.FMatch()) {
+				Debug.Log("1 to 2: " + string.Join(", ", new List<int>(vfs.Mapping1To2).ConvertAll(i => i.ToString()).ToArray()));
 			}
 
 			Debug.Log ("Done.");
@@ -363,7 +365,7 @@ namespace MissionGrammarSystem {
 		}
 		// Step 6: Remove indexes.
 		private static void RemoveIndexes() {
-			foreach (var node in _relatedNodes) {
+			foreach (var node in _relatedNodes ?? Enumerable.Empty<Node>()) {
 				node.Index = 0;
 			}
 		}

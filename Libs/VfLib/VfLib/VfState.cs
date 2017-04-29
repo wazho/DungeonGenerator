@@ -617,16 +617,13 @@ namespace vflibcs
 
 			if (_fContextCheck)
 			{
-				IContextCheck icc1 = _vfgr1.GetAttr(inod1) as IContextCheck;
-				IContextCheck icc2 = _vfgr2.GetAttr(inod2) as IContextCheck;
+				string icc1 = (string) _vfgr1.GetAttr(inod1);
+				string icc2 = (string) _vfgr2.GetAttr(inod2);
 
-				if (icc1 != null && icc2 != null)
-                {
-					if (!icc1.FCompatible(icc2))
-					{
-						return false;
-					}
-                }
+				if (icc1 != icc2)
+				{
+					return false;
+				}
 			}
 
 			List<int> lstIn1 = _vfgr1.InNeighbors(inod1);
