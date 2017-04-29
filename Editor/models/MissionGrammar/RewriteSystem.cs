@@ -351,26 +351,25 @@ namespace MissionGrammarSystem {
 				return ReplacementNodeTable.First(n => n.Index == index);
 			}
 		}
-		private static Dictionary<Node,int> nodeDictionary = new Dictionary<Node, int>();
+		private static Dictionary<Node, int> nodeDictionary = new Dictionary<Node, int>();
 		private static VFlibcs.Graph TransToVFGraph(Node node) {
 			nodeDictionary.Clear();
 			VFlibcs.Graph result = new VFlibcs.Graph();
 			result.InsertNode(node.Name);
-			nodeDictionary.Add(node,0);
+			nodeDictionary.Add(node, 0);
 			InsertGraph(result, node);
 			return result;
 		}
 		// DFS Insert.
 		private static void InsertGraph(VFlibcs.Graph graph, Node node) {
 			// [TEMP] use name to present type.
-			foreach (Node chid in node.Children) {
-				if (!nodeDictionary.Keys.Any(k => (k == chid))) {
-					graph.InsertNode(chid.Name);
-				} else {
-					nodeDictionary.Add(chid, graph.NodeCount);
+			foreach (Node child in node.Children) {
+				if (! nodeDictionary.ContainsKey(child)) {
+					graph.InsertNode(child.Name);
+					nodeDictionary.Add(child, graph.NodeCount - 1);
 				}
-				graph.InsertEdge(nodeDictionary[node], graph.NodeCount);
-				InsertGraph(graph, chid);
+				graph.InsertEdge(nodeDictionary[node], nodeDictionary[child]);
+				InsertGraph(graph, child);
 			}
 		}
 	}
