@@ -1,6 +1,7 @@
 //#define GATHERSTATS
 //#define BIGSLOWTEST
 //#define PERFORMANCETEST
+using MissionGrammarSystem;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -617,10 +618,10 @@ namespace vflibcs
 
 			if (_fContextCheck)
 			{
-				MissionGrammarSystem.RewriteSystem.Node icc1 =  _vfgr1.GetAttr(inod1) as MissionGrammarSystem.RewriteSystem.Node;
-				MissionGrammarSystem.RewriteSystem.Node icc2 =  _vfgr2.GetAttr(inod2) as MissionGrammarSystem.RewriteSystem.Node;
+				RewriteSystem.Node icc1 =  _vfgr1.GetAttr(inod1) as MissionGrammarSystem.RewriteSystem.Node;
+				RewriteSystem.Node icc2 =  _vfgr2.GetAttr(inod2) as MissionGrammarSystem.RewriteSystem.Node;
 
-				if (icc1.AlphabetID != icc2.AlphabetID)
+				if (icc1.AlphabetID != icc2.AlphabetID && !Alphabet.IsAnyNode(icc1.AlphabetID) && !Alphabet.IsAnyNode(icc2.AlphabetID))
 				{
 					return false;
 				}
