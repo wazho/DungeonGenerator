@@ -208,9 +208,11 @@ namespace MissionGrammarSystem {
 		// Step 1: Find matchs.
 		private static Rule FindMatchs(VFlibcs.Graph graphVF) {
 			foreach (var rule in RandomOrderByWeight()) {
-				VFlibcs.VfState vfs = new VFlibcs.VfState(_ruleVFgraphTable[rule], graphVF, false, true);
+				if (rule.QuantityLimit == 0) { continue; }
+				VFlibcs.VfState vfs = new VFlibcs.VfState(graphVF, _ruleVFgraphTable[rule], false, true);
 				if (vfs.FMatch()) {
-					int[] mapping = vfs.Mapping1To2;
+					if (rule.QuantityLimit > 0) { rule.QuantityLimit -= 1; }
+					int[] mapping = vfs.Mapping2To1;
 					_relatedNodes.Clear();
 					for (int i = 0; i < mapping.Length; i++) {
 						// Set Index.
@@ -355,19 +357,20 @@ namespace MissionGrammarSystem {
 		private static VFlibcs.Graph TransToVFGraph(Node node) {
 			nodeDictionary.Clear();
 			VFlibcs.Graph result = new VFlibcs.Graph();
-			result.InsertNode(node.Name);
+			result.InsertNode(node);
 			nodeDictionary.Add(node, 0);
 			InsertGraph(result, node);
 			return result;
 		}
-		// DFS Insert.
+		// DFS Insert node.
 		private static void InsertGraph(VFlibcs.Graph graph, Node node) {
-			// [TEMP] use name to present type.
 			foreach (Node child in node.Children) {
+				if (child == null) { continue; }
+				// If the node have not set then set it.
 				if (! nodeDictionary.ContainsKey(child)) {
-					graph.InsertNode(child.Name);
-					nodeDictionary.Add(child, graph.NodeCount - 1);
+					nodeDictionary.Add(child, graph.InsertNode(child));
 				}
+				// Set edge.
 				graph.InsertEdge(nodeDictionary[node], nodeDictionary[child]);
 				InsertGraph(graph, child);
 			}
