@@ -1,0 +1,268 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Font Name="Segoe UI" Size="9" />
+  <Class Name="vflibcs.BacktrackAction" Collapsed="true">
+    <Position X="7.75" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>VF Isomorphism\BacktrackAction.cs</FileName>
+      <HashCode>ABAAIAAAAAAAAAAAAAAAAAAAAQAEAAAAAAAAAAIAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="vflibcs.BacktrackRecord">
+    <Position X="5.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>VF Isomorphism\BacktrackRecord.cs</FileName>
+      <HashCode>ABAACAAAAAAAAAAAAAAAAAAAJAAAAAAAAAAAAAAgAAA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Field Name="_lstActions" />
+    </ShowAsCollectionAssociation>
+    <Members>
+      <Method Name="MoveToGroup" Hidden="true" />
+      <Method Name="SetMatch" Hidden="true" />
+    </Members>
+    <NestedTypes>
+      <Class Name="vflibcs.BacktrackRecord.BacktrackRecordTester" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>BacktrackRecord.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+  </Class>
+  <Class Name="vflibcs.CandidateFinder" Collapsed="true">
+    <Position X="3" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>VF Isomorphism\CandidateFinder.cs</FileName>
+      <HashCode>AAAAAAAAAAAAEAAAAQAABQAAAAAAAAAAQQEQIAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_vfs" />
+      <Field Name="_mch" />
+    </ShowAsAssociation>
+    <Members>
+      <Field Name="_arinodGraph1" Hidden="true" />
+      <Field Name="_fFailImmediately" Hidden="true" />
+      <Field Name="_iinod" Hidden="true" />
+      <Field Name="_totalDegree2" Hidden="true" />
+      <Method Name="CandidateFinder" Hidden="true" />
+      <Method Name="FValidDegrees" Hidden="true" />
+      <Method Name="SetInitialMatch" Hidden="true" />
+    </Members>
+  </Class>
+  <Class Name="vflibcs.Graph" BaseTypeListCollapsed="true">
+    <Position X="0.5" Y="2.5" Width="2.25" />
+    <TypeIdentifier>
+      <FileName>Graph.cs</FileName>
+      <HashCode>AABAABAAABAAIQAAECAAQAAEAAAEAIgAYBABAAAAEAQ=</HashCode>
+    </TypeIdentifier>
+    <Members>
+      <Field Name="_nidIllegal" Hidden="true" />
+      <Method Name="FindNode" Hidden="true" />
+      <Method Name="GetInEdge" Hidden="true" />
+      <Method Name="GetNodeAttr" Hidden="true" />
+      <Method Name="GetOutEdge" Hidden="true" />
+      <Method Name="IsomorphicShuffling" Hidden="true" />
+      <Property Name="NodeCount" Hidden="true" />
+      <Method Name="OutEdgeCount" Hidden="true" />
+      <Method Name="PosFromId" Hidden="true" />
+      <Method Name="Shuffle" Hidden="true" />
+    </Members>
+    <NestedTypes>
+      <Class Name="vflibcs.Graph.eNode" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Graph.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="vflibcs.Graph.nNode" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Graph.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="vflibcs.Graph.GraphTester" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Graph.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="vflibcs.Match" Collapsed="true">
+    <Position X="0.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>VF Isomorphism\Match.cs</FileName>
+      <HashCode>AAAAKAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="vflibcs.RandomGraph" Collapsed="true">
+    <Position X="8" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>RandomGraph.cs</FileName>
+      <HashCode>AEAAAAAAggQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="vflibcs.SortedListNoKey&lt;T&gt;" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>VF Isomorphism\SortedListNoKey.cs</FileName>
+      <HashCode>AAIAEAAAAAAAAAAACAAAAAQAAAEAAAAAAAAAAAAAIAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="vflibcs.VfeNode" BaseTypeListCollapsed="true">
+    <Position X="8.5" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>VF Isomorphism\VfeNode.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAhABAAAAAAAAAAIAAAgAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <Members>
+      <Method Name="Equals" Hidden="true" />
+      <Method Name="GetHashCode" Hidden="true" />
+      <Method Name="VfeNode" Hidden="true" />
+    </Members>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="vflibcs.VfGraph">
+    <Position X="5.75" Y="2.25" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>VF Isomorphism\VfGraph.cs</FileName>
+      <HashCode>gAAAAAAAAAAACAAAAAIAAAAAgBAEQBAEAAAAAAhAAAA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Field Name="_arNodes" />
+    </ShowAsCollectionAssociation>
+    <Members>
+      <Method Name="GetAttr" Hidden="true" />
+      <Method Name="GetGroup" Hidden="true" />
+      <Method Name="InDegree" Hidden="true" />
+      <Method Name="InNeighbors" Hidden="true" />
+      <Method Name="OutDegree" Hidden="true" />
+      <Method Name="OutNeighbors" Hidden="true" />
+      <Method Name="ReversePermutation" Hidden="true" />
+      <Method Name="SetGroup" Hidden="true" />
+      <Method Name="VfGraph" Hidden="true" />
+    </Members>
+    <NestedTypes>
+      <Class Name="vflibcs.VfGraph.VfGraphTester" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>VfGraph.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+  </Class>
+  <Class Name="vflibcs.VfnNode">
+    <Position X="5.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>VF Isomorphism\VfnNode.cs</FileName>
+      <HashCode>gAAAABIAggAAAAAAACIgAAAAAAAAABAIAgAAAARAIAA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_arvfeEdgeOut" />
+      <Field Name="_arvfeEdgeIn" />
+      <Property Name="Grps" />
+    </ShowAsAssociation>
+    <Members>
+      <Method Name="MakeEdges" Hidden="true" />
+      <Method Name="MakeInEdges" Hidden="true" />
+      <Method Name="MakeOutEdges" Hidden="true" />
+      <Method Name="VfnNode" Hidden="true" />
+    </Members>
+  </Class>
+  <Class Name="vflibcs.VfState">
+    <Position X="3" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>VF Isomorphism\VfState.cs</FileName>
+      <HashCode>AkAEEBAEeAgAEADARABEACUGQABSggAQSGEIQBCFDEI=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_vfgr1" />
+      <Field Name="_ldr1" />
+      <Field Name="_ldr2" />
+      <Property Name="Vfgr2" />
+      <Property Name="Vfgr1" />
+    </ShowAsAssociation>
+    <Members>
+      <Field Name="_armpInodVfInodGraph1" Hidden="true" />
+      <Field Name="_armpInodVfInodGraph2" Hidden="true" />
+      <Field Name="_armpNid1Nid2" Hidden="true" />
+      <Field Name="_armpNid2Nid1" Hidden="true" />
+      <Field Name="_fContextCheck" Hidden="true" />
+      <Field Name="_fIsomorphism" Hidden="true" />
+      <Field Name="_fMatched" Hidden="true" />
+      <Field Name="_fSuccessfulMatch" Hidden="true" />
+      <Field Name="_lstDisconnected1" Hidden="true" />
+      <Field Name="_lstDisconnected2" Hidden="true" />
+      <Field Name="_lstIn1" Hidden="true" />
+      <Field Name="_lstIn2" Hidden="true" />
+      <Field Name="_lstOut1" Hidden="true" />
+      <Field Name="_lstOut2" Hidden="true" />
+      <Field Name="_vfgr1" Hidden="true" />
+      <Field Name="_vfgr2" Hidden="true" />
+      <Method Name="CmpIsomorphism" Hidden="true" />
+      <Method Name="CmpSubgraphIsomorphism" Hidden="true" />
+      <Method Name="FCompleteMatch" Hidden="true" />
+      <Method Name="FFeasible" Hidden="true" />
+      <Method Name="FInOutNew" Hidden="true" />
+      <Property Name="FMassagedPermutation" Hidden="true" />
+      <Method Name="GetGroupCountInList" Hidden="true" />
+      <Method Name="GetList" Hidden="true" />
+      <Method Name="MakeMove" Hidden="true" />
+      <Field Name="map_Illegal" Hidden="true" />
+      <Method Name="MassagePermutation" Hidden="true" />
+      <Method Name="RemoveFromMappingList" Hidden="true" />
+      <Method Name="SetMapping" Hidden="true" />
+      <Method Name="VfState" Hidden="true" />
+    </Members>
+    <NestedTypes>
+      <Delegate Name="vflibcs.VfState.FCompareDegreesDelegate" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>VfState.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+      <Class Name="vflibcs.VfState.VfGraphTester" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>VfState.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <AssociationLine Name="_ldr1" Type="vflibcs.IGraphLoader" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="3" Y="1.75" />
+        <Point X="2.877" Y="1.75" />
+        <Point X="2.877" Y="1.75" />
+        <Point X="2" Y="1.75" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.06" Y="0.1" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="_ldr2" Type="vflibcs.IGraphLoader">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.091" Y="-0.244" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="Vfgr2" Type="vflibcs.VfGraph" FixedFromPoint="true">
+      <Path>
+        <Point X="4.75" Y="3.172" />
+        <Point X="5.75" Y="3.172" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="Vfgr1" Type="vflibcs.VfGraph">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.081" Y="0.12" />
+      </MemberNameLabel>
+    </AssociationLine>
+  </Class>
+  <Interface Name="vflibcs.IGraphLoader" Collapsed="true">
+    <Position X="0.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>IGraphLoader.cs</FileName>
+      <HashCode>AAAAAAAAABAAAQAAECAAQAAAAAAEAIgAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="vflibcs.Groups" Collapsed="true">
+    <Position X="8.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>VF Isomorphism\VfnNode.cs</FileName>
+      <HashCode>AAAAAAAAAAAIoAAAAAAAAAAAAAAAAAAAAAAAAgAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+</ClassDiagram>

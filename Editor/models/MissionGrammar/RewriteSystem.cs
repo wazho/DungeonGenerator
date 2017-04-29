@@ -1,9 +1,9 @@
 using UnityEngine;
-using UnityEditor;
 using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
 using Guid = System.Guid;
+// VF Graph Isomorphism Algorithm.
+using VFlibcs = vflibcs;
 
 namespace MissionGrammarSystem {
 	public static class RewriteSystem {
@@ -38,11 +38,12 @@ namespace MissionGrammarSystem {
 		// Mapping table is used to get the GraphGrammarNode via the Node.
 		private static Dictionary<Node, GraphGrammarNode> _nodeMappingTable;
 		private static Vector2 LEFT_TOP_POSITION = new Vector2(20, 30);
-		private static int PADDING = 50;
+		private const int PADDING = 50;
 		private static List<int> CountInLayer = new List<int>();
+		private static Dictionary<Rule, VFlibcs.Graph> _ruleVFgraphTable = new Dictionary<Rule, VFlibcs.Graph>();
 		// Export the original structure from tree structure to canvas.
 		public static GraphGrammar TransformFromGraph() {
-			GraphGrammar graphGrammar = new GraphGrammar();
+			var graphGrammar = new GraphGrammar();
 			// Get reference table (For getting the symbol of Alphabet.) 
 			_referenceNodeTable       = Alphabet.ReferenceNodeTable;
 			_referenceConnectionTable = Alphabet.ReferenceConnectionTable;
@@ -69,7 +70,7 @@ namespace MissionGrammarSystem {
 			int index = 0;
 			foreach (Node childNode in node.Children) {
 				// Add connection (Now only use Connections[0], will modify).
-				GraphGrammarConnection connection = new GraphGrammarConnection(Alphabet.Connections[0]);
+				var connection = new GraphGrammarConnection(Alphabet.Connections[0]);
 				graphGrammar.Connections.Add(connection);
 				// Set starting sticked attribute.
 				_nodeMappingTable[node].AddStickiedConnection(connection, "start");
@@ -98,31 +99,23 @@ namespace MissionGrammarSystem {
 			CountInLayer[layer] += index;
 		}
 		// Depth-first search.
-		private static void ProgressIteration(Node node) {
-			node.Explored = true;
-			if (! _relatedNodes.Exists(x => ReferenceEquals(x, node))) {
-				// Step 1: Find matchs and set indexes.
-				Rule matchedRule = FindMatchs(node);
-
-				if (matchedRule != null) {
-					Debug.Log("Current node: '" + node.Name + "' is match the rule : " + matchedRule.Name + "  " + node.Index);
-					// Step 2: Remove connections.
-					RemoveConnections(matchedRule);
-					// Step 3: Remove connections from replacement rule.
-					ReplaceNodes(matchedRule);
-					// Step 4: Append the new nodes from replacement rule.
-					AppendNodes(matchedRule);
-					// Step 5: Re-add the connections from replacement rule.
-					ReAddConnection(matchedRule);
-					// Step 6: Remove indexes.
-					RemoveIndexes();
-				}
-			}
-			// Recursive.
-			foreach (Node ChildNode in node.Children) {
-				if (! ChildNode.Explored) {
-					ProgressIteration(ChildNode);
-				}
+		private static void ProgressIteration(Node root) {
+			// [Will Transform] Root transform.
+			VFlibcs.Graph currentGraph = TransToVFGraph(root);
+			// Find a rule.
+			Rule matchedRule = FindMatchs(currentGraph);
+			if (matchedRule != null) {
+				Debug.Log("Current match rule : " + matchedRule.Name);
+				// Step 2: Remove connections.
+				RemoveConnections(matchedRule);
+				// Step 3: Remove connections from replacement rule.
+				ReplaceNodes(matchedRule);
+				// Step 4: Append the new nodes from replacement rule.
+				AppendNodes(matchedRule);
+				// Step 5: Re-add the connections from replacement rule.
+				ReAddConnection(matchedRule);
+				// Step 6: Remove indexes.
+				RemoveIndexes();
 			}
 		}
 		private static void ClearExplored(Node node) {
@@ -140,7 +133,7 @@ namespace MissionGrammarSystem {
 					// If the rule isn't enabled, then skip it.
 					if (! originRule.Enable) { continue; }
 					// Declare the rule. Can use 'rule.SourceRoot' and 'rule.ReplacementRoot'.
-					Rule rule = new Rule();
+					var rule = new Rule();
 					int nodeCount;
 					// Transform source and replacement.
 					rule.Name = originGroup.Name + " - " + originRule.Name;
@@ -155,13 +148,15 @@ namespace MissionGrammarSystem {
 					rule.QuantityLimit = (originRule.QuantityLimit > 0) ? originRule.QuantityLimit : -1;
 					// Insert into the '_rules'.
 					_rules.Add(rule);
+					// Store the dictionary of VF graph.
+					_ruleVFgraphTable.Add(rule, TransToVFGraph(rule.SourceRoot));
 				}
 			}
 		}
 		// Transform a graph into tree struct. Then return the table.
 		private static List<Node> TransformGraph(GraphGrammar graph, out int nodeCount) {
 			// Initialize nodes
-			Node[] nodes = new Node[graph.Nodes.Count];
+			var nodes = new Node[graph.Nodes.Count];
 			for (int i = 0; i < graph.Nodes.Count; i++) {
 				nodes[i] = new Node(graph.Nodes[i], graph.Nodes[i].Ordering);
 			}
@@ -181,14 +176,11 @@ namespace MissionGrammarSystem {
 			// Return the table.
 			return nodes.OrderBy(n => n.Index).ToList();
 		}
-
-		private static bool[] _usedIndexTable;
-		private static List<Node> _exploredNodes = new List<Node>();
 		private static List<Rule> RandomOrderByWeight() {
 			// Declare list to store rules by order.
-			List<Rule> orderRules = new List<Rule>();
+			var orderRules = new List<Rule>();
 			// Declare the clone list that avoid to modify original list.
-			List<Rule> cloneRules = new List<Rule>(_rules);
+			var cloneRules = new List<Rule>(_rules);
 			// Sum of rule's weight.
 			int sum = cloneRules.Sum(r => r.Weight);
 			// When cloneRules is empty. The sort finish.
@@ -213,74 +205,26 @@ namespace MissionGrammarSystem {
 			}
 			return orderRules;
 		}
-
-		private static Rule FindMatchs(Node node) {
-			// Find the rule that is legal.
+		// Step 1: Find matchs.
+		private static Rule FindMatchs(VFlibcs.Graph graphVF) {
 			foreach (var rule in RandomOrderByWeight()) {
-				// If the quantity of rule less than limit.
-				// [Notice] Only ZERO will continue. It means the negative value is equivalent to infinite.
 				if (rule.QuantityLimit == 0) { continue; }
-				// Compare the root node of rule.
-				if (Alphabet.IsAnyNode(rule.SourceRoot.AlphabetID) || rule.SourceRoot.AlphabetID == node.AlphabetID) {
-					// Clear index of all nodes.
-					RemoveIndexes();
+				VFlibcs.VfState vfs = new VFlibcs.VfState(graphVF, _ruleVFgraphTable[rule], false, true);
+				if (vfs.FMatch()) {
+					if (rule.QuantityLimit > 0) { rule.QuantityLimit -= 1; }
+					int[] mapping = vfs.Mapping2To1;
 					_relatedNodes.Clear();
-					_exploredNodes.Clear();
-					_usedIndexTable = new bool[rule.SourceNodeCount + 1];
-					node.Index = rule.SourceRoot.Index;
-					_relatedNodes.Add(node);
-					_usedIndexTable[node.Index] = true;
-					if (RecursionMatch(node, rule.SourceRoot)) {
-						// Quantity limit decrease.
-						rule.QuantityLimit -= 1;
-						return rule;
+					for (int i = 0; i < mapping.Length; i++) {
+						// Set Index.
+						Node node  = graphVF.GetNodeAttr(mapping[i]) as Node;
+						node.Index = (_ruleVFgraphTable[rule].GetNodeAttr(i) as Node).Index;
+						_relatedNodes.Add(node);
 					}
+					return rule;
 				}
 			}
 			return null;
 		}
-		// Confirm the children are match
-		private static bool RecursionMatch(Node node, Node matchNode) {
-			_exploredNodes.Add(node);
-			foreach (Node childMatchNode in matchNode.Children) {
-				bool _isMatch = false;
-				foreach (Node childNode in node.Children) {
-					// If this node index and the rule index have not be used
-					if (childNode.Index == 0 &&
-						! _usedIndexTable[childMatchNode.Index] &&
-						(childNode.AlphabetID == childMatchNode.AlphabetID ||
-						Alphabet.IsAnyNode(childMatchNode.AlphabetID))) {
-						// Record used node.
-						_usedIndexTable[childMatchNode.Index] = true;
-						childNode.Index = childMatchNode.Index;
-						_relatedNodes.Add(childNode);
-						// If the children are also match.
-						if(_exploredNodes.Exists(x => ReferenceEquals(x, childNode)) ||
-						 RecursionMatch(childNode, childMatchNode)) {
-							_isMatch = true;
-							break;
-						} else {
-							childNode.Index = 0;
-							_usedIndexTable[childMatchNode.Index] = false;
-							_relatedNodes.Remove(childNode);
-						}
-						
-					} else if (childNode.Index == childMatchNode.Index &&
-						_usedIndexTable[childMatchNode.Index]) {
-						_isMatch = true;
-						break;
-					}
-				}
-
-				// If no child is match.
-				if (! _isMatch) {
-					return false;
-				}
-			}
-			// If rule node have no child, or said this rule is match.
-			return true;
-		}
-
 		// Step 2: Remove connections.
 		private static void RemoveConnections(Rule matchedRule) {
 			foreach (Node node in _relatedNodes) {
@@ -311,7 +255,7 @@ namespace MissionGrammarSystem {
 			foreach (Node matchedRuleNode in matchedRule.ReplacementNodeTable) {
 				// If index does not exist then add.
 				if (! _relatedNodes.Exists(x => x.Index == matchedRuleNode.Index)) {
-					Node node = new Node(matchedRuleNode);
+					var node = new Node(matchedRuleNode);
 					_relatedNodes.Add(node);
 				}
 			}
@@ -329,161 +273,106 @@ namespace MissionGrammarSystem {
 		}
 		// Step 6: Remove indexes.
 		private static void RemoveIndexes() {
-			foreach (var node in _relatedNodes) {
+			foreach (var node in _relatedNodes ?? Enumerable.Empty<Node>()) {
 				node.Index = 0;
 			}
 		}
 		// This is the minimum unit of exporting mission graph.
-		private class Node {
-			// GUID for this symbol in alphabet.
-			private Guid             _alphabetID;
-			// Members.
-			private string           _name;
-			private int              _index;
-			private NodeTerminalType _terminal;
-			private List<Node>       _parents;
-			private List<Node>       _children;
-			private bool             _isExplored; 
+		public class Node {
+			public Guid             AlphabetID { get; private set; }
+			public string           Name       { get; set; }
+			public int              Index      { get; set; }
+			public NodeTerminalType Terminal   { get; set; }
+			public List<Node>       Parents    { get; set; }
+			public List<Node>       Children   { get; set; }
+			public bool             Explored   { get; set; }
+
 			// Constructor.
 			public Node() {
-				this._alphabetID = Guid.Empty;
-				this._name       = string.Empty;
-				this._index      = 0;
-				this._terminal   = NodeTerminalType.Terminal;
-				this._parents    = new List<Node>();
-				this._children   = new List<Node>();
-				this._isExplored = false;
+				this.AlphabetID = Guid.Empty;
+				this.Name       = string.Empty;
+				this.Index      = 0;
+				this.Terminal   = NodeTerminalType.Terminal;
+				this.Parents    = new List<Node>();
+				this.Children   = new List<Node>();
+				this.Explored   = false;
 			}
 			public Node(GraphGrammarNode node) : this() {
-				this._alphabetID = node.AlphabetID;
-				this._name       = node.Name;
-				this._terminal   = node.Terminal;
+				this.AlphabetID = node.AlphabetID;
+				this.Name       = node.Name;
+				this.Terminal   = node.Terminal;
 			}
-			// Just for eample, maybe will delete soon.
 			public Node(GraphGrammarNode node, int index) : this() {
-				this._alphabetID = node.AlphabetID;
-				this._name       = node.Name;
-				this._index      = index;
-				this._terminal   = node.Terminal;
+				this.AlphabetID = node.AlphabetID;
+				this.Name       = node.Name;
+				this.Index      = index;
+				this.Terminal   = node.Terminal;
 			}
 			public Node(Node node) : this() {
-				this._alphabetID = node.AlphabetID;
-				this._name       = node.Name;
-				this._terminal   = node.Terminal;
-				this.Index       = node.Index;
-			}
-			// Name, getter and setter.
-			public string Name {
-				get { return _name; }
-				set { _name = value; }
-			}
-			// Index, getter and setter.
-			public int Index {
-				get { return _index; }
-				set { _index = value; }
-			}
-			// Terminal, getter and setter.
-			public NodeTerminalType Terminal {
-				get { return _terminal; }
-				set { _terminal = value; }
-			}
-			// Parents, getter and setter.
-			public List<Node> Parents {
-				get { return _parents; }
-				set { _parents = value; }
-			}
-			// Children, getter and setter.
-			public List<Node> Children {
-				get { return _children; }
-				set { _children = value; }
-			}
-			// AlphabetID, getter and setter
-			public Guid AlphabetID {
-				get { return _alphabetID; }
-			}
-			// Explored, getter and setter.
-			public bool Explored {
-				get { return _isExplored; }
-				set { _isExplored = value; }
-			}
-			// Explored, getter.
-			public Node UnexploredChild {
-				get { return _children.FirstOrDefault<Node>(n => n.Explored == false); }
+				this.AlphabetID = node.AlphabetID;
+				this.Name       = node.Name;
+				this.Terminal   = node.Terminal;
+				this.Index      = node.Index;
 			}
 			// Update the node information, only name and terminal.
 			public void Update(Node node) {
-				_alphabetID = node.AlphabetID;
-				_name       = node.Name;
-				_terminal   = node.Terminal;
+				AlphabetID = node.AlphabetID;
+				Name       = node.Name;
+				Terminal   = node.Terminal;
+			}
+			public Node UnexploredChild {
+				get { return Children.FirstOrDefault<Node>(n => ! n.Explored); }
 			}
 		}
 		// This is a pair of source rule and replacement rule.
 		private class Rule {
 			// [Will remove just for test]
-			public string Name;
+			public string     Name                 { get; set; }
+			public Node       SourceRoot           { get; set; }
+			public Node       ReplacementRoot      { get; set; }
+			public int        SourceNodeCount      { get; set; }
+			public int        ReplacementNodeCount { get; set; }
+			public List<Node> SourceNodeTable      { get; set; }
+			public List<Node> ReplacementNodeTable { get; set; }
+			public int        Weight               { get; set; }
+			public int        QuantityLimit        { get; set; }
 
-			private Node       _sourceRoot;
-			private Node       _replacementRoot;
-			private int        _sourceNodeCount;
-			private int        _replacementNodeCount;
-			private List<Node> _sourceNodeTable;
-			private List<Node> _replacementNodeTable;
-			private int        _weight;
-			private int        _quantityLimit;
 			// Constructor.
 			public Rule() {
-				this._sourceRoot           = new Node();
-				this._replacementRoot      = new Node();
-				this._sourceNodeTable      = new List<Node>();
-				this._replacementNodeTable = new List<Node>();
-			}
-			// Source, getter and setter.
-			public Node SourceRoot {
-				get { return _sourceRoot; }
-				set { _sourceRoot = value; }
-			}
-			// Replacement, getter and setter.
-			public Node ReplacementRoot {
-				get { return _replacementRoot; }
-				set { _replacementRoot = value; }
-			}
-			// Source node count, getter and setter.
-			public int SourceNodeCount {
-				get { return _sourceNodeCount; }
-				set { _sourceNodeCount = value; }
-			}
-			// Source node count, getter and setter.
-			public int ReplacementNodeCount {
-				get { return _replacementNodeCount; }
-				set { _replacementNodeCount = value; }
-			}
-			// SourceNodeTable, getter and setter.
-			public List<Node> SourceNodeTable {
-				get { return _sourceNodeTable; }
-				set { _sourceNodeTable = value; }
-			}
-			// ReplacementNodeTable, getter and setter.
-			public List<Node> ReplacementNodeTable {
-				get { return _replacementNodeTable; }
-				set { _replacementNodeTable = value; }
-			}
-			// Weight, getter.
-			public int Weight {
-				get { return _weight; }
-				set { _weight = value; }
-			}
-			// Quantity limit, getter and setter.
-			public int QuantityLimit {
-				get { return _quantityLimit; }
-				set { _quantityLimit = value; }
+				this.SourceRoot           = new Node();
+				this.ReplacementRoot      = new Node();
+				this.SourceNodeTable      = new List<Node>();
+				this.ReplacementNodeTable = new List<Node>();
 			}
 			// Find the node from source rule by index.
 			public Node FindSourceByIndex(int index) {
-				return _sourceNodeTable.Where(n => n.Index == index).FirstOrDefault();
+				return SourceNodeTable.First(n => n.Index == index);
 			}
 			// Find the node from replacement rule by index.
 			public Node FindReplacementByIndex(int index) {
-				return _replacementNodeTable.Where(n => n.Index == index).FirstOrDefault();
+				return ReplacementNodeTable.First(n => n.Index == index);
+			}
+		}
+		private static Dictionary<Node, int> nodeDictionary = new Dictionary<Node, int>();
+		private static VFlibcs.Graph TransToVFGraph(Node node) {
+			nodeDictionary.Clear();
+			VFlibcs.Graph result = new VFlibcs.Graph();
+			result.InsertNode(node);
+			nodeDictionary.Add(node, 0);
+			InsertGraph(result, node);
+			return result;
+		}
+		// DFS Insert node.
+		private static void InsertGraph(VFlibcs.Graph graph, Node node) {
+			foreach (Node child in node.Children) {
+				if (child == null) { continue; }
+				// If the node have not set then set it.
+				if (! nodeDictionary.ContainsKey(child)) {
+					nodeDictionary.Add(child, graph.InsertNode(child));
+				}
+				// Set edge.
+				graph.InsertEdge(nodeDictionary[node], nodeDictionary[child]);
+				InsertGraph(graph, child);
 			}
 		}
 	}
