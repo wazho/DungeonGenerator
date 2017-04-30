@@ -73,7 +73,8 @@ namespace vflibcs
 
 		int _inDegreeTotal1 = 0, _inDegreeTotal2 = 0, _outDegreeTotal1 = 0, _outDegreeTotal2 = 0;
 
-		bool _fIsomorphism = false;			// Subgraph Isomorphism or straight isomorphism?
+		// Salmon commend becuase never used.
+		// bool _fIsomorphism = false;			// Subgraph Isomorphism or straight isomorphism?
 		bool _fSuccessfulMatch = false;		// Have we made a successful match?
 		bool _fMatched = false;				// Have we attempted a match?
 		bool _fContextCheck = false;		// Do we context check using the attributes?
@@ -290,7 +291,8 @@ namespace vflibcs
 				fnCmp = new FCompareDegreesDelegate(CmpSubgraphIsomorphism);
 			}
 
-			_fIsomorphism = fIsomorphism;
+			// Salmon commend becuase never used.
+			// _fIsomorphism = fIsomorphism;
 
 			_armpInodVfInodGraph1 = new CmpNodeDegrees(loader1).Permutation;
 			_armpInodVfInodGraph2 = new CmpNodeDegrees(loader2).Permutation;

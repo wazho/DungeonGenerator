@@ -34,7 +34,7 @@ namespace MissionGrammarSystem {
 		}
 		// Reference table is used to get the symbol of Alphabet via the AlphabetID.
 		private static Dictionary<Guid, GraphGrammarNode> _referenceNodeTable;
-		private static Dictionary<Guid, GraphGrammarConnection> _referenceConnectionTable;
+		// private static Dictionary<Guid, GraphGrammarConnection> _referenceConnectionTable;
 		// Mapping table is used to get the GraphGrammarNode via the Node.
 		private static Dictionary<Node, GraphGrammarNode> _nodeMappingTable;
 		private static Vector2 LEFT_TOP_POSITION = new Vector2(20, 30);
@@ -48,7 +48,7 @@ namespace MissionGrammarSystem {
 			var graphGrammar = new GraphGrammar();
 			// Get reference table (For getting the symbol of Alphabet.) 
 			_referenceNodeTable       = Alphabet.ReferenceNodeTable;
-			_referenceConnectionTable = Alphabet.ReferenceConnectionTable;
+			// _referenceConnectionTable = Alphabet.ReferenceConnectionTable;
 			// Initialize mapping table.
 			_nodeMappingTable = new Dictionary<Node, GraphGrammarNode>();
 			// Add root node.

@@ -24,7 +24,7 @@ namespace vflibcs
 		#region Hashing
 		public override int GetHashCode()
 		{
-			int iTest = _inodTo.GetHashCode();
+			// int iTest = _inodTo.GetHashCode();
 			return ((_inodFrom << 16) + _inodTo).GetHashCode();
 		}
 
