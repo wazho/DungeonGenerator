@@ -28,14 +28,14 @@ namespace MissionGrammarSystem {
 		private static Dictionary<ValidationLabel, Func<MissionRule, GraphGrammar, bool>> _validationMethods = new Dictionary<ValidationLabel, Func<MissionRule, GraphGrammar, bool>>() {
 			{ ValidationLabel.LeftMoreThanRight,  (MissionRule rule, GraphGrammar graphGrammar) => ValidateLeftMoreThanRight(rule, graphGrammar) },
 			{ ValidationLabel.EmptyLeft,          (MissionRule rule, GraphGrammar graphGrammar) => ValidateEmptyLeft(rule, graphGrammar) },
-			{ ValidationLabel.HeadHasParent,      (MissionRule rule, GraphGrammar graphGrammar) => ValidateHeadHasParent(rule, graphGrammar) },
+			// { ValidationLabel.HeadHasParent,      (MissionRule rule, GraphGrammar graphGrammar) => ValidateHeadHasParent(rule, graphGrammar) },
 			{ ValidationLabel.IsolatedNode,       (MissionRule rule, GraphGrammar graphGrammar) => ValidateIsolatedNode(rule, graphGrammar) },
 			{ ValidationLabel.IsolatedConnection, (MissionRule rule, GraphGrammar graphGrammar) => ValidateIsolatedConnection(rule, graphGrammar) },
 			{ ValidationLabel.ExactlyDuplicated,  (MissionRule rule, GraphGrammar graphGrammar) => ValidateExactlyDuplicated(rule, graphGrammar) },
 			{ ValidationLabel.MultipleRelations,  (MissionRule rule, GraphGrammar graphGrammar) => ValidateMultipleRelations(rule, graphGrammar) },
 			{ ValidationLabel.CyclicLink,         (MissionRule rule, GraphGrammar graphGrammar) => ValidateCyclicLink(rule, graphGrammar) },
-			{ ValidationLabel.OrphanNode,         (MissionRule rule, GraphGrammar graphGrammar) => ValidateOrphanNode(rule, graphGrammar) },
-			{ ValidationLabel.OverflowedAnyNode,  (MissionRule rule, GraphGrammar graphGrammar) => ValidateOverflowedAnyNode(rule, graphGrammar) },
+			// { ValidationLabel.OrphanNode,         (MissionRule rule, GraphGrammar graphGrammar) => ValidateOrphanNode(rule, graphGrammar) },
+			// { ValidationLabel.OverflowedAnyNode,  (MissionRule rule, GraphGrammar graphGrammar) => ValidateOverflowedAnyNode(rule, graphGrammar) },
 		};
 
 		// Validate the graph grammar (one of pair of rule).
@@ -66,7 +66,7 @@ namespace MissionGrammarSystem {
 		private static bool ValidateHeadHasParent(MissionRule rule, GraphGrammar graphGrammar) {
 			// If head doesn't has parent, it return true.
 			// [Will modify]
-			//return (graphGrammar.Nodes.Where(n => (n.Ordering == 1 && n.Parents.Count == 0)).Any());
+			return (graphGrammar.Nodes.Where(n => (n.Ordering == 1 && n.Parents.Count == 0)).Any());
 			return true;
 		}
 		// No 4. IsolatedNode.
@@ -191,15 +191,15 @@ namespace MissionGrammarSystem {
 		private static bool ValidateOrphanNode(MissionRule rule, GraphGrammar graphGrammar) {
 			// If node has no parent, it is an orphan. (Exclude ordering 1)
 			// [Will modify]
-			//return (! graphGrammar.Nodes.Where(n => (n.Ordering != 1 && n.Parents.Count == 0)).Any());
+			return (! graphGrammar.Nodes.Where(n => (n.Ordering != 1 && n.Parents.Count == 0)).Any());
 			return true;
 		}
 		// No 10. OverflowedAnyNode.
 		private static bool ValidateOverflowedAnyNode(MissionRule rule, GraphGrammar graphGrammar) {
 			// if replaceRule have any node that dont match the source ordering.
 			// [Will modify]
-			//return !rule.ReplacementRule.Nodes.Exists(n => (Alphabet.IsAnyNode(n.AlphabetID) && 
-			//(n.Ordering > rule.SourceRule.Nodes.Count ? true : !Alphabet.IsAnyNode(rule.SourceRule.Nodes[n.Ordering - 1].AlphabetID))));
+			return !rule.ReplacementRule.Nodes.Exists(n => (Alphabet.IsAnyNode(n.AlphabetID) && 
+			(n.Ordering > rule.SourceRule.Nodes.Count ? true : !Alphabet.IsAnyNode(rule.SourceRule.Nodes[n.Ordering - 1].AlphabetID))));
 			return true;
 		}
 		// Return Error message.
