@@ -18,7 +18,7 @@ namespace MissionGrammarSystem {
 		private GraphGrammar _replacementRule;
 		private bool         _isEnabled;
 		// [Addition] if error occur disabled button
-		private bool         _isVaild;
+		private bool         _isValid;
 		private int          _weight;
 		private int          _quantityLimit;
 		// Constructor - Default.
@@ -27,8 +27,8 @@ namespace MissionGrammarSystem {
 			this._description     = "Description here.";
 			this._sourceRule      = new GraphGrammar();
 			this._replacementRule = new GraphGrammar();
-			this._isEnabled       = true;
-			this._isVaild         = true;
+			this._isEnabled       = false;
+			this._isValid         = false;
 			this._weight          = 10;
 			this._quantityLimit   = 0; 
 		}
@@ -64,8 +64,8 @@ namespace MissionGrammarSystem {
 		}
 		// Validation, getter and setter.
 		public bool Valid {
-			get { return _isVaild; }
-			set { _isVaild = value; }
+			get { return _isValid; }
+			set { _isValid = value; }
 		}
 		// Quantity Limit, getter and setter.
 		public int QuantityLimit {

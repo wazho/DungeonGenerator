@@ -26,6 +26,7 @@ public class DungeonWindow : EditorWindow {
 	public static void ShowMissionAlphabetWindow() {
 		bool hasOpened = Mission.AlphabetWindow.IsOpen;
 		var window = EditorWindow.GetWindow<Mission.AlphabetWindow>("Mission alphabet", true) as Mission.AlphabetWindow;
+		Mission.AlphabetWindow.Initialize();
 		// Relocate the position of the window if it hasn't been opened.
 		if (! hasOpened) {
 			window.position = new Rect(35, 60, 500, 660);

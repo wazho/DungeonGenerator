@@ -16,7 +16,6 @@ namespace MissionGrammarSystem {
 		private string            _description;
 		private List<MissionRule> _rules;
 		private bool              _isSelected;
-		// [NEW FIELD] if all button enable
 		private bool              _allEnable;
 		// Constructor - Default.
 		public MissionGroup() {

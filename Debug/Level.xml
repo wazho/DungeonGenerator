@@ -915,6 +915,7 @@
             </Connections>
           </MissionGraph>
         </ReplacementRule>
+        <Valid>True</Valid>
         <Enable>True</Enable>
         <Weight>10</Weight>
         <QuantityLimit>0</QuantityLimit>
@@ -1203,6 +1204,7 @@
             </Connections>
           </MissionGraph>
         </ReplacementRule>
+        <Valid>True</Valid>
         <Enable>True</Enable>
         <Weight>10</Weight>
         <QuantityLimit>0</QuantityLimit>
@@ -1621,6 +1623,7 @@
             </Connections>
           </MissionGraph>
         </ReplacementRule>
+        <Valid>True</Valid>
         <Enable>True</Enable>
         <Weight>10</Weight>
         <QuantityLimit>0</QuantityLimit>
@@ -1937,6 +1940,7 @@
             </Connections>
           </MissionGraph>
         </ReplacementRule>
+        <Valid>True</Valid>
         <Enable>True</Enable>
         <Weight>10</Weight>
         <QuantityLimit>0</QuantityLimit>
@@ -2223,6 +2227,7 @@
             </Connections>
           </MissionGraph>
         </ReplacementRule>
+        <Valid>True</Valid>
         <Enable>True</Enable>
         <Weight>10</Weight>
         <QuantityLimit>0</QuantityLimit>

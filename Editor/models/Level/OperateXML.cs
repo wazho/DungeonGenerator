@@ -52,6 +52,7 @@ namespace DungeonLevel {
 						elementRule.Add(new XElement("Description", rule.Description));
 						elementRule.Add(new XElement("SourceRule", SerializeMissionGraph(rule.SourceRule)));
 						elementRule.Add(new XElement("ReplacementRule", SerializeMissionGraph(rule.ReplacementRule)));
+						elementRule.Add(new XElement("Valid", rule.Valid.ToString()));
 						elementRule.Add(new XElement("Enable", rule.Enable.ToString()));
 						elementRule.Add(new XElement("Weight", rule.Weight));
 						elementRule.Add(new XElement("QuantityLimit", rule.QuantityLimit));
@@ -192,6 +193,7 @@ namespace DungeonLevel {
 						rule.SourceRule = UnserializeMissionGraph(elementRule.Element("SourceRule"));
 						rule.ReplacementRule = UnserializeMissionGraph(elementRule.Element("ReplacementRule"));
 						rule.Enable = bool.Parse(elementRule.Element("Enable").Value);
+						rule.Valid = bool.Parse(elementRule.Element("Valid").Value);
 						rule.Weight = int.Parse(elementRule.Element("Weight").Value);
 						rule.QuantityLimit = int.Parse(elementRule.Element("QuantityLimit").Value);
 

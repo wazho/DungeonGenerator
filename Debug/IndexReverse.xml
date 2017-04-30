@@ -850,6 +850,7 @@
             </Connections>
           </MissionGraph>
         </ReplacementRule>
+        <Valid>True</Valid>
         <Enable>True</Enable>
         <Weight>10</Weight>
         <QuantityLimit>0</QuantityLimit>
@@ -1203,6 +1204,7 @@
             </Connections>
           </MissionGraph>
         </ReplacementRule>
+        <Valid>True</Valid>
         <Enable>False</Enable>
         <Weight>10</Weight>
         <QuantityLimit>0</QuantityLimit>
@@ -1621,6 +1623,7 @@
             </Connections>
           </MissionGraph>
         </ReplacementRule>
+        <Valid>True</Valid>
         <Enable>False</Enable>
         <Weight>10</Weight>
         <QuantityLimit>0</QuantityLimit>
@@ -1885,8 +1888,8 @@
                   <Text>#000000</Text>
                 </SymbolColor>
                 <StickiedConnections>
-                  <ConnectionID>60cf0ae4-f20e-4ec1-8d13-3dbc67534cdd</ConnectionID>
                   <ConnectionID>6b2b4a0c-cad0-49af-9b11-4cbf2ddce92d</ConnectionID>
+                  <ConnectionID>60cf0ae4-f20e-4ec1-8d13-3dbc67534cdd</ConnectionID>
                 </StickiedConnections>
               </Node>
             </Nodes>
@@ -1978,6 +1981,7 @@
             </Connections>
           </MissionGraph>
         </ReplacementRule>
+        <Valid>True</Valid>
         <Enable>True</Enable>
         <Weight>10</Weight>
         <QuantityLimit>0</QuantityLimit>
@@ -2396,6 +2400,7 @@
             </Connections>
           </MissionGraph>
         </ReplacementRule>
+        <Valid>True</Valid>
         <Enable>True</Enable>
         <Weight>10</Weight>
         <QuantityLimit>0</QuantityLimit>

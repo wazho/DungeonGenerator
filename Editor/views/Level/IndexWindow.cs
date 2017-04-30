@@ -36,9 +36,13 @@ namespace DungeonLevel {
 					"Yes", "No")) {
 					// Initialization.
 					LevelSettingsWindow.Initial();
+					// Reset mission alphabet, mission grammar and rewrite system.
 					MissionGrammarSystem.Alphabet.Initial();
 					MissionGrammarSystem.MissionGrammar.Initial();
 					MissionGrammarSystem.RewriteSystem.Initial();
+					// Reset the windows of mission grammar system.
+					MissionGrammarSystem.AlphabetWindow.Initialize();
+					MissionGrammarSystem.RulesWindow.Initialize();
 					GraphGeneration.MissionGraphWindow.Initialize();
 				}
 			}

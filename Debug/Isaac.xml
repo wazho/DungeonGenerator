@@ -1085,6 +1085,7 @@
             </Connections>
           </MissionGraph>
         </ReplacementRule>
+        <Valid>True</Valid>
         <Enable>True</Enable>
         <Weight>10</Weight>
         <QuantityLimit>0</QuantityLimit>
@@ -1308,6 +1309,7 @@
             </Connections>
           </MissionGraph>
         </ReplacementRule>
+        <Valid>True</Valid>
         <Enable>True</Enable>
         <Weight>150</Weight>
         <QuantityLimit>1</QuantityLimit>
@@ -1821,6 +1823,7 @@
             </Connections>
           </MissionGraph>
         </ReplacementRule>
+        <Valid>True</Valid>
         <Enable>True</Enable>
         <Weight>30</Weight>
         <QuantityLimit>1</QuantityLimit>
@@ -1910,6 +1913,7 @@
             <Connections />
           </MissionGraph>
         </ReplacementRule>
+        <Valid>True</Valid>
         <Enable>True</Enable>
         <Weight>10</Weight>
         <QuantityLimit>0</QuantityLimit>
@@ -2066,6 +2070,7 @@
             </Connections>
           </MissionGraph>
         </ReplacementRule>
+        <Valid>True</Valid>
         <Enable>True</Enable>
         <Weight>20</Weight>
         <QuantityLimit>2</QuantityLimit>
@@ -2222,6 +2227,7 @@
             </Connections>
           </MissionGraph>
         </ReplacementRule>
+        <Valid>True</Valid>
         <Enable>True</Enable>
         <Weight>10</Weight>
         <QuantityLimit>1</QuantityLimit>
@@ -2378,6 +2384,7 @@
             </Connections>
           </MissionGraph>
         </ReplacementRule>
+        <Valid>True</Valid>
         <Enable>True</Enable>
         <Weight>10</Weight>
         <QuantityLimit>1</QuantityLimit>
@@ -2666,6 +2673,7 @@
             </Connections>
           </MissionGraph>
         </ReplacementRule>
+        <Valid>True</Valid>
         <Enable>True</Enable>
         <Weight>10</Weight>
         <QuantityLimit>1</QuantityLimit>
@@ -3023,6 +3031,7 @@
             </Connections>
           </MissionGraph>
         </ReplacementRule>
+        <Valid>True</Valid>
         <Enable>True</Enable>
         <Weight>10</Weight>
         <QuantityLimit>2</QuantityLimit>
