@@ -100,10 +100,9 @@ namespace MissionGrammarSystem {
 		}
 		// Depth-first search.
 		private static void ProgressIteration(Node root) {
-			// [Will Transform] Root transform.
-			VFlibcs.Graph currentGraph = TransToVFGraph(root);
-			// Find a rule.
-			Rule matchedRule = FindMatchs(currentGraph);
+			// if (root.Explored) { return; }
+			// Step 1: Find matched rule.
+			Rule matchedRule = FindMatchs(TransToVFGraph(root));
 			if (matchedRule != null) {
 				Debug.Log("Current match rule : " + matchedRule.Name);
 				// Step 2: Remove connections.
@@ -117,6 +116,12 @@ namespace MissionGrammarSystem {
 				// Step 6: Remove indexes.
 				RemoveIndexes();
 			}
+			// root.Explored = true;
+			// foreach (Node childNode in root.Children) {
+			// 	if (! childNode.Explored) {
+			// 		ProgressIteration(childNode);
+			// 	}
+			// }
 		}
 		private static void ClearExplored(Node node) {
 			node.Explored = false;
@@ -209,14 +214,15 @@ namespace MissionGrammarSystem {
 		private static Rule FindMatchs(VFlibcs.Graph graphVF) {
 			foreach (var rule in RandomOrderByWeight()) {
 				if (rule.QuantityLimit == 0) { continue; }
+				// VfState: Calculate the result of subgraph isomorphic.
 				VFlibcs.VfState vfs = new VFlibcs.VfState(graphVF, _ruleVFgraphTable[rule], false, true);
 				if (vfs.FMatch()) {
+					// Reduce the quantity limit.
 					if (rule.QuantityLimit > 0) { rule.QuantityLimit -= 1; }
-					int[] mapping = vfs.Mapping2To1;
 					_relatedNodes.Clear();
-					for (int i = 0; i < mapping.Length; i++) {
+					for (int i = 0; i < vfs.Mapping2To1.Length; i++) {
 						// Set Index.
-						Node node  = graphVF.GetNodeAttr(mapping[i]) as Node;
+						Node node  = graphVF.GetNodeAttr(vfs.Mapping2To1[i]) as Node;
 						node.Index = (_ruleVFgraphTable[rule].GetNodeAttr(i) as Node).Index;
 						_relatedNodes.Add(node);
 					}
@@ -353,17 +359,15 @@ namespace MissionGrammarSystem {
 				return ReplacementNodeTable.First(n => n.Index == index);
 			}
 		}
-		private static Dictionary<Node, int> nodeDictionary = new Dictionary<Node, int>();
 		private static VFlibcs.Graph TransToVFGraph(Node node) {
-			nodeDictionary.Clear();
+			Dictionary<Node, int> nodeDictionary = new Dictionary<Node, int>();
 			VFlibcs.Graph result = new VFlibcs.Graph();
-			result.InsertNode(node);
-			nodeDictionary.Add(node, 0);
-			InsertGraph(result, node);
+			nodeDictionary.Add(node, result.InsertNode(node));
+			InsertGraph(nodeDictionary, result, node);
 			return result;
 		}
 		// DFS Insert node.
-		private static void InsertGraph(VFlibcs.Graph graph, Node node) {
+		private static void InsertGraph(Dictionary<Node, int> nodeDictionary, VFlibcs.Graph graph, Node node) {
 			foreach (Node child in node.Children) {
 				if (child == null) { continue; }
 				// If the node have not set then set it.
@@ -372,7 +376,7 @@ namespace MissionGrammarSystem {
 				}
 				// Set edge.
 				graph.InsertEdge(nodeDictionary[node], nodeDictionary[child]);
-				InsertGraph(graph, child);
+				InsertGraph(nodeDictionary, graph, child);
 			}
 		}
 	}
