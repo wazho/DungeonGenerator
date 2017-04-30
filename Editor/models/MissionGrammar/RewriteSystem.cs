@@ -370,24 +370,40 @@ namespace MissionGrammarSystem {
 				return ReplacementNodeTable.First(n => n.Index == index);
 			}
 		}
+		private static Dictionary<Node, int> nodeDictionary = new Dictionary<Node, int>();
+		private static List<Node> _usedNode = new List<Node>();
 		private static VFlibcs.Graph TransToVFGraph(Node node) {
-			Dictionary<Node, int> nodeDictionary = new Dictionary<Node, int>();
+			nodeDictionary.Clear();
+			_usedNode.Clear();
 			VFlibcs.Graph result = new VFlibcs.Graph();
 			nodeDictionary.Add(node, result.InsertNode(node));
-			InsertGraph(nodeDictionary, result, node);
+			InsertGraph(result, node);
 			return result;
 		}
 		// DFS Insert node.
-		private static void InsertGraph(Dictionary<Node, int> nodeDictionary, VFlibcs.Graph graph, Node node) {
+		private static void InsertGraph(VFlibcs.Graph graph, Node node) {
+			_usedNode.Add(node);
 			foreach (Node child in node.Children) {
+				if (_usedNode.Exists(x => x == child)) { continue; }
 				if (child == null) { continue; }
 				// If the node have not set then set it.
-				if (! nodeDictionary.ContainsKey(child)) {
+				if (!nodeDictionary.ContainsKey(child)) {
 					nodeDictionary.Add(child, graph.InsertNode(child));
 				}
 				// Set edge.
 				graph.InsertEdge(nodeDictionary[node], nodeDictionary[child]);
-				InsertGraph(nodeDictionary, graph, child);
+				InsertGraph(graph, child);
+			}
+			foreach (var parent in node.Parents) {
+				if (_usedNode.Exists(x => x == parent)) { continue; }
+				if (parent == null) { continue; }
+				// If the node have not set then set it.
+				if (!nodeDictionary.ContainsKey(parent)) {
+					nodeDictionary.Add(parent, graph.InsertNode(parent));
+				}
+				// Set edge.
+				graph.InsertEdge(nodeDictionary[parent], nodeDictionary[node]);
+				InsertGraph(graph, parent);
 			}
 		}
 	}

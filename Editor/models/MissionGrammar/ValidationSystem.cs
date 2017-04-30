@@ -65,7 +65,9 @@ namespace MissionGrammarSystem {
 		// No 3. HeadHasParent.
 		private static bool ValidateHeadHasParent(MissionRule rule, GraphGrammar graphGrammar) {
 			// If head doesn't has parent, it return true.
-			return (graphGrammar.Nodes.Where(n => (n.Ordering == 1 && n.Parents.Count == 0)).Any());
+			// [Will modify]
+			//return (graphGrammar.Nodes.Where(n => (n.Ordering == 1 && n.Parents.Count == 0)).Any());
+			return true;
 		}
 		// No 4. IsolatedNode.
 		private static bool ValidateIsolatedNode(MissionRule rule, GraphGrammar graphGrammar) {
@@ -188,13 +190,17 @@ namespace MissionGrammarSystem {
 		// No 9. OrphanNode.
 		private static bool ValidateOrphanNode(MissionRule rule, GraphGrammar graphGrammar) {
 			// If node has no parent, it is an orphan. (Exclude ordering 1)
-			return (! graphGrammar.Nodes.Where(n => (n.Ordering != 1 && n.Parents.Count == 0)).Any());
+			// [Will modify]
+			//return (! graphGrammar.Nodes.Where(n => (n.Ordering != 1 && n.Parents.Count == 0)).Any());
+			return true;
 		}
 		// No 10. OverflowedAnyNode.
 		private static bool ValidateOverflowedAnyNode(MissionRule rule, GraphGrammar graphGrammar) {
 			// if replaceRule have any node that dont match the source ordering.
-			return !rule.ReplacementRule.Nodes.Exists(n => (Alphabet.IsAnyNode(n.AlphabetID) && 
-			(n.Ordering > rule.SourceRule.Nodes.Count ? true : !Alphabet.IsAnyNode(rule.SourceRule.Nodes[n.Ordering - 1].AlphabetID))));
+			// [Will modify]
+			//return !rule.ReplacementRule.Nodes.Exists(n => (Alphabet.IsAnyNode(n.AlphabetID) && 
+			//(n.Ordering > rule.SourceRule.Nodes.Count ? true : !Alphabet.IsAnyNode(rule.SourceRule.Nodes[n.Ordering - 1].AlphabetID))));
+			return true;
 		}
 		// Return Error message.
 		public static string SelectErrorType(ValidationLabel errorLabel) {
