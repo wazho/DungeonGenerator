@@ -170,7 +170,13 @@ namespace EditorExtend {
 				return _rulesArea;
 			}
 		}
-
+		private static Rect _redoUndoArea = new Rect(Screen.width / 2 - 120, 5, 100, 25);
+		public static Rect RedoUndoArea {
+			get {
+				_redoUndoArea.x = Screen.width / 2 - 120;
+				return _redoUndoArea;
+			}
+		}
 		private static Rect _sourceRuleArea = new Rect(0, 25, Screen.width / 2, 200);
 		public static Rect SourceRuleArea {
 			get {
@@ -286,7 +292,6 @@ namespace EditorExtend {
 			get { return GUILayout.Height(_height); }
 		}
 		// Using label to express the element border.
-		private static Font     _labelInNodeListFont   = Resources.Load("Fonts/texgyrecursor") as Font;
 		private static GUIStyle _labelInNodeList       = new GUIStyle(GUI.skin.label);
 		private static Vector2  _labelInNodeListOffset = new Vector2(55, 0);
 		public static GUIStyle NodeElement {
@@ -308,16 +313,16 @@ namespace EditorExtend {
 		private static Vector2  _labelInConnectionListOffset = new Vector2(75, 0);
 		public static GUIStyle ConnectionElement {
 			get {
-				if (_labelInNodeList.name != "LabelInConnectionList") {
-					_labelInNodeList.name           = "LabelInConnectionList";
-					_labelInNodeList.fontSize       = 12;
-					_labelInNodeList.margin.top     = 0;
-					_labelInNodeList.margin.bottom  = 0;
-					_labelInNodeList.padding.top    = 17;
-					_labelInNodeList.padding.bottom = 18;
-					_labelInNodeList.contentOffset  = _labelInConnectionListOffset;
+				if (_labelInConnectionList.name != "LabelInConnectionList") {
+					_labelInConnectionList.name           = "LabelInConnectionList";
+					_labelInConnectionList.fontSize       = 12;
+					_labelInConnectionList.margin.top     = 0;
+					_labelInConnectionList.margin.bottom  = 0;
+					_labelInConnectionList.padding.top    = 17;
+					_labelInConnectionList.padding.bottom = 18;
+					_labelInConnectionList.contentOffset  = _labelInConnectionListOffset;
 				}
-				return _labelInNodeList;
+				return _labelInConnectionList;
 			}
 		}
 	}

@@ -9,56 +9,61 @@ using SampleStyle = EditorExtend.SampleStyle;
 using Mission = MissionGrammarSystem;
 
 namespace GraphGeneration {
-	// Error type. 
-	public enum ErrorType {
-		None,
-		Error
-	}
-	// Select status.
-	public enum GraphState { 
-		Mission,
-		Space
-	}
-
+	// The mission graph window.
+	[InitializeOnLoad]
 	public class MissionGraphWindow : EditorWindow {
-		// Initialize.
-		public static void Initial() {
-			_currentGraph = new Mission.GraphGrammar();
+		// Error type. 
+		public enum ErrorType {
+			None,
+			Error
 		}
+		// Select status.
+		public enum GraphState { 
+			Mission,
+			Space
+		}
+		// Window self.
+		public static MissionGraphWindow Instance { get; private set; }
+		public static bool IsOpen { get { return Instance != null; } }
 		// Scroll view.
-		private Vector2 _scrollView;
+		private static Vector2 _scrollView;
 		// error type & selected graph
-		private ErrorType  _errorType;
-		private GraphState _graphState;
-		// Starting index
-		private int _startingNodeIndex;
-		private int _tempStartingNodeIndex;
-		private string[] _nodeNames = Mission.Alphabet.Nodes.Select(n => n.ExpressName).ToArray();
+		private static ErrorType  _errorType;
+		private static GraphState _graphState;
 		// Canvas.
-		private Vector2 _canvasScrollPosition;
-		private int _missionGraphCanvasSizeWidth;
-		private int _missionGraphCanvasSizeHeight;
+		private static Vector2 _canvasScrollPosition;
+		private static int _missionGraphCanvasSizeWidth;
+		private static int _missionGraphCanvasSizeHeight;
 		private static Mission.GraphGrammar _currentGraph = new Mission.GraphGrammar();
 		// Buttons 
-		private GUIStyle MissionTabButtonStyle;
-		private GUIStyle SpaceTabButtonStyle;
-		private bool _isInitTabButton;
+		private static GUIStyle MissionTabButtonStyle;
+		private static GUIStyle SpaceTabButtonStyle;
+		private static bool _isInitTabButton;
 
-		private bool _isRuleChanged;
+		private static bool _isRuleChanged;
 
+		// Initialize when trigger reload scripts via 'InitializeOnLoad'.
+		static MissionGraphWindow() {
+			Initialize();
+		}
+		// Initialize when open the editor window.
 		void Awake() {
 			Initialize();
 		}
+		void OnEnable() {
+			Instance = this;
+		}
+		void OnDisable() {
+			Instance = null;
+		}
 
-		public void Initialize() {
-			_scrollView        = new Vector2(0, 60);
-			_errorType         = ErrorType.None;
-			_graphState        = GraphState.Mission;
-			_currentGraph      = new Mission.GraphGrammar();
-			_startingNodeIndex = Mission.Alphabet.Nodes.FindIndex(x => x == Mission.Alphabet.StartingNode);
-			_nodeNames         = Mission.Alphabet.Nodes.Select(n => n.ExpressName).ToArray();
-			_isInitTabButton   = true;
-			_isRuleChanged     = false;
+		public static void Initialize() {
+			_scrollView      = new Vector2(0, 60);
+			_errorType       = ErrorType.None;
+			_graphState      = GraphState.Mission;
+			_currentGraph    = new Mission.GraphGrammar();
+			_isInitTabButton = true;
+			_isRuleChanged   = true;
 		}
 
 		void OnGUI() {
@@ -71,13 +76,11 @@ namespace GraphGeneration {
 			// Buttons for switching mission graph and space graph.
 			GUILayout.BeginVertical(SampleStyle.Frame(SampleStyle.ColorLightestGrey));
 			LayoutStateButtons();
-			_startingNodeIndex = SampleStyle.PopupLabeled("Starting Node", _startingNodeIndex, _nodeNames, SampleStyle.PopUpLabel, SampleStyle.PopUp, Screen.width - 15);
-			if(_startingNodeIndex != _tempStartingNodeIndex) {
-				_tempStartingNodeIndex = _startingNodeIndex;
-				Mission.Alphabet.StartingNode = Mission.Alphabet.Nodes[_startingNodeIndex];
-			}
+			// Dropdown for strating node.
+			int startingIndex = Mission.Alphabet.Nodes.FindIndex(n => n == Mission.Alphabet.StartingNode);
+			startingIndex = SampleStyle.PopupLabeled("Starting Node", startingIndex, Mission.Alphabet.Nodes.Select(n => n.ExpressName).ToArray(), SampleStyle.PopUpLabel, SampleStyle.PopUp, Screen.width - 15);
+			Mission.Alphabet.StartingNode = Mission.Alphabet.Nodes[startingIndex];
 			GUILayout.EndVertical();
-
 			// Canvas to draw current mission graph.
 			LayoutMissionGraphCanvas();
 			// Layout the list of mission group.
@@ -187,7 +190,6 @@ namespace GraphGeneration {
 			EditorGUILayout.EndScrollView();
 			GUILayout.EndVertical();
 			GUILayout.EndArea();
-
 		}
 		// Buttons for operating the graph.
 		private void LayoutFunctionButtons() {

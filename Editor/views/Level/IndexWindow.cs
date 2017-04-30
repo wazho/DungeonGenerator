@@ -39,7 +39,7 @@ namespace DungeonLevel {
 					MissionGrammarSystem.Alphabet.Initial();
 					MissionGrammarSystem.MissionGrammar.Initial();
 					MissionGrammarSystem.RewriteSystem.Initial();
-					GraphGeneration.MissionGraphWindow.Initial();
+					GraphGeneration.MissionGraphWindow.Initialize();
 				}
 			}
 			if (GUILayout.Button("Import Level", SampleStyle.ButtonMid, SampleStyle.MainButtonHeight)) {
@@ -48,14 +48,11 @@ namespace DungeonLevel {
 			if (GUILayout.Button("Import Rewrite", SampleStyle.ButtonMid, SampleStyle.MainButtonHeight)) {
 				// Import Rewrite.
 				string path = EditorUtility.OpenFilePanel("Import xml", "", "xml");
-				if(path.Length > 0) {
+				if (path.Length > 0) {
 					DungeonLevel.OperateXML.Unserialize.UnserializeFromXml(path);
-					MissionGrammarSystem.AlphabetWindow alphabetWindow = GetWindow<MissionGrammarSystem.AlphabetWindow>("Mission alphabet", false);
-					alphabetWindow.Initialize();
-					MissionGrammarSystem.RulesWindow rulesWindow = GetWindow<MissionGrammarSystem.RulesWindow>("Mission rules", false);
-					rulesWindow.Initialize();
-					GraphGeneration.MissionGraphWindow missionGraphWindow = GetWindow<GraphGeneration.MissionGraphWindow>("Generate mission graph", false);
-					missionGraphWindow.Initialize();
+					DungeonWindow.ShowMissionAlphabetWindow();
+					DungeonWindow.ShowMissionRulesWindow();
+					DungeonWindow.ShowGenerateMissionWindow();
 				}
 			}
 			if (GUILayout.Button("Export Level", SampleStyle.ButtonRight, SampleStyle.MainButtonHeight)) {
