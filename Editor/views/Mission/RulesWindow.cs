@@ -13,6 +13,8 @@ using SymbolList  = EditorExtend.SymbolList;
 using SampleStyle = EditorExtend.SampleStyle;
 
 namespace MissionGrammarSystem {
+	// The mission rules window.
+	[InitializeOnLoad]
 	public class RulesWindow : EditorWindow {
 		// Types of the editor.
 		public enum EditingMode {
@@ -32,66 +34,77 @@ namespace MissionGrammarSystem {
 			Copy,
 			Delete,
 		}
+		// Window self.
+		public static RulesWindow Instance { get; private set; }
+		public static bool IsOpen { get { return Instance != null; } }
 		// The mode of buttons.
-		private EditingMode       _editingMode;
-		private SymbolEditingMode _currentTab;
+		private static EditingMode       _editingMode;
+		private static SymbolEditingMode _currentTab;
 		// Mission rule of current editing.
-		private MissionRule _missionRule = new MissionRule();
+		private static MissionRule _missionRule;
 		// The array of group & rule.
-		private string[] _groupsOptions;
-		private string[] _rulesOptions;
+		private static string[] _groupsOptions;
+		private static string[] _rulesOptions;
 		// The index of group & rule.
-		private int _indexOfGroupsOptions;
-		private int _indexOfRulesOptions;
-		private int _tempIndexOfGroupsOptions;
-		private int _tempIndexOfRulesOptions;
+		private static int _indexOfGroupsOptions;
+		private static int _indexOfRulesOptions;
+		private static int _tempIndexOfGroupsOptions;
+		private static int _tempIndexOfRulesOptions;
 		// The description of group or rule.
-		private string _name;
-		private string _description;
-		private bool   _nameCanBeUsed;
+		private static string _name;
+		private static string _description;
+		private static bool   _nameCanBeUsed;
 		// Enabled Button-Apply
-		private bool _applyEditingButtonEnabled;
+		private static bool _applyEditingButtonEnabled;
 		// The texture of icons.
 		private Texture2D _editIcon;
 		private Texture2D _deleteIcon;
-		private Texture2D _redoTexture;
-		private Texture2D _undoTexture;
+		private Texture2D _redoIcon;
+		private Texture2D _undoIcon;
 		// The drawing canvas.
-		private Rect _sourceCanvas;
-		private Rect _replacementCanvas;
-		private Rect _symbolListCanvasInWindow;
+		private static Rect _sourceCanvas;
+		private static Rect _replacementCanvas;
+		private static Rect _symbolListCanvasInWindow;
 		// The scroll bar of canvas.
-		private Vector2 _sourceCanvasScrollPosition;
-		private Vector2 _replacementCanvasScrollPosition;
+		private static Vector2 _sourceCanvasScrollPosition;
+		private static Vector2 _replacementCanvasScrollPosition;
 		// Size of source canvas & replacement canvas.
-		private int _sourceCanvasWidth;
-		private int _sourceCanvasHeight;
-		private int _replacementCanvasWidth;
-		private int _replacementCanvasHeight;
+		private static int _sourceCanvasWidth;
+		private static int _sourceCanvasHeight;
+		private static int _replacementCanvasWidth;
+		private static int _replacementCanvasHeight;
 		// The scroll bar of list.
-		private Vector2 _listScrollPosition;
-		private Vector2 _positionInCanvas;
-		private GraphGrammar _currentSelectedGraphGrammar;
+		private static Vector2 _listScrollPosition;
+		private static Vector2 _positionInCanvas;
+		private static GraphGrammar _currentSelectedGraphGrammar;
 		// The last sticked node (for the last connection).
-		private GraphGrammarNode _lastStickedNode;
+		private static GraphGrammarNode _lastStickedNode;
 		// Recorder for undo/redo.
-		private StateRecorder _sourceRuleState  = new StateRecorder();
-		private StateRecorder _replaceRuleState = new StateRecorder();
+		private static StateRecorder _sourceRuleState  = new StateRecorder();
+		private static StateRecorder _replaceRuleState = new StateRecorder();
 		// Error message of rule graph.
-		private KeyValuePair<ValidationLabel, string> _graphError = new KeyValuePair<ValidationLabel, string>(ValidationLabel.NoError, string.Empty);
-		// [Will move to Style.cs]
-		private static Rect _redoUndoArea = new Rect(Screen.width / 2 - 120, 5, 100, 25);
-		public static Rect RedoUndoArea {
-			get {
-				_redoUndoArea.x = Screen.width / 2 - 120;
-				return _redoUndoArea;
-			}
-		}
+		private static KeyValuePair<ValidationLabel, string> _graphError = new KeyValuePair<ValidationLabel, string>(ValidationLabel.NoError, string.Empty);
 
-		void Awake() {
+		// Initialize when trigger reload scripts via 'InitializeOnLoad'.
+		static RulesWindow() {
 			Initialize();
 		}
-		public void Initialize() {
+		// Initialize when open the editor window.
+		void Awake() {
+			Initialize();
+			// Load textures.
+			_editIcon   = Resources.Load<Texture2D>("Icons/edit");
+			_deleteIcon = Resources.Load<Texture2D>("Icons/delete");
+			_redoIcon   = Resources.Load<Texture2D>("Icons/redo");
+			_undoIcon   = Resources.Load<Texture2D>("Icons/undo");
+		}
+		void OnEnable() {
+			Instance = this;
+		}
+		void OnDisable() {
+			Instance = null;
+		}
+		public static void Initialize() {
 			_editingMode = EditingMode.None;
 			_currentTab  = SymbolEditingMode.None;
 			// Get the first rule of first group.
@@ -108,10 +121,6 @@ namespace MissionGrammarSystem {
 			_description                     = string.Empty;
 			_nameCanBeUsed                   = false;
 			_applyEditingButtonEnabled       = false;
-			_editIcon                        = Resources.Load<Texture2D>("Icons/edit");
-			_deleteIcon                      = Resources.Load<Texture2D>("Icons/delete");
-			_redoTexture                     = Resources.Load<Texture2D>("Icons/redo");
-			_undoTexture                     = Resources.Load<Texture2D>("Icons/undo");
 			_sourceCanvasScrollPosition      = Vector2.zero;
 			_replacementCanvasScrollPosition = Vector2.zero;
 			_listScrollPosition              = Vector2.zero;
@@ -148,7 +157,6 @@ namespace MissionGrammarSystem {
 			GUILayout.EndVertical();
 			GUILayout.EndArea();
 			// Layout the canvas areas of two graph grammars.
-
 			LayoutRulesCanvasArea();
 			// Show the area of after-rule-preview.
 			LayoutRuleCanvasEditor();
@@ -802,11 +810,11 @@ namespace MissionGrammarSystem {
 			}
 			GUILayout.EndScrollView();
 			// Redo & Undo Area
-			GUILayout.BeginArea(RedoUndoArea);
+			GUILayout.BeginArea(Container.RedoUndoArea);
 			GUILayout.BeginHorizontal();
 			// Set the button disabled when it have no undo state.
 			EditorGUI.BeginDisabledGroup(!_sourceRuleState.hasUndoState);
-			if (GUILayout.Button(_undoTexture, SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Left, SampleStyle.ButtonColor.Grey), SampleStyle.ButtonHeight)) {
+			if (GUILayout.Button(_undoIcon, SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Left, SampleStyle.ButtonColor.Grey), SampleStyle.ButtonHeight)) {
 				// Undo.
 				_currentSelectedGraphGrammar = _missionRule.SourceRule;
 				UndoState();
@@ -815,7 +823,7 @@ namespace MissionGrammarSystem {
 			}
 			// Set the button disabled when it have no redo state.
 			EditorGUI.BeginDisabledGroup(!_sourceRuleState.hasRedoState);
-			if (GUILayout.Button(_redoTexture, SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Right, SampleStyle.ButtonColor.Grey), SampleStyle.ButtonHeight)) {
+			if (GUILayout.Button(_redoIcon, SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Right, SampleStyle.ButtonColor.Grey), SampleStyle.ButtonHeight)) {
 				// Redo.
 				_currentSelectedGraphGrammar = _missionRule.SourceRule;
 				RedoState();
@@ -858,11 +866,11 @@ namespace MissionGrammarSystem {
 			}
 			GUILayout.EndScrollView();
 			// Redo & Undo Area
-			GUILayout.BeginArea(RedoUndoArea);
+			GUILayout.BeginArea(Container.RedoUndoArea);
 			GUILayout.BeginHorizontal();
 			// Set the button disabled when it have no undo state.
 			EditorGUI.BeginDisabledGroup(!_replaceRuleState.hasUndoState);
-			if (GUILayout.Button(_undoTexture, SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Left, SampleStyle.ButtonColor.Grey), SampleStyle.ButtonHeight)) {
+			if (GUILayout.Button(_undoIcon, SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Left, SampleStyle.ButtonColor.Grey), SampleStyle.ButtonHeight)) {
 				// Undo.
 				_currentSelectedGraphGrammar = _missionRule.ReplacementRule;
 				UndoState();
@@ -871,7 +879,7 @@ namespace MissionGrammarSystem {
 			}
 			// Set the button disabled when it have no redo state.
 			EditorGUI.BeginDisabledGroup(!_replaceRuleState.hasRedoState);
-			if (GUILayout.Button(_redoTexture, SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Right, SampleStyle.ButtonColor.Grey), SampleStyle.ButtonHeight)) {
+			if (GUILayout.Button(_redoIcon, SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Right, SampleStyle.ButtonColor.Grey), SampleStyle.ButtonHeight)) {
 				// Redo.
 				_currentSelectedGraphGrammar = _missionRule.ReplacementRule;
 				RedoState();

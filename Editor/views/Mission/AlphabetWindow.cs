@@ -73,10 +73,15 @@ namespace MissionGrammarSystem {
 		void OnDisable() {
 			Instance = null;
 		}
-
 		public static void Initialize() {
 			// Initial whole fields in window.
-			InitFields();
+			_symbolName         = string.Empty;
+			_symbolAbbreviation = string.Empty;
+			_symbolDescription  = string.Empty;
+			_symbolOutlineColor = Color.black;
+			_symbolFilledColor  = Color.white;
+			_symbolTextColor    = Color.black;
+			_symbolTerminal     = NodeTerminalType.Terminal;
 			// Set the first values.
 			_currentTab               = AlphabetWindowTab.Nodes;
 			_isInitTabButton          = true;
@@ -388,7 +393,7 @@ namespace MissionGrammarSystem {
 		}
 		// Validate that the field data is legal.
 		private static Regex _ruleOfConnectionName         = new Regex(@"^[a-z]{1}[a-zA-Z]{,19}$");
-		private static Regex _ruleOfConnectionAbbreviation = new Regex(@"^[a-z]{1,4}$");
+		// private static Regex _ruleOfConnectionAbbreviation = new Regex(@"^[a-z]{1,4}$");
 		void ConnectionFieldValidation() {
 			if (_symbolName == string.Empty ||
 				_symbolDescription == string.Empty) {

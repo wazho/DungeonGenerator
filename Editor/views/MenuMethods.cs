@@ -24,15 +24,24 @@ public class DungeonWindow : EditorWindow {
 	// Add the 'Mission > Alphabet' in 'Dungeon' menu.
 	[MenuItem("Dungeon/Mission/Alphabet %#&ma", false, 11)]
 	public static void ShowMissionAlphabetWindow() {
-		EditorWindow window = EditorWindow.GetWindow<Mission.AlphabetWindow>("Mission alphabet", true);
-		window.position = new Rect(35, 60, 500, 660);
+		bool hasOpened = Mission.AlphabetWindow.IsOpen;
+		var window = EditorWindow.GetWindow<Mission.AlphabetWindow>("Mission alphabet", true) as Mission.AlphabetWindow;
+		// Relocate the position of the window if it hasn't been opened.
+		if (! hasOpened) {
+			window.position = new Rect(35, 60, 500, 660);
+		}
 	}
 
 	// Add the 'Mission > Rules' in 'Dungeon' menu.
 	[MenuItem("Dungeon/Mission/Rules %#&mr", false, 12)]
 	public static void ShowMissionRulesWindow() {
-		EditorWindow window = EditorWindow.GetWindow<Mission.RulesWindow>("Mission rules", true);
-		window.position = new Rect(35, 60, 750, 745);
+		bool hasOpened = Mission.RulesWindow.IsOpen;
+		var window = EditorWindow.GetWindow<Mission.RulesWindow>("Mission rules", true) as Mission.RulesWindow;
+		Mission.RulesWindow.Initialize();
+		// Relocate the position of the window if it hasn't been opened.
+		if (! hasOpened) {
+			window.position = new Rect(35, 60, 750, 745);
+		}
 	}
 
 	// Add the 'Generation > Mission' in 'Dungeon' menu.

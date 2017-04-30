@@ -51,8 +51,7 @@ namespace DungeonLevel {
 				if (path.Length > 0) {
 					DungeonLevel.OperateXML.Unserialize.UnserializeFromXml(path);
 					DungeonWindow.ShowMissionAlphabetWindow();
-					MissionGrammarSystem.RulesWindow rulesWindow = GetWindow<MissionGrammarSystem.RulesWindow>("Mission rules", false);
-					rulesWindow.Initialize();
+					DungeonWindow.ShowMissionRulesWindow();
 					DungeonWindow.ShowGenerateMissionWindow();
 				}
 			}
