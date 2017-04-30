@@ -11,7 +11,6 @@ namespace MissionGrammarSystem {
 	public enum ValidationLabel {
 		LeftMoreThanRight,
 		EmptyLeft,
-		HeadHasParent,
 		IsolatedNode,
 		IsolatedConnection,
 		ExactlyDuplicated,
@@ -28,13 +27,12 @@ namespace MissionGrammarSystem {
 		private static Dictionary<ValidationLabel, Func<MissionRule, GraphGrammar, bool>> _validationMethods = new Dictionary<ValidationLabel, Func<MissionRule, GraphGrammar, bool>>() {
 			{ ValidationLabel.LeftMoreThanRight,  (MissionRule rule, GraphGrammar graphGrammar) => ValidateLeftMoreThanRight(rule, graphGrammar) },
 			{ ValidationLabel.EmptyLeft,          (MissionRule rule, GraphGrammar graphGrammar) => ValidateEmptyLeft(rule, graphGrammar) },
-			// { ValidationLabel.HeadHasParent,      (MissionRule rule, GraphGrammar graphGrammar) => ValidateHeadHasParent(rule, graphGrammar) },
 			{ ValidationLabel.IsolatedNode,       (MissionRule rule, GraphGrammar graphGrammar) => ValidateIsolatedNode(rule, graphGrammar) },
 			{ ValidationLabel.IsolatedConnection, (MissionRule rule, GraphGrammar graphGrammar) => ValidateIsolatedConnection(rule, graphGrammar) },
 			{ ValidationLabel.ExactlyDuplicated,  (MissionRule rule, GraphGrammar graphGrammar) => ValidateExactlyDuplicated(rule, graphGrammar) },
 			{ ValidationLabel.MultipleRelations,  (MissionRule rule, GraphGrammar graphGrammar) => ValidateMultipleRelations(rule, graphGrammar) },
 			{ ValidationLabel.CyclicLink,         (MissionRule rule, GraphGrammar graphGrammar) => ValidateCyclicLink(rule, graphGrammar) },
-			// { ValidationLabel.OrphanNode,         (MissionRule rule, GraphGrammar graphGrammar) => ValidateOrphanNode(rule, graphGrammar) },
+			{ ValidationLabel.OrphanNode,         (MissionRule rule, GraphGrammar graphGrammar) => ValidateOrphanNode(rule, graphGrammar) },
 			{ ValidationLabel.OverflowedAnyNode,  (MissionRule rule, GraphGrammar graphGrammar) => ValidateOverflowedAnyNode(rule, graphGrammar) },
 		};
 
@@ -62,14 +60,7 @@ namespace MissionGrammarSystem {
 			// Is there no node in sourceRule?
 			return rule.SourceRule.Nodes.Count != 0 ? true : false;
 		}
-		// No 3. HeadHasParent.
-		private static bool ValidateHeadHasParent(MissionRule rule, GraphGrammar graphGrammar) {
-			// If head doesn't has parent, it return true.
-			// [Will modify]
-			return (graphGrammar.Nodes.Where(n => (n.Ordering == 1 && n.Parents.Count == 0)).Any());
-			return true;
-		}
-		// No 4. IsolatedNode.
+		// No 3. IsolatedNode.
 		private static bool ValidateIsolatedNode(MissionRule rule, GraphGrammar graphGrammar) {
 			if (graphGrammar.Nodes.Count > 1) {
 				if (graphGrammar.Connections.Count < graphGrammar.Nodes.Count - 1) {
@@ -84,11 +75,11 @@ namespace MissionGrammarSystem {
 			}
 			return true;
 		}
-		// No 5. IsolatedConnection.
+		// No 4. IsolatedConnection.
 		private static bool ValidateIsolatedConnection(MissionRule rule, GraphGrammar graphGrammar) {
 			return !(graphGrammar.Connections.Where(c => c.StartpointStickyOn == null || c.EndpointStickyOn == null).Any());
 		}
-		// No 6. ExactlyDuplicated.
+		// No 5. ExactlyDuplicated.
 		private static bool ValidateExactlyDuplicated(MissionRule rule, GraphGrammar graphGrammar) {
 			// Check the number of connections & nodes first.
 			if (rule.SourceRule.Nodes.Count       != rule.ReplacementRule.Nodes.Count ||
@@ -120,7 +111,7 @@ namespace MissionGrammarSystem {
 			// It's illegal and isomorphic.
 			return false;
 		}
-		// No 7. MultipleRelations.
+		// No 6. MultipleRelations.
 		private static bool ValidateMultipleRelations(MissionRule rule, GraphGrammar graphGrammar) {
 			if (graphGrammar.Connections.Count > 1) {
 				foreach (GraphGrammarConnection connection in graphGrammar.Connections) {
@@ -133,7 +124,7 @@ namespace MissionGrammarSystem {
 			}
 			return true;
 		}
-		// No 8. CyclicLink.
+		// No 7. CyclicLink.
 		private static bool ValidateCyclicLink(MissionRule rule, GraphGrammar graphGrammar) {
 			// Store the parents and children to avoid the repeat call method.
 			Dictionary<GraphGrammarNode, List<GraphGrammarNode>> parentsTable = new Dictionary<GraphGrammarNode, List<GraphGrammarNode>>();
@@ -187,14 +178,13 @@ namespace MissionGrammarSystem {
 			// Otherwise, this is not cyclic link.
 			return true;
 		}
-		// No 9. OrphanNode.
+		// No 8. OrphanNode.
 		private static bool ValidateOrphanNode(MissionRule rule, GraphGrammar graphGrammar) {
-			// If node has no parent, it is an orphan. (Exclude ordering 1)
-			// [Will modify]
-			return (! graphGrammar.Nodes.Where(n => (n.Ordering != 1 && n.Parents.Count == 0)).Any());
-			return true;
+			// If node has no parent, it is an orphan.
+			// Indegree = 0 quantity cannot > 1.
+			return (graphGrammar.Nodes.FindAll(n => n.Parents.Count == 0).Count == 1);
 		}
-		// No 10. OverflowedAnyNode.
+		// No 9. OverflowedAnyNode.
 		private static bool ValidateOverflowedAnyNode(MissionRule rule, GraphGrammar graphGrammar) {
 			// Sort nodes in ordering.
 			GraphGrammarNode[] sourceNodes = rule.SourceRule.Nodes.OrderBy(n => n.Ordering).ToArray();
@@ -212,9 +202,6 @@ namespace MissionGrammarSystem {
 			case ValidationLabel.EmptyLeft:
 				result = "左側 source 節點數量不可少於一。";
 				break;
-			case ValidationLabel.HeadHasParent:
-				result = "排序 ordering 為一的節點，不能夠含有其它的父節點。";
-				break;
 			case ValidationLabel.IsolatedNode:
 				result = "不能夠有孤立的節點，請確認所有節點都已使用連接線相連。";
 				break;
@@ -231,10 +218,10 @@ namespace MissionGrammarSystem {
 				result = "目前的任務圖已形成無窮迴圈，請避免構成週期性循環的結構。";
 				break;
 			case ValidationLabel.OrphanNode:
-				result = "除了任務圖之首 (ordering 為一) 能夠不具有父節點，其餘的節點都必須有父節點所相連。";
+				result = "除了任務圖之首能夠不具有父節點，其餘的節點都必須有父節點所相連。";
 				break;
 			case ValidationLabel.OverflowedAnyNode:
-				result = "右側 replacement 的 any 節點 ordering 不可以高於左側 source 的數量上限。";
+				result = "右側 replacement 的 any 節點 ordering 必須與左側 source 的 any 節點 ordering 相同。";
 				break;
 			}
 			return result;
