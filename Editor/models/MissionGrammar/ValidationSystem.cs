@@ -35,7 +35,7 @@ namespace MissionGrammarSystem {
 			{ ValidationLabel.MultipleRelations,  (MissionRule rule, GraphGrammar graphGrammar) => ValidateMultipleRelations(rule, graphGrammar) },
 			{ ValidationLabel.CyclicLink,         (MissionRule rule, GraphGrammar graphGrammar) => ValidateCyclicLink(rule, graphGrammar) },
 			// { ValidationLabel.OrphanNode,         (MissionRule rule, GraphGrammar graphGrammar) => ValidateOrphanNode(rule, graphGrammar) },
-			// { ValidationLabel.OverflowedAnyNode,  (MissionRule rule, GraphGrammar graphGrammar) => ValidateOverflowedAnyNode(rule, graphGrammar) },
+			{ ValidationLabel.OverflowedAnyNode,  (MissionRule rule, GraphGrammar graphGrammar) => ValidateOverflowedAnyNode(rule, graphGrammar) },
 		};
 
 		// Validate the graph grammar (one of pair of rule).
@@ -196,11 +196,11 @@ namespace MissionGrammarSystem {
 		}
 		// No 10. OverflowedAnyNode.
 		private static bool ValidateOverflowedAnyNode(MissionRule rule, GraphGrammar graphGrammar) {
+			// Sort nodes in ordering.
+			GraphGrammarNode[] sourceNodes = rule.SourceRule.Nodes.OrderBy(n => n.Ordering).ToArray();
 			// if replaceRule have any node that dont match the source ordering.
-			// [Will modify]
-			return !rule.ReplacementRule.Nodes.Exists(n => (Alphabet.IsAnyNode(n.AlphabetID) && 
-			(n.Ordering > rule.SourceRule.Nodes.Count ? true : !Alphabet.IsAnyNode(rule.SourceRule.Nodes[n.Ordering - 1].AlphabetID))));
-			return true;
+			return !rule.ReplacementRule.Nodes.Exists(n => (Alphabet.IsAnyNode(n.AlphabetID) &&
+			(n.Ordering > sourceNodes.Length ? true : !Alphabet.IsAnyNode(sourceNodes[n.Ordering - 1].AlphabetID))));
 		}
 		// Return Error message.
 		public static string SelectErrorType(ValidationLabel errorLabel) {
@@ -234,7 +234,7 @@ namespace MissionGrammarSystem {
 				result = "除了任務圖之首 (ordering 為一) 能夠不具有父節點，其餘的節點都必須有父節點所相連。";
 				break;
 			case ValidationLabel.OverflowedAnyNode:
-				result = "右側 replacement 的 any 節點 ordering 不可以高於右側 source 的數量上限。";
+				result = "右側 replacement 的 any 節點 ordering 不可以高於左側 source 的數量上限。";
 				break;
 			}
 			return result;
