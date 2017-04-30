@@ -30,10 +30,6 @@ namespace GraphGeneration {
 		// error type & selected graph
 		private static ErrorType  _errorType;
 		private static GraphState _graphState;
-		// Starting index
-		private static int _startingNodeIndex;
-		private static int _tempStartingNodeIndex;
-		private static string[] _nodeNames = Mission.Alphabet.Nodes.Select(n => n.ExpressName).ToArray();
 		// Canvas.
 		private static Vector2 _canvasScrollPosition;
 		private static int _missionGraphCanvasSizeWidth;
@@ -62,14 +58,12 @@ namespace GraphGeneration {
 		}
 
 		public static void Initialize() {
-			_scrollView        = new Vector2(0, 60);
-			_errorType         = ErrorType.None;
-			_graphState        = GraphState.Mission;
-			_currentGraph      = new Mission.GraphGrammar();
-			_startingNodeIndex = Mission.Alphabet.Nodes.FindIndex(x => x == Mission.Alphabet.StartingNode);
-			_nodeNames         = Mission.Alphabet.Nodes.Select(n => n.ExpressName).ToArray();
-			_isInitTabButton   = true;
-			_isRuleChanged     = true;
+			_scrollView      = new Vector2(0, 60);
+			_errorType       = ErrorType.None;
+			_graphState      = GraphState.Mission;
+			_currentGraph    = new Mission.GraphGrammar();
+			_isInitTabButton = true;
+			_isRuleChanged   = true;
 		}
 
 		void OnGUI() {
