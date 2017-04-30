@@ -30,7 +30,7 @@ namespace MissionGrammarSystem {
 			_relatedNodes.Clear();
 			// Start interating.
 			ProgressIteration(_root);
-			ClearExplored(_root);
+			ClearExplored();
 		}
 		// Reference table is used to get the symbol of Alphabet via the AlphabetID.
 		private static Dictionary<Guid, GraphGrammarNode> _referenceNodeTable;
@@ -41,6 +41,8 @@ namespace MissionGrammarSystem {
 		private const int PADDING = 50;
 		private static List<int> CountInLayer = new List<int>();
 		private static Dictionary<Rule, VFlibcs.Graph> _ruleVFgraphTable = new Dictionary<Rule, VFlibcs.Graph>();
+		// Record the node that the explored is true.
+		private static Stack<Node> _exploredNodeStack = new Stack<Node>();
 		// Export the original structure from tree structure to canvas.
 		public static GraphGrammar TransformFromGraph() {
 			var graphGrammar = new GraphGrammar();
@@ -101,20 +103,24 @@ namespace MissionGrammarSystem {
 		// Depth-first search.
 		private static void ProgressIteration(Node root) {
 			// if (root.Explored) { return; }
-			// Step 1: Find matched rule.
-			Rule matchedRule = FindMatchs(TransToVFGraph(root));
-			if (matchedRule != null) {
-				Debug.Log("Current match rule : " + matchedRule.Name);
-				// Step 2: Remove connections.
-				RemoveConnections(matchedRule);
-				// Step 3: Remove connections from replacement rule.
-				ReplaceNodes(matchedRule);
-				// Step 4: Append the new nodes from replacement rule.
-				AppendNodes(matchedRule);
-				// Step 5: Re-add the connections from replacement rule.
-				ReAddConnection(matchedRule);
-				// Step 6: Remove indexes.
-				RemoveIndexes();
+			while (true) {
+				// Step 1: Find matched rule.
+				Rule matchedRule = FindMatchs(TransToVFGraph(root));
+				if (matchedRule != null) {
+					Debug.Log("Current match rule : " + matchedRule.Name);
+					// Step 2: Remove connections.
+					RemoveConnections(matchedRule);
+					// Step 3: Remove connections from replacement rule.
+					ReplaceNodes(matchedRule);
+					// Step 4: Append the new nodes from replacement rule.
+					AppendNodes(matchedRule);
+					// Step 5: Re-add the connections from replacement rule.
+					ReAddConnection(matchedRule);
+					// Step 6: Remove indexes.
+					RemoveIndexes();
+				} else {
+					break;
+				}
 			}
 			// root.Explored = true;
 			// foreach (Node childNode in root.Children) {
@@ -129,6 +135,12 @@ namespace MissionGrammarSystem {
 				if (childNode.Explored) {
 					ClearExplored(childNode);
 				}
+			}
+		}
+		// Overloading remove explored of nodes in stack.
+		private static void ClearExplored() {
+			while(_exploredNodeStack.Count > 0) {
+				_exploredNodeStack.Pop().Explored = false;
 			}
 		}
 		// According to current rules of mission grammar, transform them to tree structure.
@@ -225,6 +237,9 @@ namespace MissionGrammarSystem {
 						Node node  = graphVF.GetNodeAttr(vfs.Mapping2To1[i]) as Node;
 						node.Index = (_ruleVFgraphTable[rule].GetNodeAttr(i) as Node).Index;
 						_relatedNodes.Add(node);
+						// Record this one is used in this iterating.
+						node.Explored = true;
+						_exploredNodeStack.Push(node);
 					}
 					return rule;
 				}
@@ -263,6 +278,9 @@ namespace MissionGrammarSystem {
 				if (! _relatedNodes.Exists(x => x.Index == matchedRuleNode.Index)) {
 					var node = new Node(matchedRuleNode);
 					_relatedNodes.Add(node);
+					// Record this one is used in this iterating.
+					node.Explored = true;
+					_exploredNodeStack.Push(node);
 				}
 			}
 			// Order by Index.

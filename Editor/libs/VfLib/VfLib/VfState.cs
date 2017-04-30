@@ -620,7 +620,9 @@ namespace vflibcs
 			{
 				RewriteSystem.Node icc1 =  _vfgr1.GetAttr(inod1) as RewriteSystem.Node;
 				RewriteSystem.Node icc2 =  _vfgr2.GetAttr(inod2) as RewriteSystem.Node;
-
+				if(icc1.Explored || icc2.Explored) {
+					return false;
+				}
 				if (icc1.AlphabetID != icc2.AlphabetID && !Alphabet.IsAnyNode(icc1.AlphabetID) && !Alphabet.IsAnyNode(icc2.AlphabetID))
 				{
 					return false;
