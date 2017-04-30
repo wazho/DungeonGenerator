@@ -20,6 +20,7 @@ namespace GraphGeneration {
 		Space
 	}
 
+	[InitializeOnLoad]
 	public class MissionGraphWindow : EditorWindow {
 		// Initialize.
 		public static void Initial() {
@@ -46,6 +47,11 @@ namespace GraphGeneration {
 
 		private bool _isRuleChanged;
 
+		// Initialize when trigger reload scripts via 'InitializeOnLoad'.
+		MissionGraphWindow() {
+			Initialize();
+		}
+		// Initialize when open the editor window.
 		void Awake() {
 			Initialize();
 		}
@@ -58,7 +64,7 @@ namespace GraphGeneration {
 			_startingNodeIndex = Mission.Alphabet.Nodes.FindIndex(x => x == Mission.Alphabet.StartingNode);
 			_nodeNames         = Mission.Alphabet.Nodes.Select(n => n.ExpressName).ToArray();
 			_isInitTabButton   = true;
-			_isRuleChanged     = false;
+			_isRuleChanged     = true;
 		}
 
 		void OnGUI() {
@@ -72,12 +78,12 @@ namespace GraphGeneration {
 			GUILayout.BeginVertical(SampleStyle.Frame(SampleStyle.ColorLightestGrey));
 			LayoutStateButtons();
 			_startingNodeIndex = SampleStyle.PopupLabeled("Starting Node", _startingNodeIndex, _nodeNames, SampleStyle.PopUpLabel, SampleStyle.PopUp, Screen.width - 15);
-			if(_startingNodeIndex != _tempStartingNodeIndex) {
+			if (_startingNodeIndex != _tempStartingNodeIndex) {
 				_tempStartingNodeIndex = _startingNodeIndex;
 				Mission.Alphabet.StartingNode = Mission.Alphabet.Nodes[_startingNodeIndex];
+				Debug.Log(Mission.Alphabet.StartingNode.Name);
 			}
 			GUILayout.EndVertical();
-
 			// Canvas to draw current mission graph.
 			LayoutMissionGraphCanvas();
 			// Layout the list of mission group.
