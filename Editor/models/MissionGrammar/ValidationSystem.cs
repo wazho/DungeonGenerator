@@ -192,9 +192,11 @@ namespace MissionGrammarSystem {
 		}
 		// No 10. OverflowedAnyNode.
 		private static bool ValidateOverflowedAnyNode(MissionRule rule, GraphGrammar graphGrammar) {
+			// Sort nodes in ordering.
+			GraphGrammarNode[] sourceNodes = rule.SourceRule.Nodes.OrderBy(n => n.Ordering).ToArray();
 			// if replaceRule have any node that dont match the source ordering.
-			return !rule.ReplacementRule.Nodes.Exists(n => (Alphabet.IsAnyNode(n.AlphabetID) && 
-			(n.Ordering > rule.SourceRule.Nodes.Count ? true : !Alphabet.IsAnyNode(rule.SourceRule.Nodes[n.Ordering - 1].AlphabetID))));
+			return !rule.ReplacementRule.Nodes.Exists(n => (Alphabet.IsAnyNode(n.AlphabetID) &&
+			(n.Ordering > sourceNodes.Length ? true : !Alphabet.IsAnyNode(sourceNodes[n.Ordering - 1].AlphabetID))));
 		}
 		// Return Error message.
 		public static string SelectErrorType(ValidationLabel errorLabel) {
