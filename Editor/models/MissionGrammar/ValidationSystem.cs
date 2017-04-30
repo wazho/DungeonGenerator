@@ -28,13 +28,13 @@ namespace MissionGrammarSystem {
 		private static Dictionary<ValidationLabel, Func<MissionRule, GraphGrammar, bool>> _validationMethods = new Dictionary<ValidationLabel, Func<MissionRule, GraphGrammar, bool>>() {
 			{ ValidationLabel.LeftMoreThanRight,  (MissionRule rule, GraphGrammar graphGrammar) => ValidateLeftMoreThanRight(rule, graphGrammar) },
 			{ ValidationLabel.EmptyLeft,          (MissionRule rule, GraphGrammar graphGrammar) => ValidateEmptyLeft(rule, graphGrammar) },
-			{ ValidationLabel.HeadHasParent,      (MissionRule rule, GraphGrammar graphGrammar) => ValidateHeadHasParent(rule, graphGrammar) },
+			// { ValidationLabel.HeadHasParent,      (MissionRule rule, GraphGrammar graphGrammar) => ValidateHeadHasParent(rule, graphGrammar) },
 			{ ValidationLabel.IsolatedNode,       (MissionRule rule, GraphGrammar graphGrammar) => ValidateIsolatedNode(rule, graphGrammar) },
 			{ ValidationLabel.IsolatedConnection, (MissionRule rule, GraphGrammar graphGrammar) => ValidateIsolatedConnection(rule, graphGrammar) },
 			{ ValidationLabel.ExactlyDuplicated,  (MissionRule rule, GraphGrammar graphGrammar) => ValidateExactlyDuplicated(rule, graphGrammar) },
 			{ ValidationLabel.MultipleRelations,  (MissionRule rule, GraphGrammar graphGrammar) => ValidateMultipleRelations(rule, graphGrammar) },
 			{ ValidationLabel.CyclicLink,         (MissionRule rule, GraphGrammar graphGrammar) => ValidateCyclicLink(rule, graphGrammar) },
-			{ ValidationLabel.OrphanNode,         (MissionRule rule, GraphGrammar graphGrammar) => ValidateOrphanNode(rule, graphGrammar) },
+			// { ValidationLabel.OrphanNode,         (MissionRule rule, GraphGrammar graphGrammar) => ValidateOrphanNode(rule, graphGrammar) },
 			{ ValidationLabel.OverflowedAnyNode,  (MissionRule rule, GraphGrammar graphGrammar) => ValidateOverflowedAnyNode(rule, graphGrammar) },
 		};
 
@@ -230,7 +230,7 @@ namespace MissionGrammarSystem {
 				result = "除了任務圖之首 (ordering 為一) 能夠不具有父節點，其餘的節點都必須有父節點所相連。";
 				break;
 			case ValidationLabel.OverflowedAnyNode:
-				result = "右側 replacement 的 any 節點 ordering 不可以高於右側 source 的數量上限。";
+				result = "右側 replacement 的 any 節點 ordering 不可以高於左側 source 的數量上限。";
 				break;
 			}
 			return result;
