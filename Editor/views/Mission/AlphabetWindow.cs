@@ -10,6 +10,7 @@ using SampleStyle = EditorExtend.SampleStyle;
 
 namespace MissionGrammarSystem {
 	// The mission alphabet window.
+	[InitializeOnLoad]
 	public class AlphabetWindow : EditorWindow {
 		// Tabs of this window.
 		public enum AlphabetWindowTab {
@@ -23,43 +24,57 @@ namespace MissionGrammarSystem {
 			Modify,
 			Delete,
 		}
+		// Window self.
+		public static AlphabetWindow Instance { get; private set; }
+		public static bool IsOpen { get { return Instance != null; } }
 		// The mode of buttons.
-		private AlphabetWindowTab _currentTab;
-		private EditingMode       _editingMode;
+		private static AlphabetWindowTab _currentTab;
+		private static EditingMode       _editingMode;
 		// The scroll bar of list.
-		private Vector2 _scrollPosition;
+		private static Vector2 _scrollPosition;
 		// Message of helpbox of submition.
-		private string      _messageHint;
-		private MessageType _messageType;
+		private static string      _messageHint;
+		private static MessageType _messageType;
 		// Node or connection in prview canvas.
-		private GraphGrammarNode       _node       = new GraphGrammarNode(NodeTerminalType.Terminal);
-		private GraphGrammarConnection _connection = new GraphGrammarConnection();
+		private static GraphGrammarNode       _node       = new GraphGrammarNode(NodeTerminalType.Terminal);
+		private static GraphGrammarConnection _connection = new GraphGrammarConnection();
 		// The description of nodes and connections.
-		private string _symbolName;
-		private string _symbolAbbreviation;
-		private string _symbolDescription;
+		private static string _symbolName;
+		private static string _symbolAbbreviation;
+		private static string _symbolDescription;
 		// Symbol colors.
-		private Color _symbolOutlineColor;
-		private Color _symbolFilledColor;
-		private Color _symbolTextColor;
+		private static Color _symbolOutlineColor;
+		private static Color _symbolFilledColor;
+		private static Color _symbolTextColor;
 		// The exclusive types.
-		private NodeTerminalType    _symbolTerminal;
-		private ConnectionType      _connectionType;
-		private ConnectionArrowType _connectionArrowType;
+		private static NodeTerminalType    _symbolTerminal;
+		private static ConnectionType      _connectionType;
+		private static ConnectionArrowType _connectionArrowType;
 		// The drawing canvas.
-		private Rect    _symbolListCanvas;
-		private Rect    _symbolListCanvasInWindow;
-		private Vector2 _centerPosition;
+		private static Rect    _symbolListCanvas;
+		private static Rect    _symbolListCanvasInWindow;
+		private static Vector2 _centerPosition;
 		// Tab buttons.
-		private GUIStyle NodeTabButtonStyle;
-		private GUIStyle ConnectionTabButtonStyle;
-		private bool _isInitTabButton;
+		private static GUIStyle NodeTabButtonStyle;
+		private static GUIStyle ConnectionTabButtonStyle;
+		private static bool _isInitTabButton;
 
-		// Native function for Editor Window. Trigger via opening the window.
+		// Initialize when trigger reload scripts via 'InitializeOnLoad'.
+		static AlphabetWindow() {
+			Initialize();
+		}
+		// Initialize when open the editor window.
 		void Awake() {
 			Initialize();
 		}
-		public void Initialize() {
+		void OnEnable() {
+			Instance = this;
+		}
+		void OnDisable() {
+			Instance = null;
+		}
+
+		public static void Initialize() {
 			// Initial whole fields in window.
 			InitFields();
 			// Set the first values.
@@ -80,7 +95,7 @@ namespace MissionGrammarSystem {
 			Alphabet.RevokeAllSelected();
 		}
 		// Initial whole fields in window.
-		void InitFields() {
+		private static void InitFields() {
 			_symbolName         = string.Empty;
 			_symbolAbbreviation = string.Empty;
 			_symbolDescription  = string.Empty;

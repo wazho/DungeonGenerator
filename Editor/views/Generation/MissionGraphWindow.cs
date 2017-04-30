@@ -9,19 +9,19 @@ using SampleStyle = EditorExtend.SampleStyle;
 using Mission = MissionGrammarSystem;
 
 namespace GraphGeneration {
-	// Error type. 
-	public enum ErrorType {
-		None,
-		Error
-	}
-	// Select status.
-	public enum GraphState { 
-		Mission,
-		Space
-	}
-
+	// The mission graph window.
 	[InitializeOnLoad]
 	public class MissionGraphWindow : EditorWindow {
+		// Error type. 
+		public enum ErrorType {
+			None,
+			Error
+		}
+		// Select status.
+		public enum GraphState { 
+			Mission,
+			Space
+		}
 		// Window self.
 		public static MissionGraphWindow Instance { get; private set; }
 		public static bool IsOpen { get { return Instance != null; } }
