@@ -102,7 +102,6 @@ namespace MissionGrammarSystem {
 		}
 		// Depth-first search.
 		private static void ProgressIteration(Node root) {
-			// if (root.Explored) { return; }
 			while (true) {
 				// Step 1: Find matched rule.
 				Rule matchedRule = FindMatchs(TransToVFGraph(root));
@@ -122,12 +121,6 @@ namespace MissionGrammarSystem {
 					break;
 				}
 			}
-			// root.Explored = true;
-			// foreach (Node childNode in root.Children) {
-			// 	if (! childNode.Explored) {
-			// 		ProgressIteration(childNode);
-			// 	}
-			// }
 		}
 		private static void ClearExplored(Node node) {
 			node.Explored = false;
