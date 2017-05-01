@@ -25,13 +25,13 @@ namespace MissionGrammarSystem {
 		}
 		// When click the iterate button of generate graph page.
 		public static void Iterate() {
-				RemoveIndexes();
-				// Clear the node table.
-				_relatedNodes.Clear();
-				// Start interating.
-				ProgressIteration(_root);
-				ClearExplored();
-			}
+			RemoveIndexes();
+			// Clear the node table.
+			_relatedNodes.Clear();
+			// Start interating.
+			ProgressIteration(_root);
+			ClearExplored();
+		}
 		// Reference table is used to get the symbol of Alphabet via the AlphabetID.
 		private static Dictionary<Guid, GraphGrammarNode> _referenceNodeTable;
 		// private static Dictionary<Guid, GraphGrammarConnection> _referenceConnectionTable;
