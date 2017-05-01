@@ -371,10 +371,10 @@ namespace MissionGrammarSystem {
 			}
 		}
 		private static Dictionary<Node, int> nodeDictionary = new Dictionary<Node, int>();
-		private static List<Node> _usedNode = new List<Node>();
+		private static List<string> _usedEdge = new List<string>();
 		private static VFlibcs.Graph TransToVFGraph(Node node) {
 			nodeDictionary.Clear();
-			_usedNode.Clear();
+			_usedEdge.Clear();
 			VFlibcs.Graph result = new VFlibcs.Graph();
 			nodeDictionary.Add(node, result.InsertNode(node));
 			InsertGraph(result, node);
@@ -382,27 +382,30 @@ namespace MissionGrammarSystem {
 		}
 		// DFS Insert node.
 		private static void InsertGraph(VFlibcs.Graph graph, Node node) {
-			_usedNode.Add(node);
 			foreach (Node child in node.Children) {
-				if (_usedNode.Exists(x => x == child)) { continue; }
 				if (child == null) { continue; }
 				// If the node have not set then set it.
 				if (!nodeDictionary.ContainsKey(child)) {
 					nodeDictionary.Add(child, graph.InsertNode(child));
 				}
+				string stringEdge = nodeDictionary[node] + "+" + nodeDictionary[child];
+				if (_usedEdge.Exists(x => x == stringEdge)) { continue; }
 				// Set edge.
 				graph.InsertEdge(nodeDictionary[node], nodeDictionary[child]);
+				_usedEdge.Add(stringEdge);
 				InsertGraph(graph, child);
 			}
 			foreach (var parent in node.Parents) {
-				if (_usedNode.Exists(x => x == parent)) { continue; }
 				if (parent == null) { continue; }
 				// If the node have not set then set it.
 				if (!nodeDictionary.ContainsKey(parent)) {
 					nodeDictionary.Add(parent, graph.InsertNode(parent));
 				}
+				string stringEdge = nodeDictionary[parent] + "+" + nodeDictionary[node];
+				if (_usedEdge.Exists(x => x == stringEdge)) { continue; }
 				// Set edge.
 				graph.InsertEdge(nodeDictionary[parent], nodeDictionary[node]);
+				_usedEdge.Add(stringEdge);
 				InsertGraph(graph, parent);
 			}
 		}
