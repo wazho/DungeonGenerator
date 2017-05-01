@@ -218,6 +218,15 @@ namespace GraphGeneration {
 				Mission.CreVoxAttach.SetCreVoxNodeRoot(_currentGraph.Nodes[0]);
 			}
 			if (GUILayout.Button("Complete", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Right, SampleStyle.ButtonColor.Blue), SampleStyle.ButtonHeight)) {
+				var stopWatch = System.Diagnostics.Stopwatch.StartNew();
+				// Will stop the iteration if there is no non-terminal symbol and the execution time is higher than 3 second
+				while (_currentGraph.Nodes.Exists(n => n.Terminal == Mission.NodeTerminalType.NonTerminal) && stopWatch.ElapsedMilliseconds <= 3000) {
+					// Rewrite system iteration.
+					Mission.RewriteSystem.Iterate();
+					// Update the current graph.
+					_currentGraph = Mission.RewriteSystem.TransformFromGraph();
+				}
+				stopWatch.Stop();
 				// Setting root node for CreVoxAttach.
 				Mission.CreVoxAttach.SetCreVoxNodeRoot(_currentGraph.Nodes[0]);
 			}
