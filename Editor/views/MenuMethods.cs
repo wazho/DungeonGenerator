@@ -52,7 +52,7 @@ public class DungeonWindow : EditorWindow {
 		var window = EditorWindow.GetWindow<Generation.MissionGraphWindow>("Generate mission graph", true) as Generation.MissionGraphWindow;
 		// Relocate the position of the window if it hasn't been opened.
 		if (! hasOpened) {
-			window.position = new Rect(35, 60, 500, 640);
+			window.position = new Rect(35, 60, 500, 600);
 		}
 	}
 }

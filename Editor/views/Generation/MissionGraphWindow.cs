@@ -205,35 +205,24 @@ namespace GraphGeneration {
 				_isRuleChanged = false;
 				// Update the current graph.
 				_currentGraph = Mission.RewriteSystem.TransformFromGraph();
+				// Setting root node for CreVoxAttach.
+				Mission.CreVoxAttach.SetCreVoxNodeRoot(_currentGraph.Nodes[0]);
 			}
-
 			EditorGUI.BeginDisabledGroup(_isRuleChanged);
 			if (GUILayout.Button("Iterate", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Mid, SampleStyle.ButtonColor.Blue), SampleStyle.ButtonHeight)) {
 				// Rewrite system iteration.
 				Mission.RewriteSystem.Iterate();
 				// Update the current graph.
 				_currentGraph = Mission.RewriteSystem.TransformFromGraph();
+				// Setting root node for CreVoxAttach.
+				Mission.CreVoxAttach.SetCreVoxNodeRoot(_currentGraph.Nodes[0]);
 			}
 			if (GUILayout.Button("Complete", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Right, SampleStyle.ButtonColor.Blue), SampleStyle.ButtonHeight)) {
-
+				// Setting root node for CreVoxAttach.
+				Mission.CreVoxAttach.SetCreVoxNodeRoot(_currentGraph.Nodes[0]);
 			}
 			EditorGUI.EndDisabledGroup();
 			GUILayout.EndHorizontal();
-			GUILayout.Space(SampleStyle.PaddingBlock);
-			// Apply button and popup
-			if (GUILayout.Button("Save", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Regular, SampleStyle.ButtonColor.Green), SampleStyle.SubmitButtonHeight)) {
-				if (EditorUtility.DisplayDialog("Save",
-					"Are you sure?",
-					"Yes", "No")) {
-					// Setting root node for CreVoxAttach.
-					Mission.CreVoxAttach.SetCreVoxNodeRoot(_currentGraph.Nodes[0]);
-					// Commit changes
-					Debug.Log("Settings are changed :}");
-				} else {
-					// Cancel changes;
-					Debug.Log("Settings aren't changed");
-				}
-			}
 			EditorGUI.EndDisabledGroup();
 			GUILayout.EndVertical();
 			GUILayout.EndArea();
