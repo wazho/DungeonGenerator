@@ -42,6 +42,10 @@ namespace GraphGeneration {
 
 		private static bool _isRuleChanged;
 
+		private static string _messageNoError;
+		private static string _messageError;
+		private static bool _isMessageInitialized = false;
+
 		// Initialize when trigger reload scripts via 'InitializeOnLoad'.
 		static MissionGraphWindow() {
 			Initialize();
@@ -67,6 +71,11 @@ namespace GraphGeneration {
 		}
 
 		void OnGUI() {
+			if (!_isMessageInitialized) {
+				_messageNoError 		= LanguageManager.GetText("MissionGraph-NoError");
+				_messageError			= LanguageManager.GetText("MissionGraph-Error"); 
+				_isMessageInitialized 	= true;
+			}
 			if (_isInitTabButton) {
 				MissionTabButtonStyle = new GUIStyle(SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Left, SampleStyle.ButtonColor.Blue));
 				SpaceTabButtonStyle   = new GUIStyle(SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Right, SampleStyle.ButtonColor.Blue));
@@ -249,10 +258,10 @@ namespace GraphGeneration {
 			// Select the mapping message by error type.
 			switch (errorType) {
 			case ErrorType.None:
-				message = "No error occur!";
+				message = _messageNoError;
 				break;
 			case ErrorType.Error:
-				message = "Error occur!";
+				message = _messageError;
 				break;
 			}
 			return message;

@@ -18,8 +18,10 @@ namespace DungeonLevel {
 		void Awake() {
 			
 		}
-		
+
 		void OnGUI() {
+			LanguageManager.Initialize();
+
 			SampleStyle.DrawWindowBackground(SampleStyle.ColorGrey);
 			GUILayout.BeginArea(Container.IndexWindowSplashCanvasArea);
 			EditorGUI.DrawPreviewTexture(Container.IndexWindowSplashCanvasArea, SampleStyle.SplashImage); 

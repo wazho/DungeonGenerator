@@ -44,13 +44,20 @@ namespace DungeonLevel {
 		public static string Tag {
 			get { return _tag; }
 		}
-
+		private static string _messageNoError;
+		private static string _messageLevelNameIsUsed;
+		private static bool _isMessageInitialized = false;
 		void Awake() {
 			// Setting errors.
 			_errorType = ErrorType.NoError;
 		}
 
 		void OnGUI() {
+			if (!_isMessageInitialized) {
+				_messageNoError 		= LanguageManager.GetText("LevelSetting-NoError");
+				_messageLevelNameIsUsed = LanguageManager.GetText("LevelSetting-LevelNameIsUsed"); 
+				_isMessageInitialized = true;
+			}
 			SampleStyle.DrawWindowBackground(SampleStyle.ColorGrey);
 			GUILayout.BeginVertical(SampleStyle.Frame(SampleStyle.ColorLightestGrey));
 			_name         = SampleStyle.TextFieldLabeled("Level Name", _name, SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
@@ -92,10 +99,10 @@ namespace DungeonLevel {
 			// Select the mapping message by error type.
 			switch (errorType) {
 			case ErrorType.NoError:
-				message = "No error occur!";
+				message = _messageNoError;
 				break;
 			case ErrorType.LevelNameIsUsed:
-				message = "The Level's name has been used!";
+				message = _messageLevelNameIsUsed;
 				break;
 			}
 			return message;
