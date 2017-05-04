@@ -55,4 +55,16 @@ public class DungeonWindow : EditorWindow {
 			window.position = new Rect(35, 60, 500, 600);
 		}
 	}
+
+	// Add the 'Languages > English' in 'Dungeon' menu.
+	[MenuItem("Dungeon/Languages/English", false, 51)]
+	public static void LocaleEnglish() {
+		Mgl.I18n.SetLocale("en-us");
+	}
+
+	// Add the 'Languages > Traditional Chinese' in 'Dungeon' menu.
+	[MenuItem("Dungeon/Languages/Traditional Chinese", false, 52)]
+	public static void LocaleTraditionalChinese() {
+		Mgl.I18n.SetLocale("zh-tw");
+	}
 }

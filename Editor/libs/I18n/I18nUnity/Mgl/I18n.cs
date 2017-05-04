@@ -11,9 +11,9 @@ namespace Mgl
 
         private static readonly I18n instance = new I18n();
 
-        private static string[] locales = new string[] { "en-US", "fr-FR", "zh-ZH" };
+        private static string[] locales = new string[] { "en-us", "zh-tw" };
 
-        private static string _currentLocale = "en-US";
+        private static string _currentLocale = "en-us";
 
         private static string _localePath = "Locales/";
 

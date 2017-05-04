@@ -26,14 +26,14 @@
     "MissionGraph-NoError"  : "No error occur.",
     "MissionGraph-Error"    : "Error occur!",
 
-    "MissionGraph-Validation-Succeed"               : "The rule is successfully set and valid.",
-    "MissionGraph-Validation-LeftMoreThanRight"     : "The number of Source nodes can't be more than on the Replacement.",
-    "MissionGraph-Validation-EmptyLeft"             : "The number of Source node can't be less than one.",
-    "MissionGraph-Validation-IsolatedNode"          : "You can't have isolated nodes. Make sure all nodes are connected using connection.",
-    "MissionGraph-Validation-IsolatedConnection"    : "You can't have isolated connection. Make sure all connections are connected to node.",
-    "MissionGraph-Validation-ExactlyDuplicated"     : "The graph is isomorphic. Please change any.",
-    "MissionGraph-Validation-MultipleRelations"     : "Multiple relations between two nodes are not allowed.",
-    "MissionGraph-Validation-CyclicLink"            : "The current graph potentially makes infinite loops. Please avoid cyclic link structure.",
-    "MissionGraph-Validation-OrphanNode"            : "Non-first index node must not have parrent.",
-    "MissionGraph-Validation-OverflowedAnyNode"     : "------Change later-----"
+    "MissionGraph-Validation-Succeed"               : "規則設定成功，該規則已自動生效。",
+    "MissionGraph-Validation-LeftMoreThanRight"     : "左側 source 節點數量不可多於右側 replacement。",
+    "MissionGraph-Validation-EmptyLeft"             : "左側 source 節點數量不可少於一。",
+    "MissionGraph-Validation-IsolatedNode"          : "不能夠有孤立的節點，請確認所有節點都已使用連接線相連。",
+    "MissionGraph-Validation-IsolatedConnection"    : "不能夠有孤立的連接線，請確認所有連接線的首尾都已與其它節點相連。",
+    "MissionGraph-Validation-ExactlyDuplicated"     : "左側 source 與右側 replacement 完全同構，請至少更動一處。",
+    "MissionGraph-Validation-MultipleRelations"     : "不允許在兩個節點之間，以多道連接線相連。",
+    "MissionGraph-Validation-CyclicLink"            : "目前的任務圖已形成無窮迴圈，請避免構成週期性循環的結構。",
+    "MissionGraph-Validation-OrphanNode"            : "除了任務圖之首能夠不具有父節點，其餘的節點都必須有父節點所相連。",
+    "MissionGraph-Validation-OverflowedAnyNode"     : "右側 replacement 的 any 節點 ordering 必須與左側 source 的 any 節點 ordering 相同。"
 }

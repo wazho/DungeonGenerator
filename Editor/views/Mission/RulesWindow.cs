@@ -1,16 +1,18 @@
 using UnityEngine;
 using UnityEditor;
+using System;
 using System.Linq;
 using System.Collections;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
-using System;
 using Math = System.Math;
 // Stylesheet.
 using Container   = EditorExtend.MissionRuleWindow;
 using GraphCanvas = EditorExtend.GraphCanvas;
 using SymbolList  = EditorExtend.SymbolList;
 using SampleStyle = EditorExtend.SampleStyle;
+// Locales.
+using Languages = LanguageManager;
 
 namespace MissionGrammarSystem {
 	// The mission rules window.
@@ -85,19 +87,6 @@ namespace MissionGrammarSystem {
 		// Error message of rule graph.
 		private static KeyValuePair<ValidationLabel, string> _graphError = new KeyValuePair<ValidationLabel, string>(ValidationLabel.NoError, string.Empty);
 
-		private static string _messageEmptyFields;
-		private static string _messageNameFieldEmpty;
-		private static string _messageUsedNameEmptyDescription;
-		private static string _messageIllegalNameDoubleSpaceEndSpaceEmptyDescription;
-		private static string _messageIllegalNameDoubleSpaceEmptyDescription;
-		private static string _messageIllegalNameEndSpaceEmptyDescription;
-		private static string _messageUsedName;
-		private static string _messageIllegalNameDoubleSpaceEndSpace;
-		private static string _messageIllegalNameDoubleSpace;
-		private static string _messageIllegalNameEndspace;
-		private static string _messageFillTheFields;
-		private static bool _isMessageInitialized = false;
-
 		// Initialize when trigger reload scripts via 'InitializeOnLoad'.
 		static RulesWindow() {
 			Initialize();
@@ -151,21 +140,6 @@ namespace MissionGrammarSystem {
 			Alphabet.RevokeAllSelected();
 		}
 		void OnGUI() {
-			if (!_isMessageInitialized) {
-				ValidationSystem.InitializeMessage();
-				_messageEmptyFields										= LanguageManager.GetText("MissionRules-Message-EmptyFields");
-				_messageNameFieldEmpty 									= LanguageManager.GetText("MissionRules-Message-NameFieldEmpty");
-				_messageUsedNameEmptyDescription 						= LanguageManager.GetText("MissionRules-Message-UsedName,EmptyDescription");
-				_messageIllegalNameDoubleSpaceEndSpaceEmptyDescription 	= LanguageManager.GetText("MissionRules-Message-IllegalName,DoubleSpace,EndSpace,EmptyDescription");
-				_messageIllegalNameDoubleSpaceEmptyDescription 			= LanguageManager.GetText("MissionRules-Message-IllegalName,DoubleSpace,EmptyDescription");
-				_messageIllegalNameEndSpaceEmptyDescription 			= LanguageManager.GetText("MissionRules-Message-IllegalName,EndSpace,EmptyDescription");
-				_messageUsedName 										= LanguageManager.GetText("MissionRules-Message-UsedName");
-				_messageIllegalNameDoubleSpaceEndSpace 					= LanguageManager.GetText("MissionRules-Message-IllegalName,DoubleSpace,EndSpace");
-				_messageIllegalNameDoubleSpace 							= LanguageManager.GetText("MissionRules-Message-IllegalName,DoubleSpace");
-				_messageIllegalNameEndspace 							= LanguageManager.GetText("MissionRules-Message-IllegalName,EndSpace");
-				_messageFillTheFields 									= LanguageManager.GetText("MissionRules-Message-FillTheFields");
-				_isMessageInitialized 									= true;
-			}
 			SampleStyle.DrawWindowBackground(SampleStyle.ColorGrey);
 			// Layout the combobox and editor of mission group.
 			GUILayout.BeginArea(Container.PropertiesArea);
@@ -341,48 +315,48 @@ namespace MissionGrammarSystem {
 			// [TODO] Data validation. Move this part.
 			// Remind user [need Modify]
 			if (_name == string.Empty && _description == string.Empty) {
-				EditorGUILayout.HelpBox(_messageEmptyFields, MessageType.Warning);
 				_applyEditingButtonEnabled = false;
+				EditorGUILayout.HelpBox(Languages.GetText("MissionRules-Message-EmptyFields"), MessageType.Warning);
 			}
 			if (_name == string.Empty && _description != string.Empty) {
 				_applyEditingButtonEnabled = false;
-				EditorGUILayout.HelpBox(_messageNameFieldEmpty, MessageType.Warning);
+				EditorGUILayout.HelpBox(Languages.GetText("MissionRules-Message-NameFieldEmpty"), MessageType.Warning);
 			}
 			if (_name != string.Empty && _description == string.Empty && _nameCanBeUsed == false) {
 				_applyEditingButtonEnabled = false;
-				EditorGUILayout.HelpBox(_messageUsedNameEmptyDescription, MessageType.Error);
+				EditorGUILayout.HelpBox(Languages.GetText("MissionRules-Message-UsedName,EmptyDescription"), MessageType.Error);
 			}
 			if (_name != string.Empty && _description == string.Empty && _nameCanBeUsed == true && _nameStringNoDoubleSpace.IsMatch(_name) == true && _nameEndOfStringNoSpace.IsMatch(_name) == true) {
 				_applyEditingButtonEnabled = false;
-				EditorGUILayout.HelpBox(_messageIllegalNameDoubleSpaceEndSpaceEmptyDescription, MessageType.Error);
+				EditorGUILayout.HelpBox(Languages.GetText("MissionRules-Message-IllegalName,DoubleSpace,EndSpace,EmptyDescription"), MessageType.Error);
 			}
 			if (_name != string.Empty && _description == string.Empty && _nameCanBeUsed == true && _nameStringNoDoubleSpace.IsMatch(_name) == true) {
 				_applyEditingButtonEnabled = false;
-				EditorGUILayout.HelpBox(_messageIllegalNameDoubleSpaceEmptyDescription, MessageType.Error);
+				EditorGUILayout.HelpBox(Languages.GetText("MissionRules-Message-IllegalName,DoubleSpace,EmptyDescription"), MessageType.Error);
 			}
 			if (_name != string.Empty && _description == string.Empty && _nameCanBeUsed == true && _nameEndOfStringNoSpace.IsMatch(_name) == true) {
 				_applyEditingButtonEnabled = false;
-				EditorGUILayout.HelpBox(_messageIllegalNameEndSpaceEmptyDescription, MessageType.Error);
+				EditorGUILayout.HelpBox(Languages.GetText("MissionRules-Message-IllegalName,EndSpace,EmptyDescription"), MessageType.Error);
 			}
 			if (_name != string.Empty && _description != string.Empty && _nameCanBeUsed == false) {
 				_applyEditingButtonEnabled = false;
-				EditorGUILayout.HelpBox(_messageUsedName, MessageType.Error);
+				EditorGUILayout.HelpBox(Languages.GetText("MissionRules-Message-UsedName"), MessageType.Error);
 			}
 			if (_name != string.Empty && _description != string.Empty && _nameCanBeUsed == true && _nameStringNoDoubleSpace.IsMatch(_name) == true && _nameEndOfStringNoSpace.IsMatch(_name) == true) {
 				_applyEditingButtonEnabled = false;
-				EditorGUILayout.HelpBox(_messageIllegalNameDoubleSpaceEndSpace, MessageType.Info);
+				EditorGUILayout.HelpBox(Languages.GetText("MissionRules-Message-IllegalName,DoubleSpace,EndSpace"), MessageType.Info);
 			}
 			if (_name != string.Empty && _description != string.Empty && _nameCanBeUsed == true && _nameStringNoDoubleSpace.IsMatch(_name) == true) {
 				_applyEditingButtonEnabled = false;
-				EditorGUILayout.HelpBox(_messageIllegalNameDoubleSpace, MessageType.Error);
+				EditorGUILayout.HelpBox(Languages.GetText("MissionRules-Message-IllegalName,DoubleSpace"), MessageType.Error);
 			}
 			if (_name != string.Empty && _description != string.Empty && _nameCanBeUsed == true && _nameEndOfStringNoSpace.IsMatch(_name) == true) {
 				_applyEditingButtonEnabled = false;
-				EditorGUILayout.HelpBox(_messageIllegalNameEndspace, MessageType.Error);
+				EditorGUILayout.HelpBox(Languages.GetText("MissionRules-Message-IllegalName,EndSpace"), MessageType.Error);
 			}
 			if (_name != string.Empty && _description != string.Empty && _nameCanBeUsed == true && _nameStringNoDoubleSpace.IsMatch(_name) == false && _nameEndOfStringNoSpace.IsMatch(_name) == false) {
 				_applyEditingButtonEnabled = true;
-				EditorGUILayout.HelpBox(_messageFillTheFields, MessageType.Info);
+				EditorGUILayout.HelpBox(Languages.GetText("MissionRules-Message-FillTheFields"), MessageType.Info);
 			}
 			// Submit button.
 			GUI.enabled = _applyEditingButtonEnabled;

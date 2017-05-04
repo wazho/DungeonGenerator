@@ -15,10 +15,9 @@ public class LanguageManager {
 	public static void Initialize(){
 		// Change the local path later
 		//string localePath = "Assets/DungeonGenerator/Editor/libs/I18n/Method2/I18nUnity/Locales/";
-		if(!_initLanguage){
+		if (!_initLanguage){
 			I18n.Configure();	
 			_initLanguage = true;
-			Debug.Log("Language Manager Initialized");
 		}
 		// Can't change the language here
 	}

@@ -7,6 +7,8 @@ using System.Text.RegularExpressions;
 using Container   = EditorExtend.MissionAlphabetWindow;
 using SymbolList  = EditorExtend.SymbolList;
 using SampleStyle = EditorExtend.SampleStyle;
+// Locales.
+using Languages = LanguageManager;
 
 namespace MissionGrammarSystem {
 	// The mission alphabet window.
@@ -58,16 +60,6 @@ namespace MissionGrammarSystem {
 		private static GUIStyle NodeTabButtonStyle;
 		private static GUIStyle ConnectionTabButtonStyle;
 		private static bool _isInitTabButton;
-
-		private static string _messageFillColumns;
-		private static string _messageNameFieldError;
-		private static string _messageAbbreviationFieldError;
-		private static string _messageUsedNodeName;
-		private static string _messageUsedAbbreviationName;
-		private static string _messageDataChanged;
-		private static string _messageUsedConnectionName;
-		private static string _messageUpToDate;
-		private static bool _isMessageInitialized = false;
 
 		// Initialize when trigger reload scripts via 'InitializeOnLoad'.
 		static AlphabetWindow() {
@@ -124,18 +116,6 @@ namespace MissionGrammarSystem {
 		}
 		// Native function for Editor Window.
 		void OnGUI() {
-			if (!_isMessageInitialized) {
-				_messageFillColumns 			= LanguageManager.GetText("MissionAlphabet-MessageHint-FillColumns");
-				_messageNameFieldError 			= LanguageManager.GetText("MissionAlphabet-MessageHint-NameFieldError");
-				_messageAbbreviationFieldError 	= LanguageManager.GetText("MissionAlphabet-MessageHint-AbbreviationFieldError");
-				_messageUsedNodeName 			= LanguageManager.GetText("MissionAlphabet-MessageHint-UsedNodeName");
-				_messageUsedAbbreviationName 	= LanguageManager.GetText("MissionAlphabet-MessageHint-UsedAbbreviationName");
-				_messageDataChanged 			= LanguageManager.GetText("MissionAlphabet-MessageHint-DataChanged");
-				_messageUsedConnectionName 		= LanguageManager.GetText("MissionAlphabet-MessageHint-UsedConnectionName");
-				_messageUpToDate 				= LanguageManager.GetText("MissionAlphabet-MessageHint-UpToDate");
-				_isMessageInitialized  			= true;
-			}
-
 			if (_isInitTabButton) {
 				NodeTabButtonStyle        = new GUIStyle(SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Left, SampleStyle.ButtonColor.Blue));
 				ConnectionTabButtonStyle  = new GUIStyle(SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Right, SampleStyle.ButtonColor.Blue));
@@ -385,32 +365,32 @@ namespace MissionGrammarSystem {
 			if (_symbolName == string.Empty ||
 				_symbolAbbreviation == string.Empty ||
 				_symbolDescription == string.Empty) {
-				_messageHint = _messageFillColumns; //LanguageManager.GetText("Alphabet-MessageHint-FillColumns");
+				_messageHint = Languages.GetText("Alphabet-MessageHint-FillColumns");
 				_messageType = MessageType.Warning;
 			} else if (_symbolTerminal == NodeTerminalType.Terminal &&
 				! _ruleOfTerminalSymbolName.IsMatch(_symbolName)) {
-				_messageHint = _messageNameFieldError; //LanguageManager.GetText("Alphabet-MessageHint-NameFieldError");
+				_messageHint = Languages.GetText("Alphabet-MessageHint-NameFieldError");
 				_messageType = MessageType.Error;
 			} else if (_symbolTerminal == NodeTerminalType.Terminal &&
 				! _ruleOfTerminalSymbolAbbreviation.IsMatch(_symbolAbbreviation)) {
-				_messageHint = _messageAbbreviationFieldError; //LanguageManager.GetText("Alphabet-MessageHint-AbbreviationFieldError");
+				_messageHint = Languages.GetText("Alphabet-MessageHint-AbbreviationFieldError");
 				_messageType = MessageType.Error;
 			} else if (_symbolTerminal == NodeTerminalType.NonTerminal &&
 				! _ruleOfNonTerminalSymbolName.IsMatch(_symbolName)) {
-				_messageHint = _messageNameFieldError; //LanguageManager.GetText("Alphabet-MessageHint-NameFieldError");
+				_messageHint = Languages.GetText("Alphabet-MessageHint-NameFieldError");
 				_messageType = MessageType.Error;
 			} else if (_symbolTerminal == NodeTerminalType.NonTerminal &&
 				! _ruleOfNonTerminalSymbolAbbreviation.IsMatch(_symbolAbbreviation)) {
-				_messageHint = _messageAbbreviationFieldError; //LanguageManager.GetText("Alphabet-MessageHint-AbbreviationFieldError");
+				_messageHint = Languages.GetText("Alphabet-MessageHint-AbbreviationFieldError");
 				_messageType = MessageType.Error;
 			} else if (Alphabet.IsNodeNameUsed(_node)) {
-				_messageHint = _messageUsedNodeName; //LanguageManager.GetText("Alphabet-MessageHint-UsedNodeName");
+				_messageHint = Languages.GetText("Alphabet-MessageHint-UsedNodeName");
 				_messageType = MessageType.Error;
 			} else if (Alphabet.IsNodeAbbreviationUsed(_node)) {
-				_messageHint = _messageUsedAbbreviationName; //LanguageManager.GetText("Alphabet-MessageHint-UsedAbbreviationName");
+				_messageHint = Languages.GetText("Alphabet-MessageHint-UsedAbbreviationName");
 				_messageType = MessageType.Error;
 			} else {
-				_messageHint = _messageDataChanged; //LanguageManager.GetText("Alphabet-MessageHint-DataChanged");
+				_messageHint = Languages.GetText("Alphabet-MessageHint-DataChanged");
 				_messageType = MessageType.Info;
 			}
 		}
@@ -420,16 +400,16 @@ namespace MissionGrammarSystem {
 		void ConnectionFieldValidation() {
 			if (_symbolName == string.Empty ||
 				_symbolDescription == string.Empty) {
-				_messageHint = _messageFillColumns; //LanguageManager.GetText("Alphabet-MessageHint-FillColumns");
+				_messageHint = Languages.GetText("Alphabet-MessageHint-FillColumns");
 				_messageType = MessageType.Warning;
 			} else if (! _ruleOfConnectionName.IsMatch(_symbolName)) {
-				_messageHint = _messageNameFieldError; //LanguageManager.GetText("Alphabet-MessageHint-NameFieldError");
+				_messageHint = Languages.GetText("Alphabet-MessageHint-NameFieldError");
 				_messageType = MessageType.Error;
 			} else if (Alphabet.IsConnectionNameUsed(_connection)) {
-				_messageHint = _messageUsedConnectionName; //LanguageManager.GetText("Alphabet-MessageHint-UsedConnectionName");
+				_messageHint = Languages.GetText("Alphabet-MessageHint-UsedConnectionName");
 				_messageType = MessageType.Error;
 			} else {
-				_messageHint = _messageDataChanged; //LanguageManager.GetText("Alphabet-MessageHint-DataChanged");
+				_messageHint = Languages.GetText("Alphabet-MessageHint-DataChanged");
 				_messageType = MessageType.Info;
 			}
 		}
@@ -446,7 +426,7 @@ namespace MissionGrammarSystem {
 						Alphabet.SelectedNode.Name == _node.Name &&
 						Alphabet.SelectedNode.Abbreviation == _node.Abbreviation &&
 						Alphabet.SelectedNode.Description == _node.Description) {
-						_messageHint = _messageUpToDate; //LanguageManager.GetText("Alphabet-MessageHint-UpToDate");
+						_messageHint = Languages.GetText("Alphabet-MessageHint-UpToDate");
 						_messageType = MessageType.Info;
 					} else {
 						NodeFieldValidation();
@@ -464,7 +444,7 @@ namespace MissionGrammarSystem {
 						Alphabet.SelectedConnection.Requirement == _connection.Requirement &&
 						Alphabet.SelectedConnection.Name == _connection.Name &&
 						Alphabet.SelectedConnection.Description == _connection.Description) {
-						_messageHint = _messageUpToDate; //LanguageManager.GetText("Alphabet-MessageHint-UpToDate");
+						_messageHint = Languages.GetText("Alphabet-MessageHint-UpToDate");
 						_messageType = MessageType.Info;
 					} else {
 						ConnectionFieldValidation();

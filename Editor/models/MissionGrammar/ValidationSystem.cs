@@ -1,10 +1,11 @@
 using UnityEngine;
 using UnityEditor;
+using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
-
-using System;
+// Locales.
+using Languages = LanguageManager;
 
 namespace MissionGrammarSystem {
 	// Label of the validation system in mission rule.
@@ -35,31 +36,6 @@ namespace MissionGrammarSystem {
 			{ ValidationLabel.OrphanNode,         (MissionRule rule, GraphGrammar graphGrammar) => ValidateOrphanNode(rule, graphGrammar) },
 			{ ValidationLabel.OverflowedAnyNode,  (MissionRule rule, GraphGrammar graphGrammar) => ValidateOverflowedAnyNode(rule, graphGrammar) },
 		};
-
-		private static string _messageSucceed; 
-		private static string _messageLeftMoreThanRight;
-		private static string _messageEmptyLeft; 
-		private static string _messageIsolatedNode;
-		private static string _messageIsolatedConnection;
-		private static string _messageDuplicated;
-		private static string _messageMultipleRelations;
-		private static string _messageCyclicLink;
-		private static string _messageOrphanNode;
-		private static string _messageOverflowedAnyNode;
-
-		public static void InitializeMessage(){
-			_messageSucceed            	= LanguageManager.GetText("MissionGraph-Validation-Succeed"); 
-			_messageLeftMoreThanRight  	= LanguageManager.GetText("MissionGraph-Validation-LeftMoreThanRight"); 
-			_messageEmptyLeft			= LanguageManager.GetText("MissionGraph-Validation-EmptyLeft");
-			_messageIsolatedNode		= LanguageManager.GetText("MissionGraph-Validation-IsolatedNode");
-			_messageIsolatedConnection 	= LanguageManager.GetText("MissionGraph-Validation-IsolatedConnection");
-			_messageDuplicated		 	= LanguageManager.GetText("MissionGraph-Validation-ExactlyDuplicated");
-			_messageMultipleRelations 	= LanguageManager.GetText("MissionGraph-Validation-MultipleRelations");
-			_messageCyclicLink         	= LanguageManager.GetText("MissionGraph-Validation-CyclicLink");
-			_messageOrphanNode         	= LanguageManager.GetText("MissionGraph-Validation-OrphanNode");
-			_messageOverflowedAnyNode  	= LanguageManager.GetText("MissionGraph-Validation-OverflowedAnyNode");
-			Debug.Log("Message in Validation Initialized");
-		}
 
 		// Validate the graph grammar (one of pair of rule).
 		public static KeyValuePair<ValidationLabel, string> Validate(MissionRule rule, GraphGrammar graphGrammar) {
@@ -219,34 +195,34 @@ namespace MissionGrammarSystem {
 		}
 		// Return Error message.
 		public static string SelectErrorType(ValidationLabel errorLabel) {
-			string result = _messageSucceed;
+			string result = Languages.GetText("MissionGraph-Validation-Succeed");
 			switch (errorLabel) {
 			case ValidationLabel.LeftMoreThanRight:
-				result = _messageLeftMoreThanRight;
+				result = Languages.GetText("MissionGraph-Validation-LeftMoreThanRight");
 				break;
 			case ValidationLabel.EmptyLeft:
-				result = _messageEmptyLeft;
+				result = Languages.GetText("MissionGraph-Validation-EmptyLeft");
 				break;
 			case ValidationLabel.IsolatedNode:
-				result = _messageIsolatedNode;
+				result = Languages.GetText("MissionGraph-Validation-IsolatedNode");
 				break;
 			case ValidationLabel.IsolatedConnection:
-				result = _messageIsolatedConnection;
+				result = Languages.GetText("MissionGraph-Validation-IsolatedConnection");
 				break;
 			case ValidationLabel.ExactlyDuplicated:
-				result = _messageDuplicated;
+				result = Languages.GetText("MissionGraph-Validation-ExactlyDuplicated");
 				break;
 			case ValidationLabel.MultipleRelations:
-				result = _messageMultipleRelations;
+				result = Languages.GetText("MissionGraph-Validation-MultipleRelations");
 				break;
 			case ValidationLabel.CyclicLink:
-				result = _messageCyclicLink;
+				result = Languages.GetText("MissionGraph-Validation-CyclicLink");
 				break;
 			case ValidationLabel.OrphanNode:
-				result = _messageOrphanNode;
+				result = Languages.GetText("MissionGraph-Validation-OrphanNode");
 				break;
 			case ValidationLabel.OverflowedAnyNode:
-				result = _messageOverflowedAnyNode;
+				result = Languages.GetText("MissionGraph-Validation-OverflowedAnyNode");
 				break;
 			}
 			return result;
