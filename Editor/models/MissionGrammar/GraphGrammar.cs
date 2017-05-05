@@ -104,10 +104,8 @@ namespace MissionGrammarSystem {
 				if (node.IsInScope(pos)) {
 					if (string.Equals(location, "start")) {
 						connection.StartpointStickyOn = node;
-						connection.StartPosition = node.Position;
 					} else {
 						connection.EndpointStickyOn = node;
-						connection.EndPosition = node.Position;
 					}
 					node.AddStickiedConnection(connection, location);
 					sticked = true;
