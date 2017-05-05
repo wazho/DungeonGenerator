@@ -15,11 +15,12 @@ namespace MissionGrammarSystem {
 		private static List<Rule> _rules;
 
 		// When click the initial button of generate graph page.
-		public static void Initial() {
+		public static void Initial(int seed) {
 			// Initial the current graph.
 			_root         = new Node(Alphabet.StartingNode);
 			_relatedNodes = new List<Node>();
 			_rules        = new List<Rule>();
+			Random.InitState(seed);
 			// According to current rules of mission grammar, transform them to tree structure.
 			TransformRules();
 		}
