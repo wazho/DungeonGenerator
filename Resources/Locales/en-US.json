@@ -112,5 +112,7 @@ Developed by NTUST GameLab, Taiwan, advised by Prof. Wen-Kai Tai. \nCopyright \u
     "GenerateMission-IllegalRule"       : "Illegal Rule!",
     "GenerateMission-Initial"           : "Initial",
     "GenerateMission-Iterate"           : "Iterate",
-    "GenerateMission-Complete"          : "Complete"
+    "GenerateMission-Complete"          : "Complete",
+    "GenerateMission-Seed"              : "Seed",
+    "GenerateMission-Random"            : "Random"
 }

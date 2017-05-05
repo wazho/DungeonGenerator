@@ -141,17 +141,6 @@ namespace MissionGrammarSystem {
 				_outlineScope.center = value;
 				_filledScope.center  = value;
 				_textScope.center    = value;
-				// Move the stickied connections together.
-				foreach (StickiedConnection stickied in _stickiedConnections) {
-					switch (stickied.location) {
-					case "start":
-						stickied.connection.StartPosition = value;
-						break;
-					case "end":
-						stickied.connection.EndPosition = value;
-						break;
-					}
-				}
 			}
 		}
 		public float PositionX {

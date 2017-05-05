@@ -112,5 +112,7 @@
     "GenerateMission-IllegalRule"       : "非法的規則!",
     "GenerateMission-Initial"           : "初始化",
     "GenerateMission-Iterate"           : "迭代",
-    "GenerateMission-Complete"          : "完整迭代"
+    "GenerateMission-Complete"          : "完整迭代",
+    "GenerateMission-Seed"              : "種子",
+    "GenerateMission-Random"            : "隨機"
 }

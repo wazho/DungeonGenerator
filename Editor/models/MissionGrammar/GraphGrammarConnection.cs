@@ -190,6 +190,12 @@ namespace MissionGrammarSystem {
 		}
 		// Draw the connection on canvas.
 		public void Draw() {
+			if (StartpointStickyOn != null) {
+				StartPosition = StartpointStickyOn.Position + ( EndPosition - StartpointStickyOn.Position ).normalized * StartpointStickyOn.FilledScope.width / 2;
+			}
+			if (EndpointStickyOn != null) {
+				EndPosition = EndpointStickyOn.Position + ( StartPosition - EndpointStickyOn.Position ).normalized * EndpointStickyOn.FilledScope.width / 2;
+			}
 			// Draw the main line about connection.
 			EditorCanvas.DrawLine(StartPosition, EndPosition, OutlineColor, LineThickness);
 			// Head size

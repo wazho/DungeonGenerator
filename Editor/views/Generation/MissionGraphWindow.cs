@@ -41,8 +41,9 @@ namespace GraphGeneration {
 		private static GUIStyle MissionTabButtonStyle;
 		private static GUIStyle SpaceTabButtonStyle;
 		private static bool _isInitTabButton;
-
 		private static bool _isRuleChanged;
+		// Random seed.
+		public static int Seed { get; private set; }
 
 		// Initialize when trigger reload scripts via 'InitializeOnLoad'.
 		static MissionGraphWindow() {
@@ -66,6 +67,7 @@ namespace GraphGeneration {
 			_currentGraph    = new Mission.GraphGrammar();
 			_isInitTabButton = true;
 			_isRuleChanged   = true;
+			Seed             = 0;
 		}
 
 		void OnGUI() {
@@ -198,13 +200,22 @@ namespace GraphGeneration {
 		private void LayoutFunctionButtons() {
 			GUILayout.BeginArea(Container.FunctionButtonsArea);
 			GUILayout.BeginVertical(SampleStyle.Frame(SampleStyle.ColorLightestGrey));
+			GUILayout.BeginHorizontal();
+			// Random seed.
+			Seed = SampleStyle.IntFieldLabeled(Languages.GetText("GenerateMission-Seed"), Seed, SampleStyle.IntFieldLabel, SampleStyle.IntField, SampleStyle.IntFieldHeight);
+			if (GUILayout.Button(Languages.GetText("GenerateMission-Random"), SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Regular, SampleStyle.ButtonColor.Blue), SampleStyle.ButtonHeight)) {
+				Seed = Random.Range(1, 1000000);
+				// Unfocus from the field.
+				GUI.FocusControl("FocusToNothing");
+			}
+			GUILayout.EndHorizontal();
 			// If error occur, disable apply button.
 			EditorGUI.BeginDisabledGroup(_errorType != ErrorType.None);
 			// Mission and Space Graph button.
 			GUILayout.BeginHorizontal();
 			if (GUILayout.Button(Languages.GetText("GenerateMission-Initial"), SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Left, SampleStyle.ButtonColor.Blue), SampleStyle.ButtonHeight)) {
 				// Rewrite system initialization.
-				Mission.RewriteSystem.Initial();
+				Mission.RewriteSystem.Initial(Seed);
 				_isRuleChanged = false;
 				// Update the current graph.
 				_currentGraph = Mission.RewriteSystem.TransformFromGraph();
