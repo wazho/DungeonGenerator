@@ -68,7 +68,7 @@ namespace MissionGrammarSystem {
 				}
 				foreach (GraphGrammarNode node in graphGrammar.Nodes) {
 					// Connection.StickOn will remain the last node it sticked on, so use position to inforce validation.
-					if (! graphGrammar.Connections.Where(e => (e.StartPosition == node.Position || e.EndPosition == node.Position)).Any()) {
+					if (! graphGrammar.Connections.Where(e => (e.StartpointStickyOn == node || e.EndpointStickyOn == node)).Any()) {
 						return false;
 					}
 				}
