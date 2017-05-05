@@ -6,6 +6,8 @@ using System.Collections;
 using EditorStyle = EditorExtend.Style;
 using Style = EditorExtend.CommonStyle;
 using SampleStyle = EditorExtend.SampleStyle;
+// Locales.
+using Languages = LanguageManager;
 
 namespace DungeonLevel {
 	// Error type. 
@@ -46,38 +48,33 @@ namespace DungeonLevel {
 		}
 		private static string _messageNoError;
 		private static string _messageLevelNameIsUsed;
-		private static bool _isMessageInitialized = false;
 		void Awake() {
 			// Setting errors.
 			_errorType = ErrorType.NoError;
 		}
 
 		void OnGUI() {
-			if (!_isMessageInitialized) {
-				_messageNoError 		= LanguageManager.GetText("LevelSetting-NoError");
-				_messageLevelNameIsUsed = LanguageManager.GetText("LevelSetting-LevelNameIsUsed"); 
-				_isMessageInitialized = true;
-			}
+
 			SampleStyle.DrawWindowBackground(SampleStyle.ColorGrey);
 			GUILayout.BeginVertical(SampleStyle.Frame(SampleStyle.ColorLightestGrey));
-			_name         = SampleStyle.TextFieldLabeled("Level Name", _name, SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
-			_abbreviation = SampleStyle.TextFieldLabeled("Level Abbreviation", _abbreviation , SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
-			_description  = SampleStyle.TextAreaLabeled("Description", _description, SampleStyle.TextAreaLabel, SampleStyle.TextArea, SampleStyle.TextAreaHeight);
-			_tag          = SampleStyle.TextFieldLabeled("Tag", _tag, SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
+			_name         = SampleStyle.TextFieldLabeled(Languages.GetText("LevelSetting-LevelName"), _name, SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
+			_abbreviation = SampleStyle.TextFieldLabeled(Languages.GetText("LevelSetting-LevelAbbreviation"), _abbreviation , SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
+			_description  = SampleStyle.TextAreaLabeled(Languages.GetText("LevelSetting-Description"), _description, SampleStyle.TextAreaLabel, SampleStyle.TextArea, SampleStyle.TextAreaHeight);
+			_tag          = SampleStyle.TextFieldLabeled(Languages.GetText("LevelSetting-Tag"), _tag, SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
 
 			EditorGUILayout.HelpBox(FormValidation(), MessageType.Info, true);
 			// If error occur, disable apply button.
 			EditorGUI.BeginDisabledGroup(_errorType != ErrorType.NoError);
 			// Apply button and popup
-			if (GUILayout.Button("Apply", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Regular, SampleStyle.ButtonColor.Green), SampleStyle.SubmitButtonHeight)) {
-				if (EditorUtility.DisplayDialog("Apply on level settings",
-					"Are you sure want to save these level settings?",
-					"Yes", "No")) {
+			if (GUILayout.Button(Languages.GetText("LevelSetting-Apply"), SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Regular, SampleStyle.ButtonColor.Green), SampleStyle.SubmitButtonHeight)) {
+				if (EditorUtility.DisplayDialog(Languages.GetText("LevelSetting-Dialog-Title"),
+					Languages.GetText("LevelSetting-Dialog-Content"),
+					Languages.GetText("LevelSetting-Dialog-Yes"), Languages.GetText("LevelSetting-Dialog-No"))) {
 					// Commit changes
-					Debug.Log("Level Settings is changed :}");
+					Debug.Log(Languages.GetText("LevelSetting-Dialog-Yes-Content"));
 				} else {
 					// Cancel changes;
-					Debug.Log("Level Settings isn't changed");
+					Debug.Log(Languages.GetText("LevelSetting-Dialog-No-Content"));
 				}
 			}
 			EditorGUI.EndDisabledGroup();
@@ -99,10 +96,10 @@ namespace DungeonLevel {
 			// Select the mapping message by error type.
 			switch (errorType) {
 			case ErrorType.NoError:
-				message = _messageNoError;
+				message = Languages.GetText("LevelSetting-NoError");
 				break;
 			case ErrorType.LevelNameIsUsed:
-				message = _messageLevelNameIsUsed;
+				message = Languages.GetText("LevelSetting-LevelNameIsUsed");
 				break;
 			}
 			return message;

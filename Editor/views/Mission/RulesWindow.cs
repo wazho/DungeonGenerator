@@ -172,7 +172,7 @@ namespace MissionGrammarSystem {
 			// Update the content of dropdown.
 			_groupsOptions = MissionGrammar.Groups.Select(s => s.Name).ToArray();
 			// Dropdown list of current group type.
-			_indexOfGroupsOptions = SampleStyle.PopupLabeled("Current Group", _indexOfGroupsOptions, _groupsOptions, SampleStyle.PopUpLabel, SampleStyle.PopUp, Screen.width/2, SampleStyle.PopUpHeight);
+			_indexOfGroupsOptions = SampleStyle.PopupLabeled(Languages.GetText("MisssionRules-CurrentGroup"), _indexOfGroupsOptions, _groupsOptions, SampleStyle.PopUpLabel, SampleStyle.PopUp, Screen.width/2, SampleStyle.PopUpHeight);
 				if (_tempIndexOfGroupsOptions != _indexOfGroupsOptions) {
 				// Switch mode.
 				_editingMode = EditingMode.None;
@@ -211,12 +211,12 @@ namespace MissionGrammarSystem {
 				_editingMode = EditingMode.None;
 			}
 			// Sub-button of editor, create new group.
-			if (GUILayout.Button("Add New", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Right, SampleStyle.ButtonColor.Green), SampleStyle.ButtonHeight)) {
+			if (GUILayout.Button(Languages.GetText("MisssionRules-AddNew"), SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Right, SampleStyle.ButtonColor.Green), SampleStyle.ButtonHeight)) {
 				// Switch mode.
 				_editingMode = EditingMode.CreateGroup;
 				// Update info.
 				_name        = MissionGrammar.GetDefaultGroupName(_groupsOptions);
-				_description = "Description here.";
+				_description = Languages.GetText("MisssionRules-Description-Content");
 			}
 			EditorGUILayout.EndHorizontal();
 		}
@@ -229,7 +229,7 @@ namespace MissionGrammarSystem {
 				_rulesOptions = MissionGrammar.Groups[_indexOfGroupsOptions].Rules.Select(r => r.Name).ToArray();
 			}
 			// Dropdown list of Currect Rule Type.
-			_indexOfRulesOptions = SampleStyle.PopupLabeled("Current Rules", _indexOfRulesOptions, _rulesOptions, SampleStyle.PopUpLabel, SampleStyle.PopUp, Screen.width/2, SampleStyle.PopUpHeight);
+			_indexOfRulesOptions = SampleStyle.PopupLabeled(Languages.GetText("MisssionRules-CurrentRules"), _indexOfRulesOptions, _rulesOptions, SampleStyle.PopUpLabel, SampleStyle.PopUp, Screen.width/2, SampleStyle.PopUpHeight);
 			if (_tempIndexOfRulesOptions != _indexOfRulesOptions) {
 				// Switch mode.
 				_editingMode             = EditingMode.None;
@@ -266,12 +266,12 @@ namespace MissionGrammarSystem {
 				_editingMode = EditingMode.None;
 			}
 			// Sub-button of editor, create new rule.
-			if (GUILayout.Button("Add New", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Right, SampleStyle.ButtonColor.Green), SampleStyle.ButtonHeight)) {
+			if (GUILayout.Button(Languages.GetText("MisssionRules-AddNew"), SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Right, SampleStyle.ButtonColor.Green), SampleStyle.ButtonHeight)) {
 				// Switch mode.
 				_editingMode = EditingMode.CreateRule;
 				// Update info.
 				_name        = MissionGrammar.GetDefaultRuleName(_rulesOptions, _indexOfGroupsOptions);
-				_description = "Description here.";
+				_description = Languages.GetText("MisssionRules-Description-Content");
 			}
 			EditorGUILayout.EndHorizontal();
 			GUILayout.Space(SampleStyle.PaddingBlock);
@@ -285,29 +285,29 @@ namespace MissionGrammarSystem {
 			switch (_editingMode) {
 			case EditingMode.EditGroup:
 				// Text fields.
-				_name = SampleStyle.TextFieldLabeled("Group Name", _name, SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
-				_description = SampleStyle.TextFieldLabeled("Group Description", _description , SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
+				_name = SampleStyle.TextFieldLabeled(Languages.GetText("MisssionRules-GroupName"), _name, SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
+				_description = SampleStyle.TextFieldLabeled(Languages.GetText("MisssionRules-GroupDescription"), _description , SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
 				// Check the name has never used before.
 				_nameCanBeUsed = ! MissionGrammar.IsGroupNameUsed(_name);
 				break;
 			case EditingMode.CreateGroup:
 				// Text fields.
-				_name        = SampleStyle.TextFieldLabeled("New Group Name", _name, SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
-				_description = SampleStyle.TextFieldLabeled("New Group Description", _description, SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
+				_name        = SampleStyle.TextFieldLabeled(Languages.GetText("MisssionRules-NewGroupName"), _name, SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
+				_description = SampleStyle.TextFieldLabeled(Languages.GetText("MisssionRules-NewGroupDescription"), _description, SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
 				// Check the name has never used before.
 				_nameCanBeUsed = ! MissionGrammar.IsGroupNameUsed(_name);
 				break;
 			case EditingMode.EditRule:
 				// Text fields.
-				_name        = SampleStyle.TextFieldLabeled("Rule Name", _name, SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
-				_description = SampleStyle.TextFieldLabeled("Rule Description", _description, SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
+				_name        = SampleStyle.TextFieldLabeled(Languages.GetText("MisssionRules-RuleName"), _name, SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
+				_description = SampleStyle.TextFieldLabeled(Languages.GetText("MisssionRules-RuleDescription"), _description, SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
 				// Check the name has never used before.
 				_nameCanBeUsed = ! MissionGrammar.IsRuleNameUsed(_name, _indexOfGroupsOptions);
 				break;
 			case EditingMode.CreateRule:
 				// Text fields.
-				_name        = SampleStyle.TextFieldLabeled("New Rule Name", _name, SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
-				_description = SampleStyle.TextFieldLabeled("New Rule Description", _description, SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
+				_name        = SampleStyle.TextFieldLabeled(Languages.GetText("MisssionRules-NewRuleName"), _name, SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
+				_description = SampleStyle.TextFieldLabeled(Languages.GetText("MisssionRules-NewRuleDescription"), _description, SampleStyle.TextFieldLabel, SampleStyle.TextField, SampleStyle.TextFieldHeight);
 				// Check the name has never used before.
 				_nameCanBeUsed = ! MissionGrammar.IsRuleNameUsed(_name, _indexOfGroupsOptions);
 				break;
@@ -360,10 +360,10 @@ namespace MissionGrammarSystem {
 			}
 			// Submit button.
 			GUI.enabled = _applyEditingButtonEnabled;
-			if (GUILayout.Button("Apply", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Regular, SampleStyle.ButtonColor.Green), SampleStyle.SubmitButtonHeight)) {
-				if (EditorUtility.DisplayDialog("Saving", 
-					"Are you sure to save?",
-					"Yes", "No")) {
+			if (GUILayout.Button(Languages.GetText("MisssionRules-Apply"), SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Regular, SampleStyle.ButtonColor.Green), SampleStyle.SubmitButtonHeight)) {
+				if (EditorUtility.DisplayDialog(Languages.GetText("MisssionRules-Dialog-Title"), 
+					Languages.GetText("MisssionRules-Dialog-Content"),
+					Languages.GetText("MisssionRules-Dialog-Yes"), Languages.GetText("MisssionRules-Dialog-No"))) {
 					switch (_editingMode) {
 					case EditingMode.EditGroup:
 						MissionGrammar.Groups[_indexOfGroupsOptions].Name        = _name;
@@ -397,8 +397,8 @@ namespace MissionGrammarSystem {
 			GUILayout.BeginArea(Container.RulesArea, SampleStyle.Frame(SampleStyle.ColorLightestGrey));
 			// Information of Source and Replacement.
 			EditorGUILayout.BeginHorizontal();
-			GUILayout.Label("Source", SampleStyle.HeaderTwo, GUILayout.Width(Screen.width / 2));
-			GUILayout.Label("Replacement", SampleStyle.HeaderTwo, GUILayout.Width(Screen.width / 2));
+			GUILayout.Label(Languages.GetText("MisssionRules-Source"), SampleStyle.HeaderTwo, GUILayout.Width(Screen.width / 2));
+			GUILayout.Label(Languages.GetText("MisssionRules-Replacement"), SampleStyle.HeaderTwo, GUILayout.Width(Screen.width / 2));
 			EditorGUILayout.EndHorizontal();
 
 			// SourceCanvas
@@ -427,7 +427,7 @@ namespace MissionGrammarSystem {
 			if (_currentSelectedGraphGrammar != null && _currentSelectedGraphGrammar.SelectedSymbol is GraphGrammarNode) {
 				GUILayout.BeginHorizontal();
 				// Ordering of the node.
-				int sliderOrdering = EditorGUILayout.IntSlider("Ordering", _currentSelectedGraphGrammar.SelectedSymbol.Ordering, 1, _currentSelectedGraphGrammar.Nodes.Count);
+				int sliderOrdering = EditorGUILayout.IntSlider(Languages.GetText("MisssionRules-Ordering"), _currentSelectedGraphGrammar.SelectedSymbol.Ordering, 1, _currentSelectedGraphGrammar.Nodes.Count);
 				if (sliderOrdering != _currentSelectedGraphGrammar.SelectedSymbol.Ordering) {
 					GraphGrammarNode node = _currentSelectedGraphGrammar.Nodes.Find(x => x.Ordering == sliderOrdering);
 					if (node != null) {
@@ -440,15 +440,15 @@ namespace MissionGrammarSystem {
 				GUILayout.EndVertical();
 			} else {
 				EditorGUI.BeginDisabledGroup(true);
-				EditorGUILayout.IntSlider("Ordering", 0, 0, 0);
+				EditorGUILayout.IntSlider(Languages.GetText("MisssionRules-Ordering"), 0, 0, 0);
 				EditorGUI.EndDisabledGroup();
 			}
 			GUILayout.Space(SampleStyle.PaddingBlock);
 			GUILayout.BeginHorizontal();
 			// Weight field.
-			_missionRule.Weight = SampleStyle.IntFieldLabeled("Weight", _missionRule.Weight, SampleStyle.IntFieldLabel, SampleStyle.IntField, SampleStyle.IntFieldHeight); 
+			_missionRule.Weight = SampleStyle.IntFieldLabeled(Languages.GetText("MisssionRules-Weight"), _missionRule.Weight, SampleStyle.IntFieldLabel, SampleStyle.IntField, SampleStyle.IntFieldHeight); 
 			// Quantity field. Fool proofing. 
-			_missionRule.QuantityLimit = SampleStyle.IntFieldLabeled("Quantity limit", _missionRule.QuantityLimit < 0 ? 0 : _missionRule.QuantityLimit, SampleStyle.IntFieldLabel, SampleStyle.IntField, SampleStyle.IntFieldHeight);
+			_missionRule.QuantityLimit = SampleStyle.IntFieldLabeled(Languages.GetText("MisssionRules-Quantitylimit"), _missionRule.QuantityLimit < 0 ? 0 : _missionRule.QuantityLimit, SampleStyle.IntFieldLabel, SampleStyle.IntField, SampleStyle.IntFieldHeight);
 			GUILayout.EndHorizontal();
 			GUILayout.EndVertical();
 			GUILayout.EndArea();
@@ -456,23 +456,23 @@ namespace MissionGrammarSystem {
 			GUILayout.BeginArea(Container.EditorArea);
 			// Buttons - Add Node & Add Connection & Copy & Delete.
 			EditorGUILayout.BeginHorizontal(SampleStyle.Frame(SampleStyle.ColorLightestGrey));
-			if (GUILayout.Button("Add Node", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Left, SampleStyle.ButtonColor.Blue), SampleStyle.ButtonHeight)) {
+			if (GUILayout.Button(Languages.GetText("MisssionRules-AddNode"), SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Left, SampleStyle.ButtonColor.Blue), SampleStyle.ButtonHeight)) {
 				// Add Alphabet's Node.
 				_currentTab = SymbolEditingMode.AddNode;
 			}
-			if (GUILayout.Button("Add Connection", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Mid, SampleStyle.ButtonColor.Blue), SampleStyle.ButtonHeight)) {
+			if (GUILayout.Button(Languages.GetText("MisssionRules-AddConnection"), SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Mid, SampleStyle.ButtonColor.Blue), SampleStyle.ButtonHeight)) {
 				// Add Alphabet's Connection.
 				_currentTab = SymbolEditingMode.AddConnection;
 			}
 			// If don't select any canvas, disable the button.
 			EditorGUI.BeginDisabledGroup(_currentSelectedGraphGrammar == null);
-			if (GUILayout.Button("Copy", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Mid, SampleStyle.ButtonColor.Blue), SampleStyle.ButtonHeight)) {
+			if (GUILayout.Button(Languages.GetText("MisssionRules-Copy"), SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Mid, SampleStyle.ButtonColor.Blue), SampleStyle.ButtonHeight)) {
 				_currentTab = SymbolEditingMode.Copy;
 			}
 			EditorGUI.EndDisabledGroup();
 			// If don't select any node or connection, disable the button.
 			EditorGUI.BeginDisabledGroup(_currentSelectedGraphGrammar == null || _currentSelectedGraphGrammar.SelectedSymbol == null);
-			if (GUILayout.Button("Delete", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Right, SampleStyle.ButtonColor.Blue), SampleStyle.ButtonHeight)) {
+			if (GUILayout.Button(Languages.GetText("MisssionRules-Delete"), SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Right, SampleStyle.ButtonColor.Blue), SampleStyle.ButtonHeight)) {
 				_currentTab = SymbolEditingMode.Delete;
 			}
 			EditorGUI.EndDisabledGroup();
@@ -663,7 +663,7 @@ namespace MissionGrammarSystem {
 		}
 
 		void LayoutNodeList() {
-			GUILayout.Label("List of Nodes", SampleStyle.HeaderTwo, SampleStyle.HeaderTwoHeightLayout);
+			GUILayout.Label(Languages.GetText("MisssionRules-ListOfNodes"), SampleStyle.HeaderTwo, SampleStyle.HeaderTwoHeightLayout);
 			// Content of Node-List.
 			_listScrollPosition = GUILayout.BeginScrollView(_listScrollPosition, SymbolList.HeightLayout);
 			// Content of scroll area.
@@ -684,7 +684,7 @@ namespace MissionGrammarSystem {
 		}
 
 		void LayoutConnectionList() {
-			GUILayout.Label("List Connections", SampleStyle.HeaderTwo, SampleStyle.HeaderTwoHeightLayout);
+			GUILayout.Label(Languages.GetText("MisssionRules-ListOfConnections"), SampleStyle.HeaderTwo, SampleStyle.HeaderTwoHeightLayout);
 			// Content of Connection-List.
 			// Set the ScrollPosition.
 			_listScrollPosition = GUILayout.BeginScrollView(_listScrollPosition, SymbolList.HeightLayout);
@@ -716,7 +716,7 @@ namespace MissionGrammarSystem {
 				GUI.enabled = (_currentSelectedGraphGrammar != null && Alphabet.SelectedConnection != null );
 				break;
 			}
-			if (GUILayout.Button("Add New", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Left, SampleStyle.ButtonColor.Green), SampleStyle.ButtonHeight)) {
+			if (GUILayout.Button(Languages.GetText("MisssionRules-AddNew"), SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Left, SampleStyle.ButtonColor.Green), SampleStyle.ButtonHeight)) {
 				// Add symbol.
 				switch (_currentTab) {
 				case SymbolEditingMode.AddNode:
@@ -764,7 +764,7 @@ namespace MissionGrammarSystem {
 				GUI.enabled = (GUI.enabled && _currentSelectedGraphGrammar.SelectedSymbol is GraphGrammarConnection);
 				break;
 			}
-			if (GUILayout.Button("Modify", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Right, SampleStyle.ButtonColor.Green), SampleStyle.ButtonHeight)) {
+			if (GUILayout.Button(Languages.GetText("MisssionRules-Modify"), SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Right, SampleStyle.ButtonColor.Green), SampleStyle.ButtonHeight)) {
 				switch (_currentTab) {
 				case SymbolEditingMode.AddNode:
 					_currentSelectedGraphGrammar.UpdateSymbol(_currentSelectedGraphGrammar.SelectedSymbol, Alphabet.SelectedNode);

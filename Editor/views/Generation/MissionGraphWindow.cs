@@ -7,6 +7,8 @@ using Container   = EditorExtend.GenerationWindow;
 using SampleStyle = EditorExtend.SampleStyle;
 // Models.
 using Mission = MissionGrammarSystem;
+// Locales.
+using Languages = LanguageManager;
 
 namespace GraphGeneration {
 	// The mission graph window.
@@ -42,10 +44,6 @@ namespace GraphGeneration {
 
 		private static bool _isRuleChanged;
 
-		private static string _messageNoError;
-		private static string _messageError;
-		private static bool _isMessageInitialized = false;
-
 		// Initialize when trigger reload scripts via 'InitializeOnLoad'.
 		static MissionGraphWindow() {
 			Initialize();
@@ -71,11 +69,7 @@ namespace GraphGeneration {
 		}
 
 		void OnGUI() {
-			if (!_isMessageInitialized) {
-				_messageNoError 		= LanguageManager.GetText("MissionGraph-NoError");
-				_messageError			= LanguageManager.GetText("MissionGraph-Error"); 
-				_isMessageInitialized 	= true;
-			}
+			
 			if (_isInitTabButton) {
 				MissionTabButtonStyle = new GUIStyle(SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Left, SampleStyle.ButtonColor.Blue));
 				SpaceTabButtonStyle   = new GUIStyle(SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Right, SampleStyle.ButtonColor.Blue));
@@ -87,7 +81,7 @@ namespace GraphGeneration {
 			LayoutStateButtons();
 			// Dropdown for strating node.
 			int startingIndex = Mission.Alphabet.Nodes.FindIndex(n => n == Mission.Alphabet.StartingNode);
-			startingIndex = SampleStyle.PopupLabeled("Starting Node", startingIndex, Mission.Alphabet.Nodes.Select(n => n.ExpressName).ToArray(), SampleStyle.PopUpLabel, SampleStyle.PopUp, Screen.width - 15);
+			startingIndex = SampleStyle.PopupLabeled(Languages.GetText("GenerateMission-StartingNode"), startingIndex, Mission.Alphabet.Nodes.Select(n => n.ExpressName).ToArray(), SampleStyle.PopUpLabel, SampleStyle.PopUp, Screen.width - 15);
 			Mission.Alphabet.StartingNode = Mission.Alphabet.Nodes[startingIndex];
 			GUILayout.EndVertical();
 			// Canvas to draw current mission graph.
@@ -101,10 +95,10 @@ namespace GraphGeneration {
 		// Buttons for switching mission graph and space graph.
 		private void LayoutStateButtons() {
 			GUILayout.BeginHorizontal();
-			if (GUILayout.Toggle(_graphState == GraphState.Mission, "Mission Graph", MissionTabButtonStyle, SampleStyle.TabButtonHeight)) {
+			if (GUILayout.Toggle(_graphState == GraphState.Mission, Languages.GetText("GenerateMission-MissionGraph"), MissionTabButtonStyle, SampleStyle.TabButtonHeight)) {
 				_graphState = GraphState.Mission;
 			}
-			if (GUILayout.Toggle(_graphState == GraphState.Space, "Space Graph", SpaceTabButtonStyle, SampleStyle.TabButtonHeight)) {
+			if (GUILayout.Toggle(_graphState == GraphState.Space, Languages.GetText("GenerateMission-SpaceGraph"), SpaceTabButtonStyle, SampleStyle.TabButtonHeight)) {
 				_graphState = GraphState.Space;
 			}
 			GUILayout.EndHorizontal();
@@ -183,7 +177,7 @@ namespace GraphGeneration {
 						EditorGUI.EndDisabledGroup();
 						// Hint user this rule is disable because it's illegal.
 						if (!missionRule.Valid) {
-							EditorGUILayout.LabelField("Illegal Rule!");
+							EditorGUILayout.LabelField(Languages.GetText("GenerateMission-IllegalRule"));
 						}
 						GUILayout.EndHorizontal();
 						if (tempRuleEnable != missionRule.Enable) {
@@ -208,7 +202,7 @@ namespace GraphGeneration {
 			EditorGUI.BeginDisabledGroup(_errorType != ErrorType.None);
 			// Mission and Space Graph button.
 			GUILayout.BeginHorizontal();
-			if (GUILayout.Button("Initial", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Left, SampleStyle.ButtonColor.Blue), SampleStyle.ButtonHeight)) {
+			if (GUILayout.Button(Languages.GetText("GenerateMission-Initial"), SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Left, SampleStyle.ButtonColor.Blue), SampleStyle.ButtonHeight)) {
 				// Rewrite system initialization.
 				Mission.RewriteSystem.Initial();
 				_isRuleChanged = false;
@@ -218,7 +212,7 @@ namespace GraphGeneration {
 				Mission.CreVoxAttach.SetCreVoxNodeRoot(_currentGraph.Nodes[0]);
 			}
 			EditorGUI.BeginDisabledGroup(_isRuleChanged);
-			if (GUILayout.Button("Iterate", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Mid, SampleStyle.ButtonColor.Blue), SampleStyle.ButtonHeight)) {
+			if (GUILayout.Button(Languages.GetText("GenerateMission-Iterate"), SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Mid, SampleStyle.ButtonColor.Blue), SampleStyle.ButtonHeight)) {
 				// Rewrite system iteration.
 				Mission.RewriteSystem.Iterate();
 				// Update the current graph.
@@ -226,7 +220,7 @@ namespace GraphGeneration {
 				// Setting root node for CreVoxAttach.
 				Mission.CreVoxAttach.SetCreVoxNodeRoot(_currentGraph.Nodes[0]);
 			}
-			if (GUILayout.Button("Complete", SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Right, SampleStyle.ButtonColor.Blue), SampleStyle.ButtonHeight)) {
+			if (GUILayout.Button(Languages.GetText("GenerateMission-Complete"), SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Right, SampleStyle.ButtonColor.Blue), SampleStyle.ButtonHeight)) {
 				var stopWatch = System.Diagnostics.Stopwatch.StartNew();
 				// Will stop the iteration if there is no non-terminal symbol and the execution time is higher than 3 second
 				while (_currentGraph.Nodes.Exists(n => n.Terminal == Mission.NodeTerminalType.NonTerminal) && stopWatch.ElapsedMilliseconds <= 3000) {
@@ -258,10 +252,10 @@ namespace GraphGeneration {
 			// Select the mapping message by error type.
 			switch (errorType) {
 			case ErrorType.None:
-				message = _messageNoError;
+				message = Languages.GetText("MissionGraph-NoError");
 				break;
 			case ErrorType.Error:
-				message = _messageError;
+				message = Languages.GetText("MissionGraph-Error");
 				break;
 			}
 			return message;
