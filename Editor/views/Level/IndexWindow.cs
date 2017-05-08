@@ -6,20 +6,26 @@ using System.Collections;
 using EditorStyle = EditorExtend.CommonStyle;
 using SampleStyle = EditorExtend.SampleStyle;
 using Container = EditorExtend.IndexWindow;
+// Locales.
+using Languages = LanguageManager;
 
 namespace DungeonLevel {
 	public class IndexWindow : EditorWindow {
 
-		private static string _description = 
-			"Dungeon Generation is a tool for procedurally generate a Game Level specifically for Dungeon. " +
-			"This tool concerns about the player progression by using Mission & Space framework originally established by Joris Dormans. " +
-			"Developed by NTUST GameLab, Taiwan, advised by Prof. Wen-Kai Tai. \nCopyright \u00A9 2017.";
+		private static string _description;
+		//= 
+		//	"Dungeon Generation is a tool for procedurally generate a Game Level specifically for Dungeon. " +
+		//	"This tool concerns about the player progression by using Mission & Space framework originally established by Joris Dormans. " +
+		//	"Developed by NTUST GameLab, Taiwan, advised by Prof. Wen-Kai Tai. \nCopyright \u00A9 2017.";
 
 		void Awake() {
 			
 		}
-		
+
 		void OnGUI() {
+			Languages.Initialize();
+			_description = Languages.GetText("Index-About");
+
 			SampleStyle.DrawWindowBackground(SampleStyle.ColorGrey);
 			GUILayout.BeginArea(Container.IndexWindowSplashCanvasArea);
 			EditorGUI.DrawPreviewTexture(Container.IndexWindowSplashCanvasArea, SampleStyle.SplashImage); 
@@ -29,7 +35,7 @@ namespace DungeonLevel {
 			GUILayout.BeginVertical(SampleStyle.Frame(SampleStyle.ColorLightestGrey));
 			GUILayout.Label(_description, EditorStyles.wordWrappedLabel);
 			GUILayout.BeginHorizontal();
-			if (GUILayout.Button("Create Level", SampleStyle.ButtonLeft, SampleStyle.MainButtonHeight)) {
+			if (GUILayout.Button(Languages.GetText("Index-CreateLevel"), SampleStyle.ButtonLeft, SampleStyle.MainButtonHeight)) {
 				// Safety.
 				if (EditorUtility.DisplayDialog("Create new level.",
 					"Are you sure want to create a new level, this will overwrite the origin level?",
@@ -46,10 +52,10 @@ namespace DungeonLevel {
 					MissionGrammarSystem.RewriteSystem.Initial(GraphGeneration.MissionGraphWindow.Seed);
 				}
 			}
-			if (GUILayout.Button("Import Level", SampleStyle.ButtonMid, SampleStyle.MainButtonHeight)) {
+			if (GUILayout.Button(Languages.GetText("Index-ImportLevel"), SampleStyle.ButtonMid, SampleStyle.MainButtonHeight)) {
 				// Import Level.
 			}
-			if (GUILayout.Button("Import Rewrite", SampleStyle.ButtonMid, SampleStyle.MainButtonHeight)) {
+			if (GUILayout.Button(Languages.GetText("Index-ImportRewrite"), SampleStyle.ButtonMid, SampleStyle.MainButtonHeight)) {
 				// Import Rewrite.
 				string path = EditorUtility.OpenFilePanel("Import xml", "", "xml");
 				if (path.Length > 0) {
@@ -59,7 +65,7 @@ namespace DungeonLevel {
 					DungeonWindow.ShowGenerateMissionWindow();
 				}
 			}
-			if (GUILayout.Button("Export Level", SampleStyle.ButtonRight, SampleStyle.MainButtonHeight)) {
+			if (GUILayout.Button(Languages.GetText("Index-ExportLevel"), SampleStyle.ButtonRight, SampleStyle.MainButtonHeight)) {
 				// Export Level.
 				string path = EditorUtility.SaveFilePanel("Export xml", "", "Level.xml", "xml");
 				if (path.Length > 0) {
