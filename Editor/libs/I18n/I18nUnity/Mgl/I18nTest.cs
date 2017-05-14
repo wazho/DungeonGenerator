@@ -10,6 +10,7 @@
     }
 
     [TestFixture]
+	[Ignore("Useless")]
     public class I18nTest
     {
         [SetUp]
