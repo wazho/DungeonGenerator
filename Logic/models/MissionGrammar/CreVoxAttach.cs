@@ -25,6 +25,7 @@ namespace MissionGrammarSystem {
 			GraphGrammar graph = new GraphGrammar();
 			// Rewrite system initialization.
 			RewriteSystem.Initial(Seed);
+			graph = RewriteSystem.TransformFromGraph();
 			var stopWatch = System.Diagnostics.Stopwatch.StartNew();
 			// Will stop the iteration if there is no non-terminal symbol and the execution time is higher than 3 second
 			while (graph.Nodes.Exists(n => n.Terminal == NodeTerminalType.NonTerminal) && stopWatch.ElapsedMilliseconds <= 3000) {
@@ -36,6 +37,7 @@ namespace MissionGrammarSystem {
 			stopWatch.Stop();
 			// Setting root node for CreVoxAttach.
 			SetCreVoxNodeRoot(graph.Nodes[0]);
+			Debug.Log(_rootNode);
 			return _rootNode;
 		}
 
