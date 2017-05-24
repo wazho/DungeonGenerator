@@ -19,6 +19,27 @@ namespace MissionGrammarSystem {
 			_rootNode = new CreVoxNode();
 			_rootNode.SetNode(node);
 		}
+		// Realtime level generation I 
+		public static CreVoxNode GenerateMissionGraph(string xmlPath, int Seed) {
+			DungeonLevel.OperateXML.Unserialize.UnserializeFromXml(xmlPath);
+			GraphGrammar graph = new GraphGrammar();
+			// Rewrite system initialization.
+			RewriteSystem.Initial(Seed);
+			graph = RewriteSystem.TransformFromGraph();
+			var stopWatch = System.Diagnostics.Stopwatch.StartNew();
+			// Will stop the iteration if there is no non-terminal symbol and the execution time is higher than 3 second
+			while (graph.Nodes.Exists(n => n.Terminal == NodeTerminalType.NonTerminal) && stopWatch.ElapsedMilliseconds <= 3000) {
+				// Rewrite system iteration.
+				RewriteSystem.Iterate();
+				// Update the current graph.
+				graph = RewriteSystem.TransformFromGraph();
+			}
+			stopWatch.Stop();
+			// Setting root node for CreVoxAttach.
+			SetCreVoxNodeRoot(graph.Nodes[0]);
+			Debug.Log(_rootNode);
+			return _rootNode;
+		}
 
 	}
 	// For output iterated nodes.
