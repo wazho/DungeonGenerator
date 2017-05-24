@@ -6,7 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 // Locales.
 using Languages = LanguageManager;
-// TESTCommit22
+// TESTCommit23
 namespace MissionGrammarSystem {
 	// Label of the validation system in mission rule.
 	public enum ValidationLabel {
