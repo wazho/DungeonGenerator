@@ -1,13 +1,7 @@
-using UnityEngine;
-using UnityEditor;
 using System;
 using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-
-using EditorCanvas = EditorExtend.NodeCanvas;
-using EditorStyle  = EditorExtend.Style;
 
 namespace MissionGrammarSystem {
 	public static class MissionGrammar {

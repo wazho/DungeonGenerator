@@ -1,12 +1,10 @@
 using UnityEngine;
-using UnityEditor;
 using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
 using Guid = System.Guid;
-
+#if UNITY_EDITOR
 using EditorCanvas = EditorExtend.NodeCanvas;
-
+#endif
 namespace MissionGrammarSystem {
 	// Terminal types of node.
 	public enum NodeTerminalType {
@@ -245,6 +243,7 @@ namespace MissionGrammarSystem {
 		public bool IsInScope(Vector2 pos) {
 			return _filledScope.Contains(pos);
 		}
+#if UNITY_EDITOR
 		// Draw the node on canvas.
 		public void Draw() {
 			switch (Terminal) {
@@ -270,6 +269,7 @@ namespace MissionGrammarSystem {
 				break;
 			}
 		}
+#endif
 		// Sub-classes.
 		private class StickiedConnection {
 			public GraphGrammarConnection connection;

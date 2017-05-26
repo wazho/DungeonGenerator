@@ -1,12 +1,8 @@
 using UnityEngine;
-using UnityEditor;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
 using Guid = System.Guid;
-
+#if UNITY_EDITOR
 using EditorCanvas = EditorExtend.NodeCanvas;
-
+#endif
 namespace MissionGrammarSystem {
 	// Types of connection.
 	public enum ConnectionType {
@@ -188,6 +184,7 @@ namespace MissionGrammarSystem {
 			_requirement  = referenceConnection.Requirement;
 			_arrow        = referenceConnection.Arrow;
 		}
+#if UNITY_EDITOR
 		// Draw the connection on canvas.
 		public void Draw() {
 			if (StartpointStickyOn != null) {
@@ -232,5 +229,6 @@ namespace MissionGrammarSystem {
 				EditorCanvas.DrawQuad(EndpointScope, Color.blue);
 			}
 		}
+#endif
 	}
 }

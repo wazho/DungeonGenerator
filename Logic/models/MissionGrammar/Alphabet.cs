@@ -1,14 +1,11 @@
 using UnityEngine;
-using UnityEditor;
 using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
 using Guid = System.Guid;
-
+#if UNITY_EDITOR
 using EditorCanvas = EditorExtend.NodeCanvas;
-using EditorStyle  = EditorExtend.Style;
 using SampleStyle  = EditorExtend.SampleStyle;
-
+#endif
 namespace MissionGrammarSystem {
 	public static class Alphabet {
 		// Default nodes in alphabet.
@@ -161,6 +158,7 @@ namespace MissionGrammarSystem {
 				connection.Selected = false;
 			}
 		}
+#if UNITY_EDITOR
 		// Draw the node in the node list.
 		public static void DrawNodeInList(GraphGrammarNode node) {
 			node.PositionX = 30;
@@ -184,5 +182,6 @@ namespace MissionGrammarSystem {
 			// Draw this connection.
 			connection.Draw();
 		}
+#endif
 	}
 }

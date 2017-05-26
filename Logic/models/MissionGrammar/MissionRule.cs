@@ -1,8 +1,3 @@
-using UnityEngine;
-using UnityEditor;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
 
 /*
     What is *mission rule* in this file?

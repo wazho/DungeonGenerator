@@ -1,11 +1,9 @@
 using UnityEngine;
-using UnityEditor;
 using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
-
-using EditorCanvas = EditorExtend.NodeCanvas;
-
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 namespace MissionGrammarSystem {
 	public class GraphGrammar {
 		// Members.
@@ -41,7 +39,7 @@ namespace MissionGrammarSystem {
 		public List<ValidationLabel> Error {
 			get { return _error; }
 		}
-
+#if UNITY_EDITOR
 		// Pass the mouse position.
 		// Be careful for one thing. '_nodes' and '_connections' must pre-order by ordering.
 		public void TouchedSymbol(Vector2 pos) {
@@ -96,7 +94,6 @@ namespace MissionGrammarSystem {
 			_selectedSymbol = null;
 			return;
 		}
-
 		// Points of connection is sticky to the node.
 		public bool StickyNode(GraphGrammarConnection connection, Vector2 pos, string location) {
 			bool sticked = false;
@@ -123,7 +120,7 @@ namespace MissionGrammarSystem {
 			}
 			return sticked;
 		}
-
+#endif
 		// Add a new node.
 		public void AddNode() {
 			// Revoke all symbols first.

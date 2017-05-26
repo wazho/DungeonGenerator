@@ -1,8 +1,5 @@
-using UnityEngine;
-using UnityEditor;
 using System;
 using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
 // Locales.
 using Languages = LanguageManager;
