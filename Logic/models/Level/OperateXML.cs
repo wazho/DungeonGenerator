@@ -151,7 +151,7 @@ namespace DungeonLevel {
 		public static class Unserialize {
 			// Static method for other class calling.
 			public static void UnserializeFromXml(string path) {
-				TextAsset xmlData = Resources.Load(path) as TextAsset;
+				TextAsset xmlData = Resources.Load(path.Replace(".xml","")) as TextAsset;
 				XDocument xmlDocument = ( xmlData == null ) ? XDocument.Load(path) : XDocument.Parse(xmlData.text);
 				UnserializeMissionGrammar(xmlDocument);
 			}
