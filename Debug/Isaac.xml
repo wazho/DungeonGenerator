@@ -1088,7 +1088,8 @@
         <Valid>True</Valid>
         <Enable>True</Enable>
         <Weight>10</Weight>
-        <QuantityLimit>0</QuantityLimit>
+        <QuantityLimitMin>0</QuantityLimitMin>
+        <QuantityLimitMax>0</QuantityLimitMax>
       </Rule>
       <Rule>
         <Name>Boss room</Name>
@@ -1312,7 +1313,8 @@
         <Valid>True</Valid>
         <Enable>True</Enable>
         <Weight>150</Weight>
-        <QuantityLimit>1</QuantityLimit>
+        <QuantityLimitMin>0</QuantityLimitMin>
+        <QuantityLimitMax>1</QuantityLimitMax>
       </Rule>
       <Rule>
         <Name>Set Serect</Name>
@@ -1826,7 +1828,8 @@
         <Valid>True</Valid>
         <Enable>True</Enable>
         <Weight>30</Weight>
-        <QuantityLimit>1</QuantityLimit>
+        <QuantityLimitMin>0</QuantityLimitMin>
+        <QuantityLimitMax>1</QuantityLimitMax>
       </Rule>
       <Rule>
         <Name>Exporation</Name>
@@ -1916,7 +1919,8 @@
         <Valid>True</Valid>
         <Enable>True</Enable>
         <Weight>10</Weight>
-        <QuantityLimit>0</QuantityLimit>
+        <QuantityLimitMin>0</QuantityLimitMin>
+        <QuantityLimitMax>0</QuantityLimitMax>
       </Rule>
       <Rule>
         <Name>More branch</Name>
@@ -2073,7 +2077,8 @@
         <Valid>True</Valid>
         <Enable>True</Enable>
         <Weight>20</Weight>
-        <QuantityLimit>2</QuantityLimit>
+        <QuantityLimitMin>0</QuantityLimitMin>
+        <QuantityLimitMax>2</QuantityLimitMax>
       </Rule>
       <Rule>
         <Name>Shop</Name>
@@ -2230,7 +2235,8 @@
         <Valid>True</Valid>
         <Enable>True</Enable>
         <Weight>10</Weight>
-        <QuantityLimit>1</QuantityLimit>
+        <QuantityLimitMin>0</QuantityLimitMin>
+        <QuantityLimitMax>1</QuantityLimitMax>
       </Rule>
       <Rule>
         <Name>Treasure</Name>
@@ -2387,7 +2393,8 @@
         <Valid>True</Valid>
         <Enable>True</Enable>
         <Weight>10</Weight>
-        <QuantityLimit>1</QuantityLimit>
+        <QuantityLimitMin>0</QuantityLimitMin>
+        <QuantityLimitMax>1</QuantityLimitMax>
       </Rule>
       <Rule>
         <Name>Extend Safe</Name>
@@ -2676,7 +2683,8 @@
         <Valid>True</Valid>
         <Enable>True</Enable>
         <Weight>10</Weight>
-        <QuantityLimit>1</QuantityLimit>
+        <QuantityLimitMin>0</QuantityLimitMin>
+        <QuantityLimitMax>1</QuantityLimitMax>
       </Rule>
     </RuleGroup>
     <RuleGroup>
@@ -3034,7 +3042,8 @@
         <Valid>True</Valid>
         <Enable>True</Enable>
         <Weight>10</Weight>
-        <QuantityLimit>2</QuantityLimit>
+        <QuantityLimitMin>0</QuantityLimitMin>
+        <QuantityLimitMax>2</QuantityLimitMax>
       </Rule>
       <Rule>
         <Name>Flat Rooms</Name>
@@ -3648,7 +3657,8 @@
         <Valid>True</Valid>
         <Enable>True</Enable>
         <Weight>10</Weight>
-        <QuantityLimit>0</QuantityLimit>
+        <QuantityLimitMin>0</QuantityLimitMin>
+        <QuantityLimitMax>0</QuantityLimitMax>
       </Rule>
     </RuleGroup>
   </MissionRules>

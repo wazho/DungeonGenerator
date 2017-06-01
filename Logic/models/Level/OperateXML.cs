@@ -55,7 +55,8 @@ namespace DungeonLevel {
 						elementRule.Add(new XElement("Valid", rule.Valid.ToString()));
 						elementRule.Add(new XElement("Enable", rule.Enable.ToString()));
 						elementRule.Add(new XElement("Weight", rule.Weight));
-						elementRule.Add(new XElement("QuantityLimit", rule.QuantityLimit));
+						elementRule.Add(new XElement("QuantityLimitMin", rule.QuantityLimitMin));
+						elementRule.Add(new XElement("QuantityLimitMax", rule.QuantityLimitMax));
 
 						elementGroup.Add(elementRule);
 					}
@@ -196,7 +197,8 @@ namespace DungeonLevel {
 						rule.Enable = bool.Parse(elementRule.Element("Enable").Value);
 						rule.Valid = bool.Parse(elementRule.Element("Valid").Value);
 						rule.Weight = int.Parse(elementRule.Element("Weight").Value);
-						rule.QuantityLimit = int.Parse(elementRule.Element("QuantityLimit").Value);
+						rule.QuantityLimitMin = int.Parse(elementRule.Element("QuantityLimitMin").Value);
+						rule.QuantityLimitMax = int.Parse(elementRule.Element("QuantityLimitMax").Value);
 
 						group.Rules.Add(rule);
 					}

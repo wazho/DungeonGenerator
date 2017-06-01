@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
 using Guid = System.Guid;
+using Math = System.Math;
 // VF Graph Isomorphism Algorithm.
 using VFlibcs = vflibcs;
 
@@ -13,6 +14,10 @@ namespace MissionGrammarSystem {
 		private static List<Node> _relatedNodes;
 		// The rules that are transformed to the tree structure.
 		private static List<Rule> _rules;
+		// Getter of _rules.
+		public static List<Rule> Rules {
+			get { return _rules; }
+		}
 
 		// When click the initial button of generate graph page.
 		public static void Initial(int seed) {
@@ -156,7 +161,8 @@ namespace MissionGrammarSystem {
 					rule.ReplacementNodeCount = nodeCount;
 					rule.Weight               = originRule.Weight;
 					// -1 means infinite.
-					rule.QuantityLimit = (originRule.QuantityLimit > 0) ? originRule.QuantityLimit : -1;
+					rule.QuantityLimitMin = Math.Max(0, originRule.QuantityLimitMin);
+					rule.QuantityLimitMax = (originRule.QuantityLimitMax > 0) ? originRule.QuantityLimitMax : -1;
 					// Insert into the '_rules'.
 					_rules.Add(rule);
 					// Store the dictionary of VF graph.
@@ -219,12 +225,13 @@ namespace MissionGrammarSystem {
 		// Step 1: Find matchs.
 		private static Rule FindMatchs(VFlibcs.Graph graphVF) {
 			foreach (var rule in RandomOrderByWeight()) {
-				if (rule.QuantityLimit == 0) { continue; }
+				if (rule.QuantityLimitMax == 0) { continue; }
 				// VfState: Calculate the result of subgraph isomorphic.
 				VFlibcs.VfState vfs = new VFlibcs.VfState(graphVF, _ruleVFgraphTable[rule], false, true);
 				if (vfs.FMatch()) {
 					// Reduce the quantity limit.
-					if (rule.QuantityLimit > 0) { rule.QuantityLimit -= 1; }
+					if (rule.QuantityLimitMin > 0) { rule.QuantityLimitMin -= 1; }
+					if (rule.QuantityLimitMax > 0) { rule.QuantityLimitMax -= 1; }
 					_relatedNodes.Clear();
 					for (int i = 0; i < vfs.Mapping2To1.Length; i++) {
 						// Set Index.
@@ -343,7 +350,7 @@ namespace MissionGrammarSystem {
 			}
 		}
 		// This is a pair of source rule and replacement rule.
-		private class Rule {
+		public class Rule {
 			// [Will remove just for test]
 			public string     Name                 { get; set; }
 			public Node       SourceRoot           { get; set; }
@@ -353,7 +360,8 @@ namespace MissionGrammarSystem {
 			public List<Node> SourceNodeTable      { get; set; }
 			public List<Node> ReplacementNodeTable { get; set; }
 			public int        Weight               { get; set; }
-			public int        QuantityLimit        { get; set; }
+			public int        QuantityLimitMin     { get; set; }
+			public int        QuantityLimitMax     { get; set; }
 
 			// Constructor.
 			public Rule() {

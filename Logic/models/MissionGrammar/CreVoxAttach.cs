@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 using Guid = System.Guid;
-
 
 namespace MissionGrammarSystem {
 	// Setting and getting node for CreVox.
@@ -24,8 +24,17 @@ namespace MissionGrammarSystem {
 			RewriteSystem.Initial(Seed);
 			graph = RewriteSystem.TransformFromGraph();
 			var stopWatch = System.Diagnostics.Stopwatch.StartNew();
-			// Will stop the iteration if there is no non-terminal symbol and the execution time is higher than 3 second
-			while (graph.Nodes.Exists(n => n.Terminal == NodeTerminalType.NonTerminal) && stopWatch.ElapsedMilliseconds <= 3000) {
+			// Iterate until finish.
+			while (
+				(
+					// Still exist non-terminal nodes.
+					graph.Nodes.Exists(n => n.Terminal == NodeTerminalType.NonTerminal)
+					// Have to exhauste all rules that set minimum.
+					|| RewriteSystem.Rules.Sum(r => r.QuantityLimitMin) > 0
+				)
+				// Time limit is 3,000 ms.
+				&& stopWatch.ElapsedMilliseconds <= 3000
+			) {
 				// Rewrite system iteration.
 				RewriteSystem.Iterate();
 				// Update the current graph.

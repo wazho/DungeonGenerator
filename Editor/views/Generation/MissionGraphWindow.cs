@@ -233,8 +233,17 @@ namespace GraphGeneration {
 			}
 			if (GUILayout.Button(Languages.GetText("GenerateMission-Complete"), SampleStyle.GetButtonStyle(SampleStyle.ButtonType.Right, SampleStyle.ButtonColor.Blue), SampleStyle.ButtonHeight)) {
 				var stopWatch = System.Diagnostics.Stopwatch.StartNew();
-				// Will stop the iteration if there is no non-terminal symbol and the execution time is higher than 3 second
-				while (_currentGraph.Nodes.Exists(n => n.Terminal == Mission.NodeTerminalType.NonTerminal) && stopWatch.ElapsedMilliseconds <= 3000) {
+				// Iterate until finish.
+				while (
+					(
+						// Still exist non-terminal nodes.
+						_currentGraph.Nodes.Exists(n => n.Terminal == Mission.NodeTerminalType.NonTerminal)
+						// Have to exhauste all rules that set minimum.
+						|| Mission.RewriteSystem.Rules.Sum(r => r.QuantityLimitMin) > 0
+					) 
+					// Time limit is 3,000 ms.
+					&& stopWatch.ElapsedMilliseconds <= 3000
+				) {
 					// Rewrite system iteration.
 					Mission.RewriteSystem.Iterate();
 					// Update the current graph.

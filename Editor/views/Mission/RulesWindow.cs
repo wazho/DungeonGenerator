@@ -448,7 +448,8 @@ namespace MissionGrammarSystem {
 			// Weight field.
 			_missionRule.Weight = SampleStyle.IntFieldLabeled(Languages.GetText("MisssionRules-Weight"), _missionRule.Weight, SampleStyle.IntFieldLabel, SampleStyle.IntField, SampleStyle.IntFieldHeight); 
 			// Quantity field. Fool proofing. 
-			_missionRule.QuantityLimit = SampleStyle.IntFieldLabeled(Languages.GetText("MisssionRules-Quantitylimit"), _missionRule.QuantityLimit < 0 ? 0 : _missionRule.QuantityLimit, SampleStyle.IntFieldLabel, SampleStyle.IntField, SampleStyle.IntFieldHeight);
+			_missionRule.QuantityLimitMin = SampleStyle.IntFieldLabeled(Languages.GetText("MisssionRules-Quantitylimit"), _missionRule.QuantityLimitMin < 0 ? 0 : _missionRule.QuantityLimitMin, SampleStyle.IntFieldLabel, SampleStyle.IntField, SampleStyle.IntFieldHeight);
+			_missionRule.QuantityLimitMax = SampleStyle.IntFieldLabeled("~", _missionRule.QuantityLimitMax < _missionRule.QuantityLimitMin ? _missionRule.QuantityLimitMin : _missionRule.QuantityLimitMax, SampleStyle.IntFieldLabel, SampleStyle.IntField, SampleStyle.IntFieldHeight);
 			GUILayout.EndHorizontal();
 			GUILayout.EndVertical();
 			GUILayout.EndArea();

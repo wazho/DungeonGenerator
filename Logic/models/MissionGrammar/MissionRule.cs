@@ -15,17 +15,15 @@ namespace MissionGrammarSystem {
 		// [Addition] if error occur disabled button
 		private bool         _isValid;
 		private int          _weight;
-		private int          _quantityLimit;
 		// Constructor - Default.
 		public MissionRule() {
-			this._name            = "New rule";
-			this._description     = "Description here.";
-			this._sourceRule      = new GraphGrammar();
-			this._replacementRule = new GraphGrammar();
-			this._isEnabled       = false;
-			this._isValid         = false;
-			this._weight          = 10;
-			this._quantityLimit   = 0; 
+			this._name             = "New rule";
+			this._description      = "Description here.";
+			this._sourceRule       = new GraphGrammar();
+			this._replacementRule  = new GraphGrammar();
+			this._isEnabled        = false;
+			this._isValid          = false;
+			this._weight           = 10;
 		}
 		// Constructor - Pass name and description.
 		public MissionRule(string name, string description) : this() {
@@ -62,11 +60,9 @@ namespace MissionGrammarSystem {
 			get { return _isValid; }
 			set { _isValid = value; }
 		}
-		// Quantity Limit, getter and setter.
-		public int QuantityLimit {
-			get { return _quantityLimit; }
-			set { _quantityLimit = value; }
-		}
+		// Quantity Limit.
+		public int QuantityLimitMin { get; set; }
+		public int QuantityLimitMax { get; set; }
 		// Weight, getter and setter.
 		public int Weight {
 			get { return _weight; }
