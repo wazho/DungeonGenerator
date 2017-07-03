@@ -7,7 +7,12 @@ namespace EditorExtend {
 	public class NodeCanvas {
 		private static Texture2D _texture;
         private static Texture2D Texture {
-            get { return (_texture == null) ? new Texture2D(1, 1) : _texture; }
+            get {
+                if (_texture == null) {
+                    _texture = new Texture2D(1, 1);
+                }
+                return _texture;
+            }
             set { }
         }
 		// Draw a quad.
@@ -27,7 +32,7 @@ namespace EditorExtend {
 			GUI.skin.box.normal.textColor  = textColor;
 			GUI.Box(rect, content);
 		}
-		// Draw a dics.
+		// Draw a disc.
 		public static void DrawDisc(Vector3 position, float radius, Color color) {
 			Handles.BeginGUI();
 			Handles.color = color;
