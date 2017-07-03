@@ -5,10 +5,19 @@ using System.Collections;
 
 namespace EditorExtend {
 	public class NodeCanvas {
-		private static Texture2D _texture2D = new Texture2D(1, 1);
+		private static Texture2D _texture;
+        private static Texture2D Texture {
+            get {
+                if (_texture == null) {
+                    _texture = new Texture2D(1, 1);
+                }
+                return _texture;
+            }
+            set { }
+        }
 		// Draw a quad.
 		public static void DrawQuad(Rect rect, Color color) {
-			Texture2D texture = _texture2D;
+			Texture2D texture = Texture;
 			texture.SetPixel(0, 0, color);
 			texture.Apply();
 			GUI.skin.box.normal.background = texture;
@@ -16,14 +25,14 @@ namespace EditorExtend {
 		}
 		// Draw a quad with the text.
 		public static void DrawQuad(Rect rect, Color color, string content, Color textColor) {
-			Texture2D texture = _texture2D;
+			Texture2D texture = Texture;
 			texture.SetPixel(0, 0, color);
 			texture.Apply();
 			GUI.skin.box.normal.background = texture;
 			GUI.skin.box.normal.textColor  = textColor;
 			GUI.Box(rect, content);
 		}
-		// Draw a dics.
+		// Draw a disc.
 		public static void DrawDisc(Vector3 position, float radius, Color color) {
 			Handles.BeginGUI();
 			Handles.color = color;
