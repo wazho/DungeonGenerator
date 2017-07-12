@@ -13,7 +13,7 @@ namespace EditorExtend {
                 }
                 return _texture;
             }
-            set { }
+            set { _texture = value; }
         }
 		// Draw a quad.
 		public static void DrawQuad(Rect rect, Color color) {
