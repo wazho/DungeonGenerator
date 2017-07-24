@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Linq;
+using System.IO;
 using System.Collections.Generic;
 using Guid = System.Guid;
 using Math = System.Math;
@@ -21,8 +22,9 @@ namespace MissionGrammarSystem {
 
 		// When click the initial button of generate graph page.
 		public static void Initial(int seed) {
-			// Initial the current graph.
-			_root         = new Node(Alphabet.StartingNode);
+            CleanNodeRelation();
+            // Initial the current graph.
+            _root         = new Node(Alphabet.StartingNode);
 			_relatedNodes = new List<Node>();
 			_rules        = new List<Rule>();
 			Random.InitState(seed);
@@ -123,7 +125,8 @@ namespace MissionGrammarSystem {
 					ReAddConnection(matchedRule);
 					// Step 6: Remove indexes.
 					RemoveIndexes();
-				} else {
+                    break;
+                } else {
 					break;
 				}
 			}
@@ -265,8 +268,11 @@ namespace MissionGrammarSystem {
 			// Replace the node from matched rule.
 			foreach (Node node in _relatedNodes) {
 				Node replaceNode = matchedRule.FindReplacementByIndex(node.Index);
-				// If any node then keep origin node.
-				if (Alphabet.IsAnyNode(replaceNode.AlphabetID)) {
+                if (replaceNode == null){
+                    break;
+                }
+                // If any node then keep origin node.
+                if (Alphabet.IsAnyNode(replaceNode.AlphabetID)) {
 					continue;
 				}
 				node.Update(replaceNode);
@@ -287,23 +293,67 @@ namespace MissionGrammarSystem {
 			// Order by Index.
 			_relatedNodes = _relatedNodes.OrderBy(x => x.Index).ToList();
 		}
-		// Step 5: Re-add the connections from replacement rule.
-		private static void ReAddConnection(Rule matchedRule) {
-			for (int i = 0; i < _relatedNodes.Count; i++) {
-				foreach (Node matchedRuleNode in matchedRule.FindReplacementByIndex(_relatedNodes[i].Index).Children) {
-					_relatedNodes[i].Children.Add(_relatedNodes[matchedRuleNode.Index - 1]);
-					_relatedNodes[matchedRuleNode.Index - 1].Parents.Add(_relatedNodes[i]);
-				}
-			}
-		}
-		// Step 6: Remove indexes.
-		private static void RemoveIndexes() {
+        // Step 5: Re-add the connections from replacement rule.
+        private static void ReAddConnection(Rule matchedRule) {
+            bool txtSave = false;
+            foreach (Node node in matchedRule.SourceNodeTable) {
+                WriteNodeRelation(node.Name + " ");
+            }
+            WriteNodeRelation("=> ");
+            for (int i = 0; i < _relatedNodes.Count; i++) {
+                //Check if the room can be find
+                if (matchedRule.FindReplacementByIndex(_relatedNodes[i].Index) == null) {
+                    //find the last room in node
+                    for (int j = 0; j < _relatedNodes.Count; j++) {
+                        //find the last room in node //Debug.Log("find last node: " + matchedRule.FindReplacementByIndex(_relatedNodes[i - j].Index).Name);
+                        if (i < j || matchedRule.FindReplacementByIndex(_relatedNodes[i - j].Index) == null) { continue; }
+                        if (!txtSave) {
+                            WriteNodeRelation(_relatedNodes[i - j].Name + "\r\n");
+                            txtSave = true;
+                        }
+                        foreach (Node tempNode in _relatedNodes[i].Children) {
+                            _relatedNodes[i - j].Children.Add(tempNode);
+                            tempNode.Parents.Clear();
+                            tempNode.Parents.Add(_relatedNodes[i - j]);
+
+                        }
+                    }
+                    continue;
+                }
+                if (!txtSave) {
+                    WriteNodeRelation(_relatedNodes[i].Name + "\r\n");
+                    txtSave = true;
+                }
+                foreach (Node matchedRuleNode in matchedRule.FindReplacementByIndex(_relatedNodes[i].Index).Children) {
+                    _relatedNodes[i].Children.Add(_relatedNodes[matchedRuleNode.Index - 1]);
+                    _relatedNodes[matchedRuleNode.Index - 1].Parents.Add(_relatedNodes[i]);
+                }
+            }
+        }
+        // Step 6: Remove indexes.
+        private static void RemoveIndexes() {
 			foreach (var node in _relatedNodes ?? Enumerable.Empty<Node>()) {
 				node.Index = 0;
 			}
 		}
-		// This is the minimum unit of exporting mission graph.
-		public class Node {
+        //save the node transform relation ino Assets/Resources/CreVox/NodeRelation.txt
+        private static void WriteNodeRelation(string output) {
+            if (!Directory.Exists("Assets/Resources/CreVox"))
+                Directory.CreateDirectory("Assets/Resources/CreVox");
+            StreamWriter writer = new StreamWriter("Assets/Resources/CreVox/NodeRelation.txt", append: true);
+            writer.Write(output);
+            writer.Close();
+        }
+        //clean the node transform relation
+        private static void CleanNodeRelation() {
+            if (!Directory.Exists("Assets/Resources/CreVox"))
+                Directory.CreateDirectory("Assets/Resources/CreVox");
+            StreamWriter writer = new StreamWriter("Assets/Resources/CreVox/NodeRelation.txt");
+            writer.Write("");
+            writer.Close();
+        }
+        // This is the minimum unit of exporting mission graph.
+        public class Node {
 			public Guid             AlphabetID { get; private set; }
 			public string           Name       { get; set; }
 			public int              Index      { get; set; }
@@ -376,8 +426,13 @@ namespace MissionGrammarSystem {
 			}
 			// Find the node from replacement rule by index.
 			public Node FindReplacementByIndex(int index) {
-				return ReplacementNodeTable.First(n => n.Index == index);
-			}
+                foreach (Node temp in ReplacementNodeTable) {
+                    if (temp.Index == index) {
+                        return temp;
+                    }
+                }
+                return null;
+            }
 		}
 		private static Dictionary<Node, int> nodeDictionary = new Dictionary<Node, int>();
 		private static List<string> _usedEdge = new List<string>();
