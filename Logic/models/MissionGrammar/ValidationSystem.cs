@@ -51,7 +51,7 @@ namespace MissionGrammarSystem {
 		// No 1. LeftMoreThanRight.
 		private static bool ValidateLeftMoreThanRight(MissionRule rule, GraphGrammar graphGrammar) {
 			// Are Nodes of sourceRule more than nodes of replacementRule?
-			return rule.SourceRule.Nodes.Count <= rule.ReplacementRule.Nodes.Count ? true : false;
+			return rule.SourceRule.Nodes.Count <= rule.ReplacementRule.Nodes.Count ? true : true;
 		}
 		// No 2. EmptyLeft.
 		private static bool ValidateEmptyLeft(MissionRule rule, GraphGrammar graphGrammar) {
