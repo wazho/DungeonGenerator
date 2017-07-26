@@ -280,6 +280,7 @@ namespace MissionGrammarSystem {
 		}
 		// Step 4: Append the new nodes from replacement rule.
 		private static void AppendNodes(Rule matchedRule) {
+            string nodeData = "";
 			foreach (Node matchedRuleNode in matchedRule.ReplacementNodeTable) {
 				// If index does not exist then add.
 				if (! _relatedNodes.Exists(x => x.Index == matchedRuleNode.Index)) {
@@ -289,17 +290,20 @@ namespace MissionGrammarSystem {
 					node.Explored = true;
 					_exploredNodeStack.Push(node);
 				}
+                nodeData += matchedRuleNode.Name + " ";
 			}
-			// Order by Index.
-			_relatedNodes = _relatedNodes.OrderBy(x => x.Index).ToList();
-		}
+            // Order by Index.
+            _relatedNodes = _relatedNodes.OrderBy(x => x.Index).ToList();
+            for (int i = nodeData.Length; i < 20; i++) { nodeData += " "; };
+            WriteNodeRelation(nodeData + "From  " + matchedRule.Name + " : ");
+        }
         // Step 5: Re-add the connections from replacement rule.
         private static void ReAddConnection(Rule matchedRule) {
             bool txtSave = false;
-            foreach (Node node in matchedRule.SourceNodeTable) {
+            foreach (Node node in matchedRule.SourceNodeTable){
                 WriteNodeRelation(node.Name + " ");
             }
-            WriteNodeRelation("=> ");
+            WriteNodeRelation("\r\n\r\n");
             for (int i = 0; i < _relatedNodes.Count; i++) {
                 //Check if the room can be find
                 if (matchedRule.FindReplacementByIndex(_relatedNodes[i].Index) == null) {
@@ -308,26 +312,24 @@ namespace MissionGrammarSystem {
                         //find the last room in node //Debug.Log("find last node: " + matchedRule.FindReplacementByIndex(_relatedNodes[i - j].Index).Name);
                         if (i < j || matchedRule.FindReplacementByIndex(_relatedNodes[i - j].Index) == null) { continue; }
                         if (!txtSave) {
-                            WriteNodeRelation(_relatedNodes[i - j].Name + "\r\n");
                             txtSave = true;
                         }
                         foreach (Node tempNode in _relatedNodes[i].Children) {
                             _relatedNodes[i - j].Children.Add(tempNode);
                             tempNode.Parents.Clear();
                             tempNode.Parents.Add(_relatedNodes[i - j]);
-
                         }
                     }
                     continue;
                 }
                 if (!txtSave) {
-                    WriteNodeRelation(_relatedNodes[i].Name + "\r\n");
                     txtSave = true;
                 }
                 foreach (Node matchedRuleNode in matchedRule.FindReplacementByIndex(_relatedNodes[i].Index).Children) {
                     _relatedNodes[i].Children.Add(_relatedNodes[matchedRuleNode.Index - 1]);
                     _relatedNodes[matchedRuleNode.Index - 1].Parents.Add(_relatedNodes[i]);
                 }
+                
             }
         }
         // Step 6: Remove indexes.
