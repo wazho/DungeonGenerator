@@ -60,6 +60,8 @@ namespace MissionGrammarSystem {
 		private static GUIStyle NodeTabButtonStyle;
 		private static GUIStyle ConnectionTabButtonStyle;
 		private static bool _isInitTabButton;
+		// The drawing area.
+		private static Rect _symbolListArea;
 
 		// Initialize when trigger reload scripts via 'InitializeOnLoad'.
 		static AlphabetWindow() {
@@ -96,6 +98,7 @@ namespace MissionGrammarSystem {
 			_connection               = new GraphGrammarConnection();
 			_symbolListCanvas         = new Rect(0, 0, Screen.width, Screen.height);
 			_symbolListCanvasInWindow = _symbolListCanvas;
+			_symbolListArea           = new Rect(0, 0, Screen.width, Screen.height);
 			_centerPosition           = new Vector2(Screen.width / 2, 75);
 			_connectionType           = ConnectionType.WeakRequirement;
 			_connectionArrowType      = ConnectionArrowType.Normal;
@@ -239,9 +242,14 @@ namespace MissionGrammarSystem {
 			// Set the scroll position.
 			_scrollPosition = GUILayout.BeginScrollView(_scrollPosition, SymbolList.HeightLayout);
 			// Content of scroll area.
-			GUILayout.BeginArea(Container.SymbolListArea);
-			_symbolListCanvas = Container.SymbolListCanvas;
-			//EditorGUI.DrawRect(_symbolListCanvas, Color.gray);
+			_symbolListArea             = Container.SymbolListArea;
+			_symbolListArea.height      = Alphabet.Nodes.Count >= Alphabet.Connections.Count ?
+					(Alphabet.Nodes.Count + 1) * 50 : (Alphabet.Connections.Count + 1) * 50;
+			GUILayout.BeginArea(_symbolListArea);
+			_symbolListCanvas           = Container.SymbolListCanvas;
+			_symbolListCanvas.height    = Alphabet.Nodes.Count >= Alphabet.Connections.Count ?
+					(Alphabet.Nodes.Count + 1) * 50 : (Alphabet.Connections.Count + 1) * 50;
+			
 			SampleStyle.DrawGrid(_symbolListCanvas, SampleStyle.MinorGridSize, SampleStyle.MajorGridSize, SampleStyle.GridBackgroundColor, SampleStyle.GridColor); 
 			GUILayout.EndArea();
 			// Layout each symbols in list.
