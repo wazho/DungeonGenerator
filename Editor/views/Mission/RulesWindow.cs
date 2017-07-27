@@ -67,8 +67,10 @@ namespace MissionGrammarSystem {
 		private static Rect _sourceCanvas;
 		private static Rect _replacementCanvas;
 		private static Rect _symbolListCanvasInWindow;
-		// The scroll bar of canvas.
-		private static Vector2 _sourceCanvasScrollPosition;
+        private static Rect _symbolListArea;
+        private static Rect _symbolListCanvas;
+        // The scroll bar of canvas.
+        private static Vector2 _sourceCanvasScrollPosition;
 		private static Vector2 _replacementCanvasScrollPosition;
 		// Size of source canvas & replacement canvas.
 		private static int _sourceCanvasWidth;
@@ -667,12 +669,18 @@ namespace MissionGrammarSystem {
 			GUILayout.Label(Languages.GetText("MisssionRules-ListOfNodes"), SampleStyle.HeaderTwo, SampleStyle.HeaderTwoHeightLayout);
 			// Content of Node-List.
 			_listScrollPosition = GUILayout.BeginScrollView(_listScrollPosition, SymbolList.HeightLayout);
-			// Content of scroll area.
-			GUILayout.BeginArea(Container.SymbolListArea);
-			// Set the scroll position.
-			_symbolListCanvasInWindow.position = GUIUtility.GUIToScreenPoint(Container.SymbolListCanvas.position) - this.position.position;
-			_symbolListCanvasInWindow.size     = _symbolListCanvasInWindow.size = Container.SymbolListCanvas.size;
-			SampleStyle.DrawGrid(Container.SymbolListCanvas, SampleStyle.MinorGridSize, SampleStyle.MajorGridSize, SampleStyle.GridBackgroundColor, SampleStyle.GridColor);
+            // Content of scroll area.
+            _symbolListArea         = Container.SymbolListArea;
+            _symbolListArea.height  = Alphabet.Nodes.Count >= Alphabet.Connections.Count ?
+                    (Alphabet.Nodes.Count + 1) * 50 : (Alphabet.Connections.Count + 1) * 50;
+            GUILayout.BeginArea(_symbolListArea);
+            // Set the scroll position.
+            _symbolListCanvas = Container.SymbolListCanvas;
+            _symbolListCanvas.height = Alphabet.Nodes.Count >= Alphabet.Connections.Count ?
+                    (Alphabet.Nodes.Count + 1) * 50 : (Alphabet.Connections.Count + 1) * 50;
+            _symbolListCanvasInWindow.position = GUIUtility.GUIToScreenPoint(_symbolListCanvas.position) - this.position.position;
+            _symbolListCanvasInWindow.size = _symbolListCanvasInWindow.size = _symbolListCanvas.size;
+            SampleStyle.DrawGrid(_symbolListCanvas, SampleStyle.MinorGridSize, SampleStyle.MajorGridSize, SampleStyle.GridBackgroundColor, SampleStyle.GridColor);
 			GUILayout.EndArea();
 
 			// Layout each symbols in list.
@@ -689,16 +697,21 @@ namespace MissionGrammarSystem {
 			// Content of Connection-List.
 			// Set the ScrollPosition.
 			_listScrollPosition = GUILayout.BeginScrollView(_listScrollPosition, SymbolList.HeightLayout);
-			// Content of scroll area.
-			GUILayout.BeginArea(Container.SymbolListArea);
-			// Set the scroll position.
-			_symbolListCanvasInWindow.position = GUIUtility.GUIToScreenPoint(Container.SymbolListCanvas.position) - this.position.position;
-			_symbolListCanvasInWindow.size     = _symbolListCanvasInWindow.size = Container.SymbolListCanvas.size;
-			SampleStyle.DrawGrid(Container.SymbolListCanvas, SampleStyle.MinorGridSize, SampleStyle.MajorGridSize, SampleStyle.GridBackgroundColor, SampleStyle.GridColor);
+            // Content of scroll area.
+            _symbolListArea = Container.SymbolListArea;
+            _symbolListArea.height = Alphabet.Nodes.Count >= Alphabet.Connections.Count ?
+                    (Alphabet.Nodes.Count + 1) * 50 : (Alphabet.Connections.Count + 1) * 50;
+            GUILayout.BeginArea(_symbolListArea);
+            // Set the scroll position.
+            _symbolListCanvas = Container.SymbolListCanvas;
+            _symbolListCanvas.height = Alphabet.Nodes.Count >= Alphabet.Connections.Count ?
+                    (Alphabet.Nodes.Count + 1) * 50 : (Alphabet.Connections.Count + 1) * 50;
+            _symbolListCanvasInWindow.position = GUIUtility.GUIToScreenPoint(_symbolListCanvas.position) - this.position.position;
+			_symbolListCanvasInWindow.size = _symbolListCanvasInWindow.size = _symbolListCanvas.size;
+            SampleStyle.DrawGrid(_symbolListCanvas, SampleStyle.MinorGridSize, SampleStyle.MajorGridSize, SampleStyle.GridBackgroundColor, SampleStyle.GridColor);
 			GUILayout.EndArea();
 			// Layout each symbols in list.:
-
-			foreach (var connection in Alphabet.Connections) {
+            foreach (var connection in Alphabet.Connections) {
 				Alphabet.DrawConnectionInList(connection);
 				// Custom style to modify padding and margin for label.
 				GUILayout.Label(connection.Name, SymbolList.ConnectionElement);
