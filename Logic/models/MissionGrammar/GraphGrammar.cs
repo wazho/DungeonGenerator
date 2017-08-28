@@ -208,5 +208,8 @@ namespace MissionGrammarSystem {
 			_selectedSymbol = null;
 			return;
 		}
+		public GraphGrammarConnection GetConnectionByNode(GraphGrammarNode node1, GraphGrammarNode node2) {
+			return _connections.Find(c => ( ( c.StartpointStickyOn == node1 && c.EndpointStickyOn == node2 ) || c.EndpointStickyOn == node1 && c.StartpointStickyOn == node2 ));
+		}
 	}
 }
