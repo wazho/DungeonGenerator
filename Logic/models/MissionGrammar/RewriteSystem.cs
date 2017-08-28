@@ -139,7 +139,8 @@ namespace MissionGrammarSystem {
 		}
 		private static void ClearExplored(Node node) {
 			node.Explored = false;
-			foreach (Node childNode in node.Children) {
+			foreach (Node edgeChild in node.Children) {
+				Node childNode = edgeChild.Children[0];
 				if (childNode.Explored) {
 					ClearExplored(childNode);
 				}
@@ -190,7 +191,6 @@ namespace MissionGrammarSystem {
 			// Set parents and children
 			for (int i = 0; i < graph.Nodes.Count; i++) {
 				foreach (var childNode in graph.Nodes[i].Children) {
-					Debug.Log(childNode.Name);
 					Node edgeNode = new Node(graph.GetConnectionByNode(graph.Nodes[i], childNode), edgeIndex++);
 					nodes.Add(edgeNode);
 					nodes[i].Children.Add(edgeNode);
