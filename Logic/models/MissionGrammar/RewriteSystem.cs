@@ -9,6 +9,8 @@ using VFlibcs = vflibcs;
 
 namespace MissionGrammarSystem {
 	public static class RewriteSystem {
+		public static GraphGrammar ResultGraph;
+
 		// Current root of the mission graph.
 		private static Node       _root;
 		// Related nodes are a table that can quickly access nodes that are related with rule.
@@ -66,6 +68,7 @@ namespace MissionGrammarSystem {
 			CountInLayer.Add(0);
 			RecursionGraphGrammar(_root, ref graphGrammar, 1);
 			ClearExplored(_root);
+			ResultGraph = graphGrammar;
 			return graphGrammar;
 		}
 		// Add node and connection to graph grammar by dfs.
