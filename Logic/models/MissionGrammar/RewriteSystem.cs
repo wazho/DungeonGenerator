@@ -9,6 +9,8 @@ using VFlibcs = vflibcs;
 
 namespace MissionGrammarSystem {
 	public static class RewriteSystem {
+		public static GraphGrammar ResultGraph;
+
 		// Current root of the mission graph.
 		private static Node       _root;
 		// Related nodes are a table that can quickly access nodes that are related with rule.
@@ -66,6 +68,7 @@ namespace MissionGrammarSystem {
 			CountInLayer.Add(0);
 			RecursionGraphGrammar(_root, ref graphGrammar, 1);
 			ClearExplored(_root);
+			ResultGraph = graphGrammar;
 			return graphGrammar;
 		}
 		// Add node and connection to graph grammar by dfs.
@@ -78,9 +81,10 @@ namespace MissionGrammarSystem {
 			node.Explored = true;
 			// "index" is used to calculate y position.
 			int index = 0;
-			foreach (Node childNode in node.Children) {
+			foreach (Node edgeNode in node.Children) {
 				// Add connection (Now only use Connections[0], will modify).
-				var connection = new GraphGrammarConnection(Alphabet.Connections[0]);
+				Node childNode = edgeNode.Children[0];
+				var connection = new GraphGrammarConnection(Alphabet.Connections.Find(c => c.AlphabetID == edgeNode.AlphabetID));
 				graphGrammar.Connections.Add(connection);
 				// Set starting sticked attribute.
 				_nodeMappingTable[node].AddStickiedConnection(connection, "start");
@@ -116,14 +120,19 @@ namespace MissionGrammarSystem {
 				if (matchedRule != null) {
 					Debug.Log("Current match rule : " + matchedRule.Name);
 					// Step 2: Remove connections.
+					//Debug.Log("2");
 					RemoveConnections(matchedRule);
 					// Step 3: Remove connections from replacement rule.
+					//Debug.Log("3");
 					ReplaceNodes(matchedRule);
 					// Step 4: Append the new nodes from replacement rule.
+					//Debug.Log("4");
 					AppendNodes(matchedRule);
 					// Step 5: Re-add the connections from replacement rule.
+					//Debug.Log("5");
 					ReAddConnection(matchedRule);
 					// Step 6: Remove indexes.
+					//Debug.Log("6");
 					RemoveIndexes();
                     break;
                 } else {
@@ -133,7 +142,8 @@ namespace MissionGrammarSystem {
 		}
 		private static void ClearExplored(Node node) {
 			node.Explored = false;
-			foreach (Node childNode in node.Children) {
+			foreach (Node edgeChild in node.Children) {
+				Node childNode = edgeChild.Children[0];
 				if (childNode.Explored) {
 					ClearExplored(childNode);
 				}
@@ -175,24 +185,26 @@ namespace MissionGrammarSystem {
 		}
 		// Transform a graph into tree struct. Then return the table.
 		private static List<Node> TransformGraph(GraphGrammar graph, out int nodeCount) {
+			int edgeIndex = graph.Nodes.Count + 1;
 			// Initialize nodes
-			var nodes = new Node[graph.Nodes.Count];
+			var nodes = new List<Node>();
 			for (int i = 0; i < graph.Nodes.Count; i++) {
-				nodes[i] = new Node(graph.Nodes[i], graph.Nodes[i].Ordering);
+				nodes.Add(new Node(graph.Nodes[i], graph.Nodes[i].Ordering));
 			}
 			// Set parents and children
 			for (int i = 0; i < graph.Nodes.Count; i++) {
 				foreach (var childNode in graph.Nodes[i].Children) {
+					Node edgeNode = new Node(graph.GetConnectionByNode(graph.Nodes[i], childNode), edgeIndex++);
+					nodes.Add(edgeNode);
+					nodes[i].Children.Add(edgeNode);
+					edgeNode.Parents.Add(nodes[i]);
 					int index = graph.Nodes.FindIndex(n => n.ID == childNode.ID);
-					nodes[i].Children.Add(nodes[index]);
-				}
-				foreach (var parentsNode in graph.Nodes[i].Parents) {
-					int index = graph.Nodes.FindIndex(n => n.ID == parentsNode.ID);
-					nodes[i].Parents.Add(nodes[index]);
+					edgeNode.Children.Add(nodes[index]);
+					nodes[index].Parents.Add(edgeNode);
 				}
 			}
 			// Update the node count.
-			nodeCount = graph.Nodes.Count;
+			nodeCount = graph.Nodes.Count + graph.Connections.Count;
 			// Return the table.
 			return nodes.OrderBy(n => n.Index).ToList();
 		}
@@ -239,11 +251,12 @@ namespace MissionGrammarSystem {
 					for (int i = 0; i < vfs.Mapping2To1.Length; i++) {
 						// Set Index.
 						Node node  = graphVF.GetNodeAttr(vfs.Mapping2To1[i]) as Node;
-						node.Index = (_ruleVFgraphTable[rule].GetNodeAttr(i) as Node).Index;
-						_relatedNodes.Add(node);
 						// Record this one is used in this iterating.
 						node.Explored = true;
 						_exploredNodeStack.Push(node);
+						if (node.IsEdge) { continue; }
+						node.Index = (_ruleVFgraphTable[rule].GetNodeAttr(i) as Node).Index;
+						_relatedNodes.Add(node);
 					}
 					return rule;
 				}
@@ -255,8 +268,8 @@ namespace MissionGrammarSystem {
 			foreach (Node node in _relatedNodes) {
 				for (int i = 0; i < node.Children.Count; i++) {
 					// If this node and its child are in the rule, remove the connective.
-					if (node.Children[i].Index != 0) {
-						node.Children[i].Parents.Remove(node);
+					if (node.Children[i].Children[0].Index != 0) {
+						node.Children[i].Children[0].Parents.Remove(node.Children[i]);
 						node.Children.RemoveAt(i);
 						i--;
 					}
@@ -326,10 +339,14 @@ namespace MissionGrammarSystem {
                     txtSave = true;
                 }
                 foreach (Node matchedRuleNode in matchedRule.FindReplacementByIndex(_relatedNodes[i].Index).Children) {
+					/*Node findNode = matchedRule.ReplacementNodeTable.Find(n => ( n.IsEdge && n.Parents.Exists(p => p.Index == _relatedNodes[i].Index) && n.Children.Exists(c => c.Index == matchedRuleNode.Index) ));
+					Debug.Log(findNode);
+					Node edgeNode = new Node(findNode);
+					edgeNode.Parents.Add(_relatedNodes[i]);
+					edgeNode.Children.Add(_relatedNodes[matchedRuleNode.Index - 1]); */
                     _relatedNodes[i].Children.Add(_relatedNodes[matchedRuleNode.Index - 1]);
-                    _relatedNodes[matchedRuleNode.Index - 1].Parents.Add(_relatedNodes[i]);
-                }
-                
+					_relatedNodes[matchedRuleNode.Index - 1].Parents.Add(_relatedNodes[i]);
+				}
             }
         }
         // Step 6: Remove indexes.
@@ -363,6 +380,7 @@ namespace MissionGrammarSystem {
 			public List<Node>       Parents    { get; set; }
 			public List<Node>       Children   { get; set; }
 			public bool             Explored   { get; set; }
+			public bool             IsEdge     { get; set; }
 
 			// Constructor.
 			public Node() {
@@ -373,6 +391,7 @@ namespace MissionGrammarSystem {
 				this.Parents    = new List<Node>();
 				this.Children   = new List<Node>();
 				this.Explored   = false;
+				this.IsEdge     = false;
 			}
 			public Node(GraphGrammarNode node) : this() {
 				this.AlphabetID = node.AlphabetID;
@@ -385,11 +404,19 @@ namespace MissionGrammarSystem {
 				this.Index      = index;
 				this.Terminal   = node.Terminal;
 			}
+			public Node(GraphGrammarConnection connection, int index) : this() {
+				Debug.Log(connection);
+				this.AlphabetID = connection.AlphabetID;
+				this.Name       = connection.Name;
+				this.IsEdge     = true;
+				this.Index = index;
+			}
 			public Node(Node node) : this() {
 				this.AlphabetID = node.AlphabetID;
 				this.Name       = node.Name;
 				this.Terminal   = node.Terminal;
 				this.Index      = node.Index;
+				this.IsEdge     = node.IsEdge;
 			}
 			// Update the node information, only name and terminal.
 			public void Update(Node node) {

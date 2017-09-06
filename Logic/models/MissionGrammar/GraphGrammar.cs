@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
+using System;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -207,6 +208,12 @@ namespace MissionGrammarSystem {
 			}
 			_selectedSymbol = null;
 			return;
+		}
+		public GraphGrammarConnection GetConnectionByNode(GraphGrammarNode node1, GraphGrammarNode node2) {
+			return _connections.Find(c => ( ( c.StartpointStickyOn.ID == node1.ID && c.EndpointStickyOn.ID == node2.ID ) || c.EndpointStickyOn.ID == node1.ID && c.StartpointStickyOn.ID == node2.ID ));
+		}
+		public GraphGrammarConnection GetConnectionByNodeID(Guid node1, Guid node2) {
+			return _connections.Find(c => ( ( c.StartpointStickyOn.ID == node1 && c.EndpointStickyOn.ID == node2 ) || c.EndpointStickyOn.ID == node1 && c.StartpointStickyOn.ID == node2 ));
 		}
 	}
 }
